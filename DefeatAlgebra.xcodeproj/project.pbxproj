@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2019C37D1F0B5335003C7609 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2019C37C1F0B5335003C7609 /* MainMenu.sks */; };
+		2019C37F1F0B5933003C7609 /* AnimationActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2019C37E1F0B5933003C7609 /* AnimationActions.sks */; };
+		2019C3811F0B5A85003C7609 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019C3801F0B5A85003C7609 /* Enemy.swift */; };
+		2019C3831F0B5A91003C7609 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019C3821F0B5A91003C7609 /* Grid.swift */; };
+		201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0291F11BE1D001346C7 /* MSButtonNode.swift */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D861F074FE800F4DD11 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D851F074FE800F4DD11 /* GameScene.sks */; };
 		204C7D881F074FE800F4DD11 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D871F074FE800F4DD11 /* Actions.sks */; };
@@ -18,6 +23,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2019C37C1F0B5335003C7609 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
+		2019C37E1F0B5933003C7609 /* AnimationActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = AnimationActions.sks; path = ../AnimationActions.sks; sourceTree = "<group>"; };
+		2019C3801F0B5A85003C7609 /* Enemy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
+		2019C3821F0B5A91003C7609 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		201CF0291F11BE1D001346C7 /* MSButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSButtonNode.swift; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D851F074FE800F4DD11 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -62,9 +72,14 @@
 			children = (
 				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
 				204C7D851F074FE800F4DD11 /* GameScene.sks */,
-				204C7D871F074FE800F4DD11 /* Actions.sks */,
 				204C7D891F074FE800F4DD11 /* GameScene.swift */,
+				2019C37C1F0B5335003C7609 /* MainMenu.sks */,
+				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
+				2019C3801F0B5A85003C7609 /* Enemy.swift */,
+				2019C3821F0B5A91003C7609 /* Grid.swift */,
+				204C7D871F074FE800F4DD11 /* Actions.sks */,
 				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
+				201CF0291F11BE1D001346C7 /* MSButtonNode.swift */,
 				204C7D8D1F074FE800F4DD11 /* Main.storyboard */,
 				204C7D901F074FE800F4DD11 /* Assets.xcassets */,
 				204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */,
@@ -137,6 +152,8 @@
 				204C7D861F074FE800F4DD11 /* GameScene.sks in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
 				204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */,
+				2019C37D1F0B5335003C7609 /* MainMenu.sks in Resources */,
+				2019C37F1F0B5933003C7609 /* AnimationActions.sks in Resources */,
 				204C7D881F074FE800F4DD11 /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -148,8 +165,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2019C3811F0B5A85003C7609 /* Enemy.swift in Sources */,
 				204C7D8A1F074FE800F4DD11 /* GameScene.swift in Sources */,
 				204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */,
+				201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */,
+				2019C3831F0B5A91003C7609 /* Grid.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,6 +334,7 @@
 				204C7D9A1F074FE800F4DD11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
