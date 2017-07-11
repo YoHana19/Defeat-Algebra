@@ -13,6 +13,8 @@
 		2019C3831F0B5A91003C7609 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019C3821F0B5A91003C7609 /* Grid.swift */; };
 		201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0291F11BE1D001346C7 /* MSButtonNode.swift */; };
 		201CF02E1F134157001346C7 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF02D1F134156001346C7 /* Hero.swift */; };
+		201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF02F1F13E490001346C7 /* EnemyArm.swift */; };
+		201CF0321F140653001346C7 /* EnemyFist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0311F140653001346C7 /* EnemyFist.swift */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D861F074FE800F4DD11 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D851F074FE800F4DD11 /* GameScene.sks */; };
 		204C7D881F074FE800F4DD11 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D871F074FE800F4DD11 /* Actions.sks */; };
@@ -30,6 +32,8 @@
 		2019C3821F0B5A91003C7609 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 		201CF0291F11BE1D001346C7 /* MSButtonNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MSButtonNode.swift; sourceTree = "<group>"; };
 		201CF02D1F134156001346C7 /* Hero.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hero.swift; sourceTree = "<group>"; };
+		201CF02F1F13E490001346C7 /* EnemyArm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyArm.swift; sourceTree = "<group>"; };
+		201CF0311F140653001346C7 /* EnemyFist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyFist.swift; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D851F074FE800F4DD11 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -75,11 +79,13 @@
 				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
 				204C7D851F074FE800F4DD11 /* GameScene.sks */,
 				204C7D891F074FE800F4DD11 /* GameScene.swift */,
-				201CF02D1F134156001346C7 /* Hero.swift */,
 				2019C37C1F0B5335003C7609 /* MainMenu.sks */,
 				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
-				2019C3801F0B5A85003C7609 /* Enemy.swift */,
 				2019C3821F0B5A91003C7609 /* Grid.swift */,
+				201CF02D1F134156001346C7 /* Hero.swift */,
+				2019C3801F0B5A85003C7609 /* Enemy.swift */,
+				201CF02F1F13E490001346C7 /* EnemyArm.swift */,
+				201CF0311F140653001346C7 /* EnemyFist.swift */,
 				204C7D871F074FE800F4DD11 /* Actions.sks */,
 				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
 				201CF0291F11BE1D001346C7 /* MSButtonNode.swift */,
@@ -169,12 +175,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2019C3811F0B5A85003C7609 /* Enemy.swift in Sources */,
+				201CF0321F140653001346C7 /* EnemyFist.swift in Sources */,
 				204C7D8A1F074FE800F4DD11 /* GameScene.swift in Sources */,
 				204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */,
 				201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */,
 				201CF02E1F134157001346C7 /* Hero.swift in Sources */,
 				2019C3831F0B5A91003C7609 /* Grid.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
+				201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

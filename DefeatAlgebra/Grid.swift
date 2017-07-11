@@ -22,6 +22,9 @@ class Grid: SKSpriteNode {
     /* Enemy Array */
     var enemyArray = [Enemy]()
     
+    /* For confirm all punches finish */
+    var maxDuration: CGFloat = 0
+    
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -106,6 +109,8 @@ class Grid: SKSpriteNode {
             /* Add creature to grid array */
             enemyArray.append(enemy)
         }
+        
+        maxDuration = 2.9*2+0.3
     }
     
 }

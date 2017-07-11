@@ -29,9 +29,9 @@ class Hero: SKSpriteNode {
         
         // Set physics properties
         physicsBody = SKPhysicsBody(rectangleOf: heroSize)
-        physicsBody?.categoryBitMask = 4
-        physicsBody?.collisionBitMask = 2
-        physicsBody?.contactTestBitMask = 2
+        physicsBody?.categoryBitMask = 1
+        physicsBody?.collisionBitMask = 16
+        physicsBody?.contactTestBitMask = 15
         
         setTexture()
         setMovingAnimation()
