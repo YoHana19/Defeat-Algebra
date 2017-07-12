@@ -22,8 +22,9 @@ class Grid: SKSpriteNode {
     /* Enemy Array */
     var enemyArray = [Enemy]()
     
-    /* For confirm all punches finish */
-    var maxDuration: CGFloat = 0
+    /* Flash speed */
+    var flashSpeed: Double = 1.6
+    
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
@@ -42,6 +43,11 @@ class Grid: SKSpriteNode {
             /* New enemy object */
             let enemy = Enemy()
         
+            /* Attach variable expression */
+            enemy.makeTriangle()
+            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
+            
+            
             /* Set direction of enemy randomly*/
             let directionIndex = Int(arc4random_uniform(4))+1
             enemy.direction = Direction(rawValue: directionIndex)!
@@ -109,9 +115,21 @@ class Grid: SKSpriteNode {
             /* Add creature to grid array */
             enemyArray.append(enemy)
         }
-        
-        maxDuration = 2.9*2+0.3
     }
     
+    func flashGrid() -> Int {
+        /* Set the number of times of flash randomly */
+        let numOfFlash = Int(arc4random_uniform(4))+1
+        
+        /* Set flash animation */
+        let fadeInColorlize = SKAction.colorize(with: UIColor.yellow, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+        let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+        let fadeOutColorlize = SKAction.colorize(with: UIColor.yellow, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+        let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+        let flash = SKAction.repeat(seqFlash, count: numOfFlash)
+        self.run(flash)
+        
+        return numOfFlash
+    }
 }
 

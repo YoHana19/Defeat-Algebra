@@ -9,19 +9,28 @@
 import Foundation
 import SpriteKit
 
+enum EnemyState {
+    case moving, staying, punching
+}
+
 class Enemy: SKSpriteNode {
     
-    var direction: Direction = .front
+    /* Enemy state management */
+    var enemyState: EnemyState = .moving
     
     /* Enemy property */
     var moveSpeed = 0.5
-    var punchSpeed: CGFloat = 0.01
-
+    var punchSpeed: CGFloat = 0.005
+    var direction: Direction = .front
+    
     /* Enemy variable for punch */
-    var valueOfEnemy: Int = 5
+    var valueOfEnemy: Int = 0
     var firstPunchLength: CGFloat = 45
     var singlePunchLength: CGFloat = 61
-    var punchLength: CGFloat!
+    var punchLength: CGFloat! = 0
+    var variableExpression: [Int]!
+    var variableExpressionForLabel: String!
+    let variableExpressionSource = [[1,0],[1,1],[1,2],[1,3],[1,4],[2,0],[2,1],[2,2]]
     
     /* For arms when punch hit wall */
     var armHitWallArray: [EnemyArm] = []
@@ -49,14 +58,42 @@ class Enemy: SKSpriteNode {
         physicsBody?.collisionBitMask = 16
         physicsBody?.contactTestBitMask = 1
         
-        /* calculate punch length */
-        punchLength = firstPunchLength + CGFloat(valueOfEnemy-1) * singlePunchLength
+        /* Set variable expression */
+        let rand = arc4random_uniform(UInt32(variableExpressionSource.count))
+        variableExpression = variableExpressionSource[Int(rand)]
+        if variableExpression[0] == 1 {
+            if variableExpression[1] == 0 {
+                variableExpressionForLabel = "x"
+            } else {
+                variableExpressionForLabel = "x+\(variableExpression[1])"
+            }
+        } else {
+            if variableExpression[1] == 0 {
+                variableExpressionForLabel = "\(variableExpression[0])x"
+            } else {
+                variableExpressionForLabel = "\(variableExpression[0])x+\(variableExpression[1])"
+            }
+        }
         
     }
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    /* Set standing texture of enemy according to direction */
+    func setStandingtexture() {
+        switch direction {
+        case .front:
+            self.texture = SKTexture(imageNamed: "front155")
+        case .back:
+            self.texture = SKTexture(imageNamed: "back155")
+        case .left:
+            self.texture = SKTexture(imageNamed: "left155")
+        case .right:
+            self.texture = SKTexture(imageNamed: "right155")
+        }
     }
     
     /* Set Animation to enemy according to direction */
@@ -94,6 +131,56 @@ class Enemy: SKSpriteNode {
             self.run(moveRightByOneCell)
         }
     }
+    
+    func makeTriangle() {
+        /* length of one side */
+        let length: CGFloat = 7
+        
+        /* Set 4 points from start point to end point */
+        var points = [CGPoint(x: 0.0, y: -length),
+                      CGPoint(x: -length, y: length / 2.0),
+                      CGPoint(x: length, y: length / 2.0),
+                      CGPoint(x: 0.0, y: -length)]
+        
+        /* Make triangle */
+        let triangle = SKShapeNode(points: &points, count: points.count)
+        
+        /* Set triangle position */
+        triangle.position = CGPoint(x: 0, y: 40)
+        triangle.zPosition = 4
+        
+        
+        /* Colorlize triangle to red */
+        triangle.fillColor = UIColor.red
+        
+        self.addChild(triangle)
+    }
+    
+    func setVariableExpressionLabel(text: String) {
+        /* Set label with font */
+        let label = SKLabelNode(fontNamed: "BiauKai")
+        
+        /* Set text */
+        label.text = text
+        
+        /* Set font size */
+        label.fontSize = 20
+        
+        /* Set position */
+        label.position = CGPoint(x:0, y: 60)
+        
+        /* Add to Scene */
+        self.addChild(label)
+    }
+    
+    func calculatePunchLength(value: Int) {
+        /* Calculate value of variable expression of enemy */
+        self.valueOfEnemy = value*self.variableExpression[0]+variableExpression[1]
+        
+        /* Calculate length of punch */
+        self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
+    }
+
     
     /* Set texture in punching */
     func setTextureInPunch() {

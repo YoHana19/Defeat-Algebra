@@ -10,7 +10,7 @@ import SpriteKit
 import GameplayKit
 
 enum GameSceneState {
-    case AddEnemy, EnemyMoving, EnemyPunching
+    case AddEnemy, EnemyMoving, GridFlashing, EnemyPunching
 }
 
 enum Direction: Int {
@@ -24,12 +24,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var hero: Hero!
     var wall: SKShapeNode!
     
+    /* Game labels */
+    var valueOfX: SKLabelNode!
+    
     /* Game constants */
-    /* enemy property */
-    var moveTimer: CFTimeInterval = 0
-    var singleMoveTime: CFTimeInterval = 0.75
-    let attackTime: TimeInterval = 0.5
     let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
+    /* Enemy property */
+    var moveTimer: CFTimeInterval = 0
+    var singleMoveTime: CFTimeInterval = 0.75 /* the duration when enemy move by one cell */
+    let attackTime: TimeInterval = 0.5  /* the duration when player can destroy enemy */
+    let punchStayTime = 2.0  /* the duration between finishing flash and starting punch */
+    /* Add enemy */
+    var countTurnForAddEnemy: Int = 0
+    var addInterval: Int = 15 /* Add enemy after enemy move 10 times */
+    /* Flash grid */
+    var countTurnForFlashGrid: Int = 0
+    var flashInterval: Int = 6
     
     /* Game buttons */
     var test: MSButtonNode!
@@ -40,12 +50,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Game flags */
     var addEnemyDoneFlag = false
-    var punchUndoneFlag = true
+    var punchDoneFlag = false
     var attackFlag = false
     var allPunchDoneFlag = false
+    var punchTimeFlag = false
+    var flashGridDoneFlag = false
+    var calPunchLengthDoneFlag = false
     
     /* Player Control */
     var beganPos:CGPoint!
+    
+    /* Store longest duration punch will take to confirm all punches finish */
+    var numOfFlash: Int = 0
+    var longestPunchLength: CGFloat = 0
+    var maxDuration: CGFloat = 6
     
     override func didMove(to view: SKView) {
         /* Connect scene objects */
@@ -57,21 +75,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         test.selectedHandler = {
             
-            /* Remove wall */
-            self.removeChildren(in: [self.wall])
+            /* Grab reference to the SpriteKit view */
+            let skView = self.view as SKView!
             
-            let addEnemy = SKAction.run({ self.gridNode.addEnemyAtGrid(3) })
-            let wait = SKAction.wait(forDuration: 1.0)
-            let addDone = SKAction.run({ self.addEnemyDoneFlag = true })
-            let seq = SKAction.sequence([addEnemy, wait, addDone])
-            self.run(seq)
+            /* Load Game scene */
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
+                return
+            }
             
-            self.gameState = .EnemyMoving
+            /* Ensure correct aspect mode */
+            scene.scaleMode = .aspectFill
+            
+            /* Restart GameScene */
+            skView?.presentScene(scene)
         }
         
         test2.selectedHandler = {
-            self.gameState = .EnemyPunching
+            
+            /* For stop enemy movement */
+            self.punchTimeFlag = true
+            
+            /* Make grid flash */
+            let numOfFlash = self.gridNode.flashGrid()
+            
+            /* Caluculate punch length of enemy */
+            for enemy in self.gridNode.enemyArray {
+                enemy.calculatePunchLength(value: numOfFlash)
+            }
+            
+            /* Set wait time for player to caluculate variable expression */
+            let waitTime = Double(numOfFlash)*1.0+self.punchStayTime
+            let wait = SKAction.wait(forDuration: TimeInterval(waitTime))
+            
+            /* Display vaue of x on screen */
+            let displayValueX = SKAction.run({
+                self.valueOfX.text = "\(numOfFlash)"
+                self.valueOfX.position = CGPoint(x: 260, y: self.valueOfX.position.y)
+            })
+            
+            /* Move state to excute punch */
+            let moveState = SKAction.run({ self.gameState = .EnemyPunching })
+            let seq = SKAction.sequence([wait, displayValueX, moveState])
+            self.run(seq)
         }
+        
+        /* Display value of x */
+        valueOfX = childNode(withName: "valueOfX") as! SKLabelNode
         
         /* Set physics contact delegate */
         physicsWorld.contactDelegate = self
@@ -86,40 +135,143 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Set invisible wall */
         setWall()
-
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
         switch gameState {
         case .AddEnemy:
-            break;
-        case .EnemyMoving:
-            if self.addEnemyDoneFlag {
-                /* Set invisible wall */
-                setWall()
-                self.addEnemyDoneFlag = false
-            }
-            allPunchDoneFlag = false
-            punchUndoneFlag = true
-            enemyMoveAround()
-        case .EnemyPunching:
-            /* Make sure execute punch once */
-            if punchUndoneFlag {
-                /* Do punch */
-                let punch = SKAction.run({ self.enemyPunch() })
-                let wait = SKAction.wait(forDuration: TimeInterval(gridNode.maxDuration))
-                let onFlag = SKAction.run({ self.allPunchDoneFlag = true })
-                let seq = SKAction.sequence([punch, wait, onFlag])
+            /* Make sure call addEnemy only once */
+            if addEnemyDoneFlag == false {
+                self.addEnemyDoneFlag = true
+                
+                /* Remove wall */
+                self.removeChildren(in: [self.wall])
+                
+                /* Add enemy on grid */
+                let addEnemy = SKAction.run({ self.gridNode.addEnemyAtGrid(3) })
+                let wait = SKAction.wait(forDuration: 3.0)
+                let addDone = SKAction.run({ self.gameState = .EnemyMoving })
+                let seq = SKAction.sequence([addEnemy, wait, addDone])
                 self.run(seq)
                 
-                /* punch is done */
-                punchUndoneFlag = false
+                /* Reset count turn */
+                countTurnForAddEnemy = 0
+            }
+        case .EnemyMoving:
+            
+            /* When fixed truns passes, add new enemy */
+            self.addEnemy()
+            
+            /* Set wall after adding enemy done */
+            if addEnemyDoneFlag {
+                /* Set invisible wall */
+                setWall()
+                addEnemyDoneFlag = false
+            }
+            
+            /* If no enemy, no flash */
+            if self.gridNode.enemyArray.count > 0 {
+                /* When fixed truns passes, make grid flash */
+                self.flashGrid()
+            }
+            
+            /* Reset flashGridDoneFlag */
+            if flashGridDoneFlag {
+                flashGridDoneFlag = false
+            }
+            
+            /* Reset punchDoneFlag */
+            if punchDoneFlag {
+                punchDoneFlag = false
+            }
+            
+            /* Reset allPunchDoneFlag */
+            if allPunchDoneFlag {
+                allPunchDoneFlag = false
+            }
+            
+            /* Make enemy move aorund automatically */
+            enemyMoveAround()
+            break;
+            
+        case .GridFlashing:
+            
+            /* Make sure call flashGrid only once */
+            if flashGridDoneFlag == false {
+                self.flashGridDoneFlag = true
+            
+                /* Make grid flash */
+                numOfFlash = self.gridNode.flashGrid()
+            
+                /* Caluculate punch length of enemy */
+                for (i, enemy) in self.gridNode.enemyArray.enumerated() {
+                    enemy.calculatePunchLength(value: numOfFlash)
+                    if longestPunchLength < enemy.punchLength {
+                        longestPunchLength = enemy.punchLength
+                        maxDuration = 2*longestPunchLength*enemy.punchSpeed+CGFloat(attackTime)
+                    }
+                    /* Make sure to calculate maxDuration properly */
+                    if i == self.gridNode.enemyArray.count-1 {
+                        calPunchLengthDoneFlag = true
+                    }
+                    print(self.longestPunchLength)
+                    print(self.maxDuration)
+                }
+            }
+            
+            /* Make sure to calculate maxDuration properly */
+            if calPunchLengthDoneFlag {
+                calPunchLengthDoneFlag = false
+                
+                /* Set wait time for player to caluculate variable expression */
+                let waitTime = Double(numOfFlash) * self.gridNode.flashSpeed + self.punchStayTime
+                let wait = SKAction.wait(forDuration: TimeInterval(waitTime))
+                
+                /* Display vaue of x on screen */
+                let displayValueX = SKAction.run({
+                    self.valueOfX.text = "\(self.numOfFlash)"
+                    self.valueOfX.position = CGPoint(x: 260, y: self.valueOfX.position.y)
+                })
+                
+                /* Move state to excute punch */
+                let moveState = SKAction.run({ self.gameState = .EnemyPunching })
+                let seq = SKAction.sequence([wait, displayValueX, moveState])
+                self.run(seq)
+                
+                /* Reset count turn */
+                countTurnForFlashGrid = 0
+            }
+            break;
+            
+        case .EnemyPunching:
+            
+            /* Make sure to execute punch once */
+            if punchDoneFlag == false {
+                punchDoneFlag = true
+                
+                /* Do punch */
+                let punch = SKAction.run({ self.enemyPunch() })
+                
+                /* Wait untill all punch done */
+                let wait = SKAction.wait(forDuration: TimeInterval(self.maxDuration+0.3)) /* 0.3 is buffer */
+                let onFlag = SKAction.run({ self.allPunchDoneFlag = true })
+                
+                /* Reset value of x label */
+                let undoValueX = SKAction.run({
+                    self.valueOfX.text = "Flash Times"
+                    self.valueOfX.position = CGPoint(x: 469, y: self.valueOfX.position.y)
+                })
+
+                let seq = SKAction.sequence([punch, wait, undoValueX, onFlag])
+                self.run(seq)
             }
             
             /* Make sure enemy start to move again after all punches finish */
             if allPunchDoneFlag {
                 gameState = .EnemyMoving
             }
+            break;
         }
     }
     
@@ -163,7 +315,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
             } else {
-                print("Game Over")
+                if contactA.categoryBitMask == 1 { contactA.node?.removeFromParent() }
+                if contactB.categoryBitMask == 1 { contactB.node?.removeFromParent() }
             }
         }
         
@@ -330,6 +483,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func addEnemy() {
+        /* Time to add enemy */
+        if countTurnForAddEnemy > addInterval {
+            
+            /* Stop all enemy's movement */
+            for enemy in self.gridNode.enemyArray {
+                enemy.removeAllActions()
+                enemy.setStandingtexture()
+            }
+            
+            /* Make sure to stop all enemy before move to addEnemy state */
+            let wait = SKAction.wait(forDuration: 1.0)
+            let moveState = SKAction.run({ self.gameState = .AddEnemy })
+            let seq = SKAction.sequence([wait, moveState])
+            self.run(seq)
+            
+        }
+    }
+    
+    func flashGrid() {
+        /* Time to flash grid */
+        if countTurnForFlashGrid > flashInterval {
+            
+            /* Stop all enemy's movement */
+            for enemy in self.gridNode.enemyArray {
+                enemy.removeAllActions()
+                enemy.setStandingtexture()
+            }
+            
+            /* Make sure to stop all enemy before move to GridFlashing state */
+            let wait = SKAction.wait(forDuration: 1.0)
+            let moveState = SKAction.run({ self.gameState = .GridFlashing })
+            let seq = SKAction.sequence([wait, moveState])
+            self.run(seq)
+            
+        }
+    }
+    
     func enemyMoveAround() {
         /* Time to move enemy */
         if moveTimer >= singleMoveTime {
@@ -344,6 +535,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // Reset spawn timer
             moveTimer = 0
+            
+            /* Count number of times of move to add enemy */
+            countTurnForAddEnemy += 1
+            countTurnForFlashGrid += 1
         }
         
         moveTimer += fixedDelta
@@ -397,15 +592,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let drawPunch = SKAction.run({ enemy.drawPunch(arms: armAndFist.arm, fists: armAndFist.fist, length: enemy.punchLength) })
             
             /* Make sure delete arms & fists after finishing punch drawing */
-            let drawWait = SKAction.wait(forDuration: TimeInterval(enemy.punchLength*enemy.punchSpeed-0.1))
+            let drawWait = SKAction.wait(forDuration: TimeInterval(enemy.punchLength*enemy.punchSpeed-0.1)) /* 0.1 is buffer */
             
             /* Get rid of all arms and fists */
             let punchDone = SKAction.run({
                 enemy.removeAllChildren()
             })
             
+            /* Set variable expression */
+            let setVariableExpression = SKAction.run({
+                enemy.makeTriangle()
+                enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
+            })
+            
             /* excute drawPunch */
-            let seq = SKAction.sequence([wait, attackFlagOn, attackTime, attackFlagOff, drawPunch, drawWait, punchDone])
+            let seq = SKAction.sequence([wait, attackFlagOn, attackTime, attackFlagOff, drawPunch, drawWait, punchDone, setVariableExpression])
             self.run(seq)
         }
     }
@@ -618,8 +819,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enemy.armHitWallArray.removeAll()
         })
         
+        /* Set variable expression */
+        let setVariableExpression = SKAction.run({
+            enemy.makeTriangle()
+            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
+        })
+        
         /* excute drawPunch */
-        let seq = SKAction.sequence([extendWait, attackFlagOn, attackTime, attackFlagOff, drawPunch, drawWait1, deleteArmAndFist, showUpNewFist, drawLeftPunch, drawWait2, punchDone])
+        let seq = SKAction.sequence([extendWait, attackFlagOn, attackTime, attackFlagOff, drawPunch, drawWait1, deleteArmAndFist, showUpNewFist, drawLeftPunch, drawWait2, punchDone, setVariableExpression])
         self.run(seq)
     }
 }
