@@ -13,6 +13,7 @@ class EnemyFist: SKSpriteNode {
     
     var direction: Direction = .front
     var extendSpeed = 0.5
+    var circle = SKShapeNode(circleOfRadius: 20.0)
     
     init(direction: Direction) {
         /* Initialize with enemy asset */
@@ -96,5 +97,27 @@ class EnemyFist: SKSpriteNode {
             let moveFist = SKAction.moveBy(x: -length, y: 0, duration: TimeInterval(length*speed))
             self.run(moveFist)
         }
+    }
+    
+    /* Set hit point when punch goes around */
+    func setHitPoint() {
+        /* Set body size */
+        let bodySize = CGSize(width: 32, height: 34)
+        
+        /* Set invisible hit point */
+        circle = SKShapeNode(rectOf: bodySize)
+        circle.position = self.position
+        circle.zPosition = 5
+        
+        /* Make hit point invisible */
+        circle.fillColor = SKColor.red
+        circle.alpha = CGFloat(0.1)
+        
+        /* Set physics property */
+        circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
+        circle.physicsBody?.categoryBitMask = 64
+        circle.physicsBody?.collisionBitMask = 0
+        circle.physicsBody?.contactTestBitMask = 33
+        self.parent?.addChild(circle)
     }
 }

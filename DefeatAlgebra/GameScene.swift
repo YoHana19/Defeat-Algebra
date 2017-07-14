@@ -6,6 +6,19 @@
 //  Copyright © 2017年 yo hanashima. All rights reserved.
 //
 
+/* Index of categryBitMask of game objects */
+/*
+ 1: Hero
+ 2: Enemy
+ 4: EnemyArm
+ 8: EnemyFist
+ 16: GameConsole
+ 32: Mine
+ 64: HitPoint
+ 128: MineToGet
+ 1024: Wall
+*/
+
 import SpriteKit
 import GameplayKit
 
@@ -29,17 +42,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Game constants */
     let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
+    
     /* Enemy property */
     var moveTimer: CFTimeInterval = 0
-    var singleMoveTime: CFTimeInterval = 0.75 /* the duration when enemy move by one cell */
+    var singleMoveTime: CFTimeInterval = 0.5 /* the duration when enemy move by one cell */
     let attackTime: TimeInterval = 0.5  /* the duration when player can destroy enemy */
-    let punchStayTime = 2.0  /* the duration between finishing flash and starting punch */
+    let singlePunchStayTime: CGFloat = 2.0
+    var punchStayTime: TimeInterval = 0  /* the duration between finishing flash and starting punch. It will be fixed according to number of enemy */
+    
     /* Add enemy */
+    var numOfAddEnemy = 3
     var countTurnForAddEnemy: Int = 0
-    var addInterval: Int = 15 /* Add enemy after enemy move 10 times */
+    var addInterval: Int = 20 /* Add enemy after enemy move 10 times */
+    
     /* Flash grid */
     var countTurnForFlashGrid: Int = 0
     var flashInterval: Int = 6
+    
+    /* Game console as point to gather */
+    var numOfGameConsole = 1
     
     /* Game buttons */
     var test: MSButtonNode!
@@ -50,8 +71,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Game flags */
     var addEnemyDoneFlag = false
-    var punchDoneFlag = false
-    var attackFlag = false
+    var punchDoneFlag = false 
     var allPunchDoneFlag = false
     var punchTimeFlag = false
     var flashGridDoneFlag = false
@@ -64,6 +84,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var numOfFlash: Int = 0
     var longestPunchLength: CGFloat = 0
     var maxDuration: CGFloat = 6
+    
+    /* Game Score */
+    var scoreLabel: SKLabelNode!
+    var score: Int = 0 {
+        didSet {
+            scoreLabel.text = String(score)
+        }
+    }
     
     override func didMove(to view: SKView) {
         /* Connect scene objects */
@@ -92,35 +120,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         test2.selectedHandler = {
             
-            /* For stop enemy movement */
-            self.punchTimeFlag = true
-            
-            /* Make grid flash */
-            let numOfFlash = self.gridNode.flashGrid()
-            
-            /* Caluculate punch length of enemy */
-            for enemy in self.gridNode.enemyArray {
-                enemy.calculatePunchLength(value: numOfFlash)
-            }
-            
-            /* Set wait time for player to caluculate variable expression */
-            let waitTime = Double(numOfFlash)*1.0+self.punchStayTime
-            let wait = SKAction.wait(forDuration: TimeInterval(waitTime))
-            
-            /* Display vaue of x on screen */
-            let displayValueX = SKAction.run({
-                self.valueOfX.text = "\(numOfFlash)"
-                self.valueOfX.position = CGPoint(x: 260, y: self.valueOfX.position.y)
-            })
-            
-            /* Move state to excute punch */
-            let moveState = SKAction.run({ self.gameState = .EnemyPunching })
-            let seq = SKAction.sequence([wait, displayValueX, moveState])
-            self.run(seq)
         }
         
         /* Display value of x */
         valueOfX = childNode(withName: "valueOfX") as! SKLabelNode
+        
+        /* Score label */
+        scoreLabel = childNode(withName: "scoreLabel") as! SKLabelNode        
         
         /* Set physics contact delegate */
         physicsWorld.contactDelegate = self
@@ -136,6 +142,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set invisible wall */
         setWall()
         
+        /* Set first game console */
+//        self.gridNode.addGameConsole(1)
+
+        /* Set first mine to get */
+        self.gridNode.addMineToGet(1)
+
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -145,11 +157,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if addEnemyDoneFlag == false {
                 self.addEnemyDoneFlag = true
                 
-                /* Remove wall */
-                self.removeChildren(in: [self.wall])
-                
                 /* Add enemy on grid */
-                let addEnemy = SKAction.run({ self.gridNode.addEnemyAtGrid(3) })
+                let addEnemy = SKAction.run({ self.gridNode.addEnemyAtGrid(self.numOfAddEnemy) })
                 let wait = SKAction.wait(forDuration: 3.0)
                 let addDone = SKAction.run({ self.gameState = .EnemyMoving })
                 let seq = SKAction.sequence([addEnemy, wait, addDone])
@@ -163,17 +172,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* When fixed truns passes, add new enemy */
             self.addEnemy()
             
-            /* Set wall after adding enemy done */
+            /* After adding Enemy, set enemy's collision to wall */
             if addEnemyDoneFlag {
-                /* Set invisible wall */
-                setWall()
+                for enemy in self.gridNode.enemyArray {
+                    enemy.setEnemyCollisionToWall()
+                }
                 addEnemyDoneFlag = false
             }
             
-            /* If no enemy, no flash */
+            /* If no enemy, no flash and add enemies */
             if self.gridNode.enemyArray.count > 0 {
                 /* When fixed truns passes, make grid flash */
                 self.flashGrid()
+            } else {
+                gameState = .AddEnemy
             }
             
             /* Reset flashGridDoneFlag */
@@ -200,9 +212,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Make sure call flashGrid only once */
             if flashGridDoneFlag == false {
                 self.flashGridDoneFlag = true
-            
+                
+                /* Remove mine to get on grid */
+                if let theNode = self.gridNode.childNode(withName: "mineToGet") {
+                    theNode.removeFromParent()
+                }
+                
                 /* Make grid flash */
-                numOfFlash = self.gridNode.flashGrid()
+                numOfFlash = self.gridNode.flashGrid(labelNode: self.valueOfX)
             
                 /* Caluculate punch length of enemy */
                 for (i, enemy) in self.gridNode.enemyArray.enumerated() {
@@ -213,10 +230,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     /* Make sure to calculate maxDuration properly */
                     if i == self.gridNode.enemyArray.count-1 {
+                        self.punchStayTime = TimeInterval(self.singlePunchStayTime*CGFloat(self.gridNode.enemyArray.count))
                         calPunchLengthDoneFlag = true
                     }
-                    print(self.longestPunchLength)
-                    print(self.maxDuration)
                 }
             }
             
@@ -231,7 +247,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Display vaue of x on screen */
                 let displayValueX = SKAction.run({
                     self.valueOfX.text = "\(self.numOfFlash)"
-                    self.valueOfX.position = CGPoint(x: 260, y: self.valueOfX.position.y)
+                    self.valueOfX.position = CGPoint(x: 111, y: self.valueOfX.position.y)
                 })
                 
                 /* Move state to excute punch */
@@ -260,7 +276,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Reset value of x label */
                 let undoValueX = SKAction.run({
                     self.valueOfX.text = "Flash Times"
-                    self.valueOfX.position = CGPoint(x: 469, y: self.valueOfX.position.y)
+                    self.valueOfX.position = CGPoint(x: 200, y: self.valueOfX.position.y)
                 })
 
                 let seq = SKAction.sequence([punch, wait, undoValueX, onFlag])
@@ -269,15 +285,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Make sure enemy start to move again after all punches finish */
             if allPunchDoneFlag {
+                /* Change game state */
                 gameState = .EnemyMoving
+                
+                /* Remove dead enemy from enemyArray */
+                self.gridNode.enemyArray = self.gridNode.enemyArray.filter({ $0.aliveFlag == true })
+                
+                /* Remove all mine */
+                for _ in 0...self.gridNode.numOfMineOnGrid {
+                    if let theNode = self.gridNode.childNode(withName: "mine") {
+                        theNode.removeFromParent()
+                    }
+                }
+                
+                /* Reset number of mine on grid */
+                self.gridNode.numOfMineOnGrid = 0
+                
+                /* Set first mine to get */
+                self.gridNode.addMineToGet(1)
             }
             break;
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         let touch = touches.first!              // Get the first touch
         beganPos = touch.location(in: self)
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -285,6 +320,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         let touch = touches.first!
         let endedPos = touch.location(in: self)
         let diffPos = CGPoint(x: endedPos.x - beganPos.x, y: endedPos.y - beganPos.y)
@@ -299,31 +335,129 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let contactA:SKPhysicsBody = contact.bodyA
         let contactB:SKPhysicsBody = contact.bodyB
         
-        /* Player is hit by something */
+        /* Player hit something */
         if contactA.categoryBitMask == 1 || contactB.categoryBitMask == 1 {
-            /* If player step on during attack time, enemy will be destoried */
-            if attackFlag {
+            
+            /* Player hit hitPoint */
+            if contactA.categoryBitMask == 64 || contactB.categoryBitMask == 64 {
                 if contactA.categoryBitMask == 1 {
-                    if contactB.categoryBitMask == 8 {
-                        let nodeB = contactB.node as! EnemyFist
-                        nodeB.parent?.removeFromParent()
+                    /* Get node as hitPoint */
+                    let nodeB = contactB.node as! SKShapeNode
+                    /* Get parent as enemy */
+                    let enemy = nodeB.parent as! Enemy
+                    /* Change enemy state to dead to remove from enemyArray */
+                    enemy.aliveFlag = false
+                    /*  Destroy enemy */
+                    enemy.removeFromParent()
+                    self.score += 1
+                
+                } else if contactB.categoryBitMask == 1 {
+                    /* Get node as hitPoint */
+                    let nodeA = contactA.node as! SKShapeNode
+                    /* Get parent as enemy */
+                    let enemy = nodeA.parent as! Enemy
+                    /* Change enemy state to dead to remove from enemyArray */
+                    enemy.aliveFlag = false
+                    /*  Destroy enemy */
+                    enemy.removeFromParent()
+                    self.score += 1
+                }
+            /* Player hit fist */
+            } else if contactA.categoryBitMask == 8 || contactB.categoryBitMask == 8 {
+                if contactA.categoryBitMask == 1 {
+                    /* Get node as fist */
+                    let nodeB = contactB.node as! EnemyFist
+                    /* Get parent as parent */
+                    let enemy = nodeB.parent as! Enemy
+                    /* If player step on during enemy's punch streaching out, plyer will survive */
+                    if enemy.punchState == .streachOut {
+                        return
+                   /* Game Over */
+                    } else {
+                        contactA.node?.removeFromParent()
                     }
                 } else if contactB.categoryBitMask == 1 {
-                    if contactA.categoryBitMask == 8 {
-                        let nodeA = contactA.node as! EnemyFist
-                        nodeA.parent?.removeFromParent()
+                    /* Get node as fist */
+                    let nodeA = contactA.node as! EnemyFist
+                    /* Get parent as parent */
+                    let enemy = nodeA.parent as! Enemy
+                    /* If player step on during enemy's punch streaching out, player will survive */
+                    if enemy.punchState == .streachOut {
+                        return
+                    /* Game Over */
+                    } else {
+                        contactB.node?.removeFromParent()
                     }
                 }
+            
+            /* Get game console */
+            } else if contactA.categoryBitMask == 16 || contactB.categoryBitMask == 16 {
+                if contactA.categoryBitMask == 1 { contactB.node?.removeFromParent() }
+                if contactB.categoryBitMask == 1 { contactA.node?.removeFromParent() }
+                self.gridNode.addGameConsole(self.numOfGameConsole)
+//                self.score += 1
+            
+            /* Get mine to get */
+            } else if contactA.categoryBitMask == 128 || contactB.categoryBitMask == 128 {
+                /* Make sure to display mine to get only when gameState is EnemyMoving or AddEnemy */
+                guard self.gameState == .EnemyMoving || self.gameState == .AddEnemy else { return }
+                
+                if contactA.categoryBitMask == 1 { contactB.node?.removeFromParent() }
+                if contactB.categoryBitMask == 1 { contactA.node?.removeFromParent() }
+                self.gridNode.addMineToGet(1)
+                self.gridNode.numOfMine += 1
+                    
+            /* Game over */
             } else {
-                if contactA.categoryBitMask == 1 { contactA.node?.removeFromParent() }
-                if contactB.categoryBitMask == 1 { contactB.node?.removeFromParent() }
+                if contactA.categoryBitMask == 1 {
+                    print("\(contactB.categoryBitMask)")
+                    contactA.node?.removeFromParent() }
+                if contactB.categoryBitMask == 1 {
+                    print("\(contactA.categoryBitMask)")
+                    contactB.node?.removeFromParent()
+                }
             }
         }
         
-        /* Enemy's arm or fist hits wall */
-        if contactA.categoryBitMask == 16 || contactB.categoryBitMask == 16 {
+        /* Mine hit enemy's fist */
+        if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
             
-            if contactA.categoryBitMask == 16 {
+            if contactA.categoryBitMask == 32 {
+                if contactB.categoryBitMask == 64 {
+                    /* Get node as hitPoint */
+                    let nodeB = contactB.node as! SKShapeNode
+                    /* Get parent as enemy */
+                    let enemy = nodeB.parent as! Enemy
+                    /* Change enemy state to dead to remove from enemyArray */
+                    enemy.aliveFlag = false
+                    /*  Destroy enemy */
+                    enemy.removeFromParent()
+                    self.score += 1
+                    /* Remove mine */
+                    contactA.node?.removeFromParent()
+                }
+            } else if contactB.categoryBitMask == 32 {
+                if contactA.categoryBitMask == 64 {
+                    /* Get node as hitPoint */
+                    let nodeA = contactA.node as! SKShapeNode
+                    /* Get parent as enemy */
+                    let enemy = nodeA.parent as! Enemy
+                    /* Change enemy state to dead to remove from enemyArray */
+                    enemy.aliveFlag = false
+                    /*  Destroy enemy */
+                    enemy.removeFromParent()
+                    self.score += 1
+                    /* Remove mine */
+                    contactB.node?.removeFromParent()
+                }
+            }
+            
+        }
+        
+        /* Enemy's arm or fist hits wall */
+        if contactA.categoryBitMask == 1024 || contactB.categoryBitMask == 1024 {
+            
+            if contactA.categoryBitMask == 1024 {
                 /* Arm hits wall */
                 if contactB.categoryBitMask == 4 {
                     /* Get enemy arm */
@@ -336,36 +470,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let enemy = nodeB.parent as! Enemy
                     
                     /* Create new same arm without animation */
-                    let createNewArm = SKAction.run({
-                        let size = nodeB.size
-                        let newArm1 = EnemyArm(direction: enemy.direction)
-                        let newArm2 = EnemyArm(direction: enemy.direction)
-                        newArm1.yScale = (size.height-3)/newArm1.size.height
-                        newArm2.yScale = (size.height-3)/newArm2.size.height
-                        enemy.setArm(arm: [newArm1, newArm2], direction: enemy.direction)
-                        enemy.addChild(newArm1)
-                        enemy.addChild(newArm2)
+                    let size = nodeB.size
+                    let originPosition = nodeB.position
+                    let newArm = EnemyArm(direction: enemy.direction)
+                    newArm.yScale = (size.height-3)/newArm.size.height
+                    newArm.position = originPosition
+                    enemy.addChild(newArm)
                         
-                        /* For use later */
-                        enemy.armHitWallArray.append(newArm1)
-                        enemy.armHitWallArray.append(newArm2)
-                        
-                        /* Get rid of old arm */
-                        nodeB.removeFromParent()
-                    })
+                    /* For use later when making it shrink */
+                    enemy.armHitWallArray.append(newArm)
                     
-                    let wait = SKAction.wait(forDuration: 0.1)
+                    /* Calculate left length of punch */
+                    let leftLength = enemy.punchLength-size.height
                     
                     /* Go around punch */
-                    let goAround = SKAction.run({
-                        /* Calculate left length of punch */
-                        let leftLength = enemy.punchLength-nodeB.size.height
-                        /* Go around punch */
-                        self.goAroundPunch(enemy: enemy, length: leftLength)
-                    })
+                    self.goAroundPunch(enemy: enemy, position: originPosition, length: leftLength, lastArm: newArm)
                     
-                    let seq = SKAction.sequence([createNewArm, wait, goAround])
-                    self.run(seq)
+                    /* Get rid of old arm */
+                    nodeB.removeFromParent()
                     
                 /* Fist hits wall */
                 } else if contactB.categoryBitMask == 8 {
@@ -377,21 +499,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                 }
             }
-            if contactB.categoryBitMask == 16 {
+            if contactB.categoryBitMask == 1024 {
                 /* In case arm hit wall */
                 if contactA.categoryBitMask == 4 {
                     /* Get enemy arm */
                     let nodeA = contactA.node as! EnemyArm
+                    
                     /* Stop extending arm */
                     nodeA.removeAllActions()
+                    
+                    /* Get parent of arm */
+                    let enemy = nodeA.parent as! Enemy
+                    
+                    /* Create new same arm without animation */
+                    let size = nodeA.size
+                    let originPosition = nodeA.position
+                    let newArm = EnemyArm(direction: enemy.direction)
+                    newArm.yScale = (size.height-3)/newArm.size.height
+                    newArm.position = originPosition
+                    enemy.addChild(newArm)
+                        
+                    /* For use later when making it shrink */
+                    enemy.armHitWallArray.append(newArm)
+                        
+                    /* Get rid of old arm */
+                    nodeA.removeFromParent()
+                    
+                    /* Calculate left length of punch */
+                    let leftLength = enemy.punchLength-nodeA.size.height
+                    /* Go around punch */
+                    self.goAroundPunch(enemy: enemy, position: originPosition, length: leftLength, lastArm: newArm)
+                    
                     
                 /* In case fist hit wall */
                 } else if contactA.categoryBitMask == 8 {
                     /* Get enemy fist */
                     let nodeA = contactA.node as! EnemyFist
-                    
-                    /* Go around punch */
-                    self.goAroundPunch(enemy: nodeA.parent as! Enemy, length: 10)
                     
                     /* Get rid of fist */
                     nodeA.removeFromParent()
@@ -483,6 +626,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    /* Add enemy in fixed interval */
     func addEnemy() {
         /* Time to add enemy */
         if countTurnForAddEnemy > addInterval {
@@ -502,6 +646,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    /* Make grid flash in fixed interval */
     func flashGrid() {
         /* Time to flash grid */
         if countTurnForFlashGrid > flashInterval {
@@ -521,6 +666,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    /* Make enemy move around */
     func enemyMoveAround() {
         /* Time to move enemy */
         if moveTimer >= singleMoveTime {
@@ -544,6 +690,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         moveTimer += fixedDelta
     }
     
+    /* Set invisible wall */
     func setWall() {
         
         /* Calculate size of wall */
@@ -557,7 +704,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         wall.lineWidth = 2.0
         wall.alpha = CGFloat(0)
         wall.physicsBody = SKPhysicsBody(edgeLoopFrom: wall.frame)
-        wall.physicsBody?.categoryBitMask = 16
+        wall.physicsBody?.categoryBitMask = 1024
         wall.physicsBody?.collisionBitMask = 3
         wall.physicsBody?.contactTestBitMask = 12
         wall.position = position
@@ -583,10 +730,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Wait untill enemy punch streach out */
             let wait = SKAction.wait(forDuration: TimeInterval(enemy.punchLength*enemy.punchSpeed))
 
-            /* Make sure player can kill by stepping on enemy's fist during attack time */
-            let attackFlagOn = SKAction.run({ self.attackFlag = true })
+            /* Make sure player can kill during attack time */
+            let attackFlagOn = SKAction.run({
+                enemy.punchState = .streachOut
+                enemy.setHitPoint(length: enemy.punchLength)
+            })
+            /* Colorize fist to show attack time */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: 0.01)
             let attackTime = SKAction.wait(forDuration: self.attackTime)
-            let attackFlagOff = SKAction.run({ self.attackFlag = false })
+            /* Remove color of fist */
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: 0.01)
+            let attackFlagOff = SKAction.run({
+                enemy.punchState = .punching
+                enemy.circle.removeFromParent()
+            })
             
             /* Draw punch */
             let drawPunch = SKAction.run({ enemy.drawPunch(arms: armAndFist.arm, fists: armAndFist.fist, length: enemy.punchLength) })
@@ -606,25 +763,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             })
             
             /* excute drawPunch */
-            let seq = SKAction.sequence([wait, attackFlagOn, attackTime, attackFlagOff, drawPunch, drawWait, punchDone, setVariableExpression])
+            let seq = SKAction.sequence([wait, attackFlagOn, fadeInColorlize, attackTime, fadeOutColorlize, attackFlagOff, drawPunch, drawWait, punchDone, setVariableExpression])
             self.run(seq)
         }
     }
     
     /* Generate punch from opposite side when reaching the edge of grid */
-    func goAroundPunch(enemy: Enemy, length: CGFloat) {
+    func goAroundPunch(enemy: Enemy, position: CGPoint, length: CGFloat, lastArm: EnemyArm) {
         
         /*==*/
         /*== Set arm and fist the other side and punch and draw ==*/
         /*==*/
         
         /* Set arm */
-        let arm1 = EnemyArm(direction: enemy.direction)
-        let arm2 = EnemyArm(direction: enemy.direction)
+        let arm = EnemyArm(direction: enemy.direction)
         
         /* Set fist */
-        let fist1 = EnemyFist(direction: enemy.direction)
-        let fist2 = EnemyFist(direction: enemy.direction)
+        let fist = EnemyFist(direction: enemy.direction)
         
         /* Set position according to enemy's direction */
         switch enemy.direction {
@@ -633,100 +788,83 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let posY = gridNode.size.height-enemy.position.y-CGFloat(gridNode.cellHeight)-5
 
             /* Arm */
-            let armPos1 = CGPoint(x: -13, y: posY)
-            let armPos2 = CGPoint(x: 13, y: posY)
-            arm1.position = armPos1
-            arm2.position = armPos2
+            let armPos = CGPoint(x: position.x, y: posY)
+            arm.position = armPos
             
             /* Fist */
-            let fistPos1 = CGPoint(x: -13, y: posY-15)
-            let fistPos2 = CGPoint(x: 13, y: posY-15)
-            fist1.position = fistPos1
-            fist2.position = fistPos2
+            let fistPos = CGPoint(x: position.x, y: posY-15)
+            fist.position = fistPos
+            
         case .back:
             /* Calculate position y */
             let posY = -enemy.position.y+CGFloat(gridNode.cellHeight)+13
             
             /* Arm */
-            let armPos1 = CGPoint(x: -13, y: posY)
-            let armPos2 = CGPoint(x: 13, y: posY)
-            arm1.zPosition = -1
-            arm2.zPosition = -1
-            arm1.position = armPos1
-            arm2.position = armPos2
+            let armPos = CGPoint(x: position.x, y: posY)
+            arm.zPosition = -1
+            arm.position = armPos
             
             /* Fist */
-            let fistPos1 = CGPoint(x: -13, y: posY+5)
-            let fistPos2 = CGPoint(x: 13, y: posY+5)
-            fist1.position = fistPos1
-            fist2.position = fistPos2
+            let fistPos = CGPoint(x: position.x, y: posY+5)
+            fist.position = fistPos
             
         case .left:
             /* Calculate position x */
             let posX = gridNode.size.width-enemy.position.x-CGFloat(gridNode.cellWidth)-5
             
             /* Arm */
-            let armPos1 = CGPoint(x: posX, y: 3)
-            let armPos2 = CGPoint(x: posX, y: -10)
-            arm2.zPosition = -1
-            arm1.position = armPos1
-            arm2.position = armPos2
+            let armPos = CGPoint(x: posX, y: position.y)
+            arm.position = armPos
             
             /* Fist */
-            let fistPos1 = CGPoint(x: posX-15, y: 3)
-            let fistPos2 = CGPoint(x: posX-15, y: -10)
-            fist1.position = fistPos1
-            fist2.position = fistPos2
+            let fistPos = CGPoint(x: posX-15, y: position.y)
+            fist.position = fistPos
             
         case .right:
             /* Calculate position x */
             let posX = -enemy.position.x+CGFloat(gridNode.cellWidth)+5
             
             /* Arm */
-            let armPos1 = CGPoint(x: posX, y: 3)
-            let armPos2 = CGPoint(x: posX, y: -10)
-            arm2.zPosition = -1
-            arm1.position = armPos1
-            arm2.position = armPos2
+            let armPos = CGPoint(x: posX, y: position.y)
+            arm.position = armPos
             
             /* Fist */
-            let fistPos1 = CGPoint(x: posX+15, y: 3)
-            let fistPos2 = CGPoint(x: posX+15, y: -10)
-            fist1.position = fistPos1
-            fist2.position = fistPos2
+            let fistPos = CGPoint(x: posX+15, y: position.y)
+            fist.position = fistPos
             
         }
         
         /* Add arm as enemy child */
-        enemy.addChild(arm1)
-        enemy.addChild(arm2)
+        enemy.addChild(arm)
         
         /* Add arm as fist child */
-        enemy.addChild(fist1)
-        enemy.addChild(fist2)
+        enemy.addChild(fist)
         
         /* Move Fist */
-        fist1.moveFistForward(length: length, speed: enemy.punchSpeed)
-        fist2.moveFistForward(length: length, speed: enemy.punchSpeed)
+        fist.moveFistForward(length: length, speed: enemy.punchSpeed)
         
         /* Extend arm */
-        arm1.extendArm(length: length, speed: enemy.punchSpeed)
-        arm2.extendArm(length: length, speed: enemy.punchSpeed)
+        arm.extendArm(length: length, speed: enemy.punchSpeed)
         
         /* Wait untill enemy punch streach out */
         let extendWait = SKAction.wait(forDuration: TimeInterval(length*enemy.punchSpeed))
         
         /* Make sure player can kill by stepping on enemy's fist during attack time */
-        let attackFlagOn = SKAction.run({ self.attackFlag = true })
+        let attackFlagOn = SKAction.run({
+            enemy.punchState = .streachOut
+            fist.setHitPoint()
+        })
         let attackTime = SKAction.wait(forDuration: self.attackTime)
-        let attackFlagOff = SKAction.run({ self.attackFlag = false })
+        let attackFlagOff = SKAction.run({
+            enemy.punchState = .punching
+            fist.circle.removeFromParent()
+        })
         
         /* Draw punch */
         let drawPunch = SKAction.run({
-            enemy.drawPunch(arms: [arm1, arm2], fists: [fist1, fist2], length: length)
-            /* Make sure delete fise */
-            fist1.moveFistBackward(length: 20, speed: enemy.punchSpeed)
-            fist2.moveFistBackward(length: 20, speed: enemy.punchSpeed)
+            arm.ShrinkArm(length: length, speed: enemy.punchSpeed)
+            /* Make sure delete fist by making it hit wall (for adding 20) */
+            fist.moveFistBackward(length: arm.size.height+20, speed: enemy.punchSpeed)
         })
         
         /* Make sure delete arms after amr shrink back completely */
@@ -734,8 +872,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Get rid of arms and fists */
         let deleteArmAndFist = SKAction.run({
-            arm1.removeFromParent()
-            arm2.removeFromParent()
+            arm.removeFromParent()
         })
         
         /*==*/
@@ -744,8 +881,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Create new fist */
         /* Set fist */
-        let newFist1 = EnemyFist(direction: enemy.direction)
-        let newFist2 = EnemyFist(direction: enemy.direction)
+        let newFist = EnemyFist(direction: enemy.direction)
         
         /* Set position of new fist according to enemy's direction */
         switch enemy.direction {
@@ -754,69 +890,54 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let posY = -enemy.position.y+CGFloat(gridNode.cellHeight)+13
             
             /* Fist */
-            let fistPos1 = CGPoint(x: -13, y: posY+5)
-            let fistPos2 = CGPoint(x: 13, y: posY+5)
-            newFist1.position = fistPos1
-            newFist2.position = fistPos2
+            let fistPos = CGPoint(x: position.x, y: posY+5)
+            newFist.position = fistPos
+            
         case .back:
             /* Calculate position y */
             let posY = gridNode.size.height-enemy.position.y-CGFloat(gridNode.cellHeight)-5
             
             /* Fist */
-            let fistPos1 = CGPoint(x: -13, y: posY-15)
-            let fistPos2 = CGPoint(x: 13, y: posY-15)
-            newFist1.position = fistPos1
-            newFist2.position = fistPos2
+            let fistPos = CGPoint(x: position.x, y: posY-15)
+            newFist.position = fistPos
             
         case .left:
             /* Calculate position x */
             let posX = -enemy.position.x+CGFloat(gridNode.cellWidth)+5
             
             /* Fist */
-            let fistPos1 = CGPoint(x: posX+15, y: 3)
-            let fistPos2 = CGPoint(x: posX+15, y: -10)
-            newFist1.position = fistPos1
-            newFist2.position = fistPos2
+            let fistPos = CGPoint(x: posX+15, y: position.y)
+            newFist.position = fistPos
             
         case .right:
             /* Calculate position x */
             let posX = gridNode.size.width-enemy.position.x-CGFloat(gridNode.cellWidth)-5
             
             /* Fist */
-            let fistPos1 = CGPoint(x: posX-15, y: 3)
-            let fistPos2 = CGPoint(x: posX-15, y: -10)
-            newFist1.position = fistPos1
-            newFist2.position = fistPos2
+            let fistPos = CGPoint(x: posX-15, y: position.y)
+            newFist.position = fistPos
             
         }
         
         /* Add arm as enemy child */
         let showUpNewFist = SKAction.run({
-            enemy.addChild(newFist1)
-            enemy.addChild(newFist2)
+            enemy.addChild(newFist)
         })
         
         /* Draw left punch */
         let drawLeftPunch = SKAction.run({
             /* Calculate left length */
-            if enemy.armHitWallArray.count > 0 {
-                let leftLength = enemy.armHitWallArray[0].size.height
-                /* Draw punch */
-                enemy.drawPunch(arms: enemy.armHitWallArray, fists: [newFist1, newFist2], length: leftLength)
-            } else {
-                let leftLength = CGFloat(1.0)
-                /* Draw punch */
-                enemy.drawPunch(arms: enemy.armHitWallArray, fists: [newFist1, newFist2], length: leftLength)
-            }
+            let leftLength = lastArm.size.height
+            lastArm.ShrinkArm(length: leftLength, speed: enemy.punchSpeed)
+            newFist.moveFistBackward(length: leftLength, speed: enemy.punchSpeed)
         })
         
         /* Make sure delete arms & fists after finishing punch drawing */
-        let drawWait2 = SKAction.wait(forDuration: TimeInterval(enemy.armHitWallArray[0].size.height*enemy.punchSpeed-0.1))
+        let drawWait2 = SKAction.wait(forDuration: TimeInterval(lastArm.size.height*enemy.punchSpeed-0.1))
         
         /* Get rid of all arms and fists */
         let punchDone = SKAction.run({
             enemy.removeAllChildren()
-            enemy.armHitWallArray.removeAll()
         })
         
         /* Set variable expression */

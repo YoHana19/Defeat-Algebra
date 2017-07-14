@@ -9,14 +9,15 @@
 import Foundation
 import SpriteKit
 
-enum EnemyState {
-    case moving, staying, punching
+enum PunchState {
+    case punching, streachOut
 }
 
 class Enemy: SKSpriteNode {
     
     /* Enemy state management */
-    var enemyState: EnemyState = .moving
+    var punchState: PunchState = .punching
+    var circle = SKShapeNode(circleOfRadius: 20.0)
     
     /* Enemy property */
     var moveSpeed = 0.5
@@ -39,6 +40,7 @@ class Enemy: SKSpriteNode {
     var waitDoneFlag = false
     var hitWallFlag = true
     var punchDoneFlag = true
+    var aliveFlag = true
     
     init() {
         /* Initialize with enemy asset */
@@ -47,7 +49,7 @@ class Enemy: SKSpriteNode {
         super.init(texture: texture, color: UIColor.clear, size: enemySize)
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 2
+        zPosition = 3
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -55,7 +57,7 @@ class Enemy: SKSpriteNode {
         // Set physics properties
         physicsBody = SKPhysicsBody(rectangleOf: enemySize)
         physicsBody?.categoryBitMask = 2
-        physicsBody?.collisionBitMask = 16
+        physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 1
         
         /* Set variable expression */
@@ -114,6 +116,11 @@ class Enemy: SKSpriteNode {
         }
     }
     
+    /* Make enemy collide to wall */
+    func setEnemyCollisionToWall() {
+        self.physicsBody?.collisionBitMask = 1024
+    }
+    
     /* Move enemy one cell by one cell */
     func enemyMove(lengthX: Int, lengthY: Int) {
         switch direction {
@@ -165,6 +172,9 @@ class Enemy: SKSpriteNode {
         
         /* Set font size */
         label.fontSize = 20
+        
+        /* Set zPosition */
+        label.zPosition = 5
         
         /* Set position */
         label.position = CGPoint(x:0, y: 60)
@@ -288,8 +298,109 @@ class Enemy: SKSpriteNode {
             arm.ShrinkArm(length: length, speed: self.punchSpeed)
         }
         
-        for fist in fists {
-            fist.moveFistBackward(length: arms[0].size.height, speed: self.punchSpeed)
+        if arms.count > 0 {
+            for fist in fists {
+                fist.moveFistBackward(length: arms[0].size.height, speed: self.punchSpeed)
+            }
+        }
+    }
+    
+    /* Set invisible node to destroy enemy */
+    func setHitPoint(length: CGFloat) {
+
+        switch self.direction {
+        case .front:
+            /* Set body size */
+            let bodySize = CGSize(width: 55, height: 40)
+            
+            /* Set invisible hit point */
+            circle = SKShapeNode(rectOf: bodySize)
+            
+            /* Set position */
+            let actLength = length + 15 /* 10 is adjustment */
+            circle.position = CGPoint(x: 0, y: -actLength)
+            
+            /* Make hit point invisible */
+            circle.fillColor = SKColor.red
+            circle.alpha = CGFloat(0.1)
+            circle.zPosition = 5
+            
+            /* Set physics property */
+            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
+            circle.physicsBody?.categoryBitMask = 64
+            circle.physicsBody?.collisionBitMask = 0
+            circle.physicsBody?.contactTestBitMask = 33
+            self.addChild(circle)
+            
+        case .back:
+            /* Set body size */
+            let bodySize = CGSize(width: 55, height: 40)
+            
+            /* Set invisible hit point */
+            circle = SKShapeNode(rectOf: bodySize)
+            
+            /* Set position */
+            let actLength = length + 15 /* 10 is adjustment */
+            circle.position = CGPoint(x: 0, y: actLength)
+            
+            /* Make hit point invisible */
+            circle.fillColor = SKColor.red
+            circle.alpha = CGFloat(0.1)
+            circle.zPosition = 5
+            
+            /* Set physics property */
+            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
+            circle.physicsBody?.categoryBitMask = 64
+            circle.physicsBody?.collisionBitMask = 0
+            circle.physicsBody?.contactTestBitMask = 33
+            self.addChild(circle)
+            
+        case .left:
+            /* Set body size */
+            let bodySize = CGSize(width: 50, height: 45)
+            
+            /* Set invisible hit point */
+            circle = SKShapeNode(rectOf: bodySize)
+            
+            /* Set position */
+            let actLength = length + 15 /* 10 is adjustment */
+            circle.position = CGPoint(x: -actLength, y: 0)
+            
+            /* Make hit point invisible */
+            circle.fillColor = SKColor.red
+            circle.alpha = CGFloat(0.1)
+            circle.zPosition = 5
+            
+            /* Set physics property */
+            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
+            circle.physicsBody?.categoryBitMask = 64
+            circle.physicsBody?.collisionBitMask = 0
+            circle.physicsBody?.contactTestBitMask = 33
+            self.addChild(circle)
+            
+        case .right:
+            /* Set body size */
+            let bodySize = CGSize(width: 50, height: 45)
+            
+            /* Set invisible hit point */
+            circle = SKShapeNode(rectOf: bodySize)
+            
+            /* Set position */
+            let actLength = length + 15 /* 10 is adjustment */
+            circle.position = CGPoint(x: actLength, y: 0)
+            
+            /* Make hit point invisible */
+            circle.fillColor = SKColor.red
+            circle.alpha = CGFloat(0.1)
+            circle.zPosition = 5
+            
+            /* Set physics property */
+            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
+            circle.physicsBody?.categoryBitMask = 64
+            circle.physicsBody?.collisionBitMask = 0
+            circle.physicsBody?.contactTestBitMask = 33
+            self.addChild(circle)
+            
         }
     }
 }

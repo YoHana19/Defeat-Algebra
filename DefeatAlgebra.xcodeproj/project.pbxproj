@@ -23,6 +23,9 @@
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
 		204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
 		204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
+		20C22F3F1F16C56300FFF90B /* GameConsole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F3E1F16C56300FFF90B /* GameConsole.swift */; };
+		20C22F411F16E22400FFF90B /* Mine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F401F16E22400FFF90B /* Mine.swift */; };
+		20C22F431F17F0F200FFF90B /* MineToGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F421F17F0F200FFF90B /* MineToGet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +47,9 @@
 		204C7D901F074FE800F4DD11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204C7D931F074FE800F4DD11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20C22F3E1F16C56300FFF90B /* GameConsole.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConsole.swift; sourceTree = "<group>"; };
+		20C22F401F16E22400FFF90B /* Mine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mine.swift; sourceTree = "<group>"; };
+		20C22F421F17F0F200FFF90B /* MineToGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MineToGet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +89,9 @@
 				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
 				2019C3821F0B5A91003C7609 /* Grid.swift */,
 				201CF02D1F134156001346C7 /* Hero.swift */,
+				20C22F3E1F16C56300FFF90B /* GameConsole.swift */,
+				20C22F421F17F0F200FFF90B /* MineToGet.swift */,
+				20C22F401F16E22400FFF90B /* Mine.swift */,
 				2019C3801F0B5A85003C7609 /* Enemy.swift */,
 				201CF02F1F13E490001346C7 /* EnemyArm.swift */,
 				201CF0311F140653001346C7 /* EnemyFist.swift */,
@@ -175,13 +184,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				2019C3811F0B5A85003C7609 /* Enemy.swift in Sources */,
+				20C22F3F1F16C56300FFF90B /* GameConsole.swift in Sources */,
 				201CF0321F140653001346C7 /* EnemyFist.swift in Sources */,
+				20C22F431F17F0F200FFF90B /* MineToGet.swift in Sources */,
 				204C7D8A1F074FE800F4DD11 /* GameScene.swift in Sources */,
 				204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */,
 				201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */,
 				201CF02E1F134157001346C7 /* Hero.swift in Sources */,
 				2019C3831F0B5A91003C7609 /* Grid.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
+				20C22F411F16E22400FFF90B /* Mine.swift in Sources */,
 				201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
