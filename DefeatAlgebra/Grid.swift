@@ -55,7 +55,7 @@ class Grid: SKSpriteNode {
         
         /* Make sure you can set mine only when gameState is gridFlash */
         let gameScene = self.parent as! GameScene
-        guard gameScene.gameState == .GridFlashing else { return }
+        guard gameScene.gameState == .GridFlashing || gameScene.gameState == .GameStart else { return }
         
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in the grid
@@ -74,6 +74,11 @@ class Grid: SKSpriteNode {
                 if location.x < CGFloat(cellWidth) || location.x > 11*CGFloat(cellWidth) || location.y < CGFloat(cellHeight) || location.y > 11*CGFloat(cellHeight) {
                     return
                 } else {
+                    /* For tutorial */
+                    if gameScene.t5SetMine == false {
+                        gameScene.t5SetMine = true
+                    }
+                    
                     /* Caclulate grid array position */
                     let gridX = (Int(location.x)-cellWidth) / cellWidth
                     let gridY = (Int(location.y)-cellHeight) / cellHeight
@@ -167,6 +172,66 @@ class Grid: SKSpriteNode {
         
             /* Add enemy to enemyArray */
             self.enemyArray.append(enemy)
+        }
+    }
+    
+    func propagateEnemy(enemyArray: [Enemy], numberOfEnemy: Int) {
+        /* Propagate a new enemy form each enemy position*/
+        
+        for enemyOrigin in enemyArray {
+            for _ in 1...numberOfEnemy {
+                /* New enemy object */
+                let enemy = Enemy()
+                
+                /* Attach variable expression */
+                enemy.makeTriangle()
+                enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
+                
+                
+                /* Set direction of enemy randomly*/
+                let directionIndex = Int(arc4random_uniform(4))+1
+                enemy.direction = Direction(rawValue: directionIndex)!
+                enemy.setMovingAnimation()
+                
+                /* Set position on screen */
+                enemy.position = enemyOrigin.position
+                
+                /* Move one cell */
+                switch directionIndex {
+                /* Front */
+                case 1:
+                    /* Move enemy one cel */
+                    let move = SKAction.moveBy(x: 0, y: -(CGFloat)(self.cellHeight), duration: 1.5)
+                    enemy.run(move)
+                    break;
+                /* Back */
+                case 2:
+                    let move = SKAction.moveBy(x: 0, y: CGFloat(self.cellHeight), duration: 1.5)
+                    enemy.run(move)
+                    break;
+                /* Left */
+                case 3:
+                    let move = SKAction.moveBy(x: -(CGFloat)(self.cellWidth), y: 0, duration: 1.5)
+                    enemy.run(move)
+                    break;
+                /* Right */
+                case 4:
+                    let move = SKAction.moveBy(x: CGFloat(self.cellWidth), y: 0, duration: 1.5)
+                    enemy.run(move)
+                    break;
+                default:
+                    break;
+                }
+                
+                /* Set physics */
+                enemy.setEnemyCollisionToWall()
+                
+                /* Add enemy to grid node */
+                addChild(enemy)
+                
+                /* Add enemy to enemyArray */
+                self.enemyArray.append(enemy)
+            }
         }
     }
     

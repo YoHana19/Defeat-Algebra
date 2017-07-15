@@ -26,6 +26,7 @@
 		20C22F3F1F16C56300FFF90B /* GameConsole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F3E1F16C56300FFF90B /* GameConsole.swift */; };
 		20C22F411F16E22400FFF90B /* Mine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F401F16E22400FFF90B /* Mine.swift */; };
 		20C22F431F17F0F200FFF90B /* MineToGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F421F17F0F200FFF90B /* MineToGet.swift */; };
+		20C22F451F19290500FFF90B /* GameScene2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F441F19290500FFF90B /* GameScene2.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		20C22F3E1F16C56300FFF90B /* GameConsole.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameConsole.swift; sourceTree = "<group>"; };
 		20C22F401F16E22400FFF90B /* Mine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mine.swift; sourceTree = "<group>"; };
 		20C22F421F17F0F200FFF90B /* MineToGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MineToGet.swift; sourceTree = "<group>"; };
+		20C22F441F19290500FFF90B /* GameScene2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene2.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +87,7 @@
 				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
 				204C7D851F074FE800F4DD11 /* GameScene.sks */,
 				204C7D891F074FE800F4DD11 /* GameScene.swift */,
+				20C22F441F19290500FFF90B /* GameScene2.swift */,
 				2019C37C1F0B5335003C7609 /* MainMenu.sks */,
 				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
 				2019C3821F0B5A91003C7609 /* Grid.swift */,
@@ -195,6 +198,7 @@
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				20C22F411F16E22400FFF90B /* Mine.swift in Sources */,
 				201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */,
+				20C22F451F19290500FFF90B /* GameScene2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -48,6 +48,8 @@ class Enemy: SKSpriteNode {
         let enemySize = CGSize(width: 61, height: 61)
         super.init(texture: texture, color: UIColor.clear, size: enemySize)
         
+        Setname()
+        
         /* Set Z-Position, ensure ontop of grid */
         zPosition = 3
         
@@ -82,6 +84,11 @@ class Enemy: SKSpriteNode {
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    /* Set name */
+    func Setname() {
+        self.name = "enemy"
     }
     
     /* Set standing texture of enemy according to direction */

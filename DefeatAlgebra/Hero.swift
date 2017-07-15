@@ -12,7 +12,7 @@ import SpriteKit
 class Hero: SKSpriteNode {
     
     var direction: Direction = .front
-    var moveSpeed = 0.3
+    var moveSpeed = 0.15
     var heroMoveAnimation: SKAction!
     
     init() {

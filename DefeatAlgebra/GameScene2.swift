@@ -22,19 +22,15 @@
 import SpriteKit
 import GameplayKit
 
-enum GameSceneState {
-    case GameStart, AddEnemy, PropagateEnemy, EnemyMoving, GridFlashing, EnemyPunching, GameOver
-}
+//enum GameSceneState {
+//    case AddEnemy, PropagateEnemy, EnemyMoving, GridFlashing, EnemyPunching, GameOver
+//}
+//
+//enum Direction: Int {
+//    case front = 1, back, left, right
+//}
 
-enum TutorialState {
-    case t1, t2, t3, t4, t5, t6, t7
-}
-
-enum Direction: Int {
-    case front = 1, back, left, right
-}
-
-class GameScene: SKScene, SKPhysicsContactDelegate {
+class GameScene2: SKScene, SKPhysicsContactDelegate {
     
     /* Game objects */
     var gridNode: Grid!
@@ -57,7 +53,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Add enemy */
     var numOfAddEnemy = 3
-    var numOfPropagateEnemy = 1
+    var numOfPropagateEnemy = 2
     var countTurnForAddEnemy: Int = 0
     var addInterval: Int = 20 /* Add enemy after enemy move 10 times */
     
@@ -72,51 +68,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var retryButton: MSButtonNode!
     
     /* Game Management */
-    var gameState: GameSceneState = .GameStart
-    var tutorialState: TutorialState = .t1
-    
-    /* Tutorial material */
-    var buttonSkip: MSButtonNode!
-    /* t1 */
-    var t1Done = false
-    var t11Label: SKLabelNode!
-    var t12Label: SKLabelNode!
-    var t13Label: SKLabelNode!
-    /* t2 */
-    var t2Done = false
-    var t2AddDone = false
-    var t2MoveDone = false
-    var t21Label: SKLabelNode!
-    /* t3 */
-    var t3Done = false
-    var t31Label: SKLabelNode!
-    var t32Label: SKLabelNode!
-    /* t4 */
-    var t4Done = false
-    var t41Label: SKLabelNode!
-    var t42Label: SKLabelNode!
-    var t43Label: SKLabelNode!
-    /* t5 */
-    var t5Done = false
-    var t5GetMine = false
-    var t5SetMine = false
-    var t51Label: SKLabelNode!
-    var t52Label: SKLabelNode!
-    var t53Label: SKLabelNode!
-    var t54Label: SKLabelNode!
-    var t55Label: SKLabelNode!
-    /* t6 */
-    var t6Done = false
-    var t61Label: SKLabelNode!
-    var t62Label: SKLabelNode!
-    var t63Label: SKLabelNode!
-    var t64Label: SKLabelNode!
-    var t65Label: SKLabelNode!
-    var t66Label: SKLabelNode!
-    var t67Label: SKLabelNode!
-    /* t7 */
-    var t71Label: SKLabelNode!
-    var buttonPlay: MSButtonNode!
+    var gameState: GameSceneState = .AddEnemy
     
     /* Game flags */
     var addEnemyDoneFlag = false
@@ -168,110 +120,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
-        /* Tutorial material */
-        buttonSkip = childNode(withName: "buttonSkip") as! MSButtonNode
-        buttonSkip.selectedHandler = {
-            for _ in 0...2 {
-                if let theNode = self.gridNode.childNode(withName: "enemy") {
-                    theNode.removeFromParent()
-                }
-                
-                if let theNode = self.gridNode.childNode(withName: "mine") {
-                    theNode.removeFromParent()
-                }
-            }
-            self.t11Label.isHidden = true
-            self.t12Label.isHidden = true
-            self.t13Label.isHidden = true
-            self.t21Label.isHidden = true
-            self.t12Label.isHidden = true
-            self.t31Label.isHidden = true
-            self.t32Label.isHidden = true
-            self.t41Label.isHidden = true
-            self.t42Label.isHidden = true
-            self.t43Label.isHidden = true
-            self.t51Label.isHidden = true
-            self.t52Label.isHidden = true
-            self.t53Label.isHidden = true
-            self.t54Label.isHidden = true
-            self.t55Label.isHidden = true
-            self.t61Label.isHidden = true
-            self.t62Label.isHidden = true
-            self.t63Label.isHidden = true
-            self.t64Label.isHidden = true
-            self.t65Label.isHidden = true
-            self.t66Label.isHidden = true
-            self.t67Label.isHidden = true
-            self.t71Label.isHidden = true
-            self.removeAllActions()
-            
-            self.t5GetMine = true
-            self.gridNode.enemyArray.removeAll()
-            self.gameState = .AddEnemy
-            self.gridNode.addMineToGet(1)
-            self.gridNode.numOfMine = 5
-        }
-        /* t1 */
-        t11Label = childNode(withName: "t11") as! SKLabelNode
-        t12Label = childNode(withName: "t12") as! SKLabelNode
-        t13Label = childNode(withName: "t13") as! SKLabelNode
-        t13Label.isHidden = true
-        /* t2 */
-        t21Label = childNode(withName: "t21") as! SKLabelNode
-        t21Label.isHidden = true
-        /* t3 */
-        t31Label = childNode(withName: "t31") as! SKLabelNode
-        t32Label = childNode(withName: "t32") as! SKLabelNode
-        t31Label.isHidden = true
-        t32Label.isHidden = true
-        /* t4 */
-        t41Label = childNode(withName: "t41") as! SKLabelNode
-        t42Label = childNode(withName: "t42") as! SKLabelNode
-        t43Label = childNode(withName: "t43") as! SKLabelNode
-        t41Label.isHidden = true
-        t42Label.isHidden = true
-        t43Label.isHidden = true
-        /* t5 */
-        t51Label = childNode(withName: "t51") as! SKLabelNode
-        t52Label = childNode(withName: "t52") as! SKLabelNode
-        t53Label = childNode(withName: "t53") as! SKLabelNode
-        t54Label = childNode(withName: "t54") as! SKLabelNode
-        t55Label = childNode(withName: "t55") as! SKLabelNode
-        t51Label.isHidden = true
-        t52Label.isHidden = true
-        t53Label.isHidden = true
-        t54Label.isHidden = true
-        t55Label.isHidden = true
-        /* t6 */
-        t61Label = childNode(withName: "t61") as! SKLabelNode
-        t62Label = childNode(withName: "t62") as! SKLabelNode
-        t63Label = childNode(withName: "t63") as! SKLabelNode
-        t64Label = childNode(withName: "t64") as! SKLabelNode
-        t65Label = childNode(withName: "t65") as! SKLabelNode
-        t66Label = childNode(withName: "t66") as! SKLabelNode
-        t67Label = childNode(withName: "t67") as! SKLabelNode
-        t61Label.isHidden = true
-        t62Label.isHidden = true
-        t63Label.isHidden = true
-        t64Label.isHidden = true
-        t65Label.isHidden = true
-        t66Label.isHidden = true
-        t67Label.isHidden = true
-        /* t7 */
-        t71Label = childNode(withName: "t71") as! SKLabelNode
-        t71Label.isHidden = true
-        buttonPlay = childNode(withName: "buttonPlay") as! MSButtonNode
-        buttonPlay.state = .msButtonNodeStateHidden
-        
-        buttonPlay.selectedHandler = {
-            self.t71Label.isHidden = true
-            self.gameState = .AddEnemy
-            self.gridNode.addMineToGet(1)
-            self.gridNode.enemyArray.removeAll()
-            self.countTurnForFlashGrid = 0
-            
-        }
-        
         /* Game Over label */
         gameOverLabel = childNode(withName: "gameOverLabel")
         gameOverLabel.isHidden = true
@@ -300,216 +148,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        self.gridNode.addGameConsole(1)
 
         /* Set first mine to get */
-//        self.gridNode.addMineToGet(1)
+        self.gridNode.addMineToGet(1)
 
     }
     
     override func update(_ currentTime: TimeInterval) {
         switch gameState {
-        case .GameStart:
-            switch tutorialState {
-            case .t1:
-                if t1Done == false {
-                    t1Done = true
-                    let wait = SKAction.wait(forDuration: 4.0)
-                    let t13 = SKAction.run({
-                        self.t11Label.isHidden = true
-                        self.t12Label.isHidden = true
-                        self.t13Label.isHidden = false
-                    })
-                    let goNext = SKAction.run({
-                        self.t13Label.isHidden = true
-                        self.tutorialState = .t2
-                    })
-                    let seq = SKAction.sequence([wait, t13, wait, goNext])
-                    self.run(seq)
-                }
-                break;
-            case .t2:
-                if t2Done == false {
-                    t2Done = true
-                    t21Label.isHidden = false
-                    /* Add enemy on grid */
-                    let addEnemy = SKAction.run({ self.gridNode.addEnemyAtGrid(3) })
-                    let wait = SKAction.wait(forDuration: 3.0)
-                    let addDone = SKAction.run({ self.t2AddDone = true })
-                    let seq = SKAction.sequence([addEnemy, wait, addDone])
-                    self.run(seq)
-                }
-                
-                if t2AddDone {
-                    for enemy in self.gridNode.enemyArray {
-                        enemy.setEnemyCollisionToWall()
-                    }
-                    enemyMoveAround()
-                    if countTurnForFlashGrid > 5 {
-                        t2MoveDone = true
-                        t2AddDone = false
-                        countTurnForFlashGrid = 0
-                    }
-                }
-                
-                if t2MoveDone {
-                    t2MoveDone = false
-                    self.t21Label.isHidden = true
-                    self.tutorialState = .t3
-                }
-                break;
-            case .t3:
-                if t3Done == false {
-                    t3Done = true
-                    t31Label.isHidden = false
-                    t32Label.isHidden = false
-                    
-                    /* Make grid flash */
-                    numOfFlash = self.gridNode.flashGrid(labelNode: self.valueOfX)
-                    
-                    /* Caluculate punch length of enemy */
-                    for (i, enemy) in self.gridNode.enemyArray.enumerated() {
-                        enemy.calculatePunchLength(value: numOfFlash)
-                        if longestPunchLength < enemy.punchLength {
-                            longestPunchLength = enemy.punchLength
-                            maxDuration = 2*longestPunchLength*enemy.punchSpeed+CGFloat(attackTime)
-                        }
-                        /* Make sure to calculate maxDuration properly */
-                        if i == self.gridNode.enemyArray.count-1 {
-                            self.punchStayTime = TimeInterval(self.singlePunchStayTime*CGFloat(self.gridNode.enemyArray.count))
-                            calPunchLengthDoneFlag = true
-                        }
-                    }
-                    
-                    /* Make sure to calculate maxDuration properly */
-                    if calPunchLengthDoneFlag {
-                        calPunchLengthDoneFlag = false
-                        
-                        /* Set wait time for player to caluculate variable expression */
-                        let waitTime = Double(numOfFlash) * self.gridNode.flashSpeed + self.punchStayTime
-                        let wait = SKAction.wait(forDuration: TimeInterval(waitTime))
-                        
-                        /* Display vaue of x on screen */
-                        let displayValueX = SKAction.run({
-                            self.valueOfX.text = "\(self.numOfFlash)"
-                            self.valueOfX.position = CGPoint(x: 111, y: self.valueOfX.position.y)
-                        })
-                        
-                        /* Move state to excute punch */
-                        let moveState = SKAction.run({
-                            self.t31Label.isHidden = true
-                            self.t32Label.isHidden = true
-                            self.tutorialState = .t4
-                        })
-                        let seq = SKAction.sequence([wait, displayValueX, moveState])
-                        self.run(seq)
-                        
-                    }
-                }
-                break;
-            case .t4:
-                if t4Done == false {
-                    t4Done = true
-                    t41Label.isHidden = false
-                    t42Label.isHidden = false
-                    t43Label.isHidden = false
-                    
-                    /* Do punch */
-                    let punch = SKAction.run({ self.enemyPunch() })
-                    
-                    /* Wait untill all punch done */
-                    let wait = SKAction.wait(forDuration: TimeInterval(self.maxDuration+3.0))
-                    let onFlag = SKAction.run({ self.allPunchDoneFlag = true })
-                    
-                    /* Reset value of x label */
-                    let undoValueX = SKAction.run({
-                        self.valueOfX.text = "Flash Times"
-                        self.valueOfX.position = CGPoint(x: 200, y: self.valueOfX.position.y)
-                    })
-                    
-                    let seq = SKAction.sequence([punch, wait, undoValueX, onFlag])
-                    self.run(seq)
-                }
-                
-                /* Make sure enemy start to move again after all punches finish */
-                if allPunchDoneFlag {
-                    t41Label.isHidden = true
-                    t42Label.isHidden = true
-                    t43Label.isHidden = true
-                    tutorialState = .t5
-                    
-                    /* Remove dead enemy from enemyArray */
-                    self.gridNode.enemyArray = self.gridNode.enemyArray.filter({ $0.aliveFlag == true })
-                }
-
-                break;
-            case .t5:
-                if t5Done == false {
-                    t5Done = true
-                    self.gridNode.addMineToGet(1)
-                }
-                enemyMoveAround()
-                t51Label.isHidden = false
-                t52Label.isHidden = false
-                t53Label.isHidden = false
-                
-                if t5GetMine {
-                    t51Label.isHidden = true
-                    t52Label.isHidden = true
-                    t53Label.isHidden = true
-                    t54Label.isHidden = false
-                    t55Label.isHidden = false
-                    if t5SetMine {
-                        tutorialState = .t6
-                        t54Label.isHidden = true
-                        t55Label.isHidden = true
-                    }
-                }
-                
-                break;
-            case .t6:
-                if t6Done == false {
-                    t6Done = true
-                    t61Label.isHidden = false
-                    t62Label.isHidden = false
-                    t63Label.isHidden = false
-                    
-                    let wait = SKAction.wait(forDuration: 5.0)
-                    let t64 = SKAction.run({
-                        self.t61Label.isHidden = true
-                        self.t62Label.isHidden = true
-                        self.t63Label.isHidden = true
-                        self.t64Label.isHidden = false
-                        self.t65Label.isHidden = false
-                        self.t66Label.isHidden = false
-                        self.t67Label.isHidden = false
-                    })
-                    let goNext = SKAction.run({
-                        self.t64Label.isHidden = true
-                        self.t65Label.isHidden = true
-                        self.t66Label.isHidden = true
-                        self.t67Label.isHidden = true
-                        self.tutorialState = .t7
-                    })
-                    let seq = SKAction.sequence([wait, t64, wait, goNext])
-                    self.run(seq)
-                }
-                break;
-            case .t7:
-                t71Label.isHidden = false
-                buttonPlay.state = .msButtonNodeStateActive
-                if let theNode = self.gridNode.childNode(withName: "enemy") {
-                    theNode.removeFromParent()
-                }
-                
-                if let theNode = self.gridNode.childNode(withName: "mine") {
-                    theNode.removeFromParent()
-                }
-                self.gridNode.numOfMine = 5
-                break;
-            }
-            break;
         case .AddEnemy:
-            
-            buttonPlay.state = .msButtonNodeStateHidden
-            buttonSkip.state = .msButtonNodeStateHidden
             
             /* Make sure call addEnemy only once */
             if addEnemyDoneFlag == false {
@@ -691,6 +336,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Activate retryButton */
             retryButton.state = .msButtonNodeStateActive
             break;
+        
+        default:
+            break;
         }
     }
     
@@ -735,9 +383,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             /* Player hit hitPoint */
             if contactA.categoryBitMask == 64 || contactB.categoryBitMask == 64 {
-                /* Make sure not to die during tutorial */
-                guard gameState != .GameStart else { return }
-                
                 if contactA.categoryBitMask == 1 {
                     /* Get node as hitPoint */
                     let nodeB = contactB.node as! SKShapeNode
@@ -762,9 +407,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             /* Player hit fist */
             } else if contactA.categoryBitMask == 8 || contactB.categoryBitMask == 8 {
-                /* Make sure not to die during tutorial */
-                guard gameState != .GameStart else { return }
-                
                 if contactA.categoryBitMask == 1 {
                     /* Get node as fist */
                     let nodeB = contactB.node as! EnemyFist
@@ -801,26 +443,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Get mine to get */
             } else if contactA.categoryBitMask == 128 || contactB.categoryBitMask == 128 {
                 /* Make sure to display mine to get only when gameState is EnemyMoving or AddEnemy */
-                guard self.gameState == .EnemyMoving || self.gameState == .AddEnemy || self.gameState == .PropagateEnemy || self.gameState == .GameStart else { return }
+                guard self.gameState == .EnemyMoving || self.gameState == .AddEnemy || self.gameState == .PropagateEnemy else { return }
                 
-                if t5GetMine == false {
-                    t5GetMine = true
-                    if contactA.categoryBitMask == 1 { contactB.node?.removeFromParent() }
-                    if contactB.categoryBitMask == 1 { contactA.node?.removeFromParent() }
-                    self.gridNode.numOfMine += 1
-                } else {
-                    if contactA.categoryBitMask == 1 { contactB.node?.removeFromParent() }
-                    if contactB.categoryBitMask == 1 { contactA.node?.removeFromParent() }
-                    self.gridNode.addMineToGet(1)
-                    self.gridNode.numOfMine += 1
-                }
-                
+                if contactA.categoryBitMask == 1 { contactB.node?.removeFromParent() }
+                if contactB.categoryBitMask == 1 { contactA.node?.removeFromParent() }
+                self.gridNode.addMineToGet(1)
+                self.gridNode.numOfMine += 1
                     
             /* Game over */
             } else {
-                /* Make sure not to die during tutorial */
-                guard gameState != .GameStart else { return }
-                
                 if contactA.categoryBitMask == 1 {
                     print("\(contactB.categoryBitMask)")
                     contactA.node?.removeFromParent() }
