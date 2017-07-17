@@ -9,9 +9,14 @@
 import Foundation
 import SpriteKit
 
+enum HeroState {
+    case Move, Attack
+}
+
 class Hero: SKSpriteNode {
     
-    var direction: Direction = .front
+    var heroState: HeroState = .Move
+    var direction: Direction = .back
     var moveSpeed = 0.15
     var heroMoveAnimation: SKAction!
     
@@ -27,12 +32,13 @@ class Hero: SKSpriteNode {
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
-        // Set physics properties
+        /* Set physics property */
         physicsBody = SKPhysicsBody(rectangleOf: heroSize)
         physicsBody?.categoryBitMask = 1
-        physicsBody?.collisionBitMask = 1024
-        physicsBody?.contactTestBitMask = 991
-        
+        physicsBody?.collisionBitMask = 0
+        physicsBody?.contactTestBitMask = 4294967291
+
+                
         setTexture()
         setMovingAnimation()
     }
@@ -72,6 +78,36 @@ class Hero: SKSpriteNode {
             self.heroMoveAnimation = SKAction(named: "heroMoveRight")!
             self.run(heroMoveAnimation)
         }
+    }
+    
+    /* Set hero sword attack animation */
+    func setSwordAnimation() {
+        switch direction {
+        case .front:
+            self.anchorPoint = CGPoint(x: 0.5, y: 1)
+            let heroSwordAnimation = SKAction(named: "heroSwordBackward")!
+            self.run(heroSwordAnimation)
+        case .back:
+            self.anchorPoint = CGPoint(x: 0.5, y: 0)
+            let heroSwordAnimation = SKAction(named: "heroSwordForward")!
+            self.run(heroSwordAnimation)
+        case .left:
+            self.anchorPoint = CGPoint(x: 1, y: 0.5)
+            let heroSwordAnimation = SKAction(named: "heroSwordLeft")!
+            self.run(heroSwordAnimation)
+        case .right:
+            self.anchorPoint = CGPoint(x: 0, y: 0.5)
+            let heroSwordAnimation = SKAction(named: "heroSwordRight")!
+            self.run(heroSwordAnimation)
+        }
+    }
+    
+    /* Reset hero position and animation */
+    func resetHero() {
+        self.direction = .back
+        self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.setTexture()
+        self.setMovingAnimation()
     }
     
 }

@@ -29,11 +29,12 @@ class EnemyFist: SKSpriteNode {
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
-        // Set physics properties
-        physicsBody = SKPhysicsBody(rectangleOf: size)
-        physicsBody?.categoryBitMask = 8
+        /* Set physics property */
+        physicsBody = SKPhysicsBody(rectangleOf: texture.size())
+        physicsBody?.categoryBitMask = 16
         physicsBody?.collisionBitMask = 0
-        physicsBody?.contactTestBitMask = 1
+        physicsBody?.contactTestBitMask = 5
+      
         
         setAngle()
     }

@@ -27,13 +27,13 @@ class EnemyArm: SKSpriteNode {
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0)
         
-        // Set physics properties
+        /* Set physics property */
         let bodySize = CGSize(width: size.width, height: size.height)
         let centerPoint = CGPoint(x: size.width / 2 - (size.width * anchorPoint.x), y: size.height / 2 - (size.height * anchorPoint.y))
         physicsBody = SKPhysicsBody(rectangleOf: bodySize, center: centerPoint)
-        physicsBody?.categoryBitMask = 4
+        physicsBody?.categoryBitMask = 8
         physicsBody?.collisionBitMask = 0
-        physicsBody?.contactTestBitMask = 1
+        physicsBody?.contactTestBitMask = 4
         
         setAngle()
     }
