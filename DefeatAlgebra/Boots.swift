@@ -9,23 +9,22 @@
 import Foundation
 import SpriteKit
 
-class GameConsole: SKSpriteNode {
+class Boots: SKSpriteNode {
     
     init() {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "gameConsole")
-        let bodySize = CGSize(width: 48, height: 43)
-        super.init(texture: texture, color: UIColor.clear, size: bodySize)
+        let texture = SKTexture(imageNamed: "boots")
+        super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 1
+        zPosition = 2
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         // Set physics properties
-        physicsBody = SKPhysicsBody(rectangleOf: bodySize)
-        physicsBody?.categoryBitMask = 16
+        physicsBody = SKPhysicsBody(rectangleOf: texture.size())
+        physicsBody?.categoryBitMask = 32
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 1
         

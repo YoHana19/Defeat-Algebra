@@ -17,8 +17,13 @@ class Hero: SKSpriteNode {
     
     var heroState: HeroState = .Move
     var direction: Direction = .back
-    var moveSpeed = 0.15
+    var moveSpeed = 0.5
     var heroMoveAnimation: SKAction!
+    var moveLevel: Int = 1
+    
+    /* position at grid */
+    var positionX: Int = 4
+    var positionY: Int = 3
     
     init() {
         /* Initialize with enemy asset */
@@ -27,7 +32,7 @@ class Hero: SKSpriteNode {
         super.init(texture: texture, color: UIColor.clear, size: heroSize)
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 2
+        zPosition = 4
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -102,6 +107,155 @@ class Hero: SKSpriteNode {
         }
     }
     
+    /* Move hero */
+    func heroSingleMove() {
+        /* Get parent Scene */
+        let gameScene = self.parent as! GameScene
+        
+        /* Set texture and animation */
+        self.setTexture()
+        self.setMovingAnimation()
+
+        switch direction {
+        case .front:
+            /* Move hero backward */
+            let move = SKAction.moveBy(x: 0, y: -CGFloat(gameScene.gridNode.cellHeight), duration: self.moveSpeed)
+            self.run(move)
+            break;
+        case .back:
+            /* Move hero forward */
+            let move = SKAction.moveBy(x: 0, y: CGFloat(gameScene.gridNode.cellHeight), duration: self.moveSpeed)
+            self.run(move)
+            break;
+        case .left:
+            /* Move hero left */
+            let move = SKAction.moveBy(x: -CGFloat(gameScene.gridNode.cellWidth), y: 0, duration: self.moveSpeed)
+            self.run(move)
+            break;
+        case .right:
+            /* Move hero right */
+            let move = SKAction.moveBy(x: CGFloat(gameScene.gridNode.cellWidth), y: 0, duration: self.moveSpeed)
+            self.run(move)
+            break;
+        }
+    }
+    
+    func heroMoveToDest(posX: Int, posY: Int) {
+        /* Calculate difference between current position and destination */
+        let diffX = posX - self.positionX
+        let diffY = posY - self.positionY
+        
+        /* Move right */
+        if diffX > 0 {
+            self.direction = .right
+            
+            /* Move forward */
+            if diffY > 0 {
+                /* Move horizontaly */
+                let singleMoveH = SKAction.run({ self.heroSingleMove() })
+                let moveToDestX = SKAction.repeat(singleMoveH, count: diffX)
+                
+                /* Wait for move horizotaly done */
+                let wait = SKAction.wait(forDuration: TimeInterval(self.moveSpeed*Double(diffX)+0.3)) /* 0.3 is buffer */
+                
+                /* Move verticaly */
+                let changeDirect = SKAction.run({ self.direction = .back })
+                let singleMoveV = SKAction.run({ self.heroSingleMove() })
+                let moveToDestY = SKAction.repeat(singleMoveV, count: diffY)
+                
+                let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
+                self.run(seq)
+                
+            /* Move backward */
+            } else if diffY < 0 {
+                /* Move horizontaly */
+                let singleMoveH = SKAction.run({ self.heroSingleMove() })
+                let moveToDestX = SKAction.repeat(singleMoveH, count: diffX)
+                
+                /* Wait for move horizotaly done */
+                let wait = SKAction.wait(forDuration: TimeInterval(self.moveSpeed*Double(diffX)+0.3)) /* 0.3 is buffer */
+                
+                /* Move verticaly */
+                let changeDirect = SKAction.run({ self.direction = .front })
+                let singleMove = SKAction.run({ self.heroSingleMove() })
+                let moveToDestY = SKAction.repeat(singleMove, count: -diffY)
+                
+                let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
+                self.run(seq)
+            
+            /* Only move horizontaly */
+            } else {
+                let singleMove = SKAction.run({ self.heroSingleMove() })
+                let moveToDestX = SKAction.repeat(singleMove, count: diffX)
+                self.run(moveToDestX)
+            }
+
+        /* Move Left */
+        } else if diffX < 0 {
+            self.direction = .left
+            
+            /* Move forward */
+            if diffY > 0 {
+                /* Move horizontaly */
+                let singleMoveH = SKAction.run({ self.heroSingleMove() })
+                let moveToDestX = SKAction.repeat(singleMoveH, count: -diffX)
+                
+                /* Wait for move horizotaly done */
+                let wait = SKAction.wait(forDuration: TimeInterval(self.moveSpeed*Double(-diffX)+0.3)) /* 0.3 is buffer */
+                
+                /* Move verticaly */
+                let changeDirect = SKAction.run({ self.direction = .back })
+                let singleMoveV = SKAction.run({ self.heroSingleMove() })
+                let moveToDestY = SKAction.repeat(singleMoveV, count: diffY)
+                
+                let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
+                self.run(seq)
+                
+                /* Move backward */
+            } else if diffY < 0 {
+                /* Move horizontaly */
+                let singleMoveH = SKAction.run({ self.heroSingleMove() })
+                let moveToDestX = SKAction.repeat(singleMoveH, count: -diffX)
+                
+                /* Wait for move horizotaly done */
+                let wait = SKAction.wait(forDuration: TimeInterval(self.moveSpeed*Double(-diffX)+0.3)) /* 0.3 is buffer */
+                
+                /* Move verticaly */
+                let changeDirect = SKAction.run({ self.direction = .front })
+                let singleMove = SKAction.run({ self.heroSingleMove() })
+                let moveToDestY = SKAction.repeat(singleMove, count: -diffY)
+                
+                let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
+                self.run(seq)
+                
+            /* Only move horizontaly */
+            } else {
+                let singleMove = SKAction.run({ self.heroSingleMove() })
+                let moveToDestX = SKAction.repeat(singleMove, count: -diffX)
+                self.run(moveToDestX)
+            }
+        /* Only move vertically */
+        } else {
+            /* Move forward */
+            if diffY > 0 {
+                /* Move verticaly */
+                self.direction = .back
+                let singleMoveV = SKAction.run({ self.heroSingleMove() })
+                let moveToDestY = SKAction.repeat(singleMoveV, count: diffY)
+                self.run(moveToDestY)
+                
+                /* Move backward */
+            } else if diffY < 0 {
+                /* Move verticaly */
+                self.direction = .front
+                let singleMove = SKAction.run({ self.heroSingleMove() })
+                let moveToDestY = SKAction.repeat(singleMove, count: -diffY)
+                self.run(moveToDestY)
+            }
+        }
+        
+    }
+    
     /* Reset hero position and animation */
     func resetHero() {
         self.direction = .back
@@ -109,5 +263,7 @@ class Hero: SKSpriteNode {
         self.setTexture()
         self.setMovingAnimation()
     }
+    
+    
     
 }

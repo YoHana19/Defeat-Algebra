@@ -22,7 +22,6 @@ class Enemy: SKSpriteNode {
     /* Enemy position */
     var positionX = 0
     var positionY = 11
-    var positionEnemyAtGrid = [[Bool]]()
     
     /* Enemy property */
     var moveSpeed = 0.5
@@ -32,13 +31,12 @@ class Enemy: SKSpriteNode {
     var punchIntervalForCount: Int = 0
     
     /* Enemy variable for punch */
-    var valueOfEnemy: Int = 4
+    var valueOfEnemy: Int = 0
     var firstPunchLength: CGFloat = 78
     var singlePunchLength: CGFloat = 78
     var punchLength: CGFloat!
     var variableExpression: [Int]!
     var variableExpressionForLabel: String!
-    let variableExpressionSource = [[1,0],[1,1],[1,2],[1,3],[1,4],[2,0],[2,1],[2,2]]
     
     /* For arms when punch hit wall */
     var armArrayForSubSet: [EnemyArm] = []
@@ -46,12 +44,13 @@ class Enemy: SKSpriteNode {
     /* Flags */
     var myTurnFlag = false
     var turnDoneFlag = false
+    var reachCastleFlag = false
     
     var waitDoneFlag = false
     var punchDoneFlag = true
     var aliveFlag = true
     
-    init() {
+    init(variableExpressionSource: [[Int]]) {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "front155")
         let enemySize = CGSize(width: 61, height: 61)
@@ -62,8 +61,9 @@ class Enemy: SKSpriteNode {
         punchLength = firstPunchLength+CGFloat((valueOfEnemy-1))*singlePunchLength
         
         /* Set punch interval */
-        punchInterval = Int(arc4random_uniform(3))+2
+        punchInterval = Int(arc4random_uniform(3)+1)
         punchIntervalForCount = punchInterval
+        setPunchIntervalLabel()
         
         /* Set Z-Position, ensure ontop of grid */
         zPosition = 3
@@ -77,6 +77,18 @@ class Enemy: SKSpriteNode {
         physicsBody?.contactTestBitMask = 5
         
         /* Set variable expression */
+        setVariavleExpression(variableExpressionSource: variableExpressionSource)
+        
+    }
+    
+    /* You are required to implement this for your subclass to work */
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+    
+    /* Set variable expression */
+    func setVariavleExpression(variableExpressionSource: [[Int]]) {
+        
         let rand = arc4random_uniform(UInt32(variableExpressionSource.count))
         variableExpression = variableExpressionSource[Int(rand)]
         if variableExpression[0] == 1 {
@@ -92,12 +104,6 @@ class Enemy: SKSpriteNode {
                 variableExpressionForLabel = "\(variableExpression[0])x+\(variableExpression[1])"
             }
         }
-        
-    }
-    
-    /* You are required to implement this for your subclass to work */
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
     }
     
     /* Set name */
@@ -177,6 +183,29 @@ class Enemy: SKSpriteNode {
         
         /* Set position */
         label.position = CGPoint(x:0, y: 60)
+        
+        /* Add to Scene */
+        self.addChild(label)
+    }
+    
+    func setPunchIntervalLabel() {
+        /* Set label with font */
+        let label = SKLabelNode(fontNamed: "BiauKai")
+        
+        /* Set name */
+        label.name = "punchInterval"
+        
+        /* Set text */
+        label.text = String(self.punchIntervalForCount)
+        
+        /* Set font size */
+        label.fontSize = 25
+        
+        /* Set zPosition */
+        label.zPosition = 5
+        
+        /* Set position */
+        label.position = CGPoint(x:0, y: -40)
         
         /* Add to Scene */
         self.addChild(label)
@@ -280,13 +309,11 @@ class Enemy: SKSpriteNode {
         addChild(fist[1])
     }
     
- 
+    /* Move enemy */
     func enemyMove() {
         
-        print("enemy position is \(self.positionX)")
         /* Get grid node */
         let gridNode = self.parent as! Grid
-        print(gridNode.turnIndex)
         
         /* Make sure not to call if it's not my turn */
         guard myTurnFlag else { return }
@@ -294,7 +321,6 @@ class Enemy: SKSpriteNode {
         /* Make sure to call once */
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
-        
         
         /* Determine direction to move */
         let directionRand = arc4random_uniform(100)
@@ -388,11 +414,19 @@ class Enemy: SKSpriteNode {
                 gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
             }
             
+            /* Remove punchInterval label */
+            if let theNode = self.childNode(withName: "punchInterval") {
+                theNode.removeFromParent()
+            }
+            
             /* To check all enemy turn done */
             gridNode.numOfTurnEndEnemy += 1
             
             /* Count down till do punch */
             self.punchIntervalForCount -= 1
+            
+            /* Display left turn till punch */
+            self.setPunchIntervalLabel()
         })
         
         /* excute drawPunch */
@@ -400,6 +434,7 @@ class Enemy: SKSpriteNode {
         self.run(seq)
     }
     
+    /* Enemy punch and move to the position of fist */
     func punchAndMove() {
         
         /* Make sure not to call if it's not my turn */
@@ -412,17 +447,22 @@ class Enemy: SKSpriteNode {
         /* Get grid node */
         let gridNode = self.parent as! Grid
         /* Get GameScene */
-        let gameScene = gridNode.parent as! GameScene2
+        let gameScene = gridNode.parent as! GameScene
         
         /* Do punch */
         let armAndFist = self.punch()
         
-        /* Keep track enemy position */
-        self.positionY -= self.valueOfEnemy
-        
-        /* Enemy reach in front of castle */
-        if self.positionY < 0 {
-            let originPosY = self.positionY + self.valueOfEnemy
+        /* Enemy punch beyond edge of grid */
+        if self.positionY < self.valueOfEnemy {
+            
+            /* Decrese life */
+            let decreseLife = SKAction.run({ gameScene.life -= 1 })
+            
+            /* Calculate punchlength */
+            let originPosY = self.positionY
+            self.punchLength = CGFloat(originPosY*gridNode.cellHeight)+gameScene.bottomGap+30 /* 30 is a buffer */
+            
+            /* Wait till punch streach out fully */
             let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
             
             /* Subsutitute arm with opposite direction arm for shrink it the other way around */
@@ -435,6 +475,9 @@ class Enemy: SKSpriteNode {
                     newArm.yScale = (size.height)/newArm.size.height
                     newArm.position = CGPoint(x: posX, y: posY)
                     newArm.anchorPoint = CGPoint(x: 0.5, y: 1)
+                    newArm.physicsBody = nil
+//                    newArm.physicsBody?.categoryBitMask = 0
+//                    newArm.physicsBody?.contactTestBitMask = 0
                     self.addChild(newArm)
                     self.armArrayForSubSet.append(newArm)
                 }
@@ -450,7 +493,7 @@ class Enemy: SKSpriteNode {
                 }
             })
             
-            /* Move self's body to punch position */
+            /* Move enemy's body to punch position */
             let moveForward = SKAction.run({
                 let moveBody = SKAction.moveBy(x: 0, y: -CGFloat(originPosY*gridNode.cellHeight), duration: TimeInterval(self.punchLength*self.punchSpeed))
                 self.run(moveBody)
@@ -470,7 +513,7 @@ class Enemy: SKSpriteNode {
             /* Shrink arms */
             let shrinkArm = SKAction.run({
                 for arm in self.armArrayForSubSet {
-                    let shrinkArm = SKAction.scaleY(to: gameScene.bottomGap/self.punchLength, duration: TimeInterval(self.punchLength*self.punchSpeed))
+                    let shrinkArm = SKAction.scaleY(to: 3.0, duration: TimeInterval(self.punchLength*self.punchSpeed))
                     arm.run(shrinkArm)
                 }
             })
@@ -498,18 +541,28 @@ class Enemy: SKSpriteNode {
                     gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
                 }
                 
+                /* Reset enemy animation */
+                self.setMovingAnimation()
+                
                 /* To check all enemy turn done */
                 gridNode.numOfTurnEndEnemy += 1
                 
-                /* reset count down punchInterval */
+                /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
+                
+                /* Set enemy position to edge */
+                self.positionY = 0
             })
             
             /* excute drawPunch */
-            let seq = SKAction.sequence([wait, subSetArm, waitForSubSet, removeArm, moveForward, shrinkArm, drawWait, punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
+            let seq = SKAction.sequence([wait, decreseLife, subSetArm, waitForSubSet, removeArm, moveForward, shrinkArm, drawWait, punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
             self.run(seq)
 
         } else {
+            
+            /* Keep track enemy position */
+            self.positionY -= self.valueOfEnemy
+            
             /* Wait untill enemy punch streach out */
             let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
             
@@ -523,6 +576,7 @@ class Enemy: SKSpriteNode {
                     newArm.yScale = (size.height)/newArm.size.height
                     newArm.position = CGPoint(x: posX, y: posY)
                     newArm.anchorPoint = CGPoint(x: 0.5, y: 1)
+                    newArm.physicsBody = nil
                     self.addChild(newArm)
                     self.armArrayForSubSet.append(newArm)
                 }
@@ -585,11 +639,17 @@ class Enemy: SKSpriteNode {
                     gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
                 }
                 
+                /* Reset enemy animation */
+                self.setMovingAnimation()
+                
                 /* To check all enemy turn done */
                 gridNode.numOfTurnEndEnemy += 1
                 
-                /* reset count down punchInterval */
+                /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
+                
+                /* Display left trun till punch */
+                self.setPunchIntervalLabel()
             })
             
             /* excute drawPunch */
@@ -632,6 +692,73 @@ class Enemy: SKSpriteNode {
         
         /* Store reference for func drawPunch */
         return ([arm1, arm2], [fist1, fist2])
+    }
+    
+    /* Punch when enemy reach to castle */
+    func punchToCastle() {
+        /* Make sure not to call if it's not my turn */
+        guard myTurnFlag else { return }
+        
+        /* Make sure to call once */
+        guard turnDoneFlag == false else { return }
+        turnDoneFlag = true
+        
+        /* Get grid node */
+        let gridNode = self.parent as! Grid
+        /* Get GameScene */
+        let gameScene = gridNode.parent as! GameScene
+        
+        /* Decrese life */
+        let decreseLife = SKAction.run({ gameScene.life -= 1 })
+        
+        /* Set punchLength */
+        self.punchLength = 80
+        
+        /* Do punch */
+        let armAndFist = self.punch()
+        
+        /* Wait for punch streach out fully */
+        let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
+        
+        /* Draw punch */
+        let draw = SKAction.run({
+            self.drawPunch(arms: armAndFist.arm, fists: armAndFist.fist, length: self.punchLength)
+        })
+        
+        /* Make sure delete arms & fists after finishing punch drawing */
+        let drawWait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed-0.1)) /* 0.1 is buffer */
+        
+        /* Get rid of all arms and fists */
+        let punchDone = SKAction.run({
+            self.removeAllChildren()
+        })
+        
+        /* Set variable expression */
+        let setVariableExpression = SKAction.run({
+            self.makeTriangle()
+            self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
+        })
+        
+        /* Move next enemy's turn */
+        let moveTurnWait = SKAction.wait(forDuration: gridNode.moveEnemyTurnTime)
+        let moveNextEnemy = SKAction.run({
+            self.myTurnFlag = false
+            
+            /* Reset enemy animation */
+            self.setMovingAnimation()
+            
+            if gridNode.turnIndex < gridNode.enemyArray.count-1 {
+                gridNode.turnIndex += 1
+                gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
+            }
+            
+            /* To check all enemy turn done */
+            gridNode.numOfTurnEndEnemy += 1
+        })
+        
+        /* excute drawPunch */
+        let seq = SKAction.sequence([wait, decreseLife, draw, drawWait, punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
+        self.run(seq)
     }
     
     func moveBodyForward(length: CGFloat, speed: CGFloat) {
