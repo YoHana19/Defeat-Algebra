@@ -21,14 +21,15 @@ class Enemy: SKSpriteNode {
     
     /* Enemy position */
     var positionX = 0
-    var positionY = 11
+    var positionY = 0
     
     /* Enemy property */
-    var moveSpeed = 0.5
-    var punchSpeed: CGFloat = 0.005
+    var moveSpeed = 0.2
+    var punchSpeed: CGFloat = 0.0025
     var direction: Direction = .front
     var punchInterval: Int!
     var punchIntervalForCount: Int = 0
+    var singleTurnDuration: TimeInterval = 1.0
     
     /* Enemy variable for punch */
     var valueOfEnemy: Int = 0
@@ -56,14 +57,12 @@ class Enemy: SKSpriteNode {
         let enemySize = CGSize(width: 61, height: 61)
         super.init(texture: texture, color: UIColor.clear, size: enemySize)
         
-        Setname()
+        setName()
         
         punchLength = firstPunchLength+CGFloat((valueOfEnemy-1))*singlePunchLength
         
         /* Set punch interval */
-        punchInterval = Int(arc4random_uniform(3)+1)
-        punchIntervalForCount = punchInterval
-        setPunchIntervalLabel()
+        setPunchInterval()
         
         /* Set Z-Position, ensure ontop of grid */
         zPosition = 3
@@ -84,6 +83,29 @@ class Enemy: SKSpriteNode {
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    /* Set punch interval randomly */
+    func setPunchInterval() {
+        let rand = Int(arc4random_uniform(100))
+        
+        /* punchInterval is 1 with 40% */
+        if rand < 45 {
+            punchInterval = 1
+            punchIntervalForCount = punchInterval
+            setPunchIntervalLabel()
+        /* punchInterval is 2 with 40% */
+        } else if rand < 90 {
+            punchInterval = 2
+            punchIntervalForCount = punchInterval
+            setPunchIntervalLabel()
+        /* punchInterval is 0 with 20% */
+        } else {
+            punchInterval = 0
+            punchIntervalForCount = punchInterval
+            setPunchIntervalLabel()
+        }
+        
     }
     
     /* Set variable expression */
@@ -107,7 +129,7 @@ class Enemy: SKSpriteNode {
     }
     
     /* Set name */
-    func Setname() {
+    func setName() {
         self.name = "enemy"
     }
     
@@ -406,7 +428,7 @@ class Enemy: SKSpriteNode {
         }
         
         /* Move next enemy's turn */
-        let moveTurnWait = SKAction.wait(forDuration: 2.0)
+        let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
         let moveNextEnemy = SKAction.run({
             self.myTurnFlag = false
             if gridNode.turnIndex < gridNode.enemyArray.count-1 {
@@ -484,7 +506,7 @@ class Enemy: SKSpriteNode {
             })
             
             /* Make sure to remove old arm after setting new arm done */
-            let waitForSubSet = SKAction.wait(forDuration: 0.5)
+            let waitForSubSet = SKAction.wait(forDuration: 0.25)
             
             /* Remove old arms */
             let removeArm = SKAction.run({
@@ -533,7 +555,7 @@ class Enemy: SKSpriteNode {
             })
             
             /* Move next enemy's turn */
-            let moveTurnWait = SKAction.wait(forDuration: gridNode.moveEnemyTurnTime)
+            let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
             let moveNextEnemy = SKAction.run({
                 self.myTurnFlag = false
                 if gridNode.turnIndex < gridNode.enemyArray.count-1 {
@@ -583,7 +605,7 @@ class Enemy: SKSpriteNode {
             })
             
             /* Make sure to remove old arm after setting new arm done */
-            let waitForSubSet = SKAction.wait(forDuration: 0.5)
+            let waitForSubSet = SKAction.wait(forDuration: 0.25)
             
             /* Remove old arms */
             let removeArm = SKAction.run({
@@ -631,7 +653,7 @@ class Enemy: SKSpriteNode {
             })
             
             /* Move next enemy's turn */
-            let moveTurnWait = SKAction.wait(forDuration: gridNode.moveEnemyTurnTime)
+            let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
             let moveNextEnemy = SKAction.run({
                 self.myTurnFlag = false
                 if gridNode.turnIndex < gridNode.enemyArray.count-1 {
@@ -740,7 +762,7 @@ class Enemy: SKSpriteNode {
         })
         
         /* Move next enemy's turn */
-        let moveTurnWait = SKAction.wait(forDuration: gridNode.moveEnemyTurnTime)
+        let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
         let moveNextEnemy = SKAction.run({
             self.myTurnFlag = false
             

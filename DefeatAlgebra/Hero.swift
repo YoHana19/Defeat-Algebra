@@ -10,16 +10,18 @@ import Foundation
 import SpriteKit
 
 enum HeroState {
-    case Move, Attack
+    case Stay, Move, Attack
 }
 
 class Hero: SKSpriteNode {
     
-    var heroState: HeroState = .Move
+    var heroState: HeroState = .Stay
     var direction: Direction = .back
-    var moveSpeed = 0.5
+    var moveSpeed = 0.2
     var heroMoveAnimation: SKAction!
     var moveLevel: Int = 1
+    var attackDoneFlag = false
+    
     
     /* position at grid */
     var positionX: Int = 4
@@ -43,7 +45,7 @@ class Hero: SKSpriteNode {
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 4294967291
 
-                
+        setName()
         setTexture()
         setMovingAnimation()
     }
@@ -53,6 +55,10 @@ class Hero: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
+    /* Set name */
+    func setName() {
+        self.name = "hero"
+    }
     
     /* Set texture to hero according to direction */
     func setTexture() {
@@ -82,6 +88,29 @@ class Hero: SKSpriteNode {
         case .right:
             self.heroMoveAnimation = SKAction(named: "heroMoveRight")!
             self.run(heroMoveAnimation)
+        }
+    }
+    
+    /* Set hero direction when attacking */
+    func setHeroDirection(posX: Int, posY: Int) {
+        /* Calculate difference between current position and destination */
+        let diffX = posX - self.positionX
+        let diffY = posY - self.positionY
+        
+        /* turn right */
+        if diffX > 0 {
+            self.direction = .right
+        /* turn left */
+        } else if diffX < 0 {
+            self.direction = .left
+        } else {
+            /* turn front */
+            if diffY < 0 {
+                self.direction = .front
+            /* turn back */
+            } else if diffY < 0 {
+                self.direction = .back
+            }
         }
     }
     
@@ -244,13 +273,16 @@ class Hero: SKSpriteNode {
                 let moveToDestY = SKAction.repeat(singleMoveV, count: diffY)
                 self.run(moveToDestY)
                 
-                /* Move backward */
+            /* Move backward */
             } else if diffY < 0 {
                 /* Move verticaly */
                 self.direction = .front
                 let singleMove = SKAction.run({ self.heroSingleMove() })
                 let moveToDestY = SKAction.repeat(singleMove, count: -diffY)
                 self.run(moveToDestY)
+            /* Stay */
+            } else {
+                return
             }
         }
         

@@ -19,6 +19,9 @@ class Grid: SKSpriteNode {
     var cellWidth = 0
     var cellHeight = 0
     
+    /* Enemy move speed when adding */
+    var addingMoveSpeed = 0.5
+    
     /* For swiping */
     var beganPos:CGPoint!
     
@@ -27,20 +30,23 @@ class Grid: SKSpriteNode {
     var positionEnemyAtGrid = [[Bool]]()
     var numOfTurnEndEnemy = 0
     var turnIndex = 0
-    var moveEnemyTurnTime: TimeInterval = 1.0
     var startPosArray = [0, 1, 2, 3, 4, 5, 6, 7, 8]
     
-    /* Flash speed */
-    var flashSpeed: Double = 1.0
+    /* Flash */
+    var flashSpeed: Double = 0.5
+    var numOfFlashUp = 3
     
     /* Move & Attack & item setting area for player */
-    var squareArray = [[SKShapeNode]]()
+    var squareRedArray = [[SKShapeNode]]() /* for attack */
+    var squareBlueArray = [[SKShapeNode]]() /* for move */
+    var squareGreenArray = [[SKShapeNode]]() /* for item */
     
     /* Attack area position */
     var attackAreaPos = [[Int]]()
     
     /* Mine */
-    var mineArray = [[Int]]()
+    var mineSetPosArray = [[Int]]()
+    var mineSetArray = [Mine]()
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
@@ -73,11 +79,6 @@ class Grid: SKSpriteNode {
 
     }
     
-    
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-    }
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
@@ -88,45 +89,80 @@ class Grid: SKSpriteNode {
             let touch = touches.first!              // Get the first touch
             let location = touch.location(in: self) // Find the location of that touch in this view
             let nodeAtPoint = atPoint(location)     // Find the node at that location
-        
-            /* Hero move */
-            if gameScene.hero.heroState == .Move {
-                if nodeAtPoint.name == "activeArea" {
+            
+            /* Touch red square for active area */
+            if nodeAtPoint.name == "activeArea" {
+            
+                /* Caclulate grid array position */
+                let gridX = Int(location.x) / cellWidth
+                let gridY = Int(location.y) / cellHeight
+            
+                /* Hero move */
+                if gameScene.activeHero.heroState == .Move {
                 
-                    /* Caclulate grid array position */
-                    let gridX = Int(location.x) / cellWidth
-                    let gridY = Int(location.y) / cellHeight
+                    /* Move hero to touch location */
+                    gameScene.activeHero.heroMoveToDest(posX: gridX, posY: gridY)
                 
-                    /* Hero move */
-                    if gameScene.hero.heroState == .Move {
+                    /* Reset move area */
+                    self.resetSquareArray(color: "blue")
                     
-                        /* Move hero to touch location */
-                        gameScene.hero.heroMoveToDest(posX: gridX, posY: gridY)
+                    /* Keep track hero position */
+                    gameScene.activeHero.positionX = gridX
+                    gameScene.activeHero.positionY = gridY
                     
-                        /* Reset move area */
-                        self.resetSquareArray()
-                    
-                        /* Keep track hero position */
-                        gameScene.hero.positionX = gridX
-                        gameScene.hero.positionY = gridY
-                    
-                    /* Hero attack */
-                    } else if gameScene.hero.heroState == .Attack {
-                    
-                    }
-                
                     /* Move next state */
-                    gameScene.selectDirectionDone = true
-                    let wait = SKAction.wait(forDuration: 2.5)
+                    let wait = SKAction.wait(forDuration: gameScene.turnEndWait)
                     let moveState = SKAction.run({ gameScene.playerTurnState = .TurnEnd })
                     let seq = SKAction.sequence([wait, moveState])
                     self.run(seq)
                 
+                /* Hero attack */
+                } else if gameScene.activeHero.heroState == .Attack {
+                    /* Remove attack area square */
+                    self.resetSquareArray(color: "red")
+                    
+                    /* Set direction of hero */
+                    gameScene.activeHero.setHeroDirection(posX: gridX, posY: gridY)
+                    
+                    /* Do attack animation */
+                    gameScene.activeHero.setSwordAnimation()
+                        
+                    /* Hit enemy! */
+                    if self.positionEnemyAtGrid[gridX][gridY] {
+                        let waitAni = SKAction.wait(forDuration: 1.0)
+                        let removeEnemy = SKAction.run({
+                            /* Look for the enemy to destroy */
+                            for enemy in self.enemyArray {
+                                if enemy.positionX == gridX && enemy.positionY == gridY {
+                                    enemy.aliveFlag = false
+                                    enemy.removeFromParent()
+                                }
+                            }
+                        })
+                        let seq = SKAction.sequence([waitAni, removeEnemy])
+                        self.run(seq)
+                    }
+                    
+                    /* Back state */
+                    gameScene.activeHero.attackDoneFlag = true
+                    let wait = SKAction.wait(forDuration: gameScene.turnEndWait+1.0) /* 1.0 is wait time for animation */
+                    let moveState = SKAction.run({
+                        /* Reset hero animation to back */
+                        gameScene.activeHero.resetHero()
+                        gameScene.playerTurnState = .SelectAction
+                    })
+                    let seq = SKAction.sequence([wait, moveState])
+                    self.run(seq)
                 }
-            /* Hero attack */
-            } else if gameScene.hero.heroState == .Attack {
-                beganPos = touch.location(in: self)
+            /* If touch anywhere but activeArea, back to SelectAction state  */
+            } else {
+                if gameScene.activeHero.heroState == .Attack {
+                    self.resetSquareArray(color: "red")
+                    gameScene.activeHero.heroState = .Move
+                    gameScene.playerTurnState = .SelectAction
+                }
             }
+        
         /* Use item */
         } else if gameScene.playerTurnState == .UsingItem {
             /* Use mine */
@@ -139,50 +175,93 @@ class Grid: SKSpriteNode {
                     let gridX = Int(location.x) / cellWidth
                     let gridY = Int(location.y) / cellHeight
                     
-                    /* Remove active areas */
-                    self.resetSquareArray()
+                    /* Remove item active areas */
+                    self.resetSquareArray(color: "green")
                     
                     /* Store position of set mine */
-                    self.mineArray.append([gridX, gridY])
+                    self.mineSetPosArray.append([gridX, gridY])
 //                    print(self.mineArray)
  
                     /* Set mine at the location you touch */
                     let mine = Mine()
+                    self.mineSetArray.append(mine)
                     self.addObjectAtGrid(object: mine, x: gridX, y: gridY)
                     
                     /* Move state */
                     gameScene.playerTurnState = .SelectAction
                     
                     /* Remove itemIcon from item array and Scene */
-                    gameScene.itemArray[0].removeFromParent()
-                    gameScene.itemArray.remove(at: 0)
+                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
+                    gameScene.itemArray.remove(at: gameScene.usingItemIndex)
                     
+                } else {
+                    self.resetSquareArray(color: "green")
+                    gameScene.activeHero.heroState = .Move
+                    gameScene.playerTurnState = .SelectAction
                 }
             }
         }
     }
     
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    }
+
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-        
-        /* Swipe is available only at the time of selectDirection */
-        guard gameScene.playerTurnState == .SelectDirection else { return }
-        
-        /* Swipe is available only when heroState is Attack */
-        guard gameScene.hero.heroState == .Attack else { return }
-        
-        let touch = touches.first!
-        let endedPos = touch.location(in: self)
-        let diffPos = CGPoint(x: endedPos.x - beganPos.x, y: endedPos.y - beganPos.y)
-        
-        /* Show attack area */
-        showAttackAreaBySwipe(diffPos)
+
     }
     
     func resetStartPosArray() {
         for i in 0..<columns {
             self.startPosArray.append(i)
+        }
+    }
+    
+    func addInitialEnemyAtGrid(enemyPosArray: [[Int]], variableExpressionSource: [[Int]]) {
+        /* Add a new enemy at grid position*/
+        
+        /* Get gameScene */
+        let gameScene = self.parent as! GameScene
+        
+        for posArray in enemyPosArray {
+            /* New enemy object */
+            let enemy = Enemy(variableExpressionSource: variableExpressionSource)
+            
+            /* Attach variable expression */
+            enemy.makeTriangle()
+            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
+            
+            /* Set direction of enemy */
+            enemy.direction = .front
+            enemy.setMovingAnimation()
+            
+            /* Set position on screen */
+            /* Enemy come to grid from out of it */
+            let startPosition = posArray[0]
+            
+            /* Keep track enemy position */
+            enemy.positionX = startPosition
+            enemy.positionY = posArray[1]
+            
+            /* Calculate gap between top of grid and gameScene */
+            let gridPosition = CGPoint(x: (startPosition)*cellWidth+cellWidth/2, y: Int(gameScene.topGap+self.size.height))
+            enemy.position = gridPosition
+            
+            /* Set enemy's move distance when showing up */
+            let startMoveDistance = Double(Int(gameScene.topGap)+self.cellHeight*(11-posArray[1])+self.cellHeight/2)
+            
+            /* Calculate relative duration with distance */
+            let startDulation = TimeInterval(startMoveDistance/Double(self.cellHeight)*self.addingMoveSpeed)
+            
+            /* Move enemy for startMoveDistance */
+            let move = SKAction.moveBy(x: 0, y: -CGFloat(startMoveDistance), duration: startDulation)
+            enemy.run(move)
+            
+            /* Add enemy to grid node */
+            addChild(enemy)
+            
+            /* Add enemy to enemyArray */
+            self.enemyArray.append(enemy)
         }
     }
     
@@ -222,7 +301,7 @@ class Grid: SKSpriteNode {
             let startMoveDistance = CGFloat(Int(gameScene.topGap)+self.cellHeight/2)
             
             /* Calculate relative duration with distance */
-            let startDulation = TimeInterval(1.5*enemy.moveSpeed)
+            let startDulation = TimeInterval(1.5*self.addingMoveSpeed)
                 
             /* Move enemy for startMoveDistance */
             let move = SKAction.moveBy(x: 0, y: -startMoveDistance, duration: startDulation)
@@ -239,7 +318,7 @@ class Grid: SKSpriteNode {
     
     func flashGrid(labelNode: SKLabelNode) -> Int {
         /* Set the number of times of flash randomly */
-        let numOfFlash = Int(arc4random_uniform(3))+1
+        let numOfFlash = Int(arc4random_uniform(UInt32(numOfFlashUp)))+1
         
         /* Set flash animation */
         let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
@@ -311,38 +390,26 @@ class Grid: SKSpriteNode {
             for gridX in posX-1...posX+1 {
                 /* Make sure inside the grid */
                 if gridX >= 0 && gridX <= self.columns-1 {
-                    /* Remove hero position */
-                    if gridX != posX {
-                        squareArray[gridX][posY].isHidden = false
-                    }
+                    squareBlueArray[gridX][posY].isHidden = false
                 }
             }
             for gridY in posY-1...posY+1 {
                 /* Make sure inside the grid */
                 if gridY >= 0 && gridY <= self.columns-1 {
-                    /* Remove hero position */
-                    if gridY != posY {
-                        squareArray[posX][gridY].isHidden = false
-                    }
+                    squareBlueArray[posX][gridY].isHidden = false
                 }
             }
         case 2:
             for gridX in posX-2...posX+2 {
                 /* Make sure inside the grid */
                 if gridX >= 0 && gridX <= self.columns-1 {
-                    /* Remove hero position */
-                    if gridX != posX {
-                        squareArray[gridX][posY].isHidden = false
-                    }
+                    squareBlueArray[gridX][posY].isHidden = false
                 }
             }
             for gridY in posY-2...posY+2 {
                 /* Make sure inside the grid */
                 if gridY >= 0 && gridY <= self.columns-1 {
-                    /* Remove hero position */
-                    if gridY != posY {
-                        squareArray[posX][gridY].isHidden = false
-                    }
+                    squareBlueArray[posX][gridY].isHidden = false
                 }
             }
             for gridX in posX-1...posX+1 {
@@ -351,10 +418,31 @@ class Grid: SKSpriteNode {
                     for gridY in posY-1...posY+1 {
                         /* Make sure within grid */
                         if gridY >= 0 && gridY <= self.rows-1 {
-                            /* Remove hero position */
-                            if gridX != posX && gridY != posY {
-                                squareArray[gridX][gridY].isHidden = false
-                            }
+                            squareBlueArray[gridX][gridY].isHidden = false
+                        }
+                    }
+                }
+            }
+        case 3:
+            for gridX in posX-3...posX+3 {
+                /* Make sure inside the grid */
+                if gridX >= 0 && gridX <= self.columns-1 {
+                    squareBlueArray[gridX][posY].isHidden = false
+                }
+            }
+            for gridY in posY-3...posY+3 {
+                /* Make sure inside the grid */
+                if gridY >= 0 && gridY <= self.columns-1 {
+                    squareBlueArray[posX][gridY].isHidden = false
+                }
+            }
+            for gridX in posX-2...posX+2 {
+                /* Make sure within grid */
+                if gridX >= 0 && gridX <= self.columns-1 {
+                    for gridY in posY-2...posY+2 {
+                        /* Make sure within grid */
+                        if gridY >= 0 && gridY <= self.rows-1 {
+                            squareBlueArray[gridX][gridY].isHidden = false
                         }
                     }
                 }
@@ -365,129 +453,138 @@ class Grid: SKSpriteNode {
     }
     
     /* Show attack area */
-    func showAttackArea() {
-        /* Reset squareArray */
-        self.resetSquareArray()
-        
-        /* Reset attackAreaPos */
-        self.attackAreaPos.removeAll()
-        
-        /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-        
-        switch gameScene.hero.direction {
-        case .front:
-            if gameScene.hero.positionY-1 >= 0 {
-                self.squareArray[gameScene.hero.positionX][gameScene.hero.positionY-1].isHidden = false
-                self.attackAreaPos.append([gameScene.hero.positionX, gameScene.hero.positionY-1])
+    func showAttackArea(posX: Int, posY: Int, attackType: Int) {
+        /* Show up red square according to move level */
+        switch attackType {
+        case 0:
+            for gridX in posX-1...posX+1 {
+                /* Make sure inside the grid */
+                if gridX >= 0 && gridX <= self.columns-1 {
+                    /* Remove hero position */
+                    if gridX != posX {
+                        squareRedArray[gridX][posY].isHidden = false
+                    }
+                }
             }
-            
-        case .back:
-            if gameScene.hero.positionY+1 <= self.rows-1 {
-                self.squareArray[gameScene.hero.positionX][gameScene.hero.positionY+1].isHidden = false
-                self.attackAreaPos.append([gameScene.hero.positionX, gameScene.hero.positionY+1])
+            for gridY in posY-1...posY+1 {
+                /* Make sure inside the grid */
+                if gridY >= 0 && gridY <= self.columns-1 {
+                    /* Remove hero position */
+                    if gridY != posY {
+                        squareRedArray[posX][gridY].isHidden = false
+                    }
+                }
             }
-        case .left:
-            if gameScene.hero.positionX-1 >= 0 {
-                self.squareArray[gameScene.hero.positionX-1][gameScene.hero.positionY].isHidden = false
-                self.attackAreaPos.append([gameScene.hero.positionX-1, gameScene.hero.positionY])
+        case 1:
+            for gridX in posX-2...posX+2 {
+                /* Make sure inside the grid */
+                if gridX >= 0 && gridX <= self.columns-1 {
+                    /* Remove hero position */
+                    if gridX != posX {
+                        squareRedArray[gridX][posY].isHidden = false
+                    }
+                }
             }
-        case .right:
-            if gameScene.hero.positionX+1 <= self.columns-1 {
-                self.squareArray[gameScene.hero.positionX+1][gameScene.hero.positionY].isHidden = false
-                self.attackAreaPos.append([gameScene.hero.positionX+1, gameScene.hero.positionY])
+            for gridY in posY-2...posY+2 {
+                /* Make sure inside the grid */
+                if gridY >= 0 && gridY <= self.columns-1 {
+                    /* Remove hero position */
+                    if gridY != posY {
+                        squareRedArray[posX][gridY].isHidden = false
+                    }
+                }
             }
-        }
-    }
-    
-    /* Show mine setting area */
-    func showMineSettingArea() {
-        for gridX in 0..<self.columns {
-            for gridY in 1..<self.rows-1 {
-                self.squareArray[gridX][gridY].isHidden = false
-            }
-        }
-    }
-    
-    func showAttackAreaBySwipe(_ diffPos: CGPoint) {
-        /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-        
-        var degree:Int
-        
-        if diffPos.x != 0 {
-            /* horizontal move */
-            let radian = atan(diffPos.y/fabs(diffPos.x)) // calculate radian by arctan
-            degree = Int(radian * CGFloat(180 * M_1_PI)) // convert radian to degree
-        } else {
-            /* just touch */
-            if diffPos.y == 0 {
-                degree = 1000
-            } else {
-                /* vertical move */
-                degree = diffPos.y < 0 ? -90:90;
-            }
-        }
-        
-        switch degree {
-        case -90 ..< -45:
-            gameScene.hero.direction = .front
-            gameScene.hero.setTexture()
-            showAttackArea()
-        case -45 ..< 45:
-            if diffPos.x >= 0 {
-                gameScene.hero.direction = .right
-                gameScene.hero.setTexture()
-                showAttackArea()
-            } else {
-                gameScene.hero.direction = .left
-                gameScene.hero.setTexture()
-                showAttackArea()
-            }
-        case 45 ... 90:
-            gameScene.hero.direction = .back
-            gameScene.hero.setTexture()
-            showAttackArea()
         default:
             break;
         }
         
     }
     
-    /* Reset squareArray */
-    func resetSquareArray() {
-        for x in 0..<columns {
-            /* Loop through rows */
-            for y in 0..<rows {
-                squareArray[x][y].isHidden = true
+    /* Show mine setting area */
+    func showMineSettingArea() {
+        for gridX in 0..<self.columns {
+            for gridY in 1..<self.rows-1 {
+                self.squareGreenArray[gridX][gridY].isHidden = false
             }
         }
+    }
+    
+    /* Reset squareArray */
+    func resetSquareArray(color: String) {
+        switch color {
+        case "red":
+            for x in 0..<columns {
+                /* Loop through rows */
+                for y in 0..<rows {
+                    squareRedArray[x][y].isHidden = true
+                }
+            }
+        case "blue":
+            for x in 0..<columns {
+                /* Loop through rows */
+                for y in 0..<rows {
+                    squareBlueArray[x][y].isHidden = true
+                }
+            }
+        case "green":
+            for x in 0..<columns {
+                /* Loop through rows */
+                for y in 0..<rows {
+                    squareGreenArray[x][y].isHidden = true
+                }
+            }
+        default:
+            break;
+        }
+        
     }
     
     func coverGrid() {
         /* Populate the grid with creatures */
         
+        /* Red square */
         /* Loop through columns */
         for gridX in 0..<columns {
-            
             /* Initialize empty column */
-            squareArray.append([])
-            
+            squareRedArray.append([])
             /* Loop through rows */
             for gridY in 0..<rows {
-                
                 /* Createa new creature at row / column position */
-                addSquareAtGrid(x:gridX, y:gridY)
+                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.red)
+            }
+        }
+        
+        /* Blue square */
+        /* Loop through columns */
+        for gridX in 0..<columns {
+            /* Initialize empty column */
+            squareBlueArray.append([])
+            /* Loop through rows */
+            for gridY in 0..<rows {
+                /* Createa new creature at row / column position */
+                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.blue)
+            }
+        }
+        
+        /* Green square */
+        /* Loop through columns */
+        for gridX in 0..<columns {
+            /* Initialize empty column */
+            squareGreenArray.append([])
+            /* Loop through rows */
+            for gridY in 0..<rows {
+                /* Createa new creature at row / column position */
+                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.green)
             }
         }
     }
     
-    func addSquareAtGrid(x: Int, y: Int) {
+    func addSquareAtGrid(x: Int, y: Int, color: UIColor) {
         /* Add a new creature at grid position*/
         
         /* Create square */
         let square = SKShapeNode(rectOf: CGSize(width: self.cellWidth, height: cellHeight))
-        square.fillColor = UIColor.red
+        square.fillColor = color
         square.alpha = 0.5
         square.zPosition = 100
         square.name = "activeArea"
@@ -503,7 +600,16 @@ class Grid: SKSpriteNode {
         addChild(square)
         
         /* Add creature to grid array */
-        squareArray[x].append(square)
+        switch color {
+        case UIColor.red:
+            squareRedArray[x].append(square)
+        case UIColor.blue:
+            squareBlueArray[x].append(square)
+        case UIColor.green:
+            squareGreenArray[x].append(square)
+        default:
+            break;
+        }
     }
 
     
