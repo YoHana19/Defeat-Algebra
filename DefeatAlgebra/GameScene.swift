@@ -51,6 +51,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var valueOfX: SKLabelNode!
     var gameOverLabel: SKNode!
     var clearLabel: SKNode!
+    var levelLabel: SKLabelNode!
     
     /* Game buttons */
     var buttonAttack: MSButtonNode!
@@ -71,17 +72,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameState: GameSceneState = .AddEnemy
     var playerTurnState: PlayerTurnState = .ItemOn
     var itemType: ItemType = .None
-    var gameLevel: Int = 0
     var stageLevel: Int = 0
     var attackType: Int = 0
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 0
     
     /* Resource of variable expression */
-    let variableExpressionSource = [[[1, 0]],
+    let variableExpressionSource = [
+                                    [[1, 0]],
                                     [[1, 0], [1, 1], [1, 2]],
                                     [[1,0],[1,1],[1,2],[1,3],[1,4],[2,0],[2,1],[2,2]]
-                                    ]
+                                   ]
     
     /* Game flags */
     var addEnemyDoneFlag = false
@@ -101,9 +102,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Add enemy */
     var initialEnemyPosArray = [[Int]]()
-    var numOfAddEnemy = 3
+    /* [0: number of adding enemy, 1: inteval of adding enemy, 2: number of times of adding enemy] */
+    var addEnemyManagement = [
+                              [0, 0, 0],
+                              [4, 4, 1]
+                             ]
+    var numOfAddEnemy: Int = 0
     var countTurnForAddEnemy: Int = 0
-    var addInterval: Int = 10 /* Add enemy after enemy move 10 times */
+    var addInterval: Int = 0
+    var countTurnForCompAddEnemy: Int = 0
+    var numOfTimeAddEnemy: Int = 0
+    var CompAddEnemyFlag = false
     
     /* Flash grid */
     var countTurnForFlashGrid: Int = 0
@@ -134,6 +143,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOverLabel.isHidden = true
         clearLabel = childNode(withName: "clearLabel")
         clearLabel.isHidden = true
+        levelLabel = childNode(withName: "levelLabel") as! SKLabelNode
         
         /* Connect game buttons */
         buttonAttack = childNode(withName: "buttonAttack") as! MSButtonNode
@@ -210,18 +220,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ud.set(self.stageLevel, forKey: "stageLevel")
             /* Hero */
             self.moveLevelArray = []
-            for hero in self.heroArray {
+            for (i, hero) in self.heroArray.enumerated() {
                 self.moveLevelArray.append(hero.moveLevel)
-            }
-            ud.set(self.moveLevelArray, forKey: "moveLevelArray")
-            /* Items */
-            var itemIndexArray = [Int]()
-            for item in self.itemArray {
-                if item.name == "mine" {
-                    itemIndexArray.append(0)
+                if i == self.heroArray.count-1 {
+                    ud.set(self.moveLevelArray, forKey: "moveLevelArray")
                 }
             }
-            ud.set(itemIndexArray, forKey: "itemIndexArray")
+            /* Items */
+            var itemIndexArray = [Int]()
+            for (i, item) in self.itemArray.enumerated() {
+                /* mine */
+                if item.name == "mineIcon" {
+                    itemIndexArray.append(0)
+                }
+                if i == self.itemArray.count-1 {
+                    ud.set(itemIndexArray, forKey: "itemIndexArray")
+                }
+            }
             
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
@@ -250,6 +265,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Hero */
             self.moveLevelArray = [1]
             ud.set(self.moveLevelArray, forKey: "moveLevelArray")
+            /* item */
+            let itemIndexArray = [Int]()
+            ud.set(itemIndexArray, forKey: "itemIndexArray")
             
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
@@ -269,10 +287,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Pick game property from user data and set */
         let ud = UserDefaults.standard
         /* stageLevel */
+        /* For first time to install */
         stageLevel = ud.integer(forKey: "stageLevel")
+        levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
-        moveLevelArray = [4]
         /* Set hero */
         setHero()
         /* Items */
@@ -283,6 +302,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 displayitem(name: "mineIcon")
             }
         }
+       
+        
+//        /* For testing: initialize userDefaults */
+//        /* Store game property */
+//        let ud = UserDefaults.standard
+//        /* Stage level */
+//        ud.set(1, forKey: "stageLevel")
+//        /* Hero */
+//        ud.set([1], forKey: "moveLevelArray")
+//        /* item */
+//        ud.set([], forKey: "itemIndexArray")
+        
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
@@ -306,46 +337,94 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set item area */
         setItemAreaCover()
         
+        /* Set each value of adding enemy management */
+        SetAddEnemyMng()
+        
+        /* Check available fonts */
+//        for family in UIFont.familyNames {
+//            print("Font family name: \(family)")
+//            for fontName in UIFont.fontNames(forFamilyName: family) {
+//                print("    > Font name: \(fontName)")
+//            }
+//        }
         
     }
     
     override func update(_ currentTime: TimeInterval) {
         switch gameState {
         case .AddEnemy:
-            /* Make sure to call addEnemy once */
-            if addEnemyDoneFlag == false {
-                addEnemyDoneFlag = true
-                
-                /* Initial add or add on the way */
-                if initialAddEnemyFlag {
-                    initialAddEnemyFlag = false
+//            print("AddEnemy")
+            /* Make sure to call till complete adding enemy */
+            if CompAddEnemyFlag == false {
+                /* Make sure to call addEnemy once */
+                if addEnemyDoneFlag == false {
+                    addEnemyDoneFlag = true
                     
-                    /* Add enemy */
-                    let addEnemy = SKAction.run({ self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, variableExpressionSource: self.variableExpressionSource[self.gameLevel]) })
-                    let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*4+1.0) /* 4 is distance, 1.0 is buffer */
-                    let moveState = SKAction.run({
-                        /* Create enemy startPosArray */
-                        self.gridNode.resetEnemyPositon()
+                    /* Initial add or add on the way */
+                    if initialAddEnemyFlag {
+                        initialAddEnemyFlag = false
+                        
+                        /* Add enemy */
+                        let addEnemy = SKAction.run({ self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, variableExpressionSource: self.variableExpressionSource[self.stageLevel]) })
+                        let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*4+1.0) /* 4 is distance, 1.0 is buffer */
+                        let moveState = SKAction.run({
+                            /* Create enemy startPosArray */
+                            self.gridNode.resetEnemyPositon()
+                            
+                            /* Move to next state */
+                            self.gameState = .GridFlashing
+                        
+                            /* On flag if complete adding enemy */
+                            if self.countTurnForCompAddEnemy == self.numOfTimeAddEnemy {
+                                self.CompAddEnemyFlag = true
+                            }
+                        })
+                        let seq = SKAction.sequence([addEnemy, wait, moveState])
+                        self.run(seq)
+                        
+                        
+                        /* The time to add enemy */
+                    } else if countTurnForAddEnemy == addInterval {
+                        /* Add enemy */
+                        let addEnemy = SKAction.run({ self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSource[self.stageLevel]) })
+                        let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
+                        let moveState = SKAction.run({
+                            /* Update enemy position */
+                            self.gridNode.resetEnemyPositon()
+                            self.gridNode.updateEnemyPositon()
+                            print(self.gridNode.positionEnemyAtGrid)
+                            
+                            /* Count up to complete adding enemy */
+                            self.countTurnForCompAddEnemy += 1
+                            
+                            /* On flag if complete adding enemy */
+                            if self.countTurnForCompAddEnemy == self.numOfTimeAddEnemy {
+                                self.CompAddEnemyFlag = true
+                            }
+                            
+                            /* Move to next state */
+                            self.gameState = .GridFlashing
+                        })
+                        let seq = SKAction.sequence([addEnemy, wait, moveState])
+                        self.run(seq)
+                        
+                        /* Reset countTurnForAddEnemy */
+                        countTurnForAddEnemy = 0
+                        
+                    } else {
+                        /* Count up to adding enemy time */
+                        countTurnForAddEnemy += 1
+                        /* Move to next state */
                         self.gameState = .GridFlashing
-                    })
-                    let seq = SKAction.sequence([addEnemy, wait, moveState])
-                    self.run(seq)
-                    
-                } else {
-                    /* Add enemy */
-                    let addEnemy = SKAction.run({ self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSource[self.gameLevel]) })
-                    let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
-                    let moveState = SKAction.run({
-                        /* Create enemy startPosArray */
-                        self.gridNode.resetEnemyPositon()
-                        self.gameState = .GridFlashing
-                    })
-                    let seq = SKAction.sequence([addEnemy, wait, moveState])
-                    self.run(seq)
+                    }
                 }
+            } else {
+                /* Move to next state */
+                self.gameState = .GridFlashing
             }
             break;
         case .PlayerTurn:
+//            print("PlayerTurn")
             /* Check if all enemies are defeated or not */
             if totalNumOfEnemy <= 0 {
                 gameState = .StageClear
@@ -423,8 +502,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Remove used items from itemArray */
                 print("Item index array is \(usedItemIndexArray)")
+                self.usedItemIndexArray.sort { $0 < $1 }
                 for (i, index) in usedItemIndexArray.enumerated() {
-                    itemArray.remove(at: index)
+                    itemArray.remove(at: index-i)
                     print("Remove item index of \(index)")
                     if i == usedItemIndexArray.count-1 {
                         print("Item array is \(itemArray)")
@@ -457,6 +537,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .EnemyTurn:
+//            print("EnemyTurn")
             /* Reset Flags */
             addEnemyDoneFlag = false
             playerTurnDoneFlag = false
@@ -509,11 +590,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
 //                gameState = .PlayerTurn
-                gameState = .GridFlashing
+                gameState = .AddEnemy
                 playerTurnState = .ItemOn
             }
             break;
         case .GridFlashing:
+//            print("GridFlashing")
             /* Make sure to call once */
             if flashGridDoneFlag == false {
                 flashGridDoneFlag = true
@@ -624,13 +706,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 /* Get mine */
                 } else if contactA.categoryBitMask == 64 || contactB.categoryBitMask == 64 {
-                        if contactA.categoryBitMask == 64 {
-                            contactA.node?.removeFromParent()
-                            displayitem(name: "mineIcon")
-                        } else if contactB.categoryBitMask == 64 {
-                            contactB.node?.removeFromParent()
-                            displayitem(name: "mineIcon")
-                        }
+                    if contactA.categoryBitMask == 64 {
+                        contactA.node?.removeFromParent()
+                        displayitem(name: "mineIcon")
+                    } else if contactB.categoryBitMask == 64 {
+                        contactB.node?.removeFromParent()
+                        displayitem(name: "mineIcon")
+                    }
+                /* Get heart */
+                } else if contactA.categoryBitMask == 128 || contactB.categoryBitMask == 128 {
+                    if contactA.categoryBitMask == 128 {
+                        contactA.node?.removeFromParent()
+                        life += 1
+                    } else if contactB.categoryBitMask == 128 {
+                        contactB.node?.removeFromParent()
+                        life += 1
+                    }
                 }
             } else if self.gameState == .EnemyTurn {
                 if contactA.categoryBitMask == 1 {
@@ -773,11 +864,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func setInitialObj(level: Int) {
         switch level {
         case 0:
-            /* Set total number of enemy */
-            totalNumOfEnemy = 5
-            
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
+            
+            /* Set total number of enemy */
+            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
             /* Set boots */
             let boots = Boots()
@@ -791,19 +882,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let mine2 = Mine()
             self.gridNode.addObjectAtGrid(object: mine2, x: 1, y: 5)
         case 1:
-            /* Set total number of enemy */
-            totalNumOfEnemy = 7
-            
             /* Set enemy */
-            initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 10], [4, 10], [6, 10]]
+            initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 9], [4, 9], [6, 9]]
+            
+            /* Set total number of enemy */
+            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
             /* Set boots */
             let boots = Boots()
             self.gridNode.addObjectAtGrid(object: boots, x: 7, y: 6)
             let boots2 = Boots()
             self.gridNode.addObjectAtGrid(object: boots2, x: 1, y: 6)
-            let boots3 = Boots()
-            self.gridNode.addObjectAtGrid(object: boots3, x: 2, y: 0)
             
             /* Set mine */
             let mine = Mine()
@@ -815,12 +904,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let mine4 = Mine()
             self.gridNode.addObjectAtGrid(object: mine4, x: 1, y: 9)
             let mine5 = Mine()
-            self.gridNode.addObjectAtGrid(object: mine5, x: 4, y: 6)
+            self.gridNode.addObjectAtGrid(object: mine5, x: 6, y: 0)
             let mine6 = Mine()
-            self.gridNode.addObjectAtGrid(object: mine6, x: 6, y: 0)
+            self.gridNode.addObjectAtGrid(object: mine6, x: 2, y: 0)
+            
+            /* Set heart */
+            let heart = Heart()
+            self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
         default:
             break;
         }
+    }
+    
+    /* Set each value of adding enemy management */
+    func SetAddEnemyMng() {
+        numOfAddEnemy = addEnemyManagement[stageLevel][0]
+        addInterval = addEnemyManagement[stageLevel][1]
+        numOfTimeAddEnemy = addEnemyManagement[stageLevel][2]
     }
     
         

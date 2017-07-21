@@ -180,7 +180,7 @@ class Enemy: SKSpriteNode {
         let triangle = SKShapeNode(points: &points, count: points.count)
         
         /* Set triangle position */
-        triangle.position = CGPoint(x: 0, y: 40)
+        triangle.position = CGPoint(x: 0, y: 35)
         triangle.zPosition = 4
         
         
@@ -192,19 +192,27 @@ class Enemy: SKSpriteNode {
     
     func setVariableExpressionLabel(text: String) {
         /* Set label with font */
-        let label = SKLabelNode(fontNamed: "BiauKai")
+        let label = SKLabelNode(fontNamed: "GillSans-Bold")
         
         /* Set text */
         label.text = text
         
+        /* Set name */
+        label.name = "variableExpressionLabel"
+        
+        /* Enphasize it if enemy will punch next turn */
+        if self.punchIntervalForCount == 0 {
+            label.fontColor = UIColor.red
+        }
+        
         /* Set font size */
-        label.fontSize = 20
+        label.fontSize = 35
         
         /* Set zPosition */
         label.zPosition = 5
         
         /* Set position */
-        label.position = CGPoint(x:0, y: 60)
+        label.position = CGPoint(x:0, y: 50)
         
         /* Add to Scene */
         self.addChild(label)
@@ -212,7 +220,7 @@ class Enemy: SKSpriteNode {
     
     func setPunchIntervalLabel() {
         /* Set label with font */
-        let label = SKLabelNode(fontNamed: "BiauKai")
+        let label = SKLabelNode(fontNamed: "GillSans-Bold")
         
         /* Set name */
         label.name = "punchInterval"
@@ -220,8 +228,16 @@ class Enemy: SKSpriteNode {
         /* Set text */
         label.text = String(self.punchIntervalForCount)
         
+        /* Enphasize it if enemy will punch next turn */
+        if self.punchIntervalForCount == 0 {
+            label.fontColor = UIColor.red
+            if let label = self.childNode(withName: "variableExpressionLabel") as? SKLabelNode {
+                label.fontColor = UIColor.red
+            }
+        }
+        
         /* Set font size */
-        label.fontSize = 25
+        label.fontSize = 30
         
         /* Set zPosition */
         label.zPosition = 5
@@ -648,6 +664,9 @@ class Enemy: SKSpriteNode {
             
             /* Set variable expression */
             let setVariableExpression = SKAction.run({
+                /* Reset count down punchInterval */
+                self.punchIntervalForCount = self.punchInterval
+                /* Create variable expression */
                 self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
             })
@@ -666,9 +685,6 @@ class Enemy: SKSpriteNode {
                 
                 /* To check all enemy turn done */
                 gridNode.numOfTurnEndEnemy += 1
-                
-                /* Reset count down punchInterval */
-                self.punchIntervalForCount = self.punchInterval
                 
                 /* Display left trun till punch */
                 self.setPunchIntervalLabel()

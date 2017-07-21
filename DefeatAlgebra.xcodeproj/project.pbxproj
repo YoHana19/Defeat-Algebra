@@ -15,6 +15,7 @@
 		201CF02E1F134157001346C7 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF02D1F134156001346C7 /* Hero.swift */; };
 		201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF02F1F13E490001346C7 /* EnemyArm.swift */; };
 		201CF0321F140653001346C7 /* EnemyFist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0311F140653001346C7 /* EnemyFist.swift */; };
+		201EB7881F22AC77008A7AFC /* Heart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201EB7871F22AC77008A7AFC /* Heart.swift */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D881F074FE800F4DD11 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D871F074FE800F4DD11 /* Actions.sks */; };
 		204C7D8A1F074FE800F4DD11 /* GameScene1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D891F074FE800F4DD11 /* GameScene1.swift */; };
@@ -25,7 +26,6 @@
 		20B113ED1F19CB8E00CD5B4E /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20B113EC1F19CB8E00CD5B4E /* GameScene.sks */; };
 		20C22F3F1F16C56300FFF90B /* Boots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F3E1F16C56300FFF90B /* Boots.swift */; };
 		20C22F411F16E22400FFF90B /* Mine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F401F16E22400FFF90B /* Mine.swift */; };
-		20C22F431F17F0F200FFF90B /* MineToGet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F421F17F0F200FFF90B /* MineToGet.swift */; };
 		20C22F451F19290500FFF90B /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F441F19290500FFF90B /* GameScene.swift */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +38,7 @@
 		201CF02D1F134156001346C7 /* Hero.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hero.swift; sourceTree = "<group>"; };
 		201CF02F1F13E490001346C7 /* EnemyArm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyArm.swift; sourceTree = "<group>"; };
 		201CF0311F140653001346C7 /* EnemyFist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyFist.swift; sourceTree = "<group>"; };
+		201EB7871F22AC77008A7AFC /* Heart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heart.swift; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D871F074FE800F4DD11 /* Actions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Actions.sks; sourceTree = "<group>"; };
@@ -50,7 +51,6 @@
 		20B113EC1F19CB8E00CD5B4E /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		20C22F3E1F16C56300FFF90B /* Boots.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Boots.swift; sourceTree = "<group>"; };
 		20C22F401F16E22400FFF90B /* Mine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mine.swift; sourceTree = "<group>"; };
-		20C22F421F17F0F200FFF90B /* MineToGet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MineToGet.swift; sourceTree = "<group>"; };
 		20C22F441F19290500FFF90B /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -93,8 +93,8 @@
 				2019C3821F0B5A91003C7609 /* Grid.swift */,
 				201CF02D1F134156001346C7 /* Hero.swift */,
 				20C22F3E1F16C56300FFF90B /* Boots.swift */,
-				20C22F421F17F0F200FFF90B /* MineToGet.swift */,
 				20C22F401F16E22400FFF90B /* Mine.swift */,
+				201EB7871F22AC77008A7AFC /* Heart.swift */,
 				2019C3801F0B5A85003C7609 /* Enemy.swift */,
 				201CF02F1F13E490001346C7 /* EnemyArm.swift */,
 				201CF0311F140653001346C7 /* EnemyFist.swift */,
@@ -189,7 +189,6 @@
 				2019C3811F0B5A85003C7609 /* Enemy.swift in Sources */,
 				20C22F3F1F16C56300FFF90B /* Boots.swift in Sources */,
 				201CF0321F140653001346C7 /* EnemyFist.swift in Sources */,
-				20C22F431F17F0F200FFF90B /* MineToGet.swift in Sources */,
 				204C7D8A1F074FE800F4DD11 /* GameScene1.swift in Sources */,
 				204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */,
 				201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */,
@@ -198,6 +197,7 @@
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				20C22F411F16E22400FFF90B /* Mine.swift in Sources */,
 				201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */,
+				201EB7881F22AC77008A7AFC /* Heart.swift in Sources */,
 				20C22F451F19290500FFF90B /* GameScene.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

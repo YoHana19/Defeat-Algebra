@@ -194,6 +194,7 @@ class Grid: SKSpriteNode {
  
                     /* Set mine at the location you touch */
                     let mine = Mine()
+                    mine.physicsBody = nil
                     self.mineSetArray.append(mine)
                     self.addObjectAtGrid(object: mine, x: gridX, y: gridY)
                     
@@ -318,6 +319,7 @@ class Grid: SKSpriteNode {
             
             /* Keep track enemy position */
             enemy.positionX = startPosition
+            enemy.positionY = 11
             
             /* Calculate gap between top of grid and gameScene */
             let gridPosition = CGPoint(x: (startPosition)*cellWidth+cellWidth/2, y: Int(gameScene.topGap+self.size.height))
@@ -361,24 +363,6 @@ class Grid: SKSpriteNode {
         self.run(seq)
         
         return numOfFlash
-    }
-    
-    /* add mine to get at grid */
-    func addMineToGet(_ total: Int) {
-        
-        for _ in 1...total {
-            /* Create game console object */
-            let mine = MineToGet()
-            
-            /* Set position at grid randomly */
-            let posX = Int(arc4random_uniform(10)+1)
-            let posY = Int(arc4random_uniform(10)+1)
-            let position = CGPoint(x: CGFloat(posX*self.cellWidth+self.cellWidth/2), y: CGFloat(posY*self.cellHeight+self.cellHeight/2))
-            mine.position = position
-            
-            /* Add gameConsole as child */
-            self.addChild(mine)
-        }
     }
     
     /* Add a new object at grid position*/
@@ -542,7 +526,7 @@ class Grid: SKSpriteNode {
             }
             for gridY in posY-1...posY+1 {
                 /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.columns-1 {
+                if gridY >= 0 && gridY <= self.rows-1 {
                     /* Remove hero position */
                     if gridY != posY {
                         squareRedArray[posX][gridY].isHidden = false
@@ -561,7 +545,7 @@ class Grid: SKSpriteNode {
             }
             for gridY in posY-2...posY+2 {
                 /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.columns-1 {
+                if gridY >= 0 && gridY <= self.rows-1 {
                     /* Remove hero position */
                     if gridY != posY {
                         squareRedArray[posX][gridY].isHidden = false

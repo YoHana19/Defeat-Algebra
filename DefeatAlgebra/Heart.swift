@@ -9,18 +9,18 @@
 import Foundation
 import SpriteKit
 
-class MineToGet: SKSpriteNode {
+class Heart: SKSpriteNode {
     
     init() {
-        /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "mine")
-        let bodySize = CGSize(width: 40, height: 40)
+        /* Initialize with 'mine' asset */
+        let texture = SKTexture(imageNamed: "heart")
+        let bodySize = CGSize(width: 60, height: 60)
         super.init(texture: texture, color: UIColor.clear, size: bodySize)
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 1
+        zPosition = 2
         
-        /* Set anchor point to bottom-left */
+        /* Set anchor point to center */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         // Set physics properties
@@ -29,6 +29,7 @@ class MineToGet: SKSpriteNode {
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 1
         
+        /* For detect what object to tougch */
         setName()
     }
     
@@ -38,6 +39,6 @@ class MineToGet: SKSpriteNode {
     }
     
     func setName() {
-        self.name = "mineToGet"
+        self.name = "heart"
     }
 }
