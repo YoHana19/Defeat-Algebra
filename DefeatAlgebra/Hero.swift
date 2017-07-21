@@ -21,6 +21,7 @@ class Hero: SKSpriteNode {
     var heroMoveAnimation: SKAction!
     var moveLevel: Int = 1
     var attackDoneFlag = false
+    var moveDoneFlag = false
     
     
     /* position at grid */

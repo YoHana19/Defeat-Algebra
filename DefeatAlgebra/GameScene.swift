@@ -14,7 +14,7 @@
  8: EnemyArm
  16: EnemyFist
  32: Boots
- 64: Mine
+ 64: Mine:0
  128:
  1024:
 */
@@ -23,7 +23,7 @@ import SpriteKit
 import GameplayKit
 
 enum GameSceneState {
-    case AddEnemy, PlayerTurn, EnemyTurn, GridFlashing, GameOver
+    case AddEnemy, PlayerTurn, EnemyTurn, GridFlashing, StageClear, GameOver
 }
 
 enum Direction: Int {
@@ -31,11 +31,11 @@ enum Direction: Int {
 }
 
 enum PlayerTurnState {
-    case ItemOn, SelectAction, SelectDirection, UsingItem, TurnEnd
+    case ItemOn, MoveState, AttackState, UsingItem, TurnEnd
 }
 
 enum ItemType {
-    case Mine
+    case None, Mine
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -45,15 +45,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var hero: Hero!
     var activeHero = Hero()
     var castleNode: SKSpriteNode!
+    var itemAreaNode: SKSpriteNode!
     
     /* Game labels */
     var valueOfX: SKLabelNode!
     var gameOverLabel: SKNode!
+    var clearLabel: SKNode!
     
     /* Game buttons */
     var buttonAttack: MSButtonNode!
     var buttonItem: MSButtonNode!
     var buttonRetry: MSButtonNode!
+    var buttonNextLevel: MSButtonNode!
+    var buttonToL1: MSButtonNode!
     
     /* Distance of objects in Scene */
     var topGap: CGFloat = 0.0  /* the length between top of scene and grid */
@@ -66,10 +70,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Game Management */
     var gameState: GameSceneState = .AddEnemy
     var playerTurnState: PlayerTurnState = .ItemOn
-    var itemType: ItemType = .Mine
+    var itemType: ItemType = .None
     var gameLevel: Int = 0
     var stageLevel: Int = 0
     var attackType: Int = 0
+    var moveLevelArray: [Int] = [1]
+    var totalNumOfEnemy: Int = 0
     
     /* Resource of variable expression */
     let variableExpressionSource = [[[1, 0]],
@@ -106,6 +112,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Items */
     var itemArray = [SKSpriteNode]()
     var usingItemIndex = 0
+    var usedItemIndexArray = [Int]()
+    var itemAreaCover: SKShapeNode!
     
     /* Castle life */
     var lifeLabel: SKLabelNode!
@@ -119,25 +127,58 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Connect scene objects */
         gridNode = childNode(withName: "gridNode") as! Grid
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
+        itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
+        
+        /* Labels */
+        gameOverLabel = childNode(withName: "gameOverLabel")
+        gameOverLabel.isHidden = true
+        clearLabel = childNode(withName: "clearLabel")
+        clearLabel.isHidden = true
         
         /* Connect game buttons */
         buttonAttack = childNode(withName: "buttonAttack") as! MSButtonNode
         buttonItem = childNode(withName: "buttonItem") as! MSButtonNode
         buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
+        buttonNextLevel = childNode(withName: "buttonNextLevel") as! MSButtonNode
+        buttonToL1 = childNode(withName: "buttonToL1") as! MSButtonNode
         buttonAttack.state = .msButtonNodeStateHidden
         buttonItem.state = .msButtonNodeStateHidden
         buttonRetry.state = .msButtonNodeStateHidden
+        buttonNextLevel.state = .msButtonNodeStateHidden
+        buttonToL1.state = .msButtonNodeStateHidden
         
         /* Attack button */
         buttonAttack.selectedHandler = {
             if self.activeHero.attackDoneFlag {
                 return
             } else {
+                /* Reset item type */
+                self.itemType = .None
+                
+                /* Reset active area */
                 self.gridNode.resetSquareArray(color: "blue")
+                self.gridNode.resetSquareArray(color: "green")
+                
+                /* Set item area cover */
+                self.itemAreaCover.isHidden = false
+                
                 self.activeHero.heroState = .Attack
                 self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.attackType)
-                self.playerTurnState = .SelectDirection
+                self.playerTurnState = .AttackState
             }
+        }
+        
+        /* Item button */
+        buttonItem.selectedHandler = {
+            /* Reset active area */
+            self.gridNode.resetSquareArray(color: "red")
+            self.gridNode.resetSquareArray(color: "blue")
+            
+            /* Remove item area cover */
+            self.itemAreaCover.isHidden = true
+            
+            /* Change state to UsingItem */
+            self.playerTurnState = .UsingItem
         }
         
         /* Retry button */
@@ -158,9 +199,90 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
-        /* Game Over label */
-        gameOverLabel = childNode(withName: "gameOverLabel")
-        gameOverLabel.isHidden = true
+        /* Next Level button */
+        buttonNextLevel.selectedHandler = {
+            /* To next stage level */
+            self.stageLevel += 1
+            
+            /* Store game property */
+            let ud = UserDefaults.standard
+            /* Stage level */
+            ud.set(self.stageLevel, forKey: "stageLevel")
+            /* Hero */
+            self.moveLevelArray = []
+            for hero in self.heroArray {
+                self.moveLevelArray.append(hero.moveLevel)
+            }
+            ud.set(self.moveLevelArray, forKey: "moveLevelArray")
+            /* Items */
+            var itemIndexArray = [Int]()
+            for item in self.itemArray {
+                if item.name == "mine" {
+                    itemIndexArray.append(0)
+                }
+            }
+            ud.set(itemIndexArray, forKey: "itemIndexArray")
+            
+            /* Grab reference to the SpriteKit view */
+            let skView = self.view as SKView!
+            
+            /* Load Game scene */
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
+                return
+            }
+            
+            /* Ensure correct aspect mode */
+            scene.scaleMode = .aspectFill
+            
+            /* Restart GameScene */
+            skView?.presentScene(scene)
+        }
+        
+        /* Back to Level 1 button */
+        buttonToL1.selectedHandler = {
+            /* To next stage level */
+            self.stageLevel = 0
+            
+            /* Store game property */
+            let ud = UserDefaults.standard
+            /* Stage level */
+            ud.set(self.stageLevel, forKey: "stageLevel")
+            /* Hero */
+            self.moveLevelArray = [1]
+            ud.set(self.moveLevelArray, forKey: "moveLevelArray")
+            
+            /* Grab reference to the SpriteKit view */
+            let skView = self.view as SKView!
+            
+            /* Load Game scene */
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
+                return
+            }
+            
+            /* Ensure correct aspect mode */
+            scene.scaleMode = .aspectFill
+            
+            /* Restart GameScene */
+            skView?.presentScene(scene)
+        }
+        
+        /* Pick game property from user data and set */
+        let ud = UserDefaults.standard
+        /* stageLevel */
+        stageLevel = ud.integer(forKey: "stageLevel")
+        /* Hero */
+        moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
+        moveLevelArray = [4]
+        /* Set hero */
+        setHero()
+        /* Items */
+        let handedItemIndexArray = ud.array(forKey: "itemIndexArray") as? [Int] ?? []
+        for itemIndex in handedItemIndexArray {
+            /* Mine */
+            if itemIndex == 0 {
+                displayitem(name: "mineIcon")
+            }
+        }
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
@@ -177,33 +299,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Set no gravity */
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
-            
-        /* Set hero */
-        hero = Hero()
-        heroArray.append(hero)
-        hero.position = CGPoint(x: self.size.width/2, y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*3))
-        addChild(hero)
         
-        /* Set initial enemy position */
-        if stageLevel == 0 {
-            initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
-        } else {
-            initialEnemyPosArray = [[1, 10], [4, 10], [7, 10]]
-        }
+        /* Set initial objects */
+        setInitialObj(level: self.stageLevel)
+        
+        /* Set item area */
+        setItemAreaCover()
         
         
-        /* Set boots */
-        let boots = Boots()
-        self.gridNode.addObjectAtGrid(object: boots, x: 3, y: 3)
-        let boots2 = Boots()
-        self.gridNode.addObjectAtGrid(object: boots2, x: 7, y: 5)
-        
-        /* Set mine */
-        let mine = Mine()
-        self.gridNode.addObjectAtGrid(object: mine, x: 5, y: 3)
-        let mine2 = Mine()
-        self.gridNode.addObjectAtGrid(object: mine2, x: 1, y: 5)
-
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -243,6 +346,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .PlayerTurn:
+            /* Check if all enemies are defeated or not */
+            if totalNumOfEnemy <= 0 {
+                gameState = .StageClear
+            }
+            
             switch playerTurnState {
             case .ItemOn:
                 /* Activate initial hero */
@@ -257,37 +365,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             if enemy.positionX == minePos[0] && enemy.positionY == minePos[1] {
                                 enemy.aliveFlag = false
                                 enemy.removeFromParent()
+                                /* Count defeated enemy */
+                                totalNumOfEnemy -= 1
                             }
                         }
                         if i == self.gridNode.mineSetArray.count-1 {
                             /* Reset mine array */
                             self.gridNode.mineSetPosArray.removeAll()
-                            for mine in self.gridNode.mineSetArray {
+                            for (i, mine) in self.gridNode.mineSetArray.enumerated() {
                                 mine.removeFromParent()
+                                if i == self.gridNode.mineSetArray.count-1 {
+                                    /* Reset itemSet arrays */
+                                    self.gridNode.mineSetArray.removeAll()
+                                }
                             }
                         }
                     }
-                    playerTurnState = .SelectAction
+                    playerTurnState = .MoveState
                 } else {
-                    playerTurnState = .SelectAction
+                    playerTurnState = .MoveState
                 }
                 break;
-            case .SelectAction:
+            case .MoveState:
+                if activeHero.moveDoneFlag == false {
+                    /* Display move area */
+                    self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                }
                 
                 /* Display action buttons */
                 buttonAttack.state = .msButtonNodeStateActive
                 buttonItem.state = .msButtonNodeStateActive
                 
+                /* Wait for player touch to move */
+                
                 break;
-            case .SelectDirection:
-                /* Wait for player touch */
+            case .AttackState:
+                /* Wait for player touch to attack */
                 break;
             case .UsingItem:
                 switch itemType {
+                case .None:
+                    break;
                 case .Mine:
                     self.gridNode.showMineSettingArea()
                     break;
                 }
+                /* Wait for player touch to point position to use item at */
                 break;
             case .TurnEnd:
                 /* Reset Flags */
@@ -295,17 +418,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 enemyTurnDoneFlag = false
                 for hero in heroArray {
                     hero.attackDoneFlag = false
+                    hero.moveDoneFlag = false
                 }
+                
+                /* Remove used items from itemArray */
+                print("Item index array is \(usedItemIndexArray)")
+                for (i, index) in usedItemIndexArray.enumerated() {
+                    itemArray.remove(at: index)
+                    print("Remove item index of \(index)")
+                    if i == usedItemIndexArray.count-1 {
+                        print("Item array is \(itemArray)")
+                        /* Reset position of display item */
+                        self.resetDisplayItem()
+                        /* Reset usedItemIndexArray */
+                        usedItemIndexArray.removeAll()
+                    }
+                }
+                
                 
                 /* Hide action buttons */
                 buttonAttack.state = .msButtonNodeStateHidden
                 buttonItem.state = .msButtonNodeStateHidden
                 
-                /* Reset hero animation to back */
-                hero.resetHero()
+                /* Remove move area */
+                gridNode.resetSquareArray(color: "blue")
                 
-                /* Reset position of display item */
-                self.resetDisplayItem()
+                /* Reset hero animation to back */
+                activeHero.resetHero()
                 
                 /* Remove dead enemy from enemyArray */
                 self.gridNode.enemyArray = self.gridNode.enemyArray.filter({ $0.aliveFlag == true })
@@ -393,56 +532,56 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.run(seq)
             }
             break;
+        case .StageClear:
+            gridNode.resetSquareArray(color: "blue")
+            clearLabel.isHidden = false
+            buttonNextLevel.state = .msButtonNodeStateActive
+            break;
+
         case .GameOver:
             gameOverLabel.isHidden = false
             buttonRetry.state = .msButtonNodeStateActive
+            buttonToL1.state = .msButtonNodeStateActive
             break;
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        /* Get touch point */
+        let touch = touches.first!              // Get the first touch
+        let location = touch.location(in: self) // Find the location of that touch in this view
+        let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if playerTurnState == .SelectAction {
-            
-            let touch = touches.first!              // Get the first touch
-            let location = touch.location(in: self) // Find the location of that touch in this view
-            let nodeAtPoint = atPoint(location)     // Find the node at that location
-            
-            /* Touch hero */
-            if nodeAtPoint.name == "hero" {
-                /* Set hero touched active */
-                activeHero = nodeAtPoint as! Hero
-                activeHero.heroState = .Move
-                self.playerTurnState = .SelectDirection
-                self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
-            
-            /* Select item */
-            /* Use mine */
-            } else if nodeAtPoint.name == "mineIcon" {
-                /* Set mine using state */
-                itemType = .Mine
-                playerTurnState = .UsingItem
-                
-                /* Get index of game using */
-                usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
+        /* Select attack position */
+        if playerTurnState == .AttackState {
+            /* If touch anywhere but activeArea, back to MoveState  */
+            if nodeAtPoint.name != "activeArea" {
+                self.gridNode.resetSquareArray(color: "red")
+                self.activeHero.heroState = .Move
+                self.playerTurnState = .MoveState
             }
             
-        /* If touch another item when selecting a item */
+        /* Use item */
         } else if playerTurnState == .UsingItem {
-            /* Reset active area */
-            self.gridNode.resetSquareArray(color: "blue")
-            
-            let touch = touches.first!              // Get the first touch
-            let location = touch.location(in: self) // Find the location of that touch in this view
-            let nodeAtPoint = atPoint(location)     // Find the node at that location
             /* Use mine */
             if nodeAtPoint.name == "mineIcon" {
                 /* Set mine using state */
                 itemType = .Mine
-                playerTurnState = .UsingItem
                 
                 /* Get index of game using */
                 usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
+                print("Now item index is \(usingItemIndex)")
+            /* If player touch other place than item icons, back to MoveState */
+            } else {
+                playerTurnState = .MoveState
+                /* Set item area cover */
+                itemAreaCover.isHidden = false
+                
+                /* Reset item type */
+                self.itemType = .None
+                
+                /* Remove active area */
+                self.gridNode.resetSquareArray(color: "green")
             }
         }
         
@@ -474,10 +613,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
                     if contactA.categoryBitMask == 32 {
                         contactA.node?.removeFromParent()
-                        self.hero.moveLevel += 1
+                        if activeHero.moveLevel < 4 {
+                            self.activeHero.moveLevel += 1
+                        }
                     } else if contactB.categoryBitMask == 32 {
                         contactB.node?.removeFromParent()
-                        self.hero.moveLevel += 1
+                        if activeHero.moveLevel < 4 {
+                            self.activeHero.moveLevel += 1
+                        }
                     }
                 /* Get mine */
                 } else if contactA.categoryBitMask == 64 || contactB.categoryBitMask == 64 {
@@ -546,153 +689,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
 
-    
-//    func heroActionBySwipe(_ diffPos: CGPoint) {
-//        
-//        var degree:Int
-//        
-//        if diffPos.x != 0 {
-//            /* horizontal move */
-//            let radian = atan(diffPos.y/fabs(diffPos.x)) // calculate radian by arctan
-//            degree = Int(radian * CGFloat(180 * M_1_PI)) // convert radian to degree
-//        } else {
-//            /* just touch */
-//            if diffPos.y == 0 {
-//                degree = 1000
-//            } else {
-//                /* vertical move */
-//                degree = diffPos.y < 0 ? -90:90;
-//            }
-//        }
-//        
-//        switch degree {
-//        case -90 ..< -45:
-//            hero.direction = .front
-//            if hero.heroState == .Move {
-//                self.hero.heroMove()
-//            } else if hero.heroState == .Attack {
-//                /* Hit enemy! */
-//                if self.gridNode.positionEnemyAtGrid[self.hero.positionX][self.hero.positionY-1] {
-//                    let attackAni = SKAction.run({ self.hero.setSwordAnimation() })
-//                    let wait = SKAction.wait(forDuration: 1.0)
-//                    let removeEnemy = SKAction.run({
-//                        /* Look for the enemy to destroy */
-//                        for enemy in self.gridNode.enemyArray {
-//                            if enemy.positionX == self.hero.positionX && enemy.positionY == self.hero.positionY-1 {
-//                                enemy.aliveFlag = false
-//                                enemy.removeFromParent()
-//                            }
-//                        }
-//                    })
-//                    let seq = SKAction.sequence([attackAni, wait, removeEnemy])
-//                    self.run(seq)
-//                /* Miss! */
-//                } else {
-//                    self.hero.setSwordAnimation()
-//                }
-//            }
-//
-//            selectDirectionDone = true
-//            let wait = SKAction.wait(forDuration: 2.0)
-//            let moveState = SKAction.run({ self.playerTurnState = .TurnEnd })
-//            let seq = SKAction.sequence([wait, moveState])
-//            self.run(seq)
-//        case -45 ..< 45:
-//            if diffPos.x >= 0 {
-//                hero.direction = .right
-//                if hero.heroState == .Move {
-//                    self.hero.heroMove()
-//                } else if hero.heroState == .Attack {
-//                    /* Hit enemy! */
-//                    if self.gridNode.positionEnemyAtGrid[self.hero.positionX+1][self.hero.positionY] {
-//                        let attackAni = SKAction.run({ self.hero.setSwordAnimation() })
-//                        let wait = SKAction.wait(forDuration: 1.0)
-//                        let removeEnemy = SKAction.run({
-//                            /* Look for the enemy to destroy */
-//                            for enemy in self.gridNode.enemyArray {
-//                                if enemy.positionX == self.hero.positionX+1 && enemy.positionY == self.hero.positionY {
-//                                    enemy.aliveFlag = false
-//                                    enemy.removeFromParent()
-//                                }
-//                            }
-//                        })
-//                        let seq = SKAction.sequence([attackAni, wait, removeEnemy])
-//                        self.run(seq)
-//                        /* Miss! */
-//                    } else {
-//                        self.hero.setSwordAnimation()
-//                    }
-//                }
-//                
-//            } else {
-//                hero.direction = .left
-//                if hero.heroState == .Move {
-//                    self.hero.heroMove()
-//                } else if hero.heroState == .Attack {
-//                    /* Hit enemy! */
-//                    if self.gridNode.positionEnemyAtGrid[self.hero.positionX-1][self.hero.positionY] {
-//                        let attackAni = SKAction.run({ self.hero.setSwordAnimation() })
-//                        let wait = SKAction.wait(forDuration: 1.0)
-//                        let removeEnemy = SKAction.run({
-//                            /* Look for the enemy to destroy */
-//                            for enemy in self.gridNode.enemyArray {
-//                                if enemy.positionX == self.hero.positionX-1 && enemy.positionY == self.hero.positionY {
-//                                    enemy.aliveFlag = false
-//                                    enemy.removeFromParent()
-//                                }
-//                            }
-//                        })
-//                        let seq = SKAction.sequence([attackAni, wait, removeEnemy])
-//                        self.run(seq)
-//                        /* Miss! */
-//                    } else {
-//                        self.hero.setSwordAnimation()
-//                    }
-//                }
-//            }
-//            selectDirectionDone = true
-//            let wait = SKAction.wait(forDuration: 2.0)
-//            let moveState = SKAction.run({ self.playerTurnState = .TurnEnd })
-//            let seq = SKAction.sequence([wait, moveState])
-//            self.run(seq)
-//        case 45 ... 90:
-//            hero.direction = .back
-//            if hero.heroState == .Move {
-//                self.hero.heroMove()
-//            } else if hero.heroState == .Attack {
-//                /* Hit enemy! */
-//                if self.gridNode.positionEnemyAtGrid[self.hero.positionX][self.hero.positionY+1] {
-//                    let attackAni = SKAction.run({ self.hero.setSwordAnimation() })
-//                    let wait = SKAction.wait(forDuration: 1.0)
-//                    let removeEnemy = SKAction.run({
-//                        /* Look for the enemy to destroy */
-//                        for enemy in self.gridNode.enemyArray {
-//                            if enemy.positionX == self.hero.positionX && enemy.positionY == self.hero.positionY+1 {
-//                                enemy.aliveFlag = false
-//                                enemy.removeFromParent()
-//                            }
-//                        }
-//                    })
-//                    let seq = SKAction.sequence([attackAni, wait, removeEnemy])
-//                    self.run(seq)
-//                    /* Miss! */
-//                } else {
-//                    self.hero.setSwordAnimation()
-//                }
-//            }
-//            selectDirectionDone = true
-//            let wait = SKAction.wait(forDuration: 2.0)
-//            let moveState = SKAction.run({ self.playerTurnState = .TurnEnd })
-//            let seq = SKAction.sequence([wait, moveState])
-//            self.run(seq)
-//        default:
-//            /* Stop movement */
-//            hero.setTexture()
-//            break;
-//        }
-//        
-//    }
-    
     /* Add enemy in fixed interval */
     func addEnemy() {
         /* Time to add enemy */
@@ -748,6 +744,82 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func resetDisplayItem() {
         for (i, item) in itemArray.enumerated() {
             item.position = CGPoint(x: i*90+50, y: 50)
+        }
+    }
+    
+    /* Create object blanketting item area */
+    func setItemAreaCover() {
+        itemAreaCover = SKShapeNode(rectOf: itemAreaNode.size)
+        itemAreaCover.fillColor = UIColor.black
+        itemAreaCover.alpha = 0.6
+        itemAreaCover.position = itemAreaNode.position
+        itemAreaCover.zPosition = 100
+        addChild(itemAreaCover)
+    }
+    
+    /* Set initial hero */
+    func setHero() {
+        for (i, moveLevel) in moveLevelArray.enumerated() {
+            hero = Hero()
+            hero.moveLevel = moveLevel
+            hero.positionY = i+3
+            heroArray.append(hero)
+            hero.position = CGPoint(x: self.size.width/2, y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*(i+3)))
+            addChild(hero)
+        }
+    }
+    
+    /* Set initial objects */
+    func setInitialObj(level: Int) {
+        switch level {
+        case 0:
+            /* Set total number of enemy */
+            totalNumOfEnemy = 5
+            
+            /* Set enemy */
+            initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
+            
+            /* Set boots */
+            let boots = Boots()
+            self.gridNode.addObjectAtGrid(object: boots, x: 3, y: 3)
+            let boots2 = Boots()
+            self.gridNode.addObjectAtGrid(object: boots2, x: 7, y: 5)
+            
+            /* Set mine */
+            let mine = Mine()
+            self.gridNode.addObjectAtGrid(object: mine, x: 5, y: 3)
+            let mine2 = Mine()
+            self.gridNode.addObjectAtGrid(object: mine2, x: 1, y: 5)
+        case 1:
+            /* Set total number of enemy */
+            totalNumOfEnemy = 7
+            
+            /* Set enemy */
+            initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 10], [4, 10], [6, 10]]
+            
+            /* Set boots */
+            let boots = Boots()
+            self.gridNode.addObjectAtGrid(object: boots, x: 7, y: 6)
+            let boots2 = Boots()
+            self.gridNode.addObjectAtGrid(object: boots2, x: 1, y: 6)
+            let boots3 = Boots()
+            self.gridNode.addObjectAtGrid(object: boots3, x: 2, y: 0)
+            
+            /* Set mine */
+            let mine = Mine()
+            self.gridNode.addObjectAtGrid(object: mine, x: 7, y: 3)
+            let mine2 = Mine()
+            self.gridNode.addObjectAtGrid(object: mine2, x: 7, y: 9)
+            let mine3 = Mine()
+            self.gridNode.addObjectAtGrid(object: mine3, x: 1, y: 3)
+            let mine4 = Mine()
+            self.gridNode.addObjectAtGrid(object: mine4, x: 1, y: 9)
+            let mine5 = Mine()
+            self.gridNode.addObjectAtGrid(object: mine5, x: 4, y: 6)
+            let mine6 = Mine()
+            self.gridNode.addObjectAtGrid(object: mine6, x: 6, y: 0)
+        default:
+            break;
         }
     }
     
