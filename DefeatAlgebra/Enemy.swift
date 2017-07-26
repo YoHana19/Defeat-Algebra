@@ -30,6 +30,7 @@ class Enemy: SKSpriteNode {
     var punchInterval: Int!
     var punchIntervalForCount: Int = 0
     var singleTurnDuration: TimeInterval = 1.0
+    var vECategory = 0
     
     /* Enemy variable for punch */
     var valueOfEnemy: Int = 0
@@ -65,7 +66,7 @@ class Enemy: SKSpriteNode {
         setPunchInterval()
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 3
+        zPosition = 7
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -113,18 +114,34 @@ class Enemy: SKSpriteNode {
         
         let rand = arc4random_uniform(UInt32(variableExpressionSource.count))
         variableExpression = variableExpressionSource[Int(rand)]
-        if variableExpression[0] == 1 {
-            if variableExpression[1] == 0 {
-                variableExpressionForLabel = "x"
+        
+        /* Set equivalence ve */
+        vECategory = variableExpression.last!
+        
+        if variableExpression[0] == 0 {
+            if variableExpression[1] == 1 {
+                if variableExpression[2] == 0 {
+                    variableExpressionForLabel = "x"
+                } else {
+                    variableExpressionForLabel = "x+\(variableExpression[2])"
+                }
             } else {
-                variableExpressionForLabel = "x+\(variableExpression[1])"
+                if variableExpression[2] == 0 {
+                    variableExpressionForLabel = "\(variableExpression[1])x"
+                } else {
+                    variableExpressionForLabel = "\(variableExpression[1])x+\(variableExpression[2])"
+                }
             }
-        } else {
-            if variableExpression[1] == 0 {
-                variableExpressionForLabel = "\(variableExpression[0])x"
+        } else if variableExpression[0] == 1 {
+            if variableExpression[1] == 1 {
+                variableExpressionForLabel = "\(variableExpression[2])+x"
             } else {
-                variableExpressionForLabel = "\(variableExpression[0])x+\(variableExpression[1])"
+                variableExpressionForLabel = "\(variableExpression[2])+\(variableExpression[1])x"
             }
+        } else if variableExpression[0] == 2 {
+            variableExpressionForLabel = "\(variableExpression[1])×x"
+        } else if variableExpression[0] == 3 {
+            variableExpressionForLabel = "x×\(variableExpression[1])"
         }
     }
     
@@ -251,7 +268,7 @@ class Enemy: SKSpriteNode {
     
     func calculatePunchLength(value: Int) {
         /* Calculate value of variable expression of enemy */
-        self.valueOfEnemy = value*self.variableExpression[0]+variableExpression[1]
+        self.valueOfEnemy = value*self.variableExpression[1]+variableExpression[2]
         
         /* Calculate length of punch */
         self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
@@ -829,102 +846,12 @@ class Enemy: SKSpriteNode {
         }
     }
     
-    /* Set invisible node to destroy enemy */
-    func setHitPoint(length: CGFloat) {
-
-        switch self.direction {
-        case .front:
-            /* Set body size */
-            let bodySize = CGSize(width: 55, height: 40)
-            
-            /* Set invisible hit point */
-            circle = SKShapeNode(rectOf: bodySize)
-            
-            /* Set position */
-            let actLength = length + 15 /* 10 is adjustment */
-            circle.position = CGPoint(x: 0, y: -actLength)
-            
-            /* Make hit point invisible */
-            circle.fillColor = SKColor.red
-            circle.alpha = CGFloat(0.1)
-            circle.zPosition = 5
-            
-            /* Set physics property */
-            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
-            circle.physicsBody?.categoryBitMask = 64
-            circle.physicsBody?.collisionBitMask = 0
-            circle.physicsBody?.contactTestBitMask = 33
-            self.addChild(circle)
-            
-        case .back:
-            /* Set body size */
-            let bodySize = CGSize(width: 55, height: 40)
-            
-            /* Set invisible hit point */
-            circle = SKShapeNode(rectOf: bodySize)
-            
-            /* Set position */
-            let actLength = length + 15 /* 10 is adjustment */
-            circle.position = CGPoint(x: 0, y: actLength)
-            
-            /* Make hit point invisible */
-            circle.fillColor = SKColor.red
-            circle.alpha = CGFloat(0.1)
-            circle.zPosition = 5
-            
-            /* Set physics property */
-            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
-            circle.physicsBody?.categoryBitMask = 64
-            circle.physicsBody?.collisionBitMask = 0
-            circle.physicsBody?.contactTestBitMask = 33
-            self.addChild(circle)
-            
-        case .left:
-            /* Set body size */
-            let bodySize = CGSize(width: 50, height: 45)
-            
-            /* Set invisible hit point */
-            circle = SKShapeNode(rectOf: bodySize)
-            
-            /* Set position */
-            let actLength = length + 15 /* 10 is adjustment */
-            circle.position = CGPoint(x: -actLength, y: 0)
-            
-            /* Make hit point invisible */
-            circle.fillColor = SKColor.red
-            circle.alpha = CGFloat(0.1)
-            circle.zPosition = 5
-            
-            /* Set physics property */
-            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
-            circle.physicsBody?.categoryBitMask = 64
-            circle.physicsBody?.collisionBitMask = 0
-            circle.physicsBody?.contactTestBitMask = 33
-            self.addChild(circle)
-            
-        case .right:
-            /* Set body size */
-            let bodySize = CGSize(width: 50, height: 45)
-            
-            /* Set invisible hit point */
-            circle = SKShapeNode(rectOf: bodySize)
-            
-            /* Set position */
-            let actLength = length + 15 /* 10 is adjustment */
-            circle.position = CGPoint(x: actLength, y: 0)
-            
-            /* Make hit point invisible */
-            circle.fillColor = SKColor.red
-            circle.alpha = CGFloat(0.1)
-            circle.zPosition = 5
-            
-            /* Set physics property */
-            circle.physicsBody = SKPhysicsBody(rectangleOf: bodySize)
-            circle.physicsBody?.categoryBitMask = 64
-            circle.physicsBody?.collisionBitMask = 0
-            circle.physicsBody?.contactTestBitMask = 33
-            self.addChild(circle)
-            
-        }
+    /* Put color to enemy */
+    func colorizeEnemy() {
+        self.run(SKAction.colorize(with: UIColor.green, colorBlendFactor: 1.0, duration: 0.50))
+    }
+    
+    func resetColorizeEnemy() {
+        self.run(SKAction.colorize(with: UIColor.green, colorBlendFactor: 0, duration: 0.50))
     }
 }

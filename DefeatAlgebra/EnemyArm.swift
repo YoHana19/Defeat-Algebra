@@ -22,7 +22,7 @@ class EnemyArm: SKSpriteNode {
         self.direction = direction
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 3
+        zPosition = 7
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0)

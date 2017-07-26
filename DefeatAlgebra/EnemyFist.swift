@@ -24,7 +24,7 @@ class EnemyFist: SKSpriteNode {
         self.direction = direction
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 4
+        zPosition = 8
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)

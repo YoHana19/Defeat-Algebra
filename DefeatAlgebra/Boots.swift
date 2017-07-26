@@ -24,14 +24,19 @@ class Boots: SKSpriteNode {
         
         // Set physics properties
         physicsBody = SKPhysicsBody(rectangleOf: texture.size())
-        physicsBody?.categoryBitMask = 32
+        physicsBody?.categoryBitMask = 64
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 1
         
+        setName()
     }
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    func setName() {
+        self.name = "boots"
     }
 }

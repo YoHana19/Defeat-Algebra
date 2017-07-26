@@ -13,7 +13,7 @@ class Mine: SKSpriteNode {
     
     init() {
         /* Initialize with 'mine' asset */
-        let texture = SKTexture(imageNamed: "mineIcon")
+        let texture = SKTexture(imageNamed: "mine")
         let bodySize = CGSize(width: 60, height: 60)
         super.init(texture: texture, color: UIColor.clear, size: bodySize)
         

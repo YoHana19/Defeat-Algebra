@@ -25,7 +25,7 @@ class Heart: SKSpriteNode {
         
         // Set physics properties
         physicsBody = SKPhysicsBody(rectangleOf: bodySize)
-        physicsBody?.categoryBitMask = 128
+        physicsBody?.categoryBitMask = 64
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 1
         
