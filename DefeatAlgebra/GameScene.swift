@@ -35,7 +35,7 @@ enum PlayerTurnState {
 }
 
 enum ItemType {
-    case None, Mine, Catapult, Wall, MagicSword
+    case None, Mine, Catapult, Wall, MagicSword, BattleShip
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -101,6 +101,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var flashGridDoneFlag = false
     var calPunchLengthDoneFlag = false
     var initialAddEnemyFlag = true
+    /* Flag for items */
+    var mineDoneFlag = false
+    var wallDoneFlag = false
+    var battleShipDoneFlag = false
+    var battleShipOnceFlag = false
     
     /* Player Control */
     var beganPos:CGPoint!
@@ -465,13 +470,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                 if i == self.gridNode.mineSetArray.count-1 {
                                     /* Reset itemSet arrays */
                                     self.gridNode.mineSetArray.removeAll()
+                                    mineDoneFlag = true
                                 }
                             }
                         }
                     }
-                    playerTurnState = .MoveState
                 } else {
-                    playerTurnState = .MoveState
+                    mineDoneFlag = true
                 }
                 
                 /* wall */
@@ -481,13 +486,48 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         if i == self.gridNode.wallSetArray.count-1 {
                             /* Reset wall array */
                             self.gridNode.wallSetArray.removeAll()
+                            wallDoneFlag = true
                         }
                     }
-                    playerTurnState = .MoveState
                 } else {
-                    playerTurnState = .MoveState
+                    wallDoneFlag = true
                 }
-                break;
+                
+                /* battle ship */
+                /* Make sure to call once */
+                if battleShipOnceFlag == false {
+                    battleShipOnceFlag = true
+                    if self.gridNode.battleShipSetArray.count > 0 {
+                        let shoot = SKAction.run({
+                            for battleShip in self.gridNode.battleShipSetArray {
+                                battleShip.shootBullet()
+                            }
+                        })
+                        let wait = SKAction.wait(forDuration: 4.0)
+                        let remove = SKAction.run({
+                            for (i, battleShip) in self.gridNode.battleShipSetArray.enumerated() {
+                                battleShip.removeFromParent()
+                                if i == self.gridNode.battleShipSetArray.count-1 {
+                                    /* Reset wall array */
+                                    self.gridNode.battleShipSetArray.removeAll()
+                                }
+                            }
+                        })
+                        let moveState = SKAction.run({ self.battleShipDoneFlag = true })
+                        let seq = SKAction.sequence([shoot, wait, remove, moveState])
+                        self.run(seq)
+                    } else {
+                        battleShipDoneFlag = true
+                    }
+                }
+                
+                if mineDoneFlag && wallDoneFlag && battleShipDoneFlag {
+                    playerTurnState = .MoveState
+                    mineDoneFlag = false
+                    wallDoneFlag = false
+                    battleShipDoneFlag = false
+                    battleShipOnceFlag = false
+                }
             case .MoveState:
                 if activeHero.moveDoneFlag == false {
                     /* Display move area */
@@ -542,7 +582,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         self.gridNode.showAttackArea(posX: activeHero.positionX, posY: activeHero.positionY, attackType: activeHero.attackType)
                     }
                     break;
+                case .BattleShip:
+                    self.gridNode.showBttleShipSettingArea()
+                    break;
                 }
+                
                 /* Wait for player touch to point position to use item at */
                 break;
             case .TurnEnd:
@@ -913,6 +957,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Get index of game using */
                 usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
+                
+            /* battle ship */
+            } else if nodeAtPoint.name == "battleShip" {
+                /* Remove activeArea */
+                self.gridNode.resetSquareArray(color: "red")
+                resetActiveAreaForCatapult()
+                
+                /* Set mine using state */
+                itemType = .BattleShip
+                
+                /* Get index of game using */
+                usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
             
             /* Touch active area  */
             } else if nodeAtPoint.name == "activeArea" {
@@ -1021,6 +1077,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         item.removeFromParent()
                         maxLife += 1
                         life += 1
+                    /* Get spear */
+                    } else if item.name == "spear" {
+                        item.removeFromParent()
+                        if self.activeHero.attackType < 1 {
+                            self.activeHero.attackType += 1
+                        }
                     /* Other items */
                     } else {
                         item.removeFromParent()
@@ -1041,6 +1103,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         item.removeFromParent()
                         maxLife += 1
                         life += 1
+                    /* Get spear */
+                    } else if item.name == "spear" {
+                        item.removeFromParent()
+                        if self.activeHero.attackType < 1 {
+                            self.activeHero.attackType += 1
+                        }
                     /* Other items */
                     } else {
                         item.removeFromParent()
@@ -1116,157 +1184,182 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
-        /* Wall stop enemy punch or move */
+        /* Items set hit enemy */
         if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
             
             if contactA.categoryBitMask == 32 {
-                /* Get wall */
-                let wall = contactA.node as! Wall
                 
-                /* Enemy hits wall */
-                if contactB.categoryBitMask == 2 {
-                    /* Get enemy */
-                    let enemy = contactB.node as! Enemy
-                    /* Stop Enemy move */
-                    enemy.removeAllActions()
+                /* Wall stop enemy punch or move */
+                if contactA.node?.name == "wall" {
+                    /* Get wall */
+                    let wall = contactA.node as! Wall
                     
-                    /* move back according to direction of enemy */
-                    switch enemy.direction {
-                    case .front:
+                    /* Enemy hits wall */
+                    if contactB.categoryBitMask == 2 {
+                        /* Get enemy */
+                        let enemy = contactB.node as! Enemy
+                        /* Stop Enemy move */
+                        enemy.removeAllActions()
+                        
+                        /* move back according to direction of enemy */
+                        switch enemy.direction {
+                        case .front:
+                            /* Reposition enemy */
+                            let moveBack = SKAction.move(to: CGPoint(x: CGFloat(enemy.positionX*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY+1)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
+                            enemy.run(moveBack)
+                            
+                            /* Set enemy position */
+                            enemy.positionY = wall.posY+1
+                        case .left:
+                            /* Reposition enemy */
+                            let moveBack = SKAction.move(to: CGPoint(x: CGFloat((wall.posX+1)*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
+                            enemy.run(moveBack)
+                            /* Set enemy position */
+                            enemy.positionX = wall.posX+1
+                            enemy.positionY = wall.posY
+                        case .right:
+                            /* Reposition enemy */
+                            let moveBack = SKAction.move(to: CGPoint(x: CGFloat((wall.posX-1)*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
+                            enemy.run(moveBack)
+                            /* Set enemy position */
+                            enemy.positionX = wall.posX-1
+                            enemy.positionY = wall.posY
+                        default:
+                            break;
+                        }
+                        
+                        /* Get rid of all arms and fists */
+                        let punchDone = SKAction.run({
+                            enemy.removeAllChildren()
+                        })
+                        
+                        /* Set variable expression */
+                        let setVariableExpression = SKAction.run({
+                            enemy.makeTriangle()
+                            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
+                        })
+                        
+                        /* Move next enemy's turn */
+                        let moveTurnWait = SKAction.wait(forDuration: enemy.singleTurnDuration)
+                        let moveNextEnemy = SKAction.run({
+                            enemy.myTurnFlag = false
+                            if self.gridNode.turnIndex < self.gridNode.enemyArray.count-1 {
+                                self.gridNode.turnIndex += 1
+                                self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
+                            }
+                            
+                            /* Set enemy turn interval */
+                            enemy.setPunchIntervalLabel()
+                            
+                            /* Reset enemy animation */
+                            enemy.setMovingAnimation()
+                            
+                            /* To check all enemy turn done */
+                            self.gridNode.numOfTurnEndEnemy += 1
+                            
+                            /* Reset count down punchInterval */
+                            enemy.punchIntervalForCount = enemy.punchInterval
+                            
+                        })
+                        
+                        /* excute drawPunch */
+                        let seq = SKAction.sequence([punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
+                        self.run(seq)
+                        
+                        /* Fist and arm hits wall */
+                    } else {
+                        /* Get enemy arm or fist */
+                        let nodeB = contactB.node as! SKSpriteNode
+                        
+                        /* Stop arm and fist */
+                        nodeB.removeAllActions()
+                    }
+                /* bullet hit enemy */
+                } else if contactA.node?.name == "bullet" {
+                    print("bullet hit")
+                    let enemy = contactB.node as! Enemy
+                    enemy.aliveFlag = false
+                    enemy.removeFromParent()
+                    /* Count defeated enemy */
+                    totalNumOfEnemy -= 1
+                }
+                
+            }
+            
+            if contactB.categoryBitMask == 32 {
+                
+                /* Wall stop enemy punch or move */
+                if contactB.node?.name == "wall" {
+                    /* Get wall */
+                    let wall = contactB.node as! Wall
+                    
+                    /* Enemy hits wall */
+                    if contactA.categoryBitMask == 2 {
+                        /* Get enemy */
+                        let enemy = contactA.node as! Enemy
+                        /* Stop Enemy move */
+                        enemy.removeAllActions()
+                        
                         /* Reposition enemy */
                         let moveBack = SKAction.move(to: CGPoint(x: CGFloat(enemy.positionX*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY+1)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
                         enemy.run(moveBack)
                         
-                        /* Set enemy position */
-                        enemy.positionY = wall.posY+1
-                    case .left:
-                        /* Reposition enemy */
-                        let moveBack = SKAction.move(to: CGPoint(x: CGFloat((wall.posX+1)*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
-                        enemy.run(moveBack)
-                        /* Set enemy position */
-                        enemy.positionX = wall.posX+1
-                        enemy.positionY = wall.posY
-                    case .right:
-                        /* Reposition enemy */
-                        let moveBack = SKAction.move(to: CGPoint(x: CGFloat((wall.posX-1)*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
-                        enemy.run(moveBack)
-                        /* Set enemy position */
-                        enemy.positionX = wall.posX-1
-                        enemy.positionY = wall.posY
-                    default:
-                        break;
+                        /* Get rid of all arms and fists */
+                        let punchDone = SKAction.run({
+                            enemy.removeAllChildren()
+                        })
+                        
+                        /* Set variable expression */
+                        let setVariableExpression = SKAction.run({
+                            enemy.makeTriangle()
+                            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
+                        })
+                        
+                        /* Move next enemy's turn */
+                        let moveTurnWait = SKAction.wait(forDuration: enemy.singleTurnDuration)
+                        let moveNextEnemy = SKAction.run({
+                            enemy.myTurnFlag = false
+                            if self.gridNode.turnIndex < self.gridNode.enemyArray.count-1 {
+                                self.gridNode.turnIndex += 1
+                                self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
+                            }
+                            
+                            /* Set enemy turn interval */
+                            enemy.setPunchIntervalLabel()
+                            
+                            /* Reset enemy animation */
+                            enemy.setMovingAnimation()
+                            
+                            /* To check all enemy turn done */
+                            self.gridNode.numOfTurnEndEnemy += 1
+                            
+                            /* Reset count down punchInterval */
+                            enemy.punchIntervalForCount = enemy.punchInterval
+                            
+                            /* Set enemy position to edge */
+                            enemy.positionY = wall.posY+1
+                        })
+                        
+                        /* excute drawPunch */
+                        let seq = SKAction.sequence([punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
+                        self.run(seq)
+                        
+                        /* Fist and arm hits wall */
+                    } else {
+                        /* Get enemy arm or fist */
+                        let nodeA = contactA.node as! SKSpriteNode
+                        
+                        /* Stop arm and fist */
+                        nodeA.removeAllActions()
                     }
-                    
-                    /* Get rid of all arms and fists */
-                    let punchDone = SKAction.run({
-                        enemy.removeAllChildren()
-                    })
-                    
-                    /* Set variable expression */
-                    let setVariableExpression = SKAction.run({
-                        enemy.makeTriangle()
-                        enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
-                    })
-                    
-                    /* Move next enemy's turn */
-                    let moveTurnWait = SKAction.wait(forDuration: enemy.singleTurnDuration)
-                    let moveNextEnemy = SKAction.run({
-                        enemy.myTurnFlag = false
-                        if self.gridNode.turnIndex < self.gridNode.enemyArray.count-1 {
-                            self.gridNode.turnIndex += 1
-                            self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
-                        }
-                        
-                        /* Set enemy turn interval */
-                        enemy.setPunchIntervalLabel()
-                        
-                        /* Reset enemy animation */
-                        enemy.setMovingAnimation()
-                        
-                        /* To check all enemy turn done */
-                        self.gridNode.numOfTurnEndEnemy += 1
-                        
-                        /* Reset count down punchInterval */
-                        enemy.punchIntervalForCount = enemy.punchInterval
-                        
-                    })
-                    
-                    /* excute drawPunch */
-                    let seq = SKAction.sequence([punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
-                    self.run(seq)
-                    
-                /* Fist and arm hits wall */
-                } else {
-                    /* Get enemy arm or fist */
-                    let nodeB = contactB.node as! SKSpriteNode
-                    
-                    /* Stop arm and fist */
-                    nodeB.removeAllActions()
-                }
-            }
-            
-            if contactB.categoryBitMask == 32 {
-                /* Get wall */
-                let wall = contactB.node as! Wall
-
-                /* Enemy hits wall */
-                if contactA.categoryBitMask == 2 {
-                    /* Get enemy */
+                /* Bullet hit enemy */
+                } else if contactB.node?.name == "bullet" {
+                    print("bullet hit")
                     let enemy = contactA.node as! Enemy
-                    /* Stop Enemy move */
-                    enemy.removeAllActions()
-                    
-                    /* Reposition enemy */
-                    let moveBack = SKAction.move(to: CGPoint(x: CGFloat(enemy.positionX*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY+1)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
-                    enemy.run(moveBack)
-                    
-                    /* Get rid of all arms and fists */
-                    let punchDone = SKAction.run({
-                        enemy.removeAllChildren()
-                    })
-                    
-                    /* Set variable expression */
-                    let setVariableExpression = SKAction.run({
-                        enemy.makeTriangle()
-                        enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
-                    })
-                    
-                    /* Move next enemy's turn */
-                    let moveTurnWait = SKAction.wait(forDuration: enemy.singleTurnDuration)
-                    let moveNextEnemy = SKAction.run({
-                        enemy.myTurnFlag = false
-                        if self.gridNode.turnIndex < self.gridNode.enemyArray.count-1 {
-                            self.gridNode.turnIndex += 1
-                            self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
-                        }
-                        
-                        /* Set enemy turn interval */
-                        enemy.setPunchIntervalLabel()
-                        
-                        /* Reset enemy animation */
-                        enemy.setMovingAnimation()
-                        
-                        /* To check all enemy turn done */
-                        self.gridNode.numOfTurnEndEnemy += 1
-                        
-                        /* Reset count down punchInterval */
-                        enemy.punchIntervalForCount = enemy.punchInterval
-                        
-                        /* Set enemy position to edge */
-                        enemy.positionY = wall.posY+1
-                    })
-                    
-                    /* excute drawPunch */
-                    let seq = SKAction.sequence([punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
-                    self.run(seq)
-                    
-                    /* Fist and arm hits wall */
-                } else {
-                    /* Get enemy arm or fist */
-                    let nodeA = contactA.node as! SKSpriteNode
-                    
-                    /* Stop arm and fist */
-                    nodeA.removeAllActions()
+                    enemy.aliveFlag = false
+                    enemy.removeFromParent()
+                    /* Count defeated enemy */
+                    totalNumOfEnemy -= 1
                 }
             }
         }
@@ -1682,8 +1775,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.gridNode.addObjectAtGrid(object: wall2, x: 5, y: 2)
             let wall3 = Wall()
             self.gridNode.addObjectAtGrid(object: wall3, x: 3, y: 2)
-            let wall4 = Wall()
-            self.gridNode.addObjectAtGrid(object: wall4, x: 6, y: 2)
+            
+            let battleShip = BattleShip()
+            self.gridNode.addObjectAtGrid(object: battleShip, x: 6, y: 2)
             
             
         default:

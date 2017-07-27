@@ -144,6 +144,31 @@ class Hero: SKSpriteNode {
         }
     }
     
+    /* Set hero spear attack animation */
+    func setSpearAnimation() {
+        switch direction {
+        case .front:
+           self.anchorPoint = CGPoint(x: 0.5, y: 1)
+            let heroSwordAnimation = SKAction(named: "heroSpearBackward")!
+            self.run(heroSwordAnimation)
+            break;
+        case .back:
+            self.anchorPoint = CGPoint(x: 0.5, y: 0)
+            let heroSwordAnimation = SKAction(named: "heroSpearForward")!
+            self.run(heroSwordAnimation)
+            break;
+        case .left:
+            self.anchorPoint = CGPoint(x: 1, y: 0.5)
+            let heroSwordAnimation = SKAction(named: "heroSpearLeft")!
+            self.run(heroSwordAnimation)
+            break;
+        case .right:
+            self.anchorPoint = CGPoint(x: 0, y: 0.5)
+            let heroSpearAnimation = SKAction(named: "heroSpearRight")!
+            self.run(heroSpearAnimation)
+        }
+    }
+    
     /* Set hero multi sword attack animation */
     func setMultiSwordAttackAnimation() {
         /* front */
