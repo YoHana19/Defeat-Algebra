@@ -31,7 +31,7 @@ enum Direction: Int {
 }
 
 enum PlayerTurnState {
-    case ItemOn, MoveState, AttackState, UsingItem, TurnEnd
+    case DisplayPhase, ItemOn, MoveState, AttackState, UsingItem, TurnEnd
 }
 
 enum ItemType {
@@ -56,6 +56,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gameOverLabel: SKNode!
     var clearLabel: SKNode!
     var levelLabel: SKLabelNode!
+    var playerPhaseLabel: SKNode!
+    var enemyPhaseLabel: SKNode!
     
     /* Game buttons */
     var buttonRetry: MSButtonNode!
@@ -72,7 +74,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Game Management */
     var gameState: GameSceneState = .AddEnemy
-    var playerTurnState: PlayerTurnState = .ItemOn
+    var playerTurnState: PlayerTurnState = .DisplayPhase
     var itemType: ItemType = .None
     var stageLevel: Int = 0
     var moveLevelArray: [Int] = [1]
@@ -172,6 +174,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         clearLabel = childNode(withName: "clearLabel")
         clearLabel.isHidden = true
         levelLabel = childNode(withName: "levelLabel") as! SKLabelNode
+        playerPhaseLabel = childNode(withName: "playerPhaseLabel")
+        playerPhaseLabel.isHidden = true
+        enemyPhaseLabel = childNode(withName: "enemyPhaseLabel")
+        enemyPhaseLabel.isHidden = true
         
         /* Connect game buttons */
         buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
@@ -180,6 +186,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         buttonRetry.state = .msButtonNodeStateHidden
         buttonNextLevel.state = .msButtonNodeStateHidden
         buttonToL1.state = .msButtonNodeStateHidden
+        
         
         /* Retry button */
         buttonRetry.selectedHandler = {
@@ -256,7 +263,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ud.set(self.moveLevelArray, forKey: "moveLevelArray")
             /* item */
             let itemNameArray = [String]()
-            ud.set(itemNameArray, forKey: "itemIndexArray")
+            ud.set(itemNameArray, forKey: "itemNameArray")
             /* life */
             ud.set(5, forKey: "life")
             
@@ -433,13 +440,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break;
         case .PlayerTurn:
             //            print(playerTurnState)
-            //            print("\(heroArray.count), \(numOfTurnDoneHero)")
+//            print("\(heroArray.count), \(numOfTurnDoneHero)")
             /* Check if all enemies are defeated or not */
             if totalNumOfEnemy <= 0 {
                 gameState = .StageClear
             }
             
             switch playerTurnState {
+            case .DisplayPhase:
+                playerPhaseLabel.isHidden = false
+                let wait = SKAction.wait(forDuration: 1.0)
+                let moveState = SKAction.run({ self.playerTurnState = .ItemOn })
+                let seq = SKAction.sequence([wait, moveState])
+                self.run(seq)
+                break;
             case .ItemOn:
                 /* Check game over */
                 if heroArray.count < 1 {
@@ -448,6 +462,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Activate initial hero */
                     activeHero = heroArray[0]
                 }
+                
+                playerPhaseLabel.isHidden = true
                 
                 /* mine */
                 if self.gridNode.mineSetArray.count > 0 {
@@ -638,7 +654,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if gridNode.enemyArray.count > 0 {
                     gridNode.enemyArray[0].myTurnFlag = true
                 }
-                gameState = .EnemyTurn
+                
+                /* Display enemy phase label */
+                enemyPhaseLabel.isHidden = false
+                let wait = SKAction.wait(forDuration: 1.0)
+                let moveState = SKAction.run({ self.gameState = .EnemyTurn })
+                let seq = SKAction.sequence([wait, moveState])
+                self.run(seq)
                 break;
             }
             break;
@@ -648,6 +670,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             addEnemyDoneFlag = false
             playerTurnDoneFlag = false
             flashGridDoneFlag = false
+            
+            enemyPhaseLabel.isHidden = true
             
             if enemyTurnDoneFlag == false {
                 
@@ -699,7 +723,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 gameState = .AddEnemy
-                playerTurnState = .ItemOn
+                playerTurnState = .DisplayPhase
             }
             break;
         case .GridFlashing:
@@ -1128,8 +1152,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Move to next hero turn */
                         activeHero = heroArray[numOfTurnDoneHero+1]
-                        /* The last turn hero is killed */
+                    /* The last turn hero is killed */
                     } else {
+                        /* Remove dead hero */
+                        heroArray = heroArray.filter({ $0.aliveFlag == true })
                         /* The last hero is killed? */
                         if heroArray.count == 1 {
                             self.gameState = .GameOver
@@ -1149,8 +1175,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Move to next hero turn */
                         activeHero = heroArray[numOfTurnDoneHero+1]
-                        /* The last turn hero is killed */
+                    /* The last turn hero is killed */
                     } else {
+                        /* Remove dead hero */
+                        heroArray = heroArray.filter({ $0.aliveFlag == true })
                         /* The last hero is killed? */
                         if heroArray.count == 1 {
                             self.gameState = .GameOver
@@ -1660,6 +1688,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         life = maxLife
         
         switch level {
+        /* Level 1 */
         case 0:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
@@ -1680,7 +1709,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let mine = Mine()
                 self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
             }
-            
+         
+        /* Level 2 */
         case 1:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 9], [4, 9], [6, 9]]
@@ -1707,6 +1737,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
             
             
+        /* Level 3 */
         case 2:
             /* Set enemy */
             initialEnemyPosArray = [[0, 10], [2, 10], [4, 10], [6, 10], [8, 10]]
@@ -1715,14 +1746,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
             /* Set boots */
-            let bootsArray = [[1,3],[1,9],[3,0],[7,1],[7,5]]
+            let bootsArray = [[3,4],[5,4]]
             for bootsPos in bootsArray {
                 let boots = Boots()
                 self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
             }
             
             /* Set mine */
-            let minesArray = [[1,1],[1,5],[5,0],[7,3],[7,9]]
+            let minesArray = [[1,1],[1,5],[3,0],[5,0],[7,3],[7,5],[7,9],[1,9]]
             for minePos in minesArray {
                 let mine = Mine()
                 self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
@@ -1732,6 +1763,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let heart = Heart()
             self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
             
+            /* Set wall */
+            let wallsArray = [[1,3],[7,1]]
+            for wallPos in wallsArray {
+                let wall = Wall()
+                self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
+            }
             
             /* Set multiAttack */
             let multiAttackArray = [[2,6],[6,6]]
@@ -1739,7 +1776,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let multiAttack = MultiAttack()
                 self.gridNode.addObjectAtGrid(object: multiAttack, x: multiAttackPos[0], y: multiAttackPos[1])
             }
-            
+           
+        /* Level 4 */
         case 3:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [1, 9], [3, 9], [5, 9], [7, 9]]

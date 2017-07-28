@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-class Grid: SKSpriteNode {
+class GridForTutorial: SKSpriteNode {
     
     /* Grid array dimensions */
     let rows = 12
@@ -28,7 +28,7 @@ class Grid: SKSpriteNode {
     var directionJudgeDoneFlag = false
     
     /* Enemy array */
-    var enemyArray = [Enemy]()
+    var enemyArray = [EnemyForTutorial]()
     var positionEnemyAtGrid = [[Bool]]()
     var numOfTurnEndEnemy = 0
     var turnIndex = 0
@@ -49,16 +49,7 @@ class Grid: SKSpriteNode {
     /* Mine */
     var mineSetPosArray = [[Int]]()
     var mineSetArray = [Mine]()
-    
-    /* Wall */
-    var wallSetArray = [Wall]()
-    
-    /* Magic sword */
-    var vEindex = -1
-    
-    /* Battle ship */
-    var battleShipSetArray = [BattleShip]()
-    
+        
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -96,12 +87,42 @@ class Grid: SKSpriteNode {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        print("grid touchBegan")
         /* Get gameScene */
-        let gameScene = self.parent as! GameScene
+        let gameScene = self.parent as! Tutorial
+        
+        guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
+        
+        /* Caclulate grid array position */
+        let gridX = Int(location.x) / cellWidth
+        let gridY = Int(location.y) / cellHeight
+        
+        /* Manage flow for tutorial */
+        if gameScene.countTurn == 1 {
+            guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY+1 else { return }
+        } else if gameScene.countTurn == 2 {
+            if gameScene.tutorialState == .T2 {
+                guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY+1 else { return }
+            } else if gameScene.tutorialState == .T3 {
+                guard gridX == gameScene.activeHero.positionX-1 && gridY == gameScene.activeHero.positionY else { return }
+            } else {
+                return
+            }
+        } else if gameScene.countTurn == 3 {
+            guard gameScene.tutorialState != .T1 else { return }
+        } else if gameScene.countTurn == 4 {
+            guard gridX == 0 && gridY == 5 else { return }
+        } else if gameScene.countTurn == 5 {
+            if gameScene.tutorialState == .T3 {
+                guard gridX == 2 && gridY == 3 else { return }
+            } else if gameScene.tutorialState == .T4 {
+            } else {
+                return
+            }
+        }
         
         /* Touch point to move to */
         if gameScene.playerTurnState == .MoveState {
@@ -113,11 +134,6 @@ class Grid: SKSpriteNode {
                 beganPos = []
                 currentPos = []
                 
-                /* Caclulate grid array position */
-                let gridX = Int(location.x) / cellWidth
-                let gridY = Int(location.y) / cellHeight
-                
-                
                 /* Touch hero's position */
                 if gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY {
                     /* Display move path */
@@ -128,80 +144,50 @@ class Grid: SKSpriteNode {
                 }
                 
             }
-           
-//        /* Touch point to attack to */
-//        } else if gameScene.playerTurnState == .AttackState {
-//            
-//            guard gameScene.heroMovingFlag == false else { return }
-//            
-//            /* Remove attack area square */
-//            self.resetSquareArray(color: "red")
-//            
-//            /* Touch red square for active area */
-//            if nodeAtPoint.name == "activeArea" {
-//                
-//                /* Caclulate grid array position */
-//                let gridX = Int(location.x) / cellWidth
-//                let gridY = Int(location.y) / cellHeight
-//                
-//                /* Set direction of hero */
-//                gameScene.activeHero.setHeroDirection(posX: gridX, posY: gridY)
-//                    
-//                /* Do attack animation */
-//                gameScene.activeHero.setSwordAnimation()
-//                        
-//                /* If hitting enemy! */
-//                if self.positionEnemyAtGrid[gridX][gridY] {
-//                    let waitAni = SKAction.wait(forDuration: 1.0)
-//                    let removeEnemy = SKAction.run({
-//                        /* Look for the enemy to destroy */
-//                        for enemy in self.enemyArray {
-//                            if enemy.positionX == gridX && enemy.positionY == gridY {
-//                                enemy.aliveFlag = false
-//                                enemy.removeFromParent()
-//                                /* Count defeated enemy */
-//                                gameScene.totalNumOfEnemy -= 1
-//                            }
-//                        }
-//                    })
-//                    let seq = SKAction.sequence([waitAni, removeEnemy])
-//                    self.run(seq)
-//                }
-//                    
-//                /* Back to MoveState */
-//                gameScene.activeHero.attackDoneFlag = true
-//                let wait = SKAction.wait(forDuration: gameScene.turnEndWait+1.0) /* 1.0 is wait time for animation */
-//                let moveState = SKAction.run({
-//                    /* Reset hero animation to back */
-//                    gameScene.activeHero.resetHero()
-//                    gameScene.playerTurnState = .MoveState
-//                })
-//                let seq = SKAction.sequence([wait, moveState])
-//                self.run(seq)
-            
-//            /* If touch anywhere but activeArea, back to MoveState  */
-//            } else {
-//                gameScene.activeHero.heroState = .Move
-//                gameScene.playerTurnState = .MoveState
-//            }
-        
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Get gameScene */
-        let gameScene = self.parent as! GameScene
+        let gameScene = self.parent as! Tutorial
+
+        guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
+        /* Caclulate grid array position */
+        let gridX = Int(location.x) / cellWidth
+        let gridY = Int(location.y) / cellHeight
+        
+        /* Manage flow for tutorial */
+        if gameScene.countTurn == 1 {
+            guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY+1 else { return }
+        } else if gameScene.countTurn == 2 {
+            if gameScene.tutorialState == .T2 {
+                guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY+1 else { return }
+            } else if gameScene.tutorialState == .T3 {
+                guard gridX == gameScene.activeHero.positionX-1 && gridY == gameScene.activeHero.positionY else { return }
+            } else {
+                return
+            }
+        } else if gameScene.countTurn == 3 {
+            guard gameScene.tutorialState != .T1 else { return }
+        } else if gameScene.countTurn == 4 {
+            guard gridX == 0 && gridY == 5 else { return }
+        } else if gameScene.countTurn == 5 {
+            if gameScene.tutorialState == .T3 {
+                guard gridX == 2 && gridY == 3 else { return }
+            } else if gameScene.tutorialState == .T4 {
+            } else {
+                return
+            }
+        }
+
         /* Touch ends on active area */
         if nodeAtPoint.name == "activeArea" {
-            /* Caclulate grid array position */
-            let gridX = Int(location.x) / cellWidth
-            let gridY = Int(location.y) / cellHeight
             
             if beganPos.count > 0 {
                 if beganPos[0] == gameScene.activeHero.positionX && beganPos[1] == gameScene.activeHero.positionY {
@@ -249,8 +235,8 @@ class Grid: SKSpriteNode {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-
+        let gameScene = self.parent as! Tutorial
+        
         guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
@@ -258,15 +244,63 @@ class Grid: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
+        /* Caclulate grid array position */
+        let gridX = Int(location.x) / cellWidth
+        let gridY = Int(location.y) / cellHeight
+        
+        /* Manage flow for tutorial */
+        if gameScene.countTurn == 1 {
+            guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY+1 else { return }
+        } else if gameScene.countTurn == 2 {
+            if gameScene.tutorialState == .T2 {
+                guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY+1 else { return }
+                gameScene.removeTutorial()
+                let wait = SKAction.wait(forDuration: 1.2)
+                let moveState = SKAction.run({
+                    gameScene.tutorialState = .T3
+                    gameScene.showPlayerDiscriptionDone = false
+                })
+                let seq = SKAction.sequence([wait, moveState])
+                self.run(seq)
+            } else if gameScene.tutorialState == .T3 {
+                guard gridX == gameScene.activeHero.positionX-1 && gridY == gameScene.activeHero.positionY else { return }
+            } else {
+                return
+            }
+        } else if gameScene.countTurn == 3 {
+            guard gameScene.tutorialState != .T1 else { return }
+            if gameScene.tutorialState == .T2 {
+                if gridX == gameScene.activeHero.positionX-1 && gridY == gameScene.activeHero.positionY+1 {
+                    if let node = gameScene.childNode(withName: "movingPoint") {
+                        node.removeFromParent()
+                    }
+                    gameScene.removeAllActions()
+                } else {
+                    /* Stop showing move pass */
+                    resetMovePath()
+                    return
+                }
+            }
+        } else if gameScene.countTurn == 4 {
+            guard gridX == 0 && gridY == 5 else { return }
+        } else if gameScene.countTurn == 5 {
+            if gameScene.tutorialState == .T3 {
+                guard gridX == 2 && gridY == 3 else { return }
+                gameScene.tutorialState = .T4
+                gameScene.showPlayerDiscriptionDone = false
+            } else if gameScene.tutorialState == .T4 {
+            } else {
+                return
+            }
+        } else if gameScene.countTurn == 6 {
+            guard gameScene.tutorialState == .T2 else { return }
+        }
+        
         /* Touch ends on active area */
         if nodeAtPoint.name == "activeArea" {
             
             /* Touch point to move to */
             if gameScene.playerTurnState == .MoveState {
-               
-                /* Caclulate grid array position */
-                let gridX = Int(location.x) / cellWidth
-                let gridY = Int(location.y) / cellHeight
                 
                 /* Stop showing move pass */
                 resetMovePath()
@@ -320,10 +354,6 @@ class Grid: SKSpriteNode {
                 /* Touch red square for active area */
                 if nodeAtPoint.name == "activeArea" {
                     
-                    /* Caclulate grid array position */
-                    let gridX = Int(location.x) / cellWidth
-                    let gridY = Int(location.y) / cellHeight
-                    
                     /* Set direction of hero */
                     gameScene.activeHero.setHeroDirection(posX: gridX, posY: gridY)
                     
@@ -338,29 +368,6 @@ class Grid: SKSpriteNode {
                                 /* Look for the enemy to destroy */
                                 for enemy in self.enemyArray {
                                     if enemy.positionX == gridX && enemy.positionY == gridY {
-                                        enemy.aliveFlag = false
-                                        enemy.removeFromParent()
-                                        /* Count defeated enemy */
-                                        gameScene.totalNumOfEnemy -= 1
-                                    }
-                                }
-                            })
-                            let seq = SKAction.sequence([waitAni, removeEnemy])
-                            self.run(seq)
-                        }
-                        
-                    /* Spear attack */
-                    } else if gameScene.activeHero.attackType == 1 {
-                        gameScene.activeHero.setSpearAnimation()
-                        
-                        let hitSpots = self.hitSpotsForSpear()
-                        /* If hitting enemy! */
-                        if self.positionEnemyAtGrid[hitSpots.0[0]][hitSpots.0[1]] || self.positionEnemyAtGrid[hitSpots.1[0]][hitSpots.1[1]] {
-                            let waitAni = SKAction.wait(forDuration: 1.0)
-                            let removeEnemy = SKAction.run({
-                                /* Look for the enemy to destroy */
-                                for enemy in self.enemyArray {
-                                    if enemy.positionX == hitSpots.0[0] && enemy.positionY == hitSpots.0[1] || enemy.positionX == hitSpots.1[0] && enemy.positionY == hitSpots.1[1] {
                                         enemy.aliveFlag = false
                                         enemy.removeFromParent()
                                         /* Count defeated enemy */
@@ -392,13 +399,6 @@ class Grid: SKSpriteNode {
                 
             /* Touch position to use item at */
             } else if gameScene.playerTurnState == .UsingItem {
-                
-                let touch = touches.first!              // Get the first touch
-                let location = touch.location(in: self) // Find the location of that touch in this view
-                
-                /* Caclulate grid array position */
-                let gridX = Int(location.x) / cellWidth
-                let gridY = Int(location.y) / cellHeight
                     
                 /* Use mine */
                 if gameScene.itemType == .Mine {
@@ -429,182 +429,8 @@ class Grid: SKSpriteNode {
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
                     gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
-                        
-                /* Use wall */
-                } else if gameScene.itemType == .Wall {
-                    /* Set wall */
-                    let wall = Wall()
-                    wall.texture = SKTexture(imageNamed: "wallToSet")
-                    wall.posX = gridX
-                    wall.posY = gridY
-                    wall.physicsBody?.categoryBitMask = 32
-                    wall.physicsBody?.contactTestBitMask = 26
-                    self.wallSetArray.append(wall)
-                    self.addObjectAtGrid(object: wall, x: gridX, y: gridY)
-                        
-                    /* Remove item active areas */
-                    self.resetSquareArray(color: "green")
-                    /* Reset item type */
-                    gameScene.itemType = .None
-                    /* Set item area cover */
-                    gameScene.itemAreaCover.isHidden = false
-                    
-                    /* Back to MoveState */
-                    gameScene.activeHero.heroState = .Move
-                    gameScene.playerTurnState = .MoveState
-                        
-                    //                    print("Used item index is \(gameScene.usingItemIndex)")
-                    /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
-                    
-                /* Use magic sword */
-                } else if gameScene.itemType == .MagicSword {
-                    /* On magicSwordAttackDone flag */
-                    gameScene.magicSwordAttackDone = true
-                    
-                    /* Remove attack area square */
-                    self.resetSquareArray(color: "red")
-                
-                    /* Set direction of hero */
-                    gameScene.activeHero.setHeroDirection(posX: gridX, posY: gridY)
-                        
-                    /* Do attack animation */
-                    gameScene.activeHero.setSwordAnimation()
-                        
-                    print("(\(gridX), \(gridY))")
-                    
-                    /* If hitting enemy! */
-                    if self.positionEnemyAtGrid[gridX][gridY] {
-                        let waitAni = SKAction.wait(forDuration: 1.0)
-                        let removeEnemy = SKAction.run({
-                            /* Look for the enemy to destroy */
-                            for enemy in self.enemyArray {
-                                enemy.colorizeEnemy()
-                                if enemy.positionX == gridX && enemy.positionY == gridY {
-                                    self.vEindex = enemy.vECategory
-                                    enemy.aliveFlag = false
-                                    enemy.removeFromParent()
-                                    /* Count defeated enemy */
-                                    gameScene.totalNumOfEnemy -= 1
-                                    gameScene.activeHero.resetHero()
-                                    /* Display variale expression you attacked */
-                                    gameScene.dispMagicSwordVE(vE: enemy.variableExpressionForLabel)
-                                }
-                            }
-                        })
-                        let seq = SKAction.sequence([waitAni, removeEnemy])
-                        self.run(seq)
-                        gameScene.activeHero.attackDoneFlag = true
-                    /* If not hit, back to moveState */
-                    } else {
-                        /* Reset item type */
-                        gameScene.itemType = .None
-                        
-                        let waitAni = SKAction.wait(forDuration: 1.0)
-                        let backState = SKAction.run({
-                            /* Back to MoveState */
-                            gameScene.activeHero.heroState = .Move
-                            gameScene.playerTurnState = .MoveState
-                            gameScene.activeHero.resetHero()
-                        })
-                        let seq = SKAction.sequence([waitAni, backState])
-                        self.run(seq)
-                    }
-                        
-                    /* Set item area cover */
-                    gameScene.itemAreaCover.isHidden = false
-                    
-                    /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
-               
-                /* Use battle ship */
-                } else if gameScene.itemType == .BattleShip {
-                    
-                    /* Set mine at the location you touch */
-                    let battleShip = BattleShip()
-                    battleShip.texture = SKTexture(imageNamed: "battleShipToSet")
-                    /* Make sure not to collide to hero */
-                    battleShip.physicsBody = nil
-                    self.battleShipSetArray.append(battleShip)
-                    battleShip.position = CGPoint(x: 0, y: CGFloat(gridY*self.cellHeight+self.cellHeight/2))
-                    addChild(battleShip)
-                    
-                    /* Remove item active areas */
-                    self.resetSquareArray(color: "green")
-                    /* Reset item type */
-                    gameScene.itemType = .None
-                    /* Set item area cover */
-                    gameScene.itemAreaCover.isHidden = false
-                    
-                    /* Back to MoveState */
-                    gameScene.activeHero.heroState = .Move
-                    gameScene.playerTurnState = .MoveState
-                    
-                    //                    print("Used item index is \(gameScene.usingItemIndex)")
-                    /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
                 }
             }
-        /* Touch ends on enemy for magic sword */
-        } else if nodeAtPoint.name == "enemy" {
-            let enemy = nodeAtPoint as! Enemy
-            print("(\(enemy.positionX), \(enemy.positionY))")
-            guard gameScene.itemType == .MagicSword else { return }
-            
-            guard gameScene.magicSwordAttackDone else { return }
-            
-//            let enemy = nodeAtPoint as! Enemy
-            
-            if enemy.vECategory == vEindex {
-                enemy.aliveFlag = false
-                enemy.removeFromParent()
-                /* Count defeated enemy */
-                gameScene.totalNumOfEnemy -= 1
-            } else {
-                /* Back to MoveState */
-                gameScene.activeHero.heroState = .Move
-                gameScene.playerTurnState = .MoveState
-                /* Reset item type */
-                gameScene.itemType = .None
-                gameScene.magicSwordAttackDone = false
-                /* Reset color of enemy */
-                for enemy in self.enemyArray {
-                    enemy.resetColorizeEnemy()
-                }
-                /* Remove variable expression display */
-                gameScene.vELabel.isHidden = true
-                
-            }
-        
-        /* Touch ends on somewhere but active area or enemy */
-        } else {
-            print("touch not activearea")
-            /* Make sure to be invalid when using catpult */
-            guard gameScene.setCatapultDoneFlag == false else { return }
-            
-            gameScene.playerTurnState = .MoveState
-            /* Set item area cover */
-            gameScene.itemAreaCover.isHidden = false
-            
-            /* Reset item type */
-            gameScene.itemType = .None
-            gameScene.magicSwordAttackDone = false
-            
-            /* Reset color of enemy */
-            for enemy in self.enemyArray {
-                enemy.resetColorizeEnemy()
-            }
-            
-            /* Remove variable expression display */
-            gameScene.vELabel.isHidden = true
-            
-            /* Remove active area */
-            gameScene.gridNode.resetSquareArray(color: "green")
-            gameScene.gridNode.resetSquareArray(color: "red")
-            gameScene.resetActiveAreaForCatapult()
         }
     }
     
@@ -619,11 +445,11 @@ class Grid: SKSpriteNode {
         /* Add a new enemy at grid position*/
         
         /* Get gameScene */
-        let gameScene = self.parent as! GameScene
+        let gameScene = self.parent as! Tutorial
         
-        for posArray in enemyPosArray {
+        for (i, posArray) in enemyPosArray.enumerated() {
             /* New enemy object */
-            let enemy = Enemy(variableExpressionSource: variableExpressionSource)
+            let enemy = EnemyForTutorial(variableExpressionSource: variableExpressionSource, interval: i)
             
             /* Attach variable expression */
             enemy.makeTriangle()
@@ -663,62 +489,7 @@ class Grid: SKSpriteNode {
         }
     }
     
-    func addEnemyAtGrid(_ numberOfEnemy: Int, variableExpressionSource: [[Int]]) {
-        /* Add a new enemy at grid position*/
-        
-        /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-        
-        for _ in 1...numberOfEnemy {
-            /* New enemy object */
-            let enemy = Enemy(variableExpressionSource: variableExpressionSource)
-        
-            /* Attach variable expression */
-            enemy.makeTriangle()
-            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
-            
-            /* Set direction of enemy */
-            enemy.direction = .front
-            enemy.setMovingAnimation()
-        
-            /* Set position on screen */
-            /* Enemy come to grid from out of it */
-            let rand = Int(arc4random_uniform(UInt32(startPosArray.count)))
-            let startPosition = startPosArray[rand]
-            /* Make sure not to overlap enemies */
-            startPosArray.remove(at: rand)
-            
-            /* Keep track enemy position */
-            enemy.positionX = startPosition
-            enemy.positionY = 11
-            
-            /* Calculate gap between top of grid and gameScene */
-            let gridPosition = CGPoint(x: (startPosition)*cellWidth+cellWidth/2, y: Int(gameScene.topGap+self.size.height))
-            enemy.position = gridPosition
-            
-            /* Set enemy's move distance when showing up */
-            let startMoveDistance = CGFloat(Int(gameScene.topGap)+self.cellHeight/2)
-            
-            /* Calculate relative duration with distance */
-            let startDulation = TimeInterval(1.5*self.addingMoveSpeed)
-                
-            /* Move enemy for startMoveDistance */
-            let move = SKAction.moveBy(x: 0, y: -startMoveDistance, duration: startDulation)
-            enemy.run(move)
-        
-            /* Add enemy to grid node */
-            addChild(enemy)
-        
-            /* Add enemy to enemyArray */
-            self.enemyArray.append(enemy)
-        }
-    }
-
-    
-    func flashGrid(labelNode: SKLabelNode) -> Int {
-        /* Set the number of times of flash randomly */
-        let numOfFlash = Int(arc4random_uniform(UInt32(numOfFlashUp)))+1
-        
+    func flashGrid(labelNode: SKLabelNode, numOfFlash: Int) -> Int {
         /* Set flash animation */
         let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
         let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
@@ -1023,13 +794,6 @@ class Grid: SKSpriteNode {
         }
     }
     
-    /* Show active area for battle ship */
-    func showBttleShipSettingArea() {
-        for i in 1..<self.rows-1 {
-            squareGreenArray[0][i].isHidden = false
-        }
-    }
-    
     func addSquareAtGrid(x: Int, y: Int, color: UIColor) {
         /* Add a new creature at grid position*/
         
@@ -1066,7 +830,7 @@ class Grid: SKSpriteNode {
     /* Display move path */
     func dispMovePath(start: [Int], dest: [Int]) {
         /* Get gameScene */
-        let gameScene = self.parent as! GameScene
+        let gameScene = self.parent as! Tutorial
         
         /* Reset display path */
         resetMovePath()
@@ -1216,41 +980,6 @@ class Grid: SKSpriteNode {
         for gridX in 0..<self.columns {
             for gridY in 0..<self.rows-1 {
                 self.squareBlueArray[gridX][gridY].alpha = 0.4
-            }
-        }
-    }
-    
-    /* Find hit spots for spear attack */
-    func hitSpotsForSpear() -> ([Int], [Int]) {
-        let gameScene = self.parent as! GameScene
-        switch gameScene.activeHero.direction {
-        case .front:
-            print("front")
-            if gameScene.activeHero.positionY < 2 {
-                return ([gameScene.activeHero.positionX, 0], [gameScene.activeHero.positionX, 0])
-            } else {
-                return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY-1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY-2])
-            }
-        case .back:
-            print("back")
-            if gameScene.activeHero.positionY > 9 {
-                return ([gameScene.activeHero.positionX, 11], [gameScene.activeHero.positionX, 11])
-            } else {
-                return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY+1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY+2])
-            }
-        case .left:
-            print("left")
-            if gameScene.activeHero.positionX < 2 {
-                return ([0, gameScene.activeHero.positionY], [0, gameScene.activeHero.positionY])
-            } else {
-                return ([gameScene.activeHero.positionX-1, gameScene.activeHero.positionY], [gameScene.activeHero.positionX-2, gameScene.activeHero.positionY])
-            }
-        case .right:
-            print("right")
-            if gameScene.activeHero.positionX > 6 {
-                return ([8, gameScene.activeHero.positionY], [8, gameScene.activeHero.positionY])
-            } else {
-                return ([gameScene.activeHero.positionX+1, gameScene.activeHero.positionY], [gameScene.activeHero.positionX+2, gameScene.activeHero.positionY])
             }
         }
     }
