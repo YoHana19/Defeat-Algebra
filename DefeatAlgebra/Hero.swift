@@ -9,29 +9,26 @@
 import Foundation
 import SpriteKit
 
-enum HeroState {
-    case Stay, Move, Attack
-}
-
 enum MoveDirection {
     case Horizontal, Vertical
 }
 
 class Hero: SKSpriteNode {
     
-    var heroState: HeroState = .Stay
+    /* Property */
     var direction: Direction = .back
     var moveDirection: MoveDirection = .Horizontal
     var moveSpeed = 0.2
     var heroMoveAnimation: SKAction!
+    var attackType: Int = 0
     var moveLevel: Int = 1
+    
+    /* Flags */
     var attackDoneFlag = false
     var moveDoneFlag = false
     var aliveFlag = true
-    var attackType: Int = 0
     
-    
-    /* position at grid */
+    /* Position at grid */
     var positionX: Int = 4
     var positionY: Int = 3
     
@@ -48,11 +45,12 @@ class Hero: SKSpriteNode {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         /* Set physics property */
-        physicsBody = SKPhysicsBody(rectangleOf: heroSize)
+        physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 20))
         physicsBody?.categoryBitMask = 1
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 4294967258
 
+        /* Set initial hero appearance */
         setName()
         setTexture()
         setMovingAnimation()
@@ -68,6 +66,10 @@ class Hero: SKSpriteNode {
         self.name = "hero"
     }
     
+    /*================*/
+    /*== Animation ==*/
+    /*================*/
+    
     /* Set texture to hero according to direction */
     func setTexture() {
         switch direction {
@@ -81,6 +83,7 @@ class Hero: SKSpriteNode {
             self.texture = SKTexture(imageNamed: "heroRight")
         }
     }
+    
     /* Set animation to hero according to direction */
     func setMovingAnimation() {
         switch direction {
@@ -187,6 +190,17 @@ class Hero: SKSpriteNode {
         self.run(seq)
     }
     
+    /* Reset hero position and animation */
+    func resetHero() {
+        self.direction = .back
+        self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.setTexture()
+        self.setMovingAnimation()
+    }
+    
+    /*===============*/
+    /*== Hero Move ==*/
+    /*===============*/
     
     /* Move hero */
     func heroSingleMove() {
@@ -452,15 +466,5 @@ class Hero: SKSpriteNode {
             }
         }
     }
-    
-    /* Reset hero position and animation */
-    func resetHero() {
-        self.direction = .back
-        self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        self.setTexture()
-        self.setMovingAnimation()
-    }
-    
-    
     
 }

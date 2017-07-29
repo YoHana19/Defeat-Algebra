@@ -1245,7 +1245,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*3+20, y: basePosY+CGFloat(gridNode.cellHeight)*4+20))
             case .T4:
                 removeTutorial()
-                self.createTutorialLabel(text: "Mine will exblode next Player Phase!", posY: 1100)
+                self.createTutorialLabel(text: "The mine will explode next Player Phase!", posY: 1100)
                 self.createTutorialLabel(text: "Move somewhere!", posY: 1040)
             }
         case 6:

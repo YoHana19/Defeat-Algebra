@@ -24,19 +24,19 @@ class Enemy: SKSpriteNode {
     var positionY = 0
     
     /* Enemy property */
-    var moveSpeed = 0.2
-    var punchSpeed: CGFloat = 0.0025
+    var moveSpeed = 0.1
+    var punchSpeed: CGFloat = 0.0020
     var direction: Direction = .front
     var punchInterval: Int!
     var punchIntervalForCount: Int = 0
-    var singleTurnDuration: TimeInterval = 1.0
+    var singleTurnDuration: TimeInterval = 0.2
     var vECategory = 0
     
     /* Enemy variable for punch */
     var valueOfEnemy: Int = 0
     var firstPunchLength: CGFloat = 78
     var singlePunchLength: CGFloat = 78
-    var punchLength: CGFloat!
+    var punchLength: CGFloat! = 0
     var variableExpression: [Int]!
     var variableExpressionForLabel: String!
     
@@ -47,9 +47,7 @@ class Enemy: SKSpriteNode {
     var myTurnFlag = false
     var turnDoneFlag = false
     var reachCastleFlag = false
-    
-    var waitDoneFlag = false
-    var punchDoneFlag = true
+    var wallHitFlag = false
     var aliveFlag = true
     
     init(variableExpressionSource: [[Int]]) {
@@ -58,9 +56,8 @@ class Enemy: SKSpriteNode {
         let enemySize = CGSize(width: 61, height: 61)
         super.init(texture: texture, color: UIColor.clear, size: enemySize)
         
+        /* Set name */
         setName()
-        
-        punchLength = firstPunchLength+CGFloat((valueOfEnemy-1))*singlePunchLength
         
         /* Set punch interval */
         setPunchInterval()
@@ -71,6 +68,7 @@ class Enemy: SKSpriteNode {
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
+        /* Set physics property */
         physicsBody = SKPhysicsBody(rectangleOf: enemySize)
         physicsBody?.categoryBitMask = 2
         physicsBody?.collisionBitMask = 0
@@ -86,27 +84,50 @@ class Enemy: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    /* Set punch interval randomly */
-    func setPunchInterval() {
-        let rand = Int(arc4random_uniform(100))
-        
-        /* punchInterval is 1 with 40% */
-        if rand < 45 {
-            punchInterval = 1
-            punchIntervalForCount = punchInterval
-            setPunchIntervalLabel()
-        /* punchInterval is 2 with 40% */
-        } else if rand < 90 {
-            punchInterval = 2
-            punchIntervalForCount = punchInterval
-            setPunchIntervalLabel()
-        /* punchInterval is 0 with 20% */
-        } else {
-            punchInterval = 0
-            punchIntervalForCount = punchInterval
-            setPunchIntervalLabel()
+    
+    /*===============*/
+    /*== Animation ==*/
+    /*===============*/
+    
+    /* Set standing texture of enemy according to direction */
+    func setStandingtexture() {
+        switch direction {
+        case .front:
+            self.texture = SKTexture(imageNamed: "front155")
+        case .back:
+            self.texture = SKTexture(imageNamed: "back155")
+        case .left:
+            self.texture = SKTexture(imageNamed: "left155")
+        case .right:
+            self.texture = SKTexture(imageNamed: "right155")
         }
-        
+    }
+    
+    /* Set Animation to enemy according to direction */
+    func setMovingAnimation() {
+        switch direction {
+        case .front:
+            let enemyMoveAnimation = SKAction(named: "enemyMoveForward")!
+            self.run(enemyMoveAnimation)
+        case .back:
+            let enemyMoveAnimation = SKAction(named: "enemyMoveBackward")!
+            self.run(enemyMoveAnimation)
+        case .left:
+            let enemyMoveAnimation = SKAction(named: "enemyMoveLeft")!
+            self.run(enemyMoveAnimation)
+        case .right:
+            let enemyMoveAnimation = SKAction(named: "enemyMoveRight")!
+            self.run(enemyMoveAnimation)
+        }
+    }
+    
+    /*==================*/
+    /*== Set property ==*/
+    /*==================*/
+    
+    /* Set name */
+    func setName() {
+        self.name = "enemy"
     }
     
     /* Set variable expression */
@@ -145,68 +166,6 @@ class Enemy: SKSpriteNode {
         }
     }
     
-    /* Set name */
-    func setName() {
-        self.name = "enemy"
-    }
-    
-    
-    /* Set standing texture of enemy according to direction */
-    func setStandingtexture() {
-        switch direction {
-        case .front:
-            self.texture = SKTexture(imageNamed: "front155")
-        case .back:
-            self.texture = SKTexture(imageNamed: "back155")
-        case .left:
-            self.texture = SKTexture(imageNamed: "left155")
-        case .right:
-            self.texture = SKTexture(imageNamed: "right155")
-        }
-    }
-    
-    /* Set Animation to enemy according to direction */
-    func setMovingAnimation() {
-        switch direction {
-        case .front:
-            let enemyMoveAnimation = SKAction(named: "enemyMoveForward")!
-            self.run(enemyMoveAnimation)
-        case .back:
-            let enemyMoveAnimation = SKAction(named: "enemyMoveBackward")!
-            self.run(enemyMoveAnimation)
-        case .left:
-            let enemyMoveAnimation = SKAction(named: "enemyMoveLeft")!
-            self.run(enemyMoveAnimation)
-        case .right:
-            let enemyMoveAnimation = SKAction(named: "enemyMoveRight")!
-            self.run(enemyMoveAnimation)
-        }
-    }
-    
-    func makeTriangle() {
-        /* length of one side */
-        let length: CGFloat = 7
-        
-        /* Set 4 points from start point to end point */
-        var points = [CGPoint(x: 0.0, y: -length),
-                      CGPoint(x: -length, y: length / 2.0),
-                      CGPoint(x: length, y: length / 2.0),
-                      CGPoint(x: 0.0, y: -length)]
-        
-        /* Make triangle */
-        let triangle = SKShapeNode(points: &points, count: points.count)
-        
-        /* Set triangle position */
-        triangle.position = CGPoint(x: 0, y: 35)
-        triangle.zPosition = 4
-        
-        
-        /* Colorlize triangle to red */
-        triangle.fillColor = UIColor.red
-        
-        self.addChild(triangle)
-    }
-    
     func setVariableExpressionLabel(text: String) {
         /* Set label with font */
         let label = SKLabelNode(fontNamed: "GillSans-Bold")
@@ -233,6 +192,53 @@ class Enemy: SKSpriteNode {
         
         /* Add to Scene */
         self.addChild(label)
+    }
+    
+    func makeTriangle() {
+        /* length of one side */
+        let length: CGFloat = 7
+        
+        /* Set 4 points from start point to end point */
+        var points = [CGPoint(x: 0.0, y: -length),
+                      CGPoint(x: -length, y: length / 2.0),
+                      CGPoint(x: length, y: length / 2.0),
+                      CGPoint(x: 0.0, y: -length)]
+        
+        /* Make triangle */
+        let triangle = SKShapeNode(points: &points, count: points.count)
+        
+        /* Set triangle position */
+        triangle.position = CGPoint(x: 0, y: 35)
+        triangle.zPosition = 4
+        
+        
+        /* Colorlize triangle to red */
+        triangle.fillColor = UIColor.red
+        
+        self.addChild(triangle)
+    }
+    
+    /* Set punch interval randomly */
+    func setPunchInterval() {
+        let rand = Int(arc4random_uniform(100))
+        
+        /* punchInterval is 1 with 40% */
+        if rand < 45 {
+            punchInterval = 1
+            punchIntervalForCount = punchInterval
+            setPunchIntervalLabel()
+            /* punchInterval is 2 with 40% */
+        } else if rand < 90 {
+            punchInterval = 2
+            punchIntervalForCount = punchInterval
+            setPunchIntervalLabel()
+            /* punchInterval is 0 with 20% */
+        } else {
+            punchInterval = 0
+            punchIntervalForCount = punchInterval
+            setPunchIntervalLabel()
+        }
+        
     }
     
     func setPunchIntervalLabel() {
@@ -266,6 +272,138 @@ class Enemy: SKSpriteNode {
         self.addChild(label)
     }
     
+    /*==================*/
+    /*== Enemy Action ==*/
+    /*==================*/
+    
+    /*== Move ==*/
+    /* Move enemy */
+    func enemyMove() {
+        
+        /* Get grid node */
+        let gridNode = self.parent as! Grid
+        
+        /* Make sure not to call if it's not my turn */
+        guard myTurnFlag else { return }
+        
+        /* Make sure to call once */
+        guard turnDoneFlag == false else { return }
+        turnDoneFlag = true
+        
+        /* Determine direction to move */
+        let directionRand = arc4random_uniform(100)
+        
+        /* Left edge */
+        if self.positionX <= 0 {
+            /* Go forward with 70% */
+            if directionRand < 70 {
+                self.direction = .front
+                self.setMovingAnimation()
+                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
+                self.run(move)
+                
+                /* Keep track enemy position */
+                self.positionY -= 1
+                
+                /* Go right with 30% */
+            } else if directionRand < 100 {
+                self.direction = .right
+                self.setMovingAnimation()
+                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
+                self.run(move)
+                
+                /* Keep track enemy position */
+                self.positionX += 1
+            }
+            
+            /* Right edge */
+        } else if self.positionX >= gridNode.columns-1 {
+            /* Go forward with 70% */
+            if directionRand < 70 {
+                self.direction = .front
+                self.setMovingAnimation()
+                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
+                self.run(move)
+                
+                /* Keep track enemy position */
+                self.positionY -= 1
+                
+                /* Go left with 30% */
+            } else if directionRand < 100 {
+                self.direction = .left
+                self.setMovingAnimation()
+                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
+                self.run(move)
+                
+                /* Keep track enemy position */
+                self.positionX -= 1
+            }
+            
+            /* Middle */
+        } else {
+            /* Go forward with 60% */
+            if directionRand < 60 {
+                self.direction = .front
+                self.setMovingAnimation()
+                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
+                self.run(move)
+                
+                /* Keep track enemy position */
+                self.positionY -= 1
+                
+                /* Go left with 20% */
+            } else if directionRand < 80 {
+                self.direction = .left
+                self.setMovingAnimation()
+                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
+                self.run(move)
+                
+                /* Keep track enemy position */
+                self.positionX -= 1
+                
+                /* Go right with 20% */
+            } else if directionRand < 100 {
+                self.direction = .right
+                self.setMovingAnimation()
+                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
+                self.run(move)
+                
+                /* Keep track enemy position */
+                self.positionX += 1
+            }
+        }
+        
+        /* Move next enemy's turn */
+        let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
+        let moveNextEnemy = SKAction.run({
+            self.myTurnFlag = false
+            if gridNode.turnIndex < gridNode.enemyArray.count-1 {
+                gridNode.turnIndex += 1
+                gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
+            }
+            
+            /* Remove punchInterval label */
+            if let theNode = self.childNode(withName: "punchInterval") {
+                theNode.removeFromParent()
+            }
+            
+            /* To check all enemy turn done */
+            gridNode.numOfTurnEndEnemy += 1
+            
+            /* Count down till do punch */
+            self.punchIntervalForCount -= 1
+            
+            /* Display left turn till punch */
+            self.setPunchIntervalLabel()
+        })
+        
+        /* excute drawPunch */
+        let seq = SKAction.sequence([moveTurnWait, moveNextEnemy])
+        self.run(seq)
+    }
+    
+    /*== Attack ==*/
+    /* Calculate punch length */
     func calculatePunchLength(value: Int) {
         /* Calculate value of variable expression of enemy */
         self.valueOfEnemy = value*self.variableExpression[1]+variableExpression[2]
@@ -274,7 +412,6 @@ class Enemy: SKSpriteNode {
         self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
     }
 
-    
     /* Set texture in punching */
     func setTextureInPunch() {
         switch direction {
@@ -364,129 +501,68 @@ class Enemy: SKSpriteNode {
         addChild(fist[1])
     }
     
-    /* Move enemy */
-    func enemyMove() {
+    /* Do punch */
+    func punch() -> (arm: [EnemyArm], fist: [EnemyFist]) {
         
-        /* Get grid node */
-        let gridNode = self.parent as! Grid
+        /* Make sure enemy punch front direction */
+        self.direction = .front
         
-        /* Make sure not to call if it's not my turn */
-        guard myTurnFlag else { return }
+        /* Stop animation of enemy */
+        self.removeAllActions()
         
-        /* Make sure to call once */
-        guard turnDoneFlag == false else { return }
-        turnDoneFlag = true
+        /* Set texture according to direction of enemy */
+        self.setTextureInPunch()
         
-        /* Determine direction to move */
-        let directionRand = arc4random_uniform(100)
+        /* Set arm */
+        let arm1 = EnemyArm(direction: self.direction)
+        let arm2 = EnemyArm(direction: self.direction)
+        setArm(arm: [arm1, arm2], direction: self.direction)
         
-        /* Left edge */
-        if self.positionX <= 0 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-            /* Go right with 30% */
-            } else if directionRand < 100 {
-                self.direction = .right
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX += 1
-            }
-            
-        /* Right edge */
-        } else if self.positionX >= gridNode.columns-1 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-                /* Go left with 30% */
-            } else if directionRand < 100 {
-                self.direction = .left
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX -= 1
-            }
-            
-        /* Middle */
-        } else {
-            /* Go forward with 60% */
-            if directionRand < 60 {
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-                /* Go left with 20% */
-            } else if directionRand < 80 {
-                self.direction = .left
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX -= 1
-                
-                /* Go right with 20% */
-            } else if directionRand < 100 {
-                self.direction = .right
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX += 1
-            }
+        /* Set fist */
+        let fist1 = EnemyFist(direction: self.direction)
+        let fist2 = EnemyFist(direction: self.direction)
+        setFist(fist: [fist1, fist2], direction: self.direction)
+        
+        /* Move Fist */
+        fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
+        fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
+        
+        /* Extend arm */
+        arm1.extendArm(length: punchLength, speed: self.punchSpeed)
+        arm2.extendArm(length: punchLength, speed: self.punchSpeed)
+        
+        /* Store reference for func drawPunch */
+        return ([arm1, arm2], [fist1, fist2])
+    }
+    
+    func moveBodyForward(length: CGFloat, speed: CGFloat) {
+        /* Move fist */
+        switch direction {
+        case .front:
+            let moveFist = SKAction.moveBy(x: 0, y: -length, duration: TimeInterval(length*speed))
+            self.run(moveFist)
+        case .back:
+            let moveFist = SKAction.moveBy(x: 0, y: -length, duration: TimeInterval(length*speed))
+            self.run(moveFist)
+        case .left:
+            let moveFist = SKAction.moveBy(x: length, y: 0, duration: TimeInterval(length*speed))
+            self.run(moveFist)
+        case .right:
+            let moveFist = SKAction.moveBy(x: -length, y: 0, duration: TimeInterval(length*speed))
+            self.run(moveFist)
+        }
+    }
+    
+    func drawPunch(arms: [EnemyArm], fists: [EnemyFist], length: CGFloat) {
+        for arm in arms {
+            arm.ShrinkArm(length: length, speed: self.punchSpeed)
         }
         
-        /* Move next enemy's turn */
-        let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
-        let moveNextEnemy = SKAction.run({
-            self.myTurnFlag = false
-            if gridNode.turnIndex < gridNode.enemyArray.count-1 {
-                gridNode.turnIndex += 1
-                gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
+        if arms.count > 0 {
+            for fist in fists {
+                fist.moveFistBackward(length: arms[0].size.height, speed: self.punchSpeed)
             }
-            
-            /* Remove punchInterval label */
-            if let theNode = self.childNode(withName: "punchInterval") {
-                theNode.removeFromParent()
-            }
-            
-            /* To check all enemy turn done */
-            gridNode.numOfTurnEndEnemy += 1
-            
-            /* Count down till do punch */
-            self.punchIntervalForCount -= 1
-            
-            /* Display left turn till punch */
-            self.setPunchIntervalLabel()
-        })
-        
-        /* excute drawPunch */
-        let seq = SKAction.sequence([moveTurnWait, moveNextEnemy])
-        self.run(seq)
+        }
     }
     
     /* Enemy punch and move to the position of fist */
@@ -509,9 +585,19 @@ class Enemy: SKSpriteNode {
         
         /* Enemy punch beyond edge of grid */
         if self.positionY < self.valueOfEnemy {
+            print("beyond edge")
+            print(self.wallHitFlag)
             
             /* Decrese life */
-            let decreseLife = SKAction.run({ gameScene.life -= 1 })
+            let decreseLife = SKAction.run({
+                if self.wallHitFlag == false {
+                    print("decrease life")
+                    gameScene.life -= 1
+                } else {
+                    gameScene.life += 0
+                    print("wall protect")
+                }
+            })
             
             /* Calculate punchlength */
             let originPosY = self.positionY
@@ -602,6 +688,9 @@ class Enemy: SKSpriteNode {
                 /* To check all enemy turn done */
                 gridNode.numOfTurnEndEnemy += 1
                 
+                /* Reset flag */
+                self.wallHitFlag = false
+                
                 /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
                 
@@ -610,7 +699,7 @@ class Enemy: SKSpriteNode {
             })
             
             /* excute drawPunch */
-            let seq = SKAction.sequence([wait, decreseLife, subSetArm, waitForSubSet, removeArm, moveForward, shrinkArm, drawWait, punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
+            let seq = SKAction.sequence([wait, subSetArm, waitForSubSet, removeArm, moveForward, shrinkArm, drawWait, decreseLife, punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
             self.run(seq)
 
         } else {
@@ -713,41 +802,6 @@ class Enemy: SKSpriteNode {
         }
         
     }
-
-    
-    /* Do punch */
-    func punch() -> (arm: [EnemyArm], fist: [EnemyFist]) {
-        
-        /* Make sure enemy punch front direction */
-        self.direction = .front
-        
-        /* Stop animation of enemy */
-        self.removeAllActions()
-        
-        /* Set texture according to direction of enemy */
-        self.setTextureInPunch()
-        
-        /* Set arm */
-        let arm1 = EnemyArm(direction: self.direction)
-        let arm2 = EnemyArm(direction: self.direction)
-        setArm(arm: [arm1, arm2], direction: self.direction)
-        
-        /* Set fist */
-        let fist1 = EnemyFist(direction: self.direction)
-        let fist2 = EnemyFist(direction: self.direction)
-        setFist(fist: [fist1, fist2], direction: self.direction)
-        
-        /* Move Fist */
-        fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
-        fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
-        
-        /* Extend arm */
-        arm1.extendArm(length: punchLength, speed: self.punchSpeed)
-        arm2.extendArm(length: punchLength, speed: self.punchSpeed)
-        
-        /* Store reference for func drawPunch */
-        return ([arm1, arm2], [fist1, fist2])
-    }
     
     /* Punch when enemy reach to castle */
     func punchToCastle() {
@@ -816,36 +870,8 @@ class Enemy: SKSpriteNode {
         self.run(seq)
     }
     
-    func moveBodyForward(length: CGFloat, speed: CGFloat) {
-        /* Move fist */
-        switch direction {
-        case .front:
-            let moveFist = SKAction.moveBy(x: 0, y: -length, duration: TimeInterval(length*speed))
-            self.run(moveFist)
-        case .back:
-            let moveFist = SKAction.moveBy(x: 0, y: -length, duration: TimeInterval(length*speed))
-            self.run(moveFist)
-        case .left:
-            let moveFist = SKAction.moveBy(x: length, y: 0, duration: TimeInterval(length*speed))
-            self.run(moveFist)
-        case .right:
-            let moveFist = SKAction.moveBy(x: -length, y: 0, duration: TimeInterval(length*speed))
-            self.run(moveFist)
-        }
-    }
     
-    func drawPunch(arms: [EnemyArm], fists: [EnemyFist], length: CGFloat) {
-        for arm in arms {
-            arm.ShrinkArm(length: length, speed: self.punchSpeed)
-        }
-        
-        if arms.count > 0 {
-            for fist in fists {
-                fist.moveFistBackward(length: arms[0].size.height, speed: self.punchSpeed)
-            }
-        }
-    }
-    
+    /*== For Magic Sword ==*/
     /* Put color to enemy */
     func colorizeEnemy() {
         self.run(SKAction.colorize(with: UIColor.green, colorBlendFactor: 1.0, duration: 0.50))

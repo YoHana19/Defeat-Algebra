@@ -13,8 +13,8 @@
  4: castleNode - 24(8,16)
  8: EnemyArm - 4
  16: EnemyFist - 5(1,4)
- 32: setItems - wall-26(2,8,16)
- 64: getItems(Boots,mine,Heart,callHero,catapult,multiAttack) - 1
+ 32: setItems - wall-26(2,8,16), bullet-2
+ 64: getItems(Boots,mine,Heart,callHero,catapult,multiAttack, battleShip) - 1
  128:
  1024:
  */
@@ -40,18 +40,15 @@ enum ItemType {
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
-    /* Game objects */
-    var gridNode: Grid!
-    var hero: Hero!
+    /*== Game objects ==*/
     var activeHero = Hero()
+    var gridNode: Grid!
     var castleNode: SKSpriteNode!
     var itemAreaNode: SKSpriteNode!
     var buttonAttack: SKNode!
     var buttonItem: SKNode!
-    var inputBoard: InputVariableExpression!
-    var setCatapult = Catapult()
     
-    /* Game labels */
+    /*== Game labels ==*/
     var valueOfX: SKLabelNode!
     var gameOverLabel: SKNode!
     var clearLabel: SKNode!
@@ -59,30 +56,49 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var playerPhaseLabel: SKNode!
     var enemyPhaseLabel: SKNode!
     
-    /* Game buttons */
+    /*== Game buttons ==*/
     var buttonRetry: MSButtonNode!
     var buttonNextLevel: MSButtonNode!
     var buttonToL1: MSButtonNode!
     
+    /*== Game constants ==*/
+    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
     /* Distance of objects in Scene */
     var topGap: CGFloat = 0.0  /* the length between top of scene and grid */
     var bottomGap: CGFloat = 0.0  /* the length between castle and grid */
-    
-    /* Game constants */
-    let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
-    let turnEndWait: TimeInterval = 1.0
-    
     /* Game Management */
+    /* Game Speed */
+    let turnEndWait: TimeInterval = 1.0
+    let phaseLabelTime: TimeInterval = 0.3
+    /* State cotrol */
     var gameState: GameSceneState = .AddEnemy
     var playerTurnState: PlayerTurnState = .DisplayPhase
     var itemType: ItemType = .None
+    /* Game level */
     var stageLevel: Int = 0
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 0
     
-    /* Resource of variable expression */
-    /* 1st element decides wihich is coefficiet or constant term */
+    /*===========*/
+    /*== Hero ==*/
+    /*===========*/
+    
+    /*== Hero Management ==*/
+    var heroArray = [Hero]()
+    var heroMovingFlag = false
+    /* Hero turn */
+    var numOfTurnDoneHero = 0
+    var playerTurnDoneFlag = false
+    
+    
+    /*===========*/
+    /*== Enemy ==*/
+    /*===========*/
+    
+    /*== Resource of variable expression ==*/
+    /* 1st element decides wihich is coefficiet or constant term, 4th elment indicates equivarence of variable expression */
     let variableExpressionSource = [
+        [[0, 1, 0, 0]],
         [[0, 1, 0, 0]],
         [[0 ,1, 0, 0], [0, 1, 1, 1], [0, 1, 2, 2]],
         [[0, 1, 0, 0], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 3, 3], [1, 1, 1, 1], [1, 1, 2, 2], [1, 1, 3, 3]],
@@ -90,38 +106,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         [[1,0],[1,1],[1,2],[1,3],[1,4],[2,0],[2,1],[2,2]]
     ]
     
-    /* Game flags */
-    var addEnemyDoneFlag = false
-    var playerTurnDoneFlag = false
-    var enemyTurnDoneFlag = false
-    var heroMovingFlag = false
-    var catapultFireReady = false
-    var catapultDoneFlag = false
-    var punchDoneFlag = false
-    var allPunchDoneFlag = false
-    var punchTimeFlag = false
-    var flashGridDoneFlag = false
-    var calPunchLengthDoneFlag = false
-    var initialAddEnemyFlag = true
-    /* Flag for items */
-    var mineDoneFlag = false
-    var wallDoneFlag = false
-    var battleShipDoneFlag = false
-    var battleShipOnceFlag = false
-    
-    /* Player Control */
-    var beganPos:CGPoint!
-    var heroArray = [Hero]()
-    var numOfTurnDoneHero = 0
-    
-    /* Add enemy */
+    /*== Add enemy management ==*/
     var initialEnemyPosArray = [[Int]]()
+    var initialAddEnemyFlag = true
     /* [0: number of adding enemy, 1: inteval of adding enemy, 2: number of times of adding enemy] */
     var addEnemyManagement = [
         [0, 0, 0],
+        [0, 0, 0],
         [4, 4, 1],
         [4, 2, 3],
-        [5, 2, 3]
+        [3, 3, 2]
     ]
     var numOfAddEnemy: Int = 0
     var countTurnForAddEnemy: Int = 0
@@ -129,24 +123,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var countTurnForCompAddEnemy: Int = 0
     var numOfTimeAddEnemy: Int = 0
     var CompAddEnemyFlag = false
+    var addEnemyDoneFlag = false
     
-    /* Flash grid */
-    var countTurnForFlashGrid: Int = 0
-    var flashInterval: Int = 8
-    var xValue: Int = 0
+    /*== Enemy Turn management ==*/
+    var enemyTurnDoneFlag = false
     
-    /* Items */
+    /*===========*/
+    /*== Items ==*/
+    /*===========*/
+    
+    /*== Item Management ==*/
     var itemArray = [SKSpriteNode]()
     var usingItemIndex = 0
     var usedItemIndexArray = [Int]()
     var itemAreaCover: SKShapeNode!
-    var activeAreaForCatapult = [SKShapeNode]()
-    var setCatapultDoneFlag = false
-    var catapultXPos: Int = 0
-    var magicSwordAttackDone = false
+    /* Catapult */
+    var setCatapult = Catapult()
+    var inputBoard: InputVariableExpression!
     var vELabel: SKLabelNode!
+    var activeAreaForCatapult = [SKShapeNode]()
+    var catapultXPos: Int = 0
+    var setCatapultDoneFlag = false
+    var catapultFireReady = false
+    var catapultDoneFlag = false
+    /* Magic sword */
+    var magicSwordAttackDone = false
+    /* Mine */
+    var mineDoneFlag = false
+    /* Wall */
+    var wallDoneFlag = false
+    /* Battle ship */
+    var battleShipDoneFlag = false
+    var battleShipOnceFlag = false
     
-    /* Castle life */
+    /*================*/
+    /*== Grid Flash ==*/
+    /*================*/
+    
+    var countTurnForFlashGrid: Int = 0
+    var flashInterval: Int = 8
+    var xValue: Int = 0
+    var flashGridDoneFlag = false
+    
+    /*=================*/
+    /*== Castle life ==*/
+    /*=================*/
+    
     var lifeLabel: SKLabelNode!
     var maxLife = 5
     var life: Int = 5 {
@@ -157,6 +179,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             lifeLabel.text = String(life)
         }
     }
+    
     
     override func didMove(to view: SKView) {
         /* Connect scene objects */
@@ -282,7 +305,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
-        /* Pick game property from user data and set */
+        /* Pick game property from user data and set them */
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
@@ -348,7 +371,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         setActiveAreaForCatapult()
         
-        /* For magi sword */
+        /* For magic sword */
         setMagicSwordVE()
         
         
@@ -365,7 +388,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         switch gameState {
         case .AddEnemy:
-            //            print("AddEnemy")
+                        print("AddEnemy")
             /* Make sure to call till complete adding enemy */
             if CompAddEnemyFlag == false {
                 /* Make sure to call addEnemy once */
@@ -449,7 +472,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             switch playerTurnState {
             case .DisplayPhase:
                 playerPhaseLabel.isHidden = false
-                let wait = SKAction.wait(forDuration: 1.0)
+                let wait = SKAction.wait(forDuration: self.phaseLabelTime)
                 let moveState = SKAction.run({ self.playerTurnState = .ItemOn })
                 let seq = SKAction.sequence([wait, moveState])
                 self.run(seq)
@@ -657,7 +680,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Display enemy phase label */
                 enemyPhaseLabel.isHidden = false
-                let wait = SKAction.wait(forDuration: 1.0)
+                let wait = SKAction.wait(forDuration: self.phaseLabelTime)
                 let moveState = SKAction.run({ self.gameState = .EnemyTurn })
                 let seq = SKAction.sequence([wait, moveState])
                 self.run(seq)
@@ -665,7 +688,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .EnemyTurn:
-            //            print("EnemyTurn")
+//                        print("EnemyTurn")
             /* Reset Flags */
             addEnemyDoneFlag = false
             playerTurnDoneFlag = false
@@ -674,6 +697,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enemyPhaseLabel.isHidden = true
             
             if enemyTurnDoneFlag == false {
+                print("\(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
                 
                 /* Reset enemy position */
                 gridNode.resetEnemyPositon()
@@ -697,40 +721,44 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             
+            print("outside \(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
+            
             /* All enemies finish their actions */
             if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
-                
+                print("all enemy turn done")
                 /* Remove dead hero from heroArray */
                 self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
-                
+                print("1")
+                gameState = .AddEnemy
                 enemyTurnDoneFlag = true
                 /* Reset all stuffs */
                 gridNode.turnIndex = 0
-                gridNode.numOfTurnEndEnemy = 0
                 for enemy in gridNode.enemyArray {
                     enemy.turnDoneFlag = false
                     enemy.myTurnFlag = false
                 }
-                
+                print("2")
                 /* Update enemy position */
                 gridNode.updateEnemyPositon()
-                
+                print("3")
                 /* Check if enemy reach to castle */
                 for enemy in self.gridNode.enemyArray {
                     if enemy.positionY == 0 {
                         enemy.reachCastleFlag = true
                     }
                 }
-                
-                gameState = .AddEnemy
+                print("4")
                 playerTurnState = .DisplayPhase
+                print("5")
             }
             break;
         case .GridFlashing:
-            //            print("GridFlashing")
+//                        print("GridFlashing")
             /* Make sure to call once */
             if flashGridDoneFlag == false {
                 flashGridDoneFlag = true
+                
+                gridNode.numOfTurnEndEnemy = 0
                 
                 /* Make grid flash */
                 xValue = self.gridNode.flashGrid(labelNode: valueOfX)
@@ -785,8 +813,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
-                    
-                    self.activeHero.heroState = .Attack
+                
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
                 }
@@ -824,7 +851,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* If touch anywhere but activeArea, back to MoveState  */
             } else if nodeAtPoint.name != "activeArea" {
                 self.gridNode.resetSquareArray(color: "red")
-                self.activeHero.heroState = .Move
                 self.playerTurnState = .MoveState
             }
             
@@ -847,7 +873,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.activeHero.heroState = .Attack
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
                 }
@@ -1194,6 +1219,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Enemy's arm or fist hits castle wall */
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
+            print("cate 4 hit")
             
             if contactA.categoryBitMask == 4 {
                 /* Get enemy body or arm or fist */
@@ -1228,6 +1254,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         let enemy = contactB.node as! Enemy
                         /* Stop Enemy move */
                         enemy.removeAllActions()
+                        enemy.wallHitFlag = true
                         
                         /* move back according to direction of enemy */
                         switch enemy.direction {
@@ -1263,6 +1290,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Set variable expression */
                         let setVariableExpression = SKAction.run({
+                            /* Reset count down punchInterval */
+                            enemy.punchIntervalForCount = enemy.punchInterval
                             enemy.makeTriangle()
                             enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
                         })
@@ -1284,9 +1313,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             
                             /* To check all enemy turn done */
                             self.gridNode.numOfTurnEndEnemy += 1
-                            
-                            /* Reset count down punchInterval */
-                            enemy.punchIntervalForCount = enemy.punchInterval
                             
                         })
                         
@@ -1327,6 +1353,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         let enemy = contactA.node as! Enemy
                         /* Stop Enemy move */
                         enemy.removeAllActions()
+                        enemy.wallHitFlag = true
                         
                         /* Reposition enemy */
                         let moveBack = SKAction.move(to: CGPoint(x: CGFloat(enemy.positionX*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY+1)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
@@ -1339,6 +1366,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Set variable expression */
                         let setVariableExpression = SKAction.run({
+                            /* Reset count down punchInterval */
+                            enemy.punchIntervalForCount = enemy.punchInterval
                             enemy.makeTriangle()
                             enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
                         })
@@ -1352,17 +1381,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                 self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
                             }
                             
-                            /* Set enemy turn interval */
-                            enemy.setPunchIntervalLabel()
-                            
                             /* Reset enemy animation */
                             enemy.setMovingAnimation()
                             
                             /* To check all enemy turn done */
                             self.gridNode.numOfTurnEndEnemy += 1
                             
-                            /* Reset count down punchInterval */
-                            enemy.punchIntervalForCount = enemy.punchInterval
+                            /* Set enemy turn interval */
+                            enemy.setPunchIntervalLabel()
                             
                             /* Set enemy position to edge */
                             enemy.positionY = wall.posY+1
@@ -1393,7 +1419,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    /* Add enemy in fixed interval */
+    
+    /*===========*/
+    /*== Hero ==*/
+    /*===========*/
+    
+    /*== Set initial hero ==*/
+    func setHero() {
+        if moveLevelArray.count == 1 {
+            hero = Hero()
+            hero.moveLevel = moveLevelArray[0]
+            hero.positionX = 4
+            hero.positionY = 3
+            heroArray.append(hero)
+            hero.position = CGPoint(x: gridNode.position.x+CGFloat(self.gridNode.cellWidth/2)+CGFloat(self.gridNode.cellWidth*4), y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*3))
+            addChild(hero)
+        } else if moveLevelArray.count == 2 {
+            let heroPosArray = [[3,3],[5,3]]
+            
+            for (i, moveLevel) in moveLevelArray.enumerated() {
+                hero = Hero()
+                hero.moveLevel = moveLevel
+                hero.positionX = heroPosArray[i][0]
+                hero.positionY = heroPosArray[i][1]
+                heroArray.append(hero)
+                hero.position = CGPoint(x: gridNode.position.x+CGFloat(self.gridNode.cellWidth/2)+CGFloat(self.gridNode.cellWidth*heroPosArray[i][0]), y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*heroPosArray[i][1]))
+                addChild(hero)
+            }
+        }
+    }
+    
+    /*===========*/
+    /*== Enemy ==*/
+    /*===========*/
+    
+    /*== Add enemy in fixed interval ==*/
     func addEnemy() {
         /* Time to add enemy */
         if countTurnForAddEnemy > addInterval {
@@ -1413,6 +1473,47 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    /*== Set each value of adding enemy management ==*/
+    func SetAddEnemyMng() {
+        numOfAddEnemy = addEnemyManagement[stageLevel][0]
+        addInterval = addEnemyManagement[stageLevel][1]
+        numOfTimeAddEnemy = addEnemyManagement[stageLevel][2]
+    }
+    
+    /*===========*/
+    /*== Items ==*/
+    /*===========*/
+    
+    /*== Item Management ==*/
+    /* Create item icons to display when you get items */
+    func displayitem(name: String) {
+        let index = self.itemArray.count
+        let item = SKSpriteNode(imageNamed: name)
+        item.position = CGPoint(x: index*90+50, y: 50)
+        item.zPosition = 2
+        item.name = name
+        self.itemArray.append(item)
+        addChild(item)
+    }
+    
+    /* Reset position of item when use any */
+    func resetDisplayItem() {
+        for (i, item) in itemArray.enumerated() {
+            item.position = CGPoint(x: i*90+50, y: 50)
+        }
+    }
+    
+    /* Create object blanketting item area */
+    func setItemAreaCover() {
+        itemAreaCover = SKShapeNode(rectOf: itemAreaNode.size)
+        itemAreaCover.fillColor = UIColor.black
+        itemAreaCover.alpha = 0.6
+        itemAreaCover.position = itemAreaNode.position
+        itemAreaCover.zPosition = 100
+        addChild(itemAreaCover)
+    }
+    
+    /*== Catapult ==*/
     /* Display active area for catapult */
     func setSingleActiveAreaForCatapult() -> SKShapeNode {
         let square = SKShapeNode(rectOf: CGSize(width: gridNode.cellWidth, height: 60))
@@ -1509,7 +1610,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    /* Check within grid */
+    /* Check within grid for catapult */
     func checkWithinGrid() -> (Int, Int, Int, Int) {
         /* Calculate hit spots */
         /* Make sure hit spots within grid */
@@ -1564,7 +1665,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    /* Add hero */
+    /*== Call Hero ==*/
     func addHero() {
         
         /* Create hero */
@@ -1593,6 +1694,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         heroArray.append(hero)
     }
     
+    /*== Magic Sword ==*/
+    /* Display variable expression you attack when using magic sword */
+    func setMagicSwordVE() {
+        /* label of variable expresion */
+        vELabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        vELabel.text = "0"
+        vELabel.fontSize = 96
+        vELabel.position = CGPoint(x: self.size.width/2, y: 170)
+        vELabel.zPosition = 20
+        vELabel.isHidden = true
+        addChild(vELabel)
+    }
+    func dispMagicSwordVE(vE: String) {
+        vELabel.text = vE
+        vELabel.isHidden = false
+    }
+    
+    /*================*/
+    /*== Grid Flash ==*/
+    /*================*/
+    
     /* Make grid flash in fixed interval */
     func flashGrid() {
         /* Time to flash grid */
@@ -1613,76 +1735,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    /* Display variable expression you attack when using magic sword */
-    func setMagicSwordVE() {
-        /* label of variable expresion */
-        vELabel = SKLabelNode(fontNamed: "GillSans-Bold")
-        vELabel.text = "0"
-        vELabel.fontSize = 96
-        vELabel.position = CGPoint(x: self.size.width/2, y: 170)
-        vELabel.zPosition = 20
-        vELabel.isHidden = true
-        addChild(vELabel)
-    }
-    func dispMagicSwordVE(vE: String) {
-        vELabel.text = vE
-        vELabel.isHidden = false
-    }
+    /*=====================*/
+    /*== Game Management ==*/
+    /*=====================*/
     
-    /* Create item icons to display when you get items */
-    func displayitem(name: String) {
-        let index = self.itemArray.count
-        let item = SKSpriteNode(imageNamed: name)
-        item.position = CGPoint(x: index*90+50, y: 50)
-        item.zPosition = 2
-        item.name = name
-        self.itemArray.append(item)
-        addChild(item)
-    }
-    
-    /* Reset position of item when use any */
-    func resetDisplayItem() {
-        for (i, item) in itemArray.enumerated() {
-            item.position = CGPoint(x: i*90+50, y: 50)
-        }
-    }
-    
-    /* Create object blanketting item area */
-    func setItemAreaCover() {
-        itemAreaCover = SKShapeNode(rectOf: itemAreaNode.size)
-        itemAreaCover.fillColor = UIColor.black
-        itemAreaCover.alpha = 0.6
-        itemAreaCover.position = itemAreaNode.position
-        itemAreaCover.zPosition = 100
-        addChild(itemAreaCover)
-    }
-    
-    /* Set initial hero */
-    func setHero() {
-        if moveLevelArray.count == 1 {
-            hero = Hero()
-            hero.moveLevel = moveLevelArray[0]
-            hero.positionX = 4
-            hero.positionY = 3
-            heroArray.append(hero)
-            hero.position = CGPoint(x: gridNode.position.x+CGFloat(self.gridNode.cellWidth/2)+CGFloat(self.gridNode.cellWidth*4), y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*3))
-            addChild(hero)
-        } else if moveLevelArray.count == 2 {
-            let heroPosArray = [[3,3],[5,3]]
-            
-            for (i, moveLevel) in moveLevelArray.enumerated() {
-                hero = Hero()
-                hero.moveLevel = moveLevel
-                hero.positionX = heroPosArray[i][0]
-                hero.positionY = heroPosArray[i][1]
-                heroArray.append(hero)
-                hero.position = CGPoint(x: gridNode.position.x+CGFloat(self.gridNode.cellWidth/2)+CGFloat(self.gridNode.cellWidth*heroPosArray[i][0]), y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*heroPosArray[i][1]))
-                addChild(hero)
-            }
-        }
-    }
-    
-    /* Set initial objects */
+    /*== Set initial objects ==*/
     func setInitialObj(level: Int) {
         /* Set life */
         life = maxLife
@@ -1691,27 +1748,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 1 */
         case 0:
             /* Set enemy */
+            initialEnemyPosArray = [[2, 9], [6, 9]]
+            
+            /* Set total number of enemy */
+            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            
+            /* Set boots */
+            let bootsArray = [[4,5]]
+            for bootsPos in bootsArray {
+                let boots = Boots()
+                self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
+            }
+            
+        /* Level 2 */
+        case 1:
+            /* Set enemy */
             initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
             /* Set boots */
-            let bootsArray = [[3,3],[7,5]]
+            let bootsArray = [[4,5]]
             for bootsPos in bootsArray {
                 let boots = Boots()
                 self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
             }
             
             /* Set mine */
-            let minesArray = [[5,3],[1,5]]
+            let minesArray = [[1,5],[7,5]]
             for minePos in minesArray {
                 let mine = Mine()
                 self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
             }
          
-        /* Level 2 */
-        case 1:
+        /* Level 3 */
+        case 2:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 9], [4, 9], [6, 9]]
             
@@ -1726,7 +1798,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Set mine */
-            let minesArray = [[1,3],[1,9],[7,3],[7,9],[2,0],[6,0]]
+            let minesArray = [[1,3],[7,3],[2,0],[6,0]]
             for minePos in minesArray {
                 let mine = Mine()
                 self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
@@ -1737,23 +1809,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
             
             
-        /* Level 3 */
-        case 2:
+        /* Level 4 */
+        case 3:
             /* Set enemy */
-            initialEnemyPosArray = [[0, 10], [2, 10], [4, 10], [6, 10], [8, 10]]
+            initialEnemyPosArray = [[0, 10], [2, 10], [4, 10], [6, 10], [8, 10], [3, 8], [5, 8]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
             /* Set boots */
-            let bootsArray = [[3,4],[5,4]]
+            let bootsArray = [[3,3],[5,3]]
             for bootsPos in bootsArray {
                 let boots = Boots()
                 self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
             }
             
             /* Set mine */
-            let minesArray = [[1,1],[1,5],[3,0],[5,0],[7,3],[7,5],[7,9],[1,9]]
+            let minesArray = [[1,1],[1,5],[5,0],[7,3],[7,7],[1,7]]
             for minePos in minesArray {
                 let mine = Mine()
                 self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
@@ -1764,70 +1836,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
             
             /* Set wall */
-            let wallsArray = [[1,3],[7,1]]
+            let wallsArray = [[3,0],[1,3],[7,1],[7,5]]
             for wallPos in wallsArray {
                 let wall = Wall()
                 self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
             }
             
             /* Set multiAttack */
-            let multiAttackArray = [[2,6],[6,6]]
+            let multiAttackArray = [[3,5],[5,5],[3,7],[5,7]]
             for multiAttackPos in multiAttackArray {
                 let multiAttack = MultiAttack()
                 self.gridNode.addObjectAtGrid(object: multiAttack, x: multiAttackPos[0], y: multiAttackPos[1])
             }
            
-        /* Level 4 */
-        case 3:
+        /* Level 5 */
+        case 4:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [1, 9], [3, 9], [5, 9], [7, 9]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
-            /* Set boots */
-            let bootsArray = [[1,1],[7,1]]
-            for bootsPos in bootsArray {
-                let boots = Boots()
-                self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
-            }
-            
             /* Set mine */
-            let minesArray = [[4,0],[0,8],[8,8],[4,11]]
+            let minesArray = [[4,0],[4,6],[1,3],[7,3]]
             for minePos in minesArray {
                 let mine = Mine()
                 self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
             }
             
             /* Set multiAttack */
-            let multiAttackArray = [[2,6],[6,6]]
+            let multiAttackArray = [[3,2],[5,4],[2,5],[6,1]]
             for multiAttackPos in multiAttackArray {
                 let multiAttack = MultiAttack()
                 self.gridNode.addObjectAtGrid(object: multiAttack, x: multiAttackPos[0], y: multiAttackPos[1])
             }
             
             /* Set wall */
-            let wall = Wall()
-            self.gridNode.addObjectAtGrid(object: wall, x: 4, y: 2)
-            let wall2 = Wall()
-            self.gridNode.addObjectAtGrid(object: wall2, x: 5, y: 2)
-            let wall3 = Wall()
-            self.gridNode.addObjectAtGrid(object: wall3, x: 3, y: 2)
-            
-            let battleShip = BattleShip()
-            self.gridNode.addObjectAtGrid(object: battleShip, x: 6, y: 2)
+            let wallsArray = [[3,4],[5,2],[2,1],[6,5]]
+            for wallPos in wallsArray {
+                let wall = Wall()
+                self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
+            }
             
             
         default:
             break;
         }
-    }
-    
-    /* Set each value of adding enemy management */
-    func SetAddEnemyMng() {
-        numOfAddEnemy = addEnemyManagement[stageLevel][0]
-        addInterval = addEnemyManagement[stageLevel][1]
-        numOfTimeAddEnemy = addEnemyManagement[stageLevel][2]
     }
     
     
