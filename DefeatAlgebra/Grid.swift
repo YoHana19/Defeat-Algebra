@@ -33,6 +33,8 @@ class Grid: SKSpriteNode {
     var numOfTurnEndEnemy = 0
     var turnIndex = 0
     var startPosArray = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    var touchingEnemyFlag = false
+    var touchedEnemy = Enemy(variableExpressionSource: [[0,1,0,0]])
     
     /* Flash */
     var flashSpeed: Double = 0.5
@@ -90,7 +92,7 @@ class Grid: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        print("grid touchBegan")
+        print("grid touchBegan")
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
@@ -122,12 +124,22 @@ class Grid: SKSpriteNode {
                     beganPos = [gridX, gridY]
                     currentPos = beganPos
                 }
-                
+            }
+        }
+        
+        /* Touch enemy to check variable expression */
+        if touchingEnemyFlag == false {
+            if nodeAtPoint.name == "enemy" {
+                touchingEnemyFlag = true
+                touchedEnemy = nodeAtPoint as! Enemy
+                touchedEnemy.position = location
+                touchedEnemy.physicsBody = nil
             }
         }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("grid touchMoved")
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
@@ -178,20 +190,41 @@ class Grid: SKSpriteNode {
                     }
                 }
             }
+            
+            if touchingEnemyFlag {
+                rePosEnemy(enemy: touchedEnemy)
+                touchingEnemyFlag = false
+            }
+            
+        } else if nodeAtPoint.name == "enemy" {
+            if touchingEnemyFlag {
+                touchedEnemy.position = location
+            }
         } else {
             directionJudgeDoneFlag = false
             resetMovePath()
+            if touchingEnemyFlag {
+                rePosEnemy(enemy: touchedEnemy)
+                touchingEnemyFlag = false
+            }
         }
     }
 
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        print("grid touchEnded")
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
 
         guard gameScene.gameState == .PlayerTurn else { return }
         
+        /* Reset enemy position after checking variable expression */
+        print(touchingEnemyFlag)
+        if touchingEnemyFlag {
+            rePosEnemy(enemy: touchedEnemy)
+            touchingEnemyFlag = false
+        }
+
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
@@ -251,6 +284,7 @@ class Grid: SKSpriteNode {
             
         /* Touch point to attack to */
         } else if gameScene.playerTurnState == .AttackState {
+//            print("attackstate")
             
             /* Touch ends on active area */
             if nodeAtPoint.name == "activeArea" {
@@ -582,7 +616,16 @@ class Grid: SKSpriteNode {
         }
     }
     
-    /*== Adding Enemy */
+    /* Reposition enemy for checking variable exoression */
+    func rePosEnemy(enemy: Enemy) {
+        enemy.position = CGPoint(x: CGFloat(enemy.positionX*self.cellWidth+self.cellWidth/2), y: CGFloat(enemy.positionY*self.cellHeight+self.cellHeight/2))
+        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
+        enemy.physicsBody?.categoryBitMask = 2
+        enemy.physicsBody?.collisionBitMask = 0
+        enemy.physicsBody?.contactTestBitMask = 1
+    }
+    
+    /*== Adding Enemy ==*/
     
     /* Add initial enemy */
     func addInitialEnemyAtGrid(enemyPosArray: [[Int]], variableExpressionSource: [[Int]]) {
@@ -1199,7 +1242,6 @@ class Grid: SKSpriteNode {
             }
         }
     }
-
     
     /*== Items ==*/
     /* Mine */
@@ -1233,7 +1275,6 @@ class Grid: SKSpriteNode {
             squareGreenArray[0][i].isHidden = false
         }
     }
-
     
 }
 

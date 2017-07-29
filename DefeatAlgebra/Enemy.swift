@@ -72,7 +72,7 @@ class Enemy: SKSpriteNode {
         physicsBody = SKPhysicsBody(rectangleOf: enemySize)
         physicsBody?.categoryBitMask = 2
         physicsBody?.collisionBitMask = 0
-        physicsBody?.contactTestBitMask = 5
+        physicsBody?.contactTestBitMask = 1
         
         /* Set variable expression */
         setVariavleExpression(variableExpressionSource: variableExpressionSource)

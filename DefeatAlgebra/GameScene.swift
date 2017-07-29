@@ -9,7 +9,7 @@
 /* Index of categryBitMask of game objects */
 /*
  1: Hero - 4294967258(MAX-4-32-1)
- 2: Enemy - 5(1,4)
+ 2: Enemy - 1
  4: castleNode - 24(8,16)
  8: EnemyArm - 4
  16: EnemyFist - 5(1,4)
@@ -388,7 +388,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         switch gameState {
         case .AddEnemy:
-                        print("AddEnemy")
+//                        print("AddEnemy")
             /* Make sure to call till complete adding enemy */
             if CompAddEnemyFlag == false {
                 /* Make sure to call addEnemy once */
@@ -697,7 +697,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enemyPhaseLabel.isHidden = true
             
             if enemyTurnDoneFlag == false {
-                print("\(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
+//                print("\(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
                 
                 /* Reset enemy position */
                 gridNode.resetEnemyPositon()
@@ -721,15 +721,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             
-            print("outside \(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
-            
             /* All enemies finish their actions */
             if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
-                print("all enemy turn done")
+                
                 /* Remove dead hero from heroArray */
                 self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
-                print("1")
-                gameState = .AddEnemy
+                
                 enemyTurnDoneFlag = true
                 /* Reset all stuffs */
                 gridNode.turnIndex = 0
@@ -737,19 +734,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     enemy.turnDoneFlag = false
                     enemy.myTurnFlag = false
                 }
-                print("2")
+                
                 /* Update enemy position */
                 gridNode.updateEnemyPositon()
-                print("3")
+                
                 /* Check if enemy reach to castle */
                 for enemy in self.gridNode.enemyArray {
                     if enemy.positionY == 0 {
                         enemy.reachCastleFlag = true
                     }
                 }
-                print("4")
+                
+                gameState = .AddEnemy
                 playerTurnState = .DisplayPhase
-                print("5")
+                
             }
             break;
         case .GridFlashing:
