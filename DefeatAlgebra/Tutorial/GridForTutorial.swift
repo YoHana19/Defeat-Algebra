@@ -393,7 +393,6 @@ class GridForTutorial: SKSpriteNode {
                     
                 /* If touch anywhere but activeArea, back to MoveState  */
                 } else {
-                    gameScene.activeHero.heroState = .Move
                     gameScene.playerTurnState = .MoveState
                 }
                 
@@ -422,7 +421,6 @@ class GridForTutorial: SKSpriteNode {
                     gameScene.itemAreaCover.isHidden = false
                      
                     /* Back to MoveState */
-                    gameScene.activeHero.heroState = .Move
                     gameScene.playerTurnState = .MoveState
                         
                     //                    print("Used item index is \(gameScene.usingItemIndex)")

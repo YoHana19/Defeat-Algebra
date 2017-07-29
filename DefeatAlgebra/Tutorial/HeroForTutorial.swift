@@ -11,7 +11,6 @@ import SpriteKit
 
 class HeroForTutorial: SKSpriteNode {
     
-    var heroState: HeroState = .Stay
     var direction: Direction = .back
     var moveDirection: MoveDirection = .Horizontal
     var moveSpeed = 0.2

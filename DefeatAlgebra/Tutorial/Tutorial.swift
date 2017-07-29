@@ -593,7 +593,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.activeHero.heroState = .Attack
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
                 }
@@ -631,7 +630,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 /* If touch anywhere but activeArea, back to MoveState  */
             } else if nodeAtPoint.name != "activeArea" {
                 self.gridNode.resetSquareArray(color: "red")
-                self.activeHero.heroState = .Move
                 self.playerTurnState = .MoveState
             }
             
@@ -654,7 +652,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.activeHero.heroState = .Attack
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
                 }

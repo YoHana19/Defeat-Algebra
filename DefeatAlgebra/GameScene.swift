@@ -1427,7 +1427,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*== Set initial hero ==*/
     func setHero() {
         if moveLevelArray.count == 1 {
-            hero = Hero()
+            let hero = Hero()
             hero.moveLevel = moveLevelArray[0]
             hero.positionX = 4
             hero.positionY = 3
@@ -1438,7 +1438,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let heroPosArray = [[3,3],[5,3]]
             
             for (i, moveLevel) in moveLevelArray.enumerated() {
-                hero = Hero()
+                let hero = Hero()
                 hero.moveLevel = moveLevel
                 hero.positionX = heroPosArray[i][0]
                 hero.positionY = heroPosArray[i][1]
