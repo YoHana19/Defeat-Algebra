@@ -96,13 +96,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*===========*/
     
     /*== Resource of variable expression ==*/
-    /* 1st element decides wihich is coefficiet or constant term, 4th elment indicates equivarence of variable expression */
+    /* 1st element decides wihich is coefficiet or constant term, last elment indicates equivarence of variable expression */
+    /* 1st element 0:x+1, 1:1+x, 2:1×x, 3:x×1, 4:2x-1, 5:3-x */
     let variableExpressionSource = [
         [[0, 1, 0, 0]],
         [[0, 1, 0, 0]],
         [[0 ,1, 0, 0], [0, 1, 1, 1], [0, 1, 2, 2]],
         [[0, 1, 0, 0], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 3, 3], [1, 1, 1, 1], [1, 1, 2, 2], [1, 1, 3, 3]],
         [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [2, 1, 0, 0], [2, 2, 0, 4], [2, 3, 0, 5], [3, 1, 0, 0], [3, 2, 0, 4], [3, 3, 0, 5]],
+        [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [0, 1, 1, 1], [0, 2, 1, 7], [0, 3, 1, 8], [0, 1, 2, 2], [0, 2, 2, 9], [0, 3, 2, 10], [1, 1, 1, 1], [1, 2, 1, 7], [1, 3, 1, 8], [1, 1, 2, 2], [1, 2, 2, 9], [1, 3, 2, 10]],
         [[1,0],[1,1],[1,2],[1,3],[1,4],[2,0],[2,1],[2,2]]
     ]
     
@@ -115,7 +117,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         [0, 0, 0],
         [4, 4, 1],
         [4, 2, 3],
-        [3, 3, 2]
+        [3, 3, 2],
+        [3, 1, 5]
     ]
     var numOfAddEnemy: Int = 0
     var countTurnForAddEnemy: Int = 0
@@ -462,6 +465,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .PlayerTurn:
+//            print(itemArray)
             //            print(playerTurnState)
 //            print("\(heroArray.count), \(numOfTurnDoneHero)")
             /* Check if all enemies are defeated or not */
@@ -653,18 +657,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Remove used items from itemArray */
                 //                print("Item index array is \(usedItemIndexArray)")
-                self.usedItemIndexArray.sort { $0 < $1 }
-                for (i, index) in usedItemIndexArray.enumerated() {
-                    itemArray.remove(at: index-i)
-                    //                    print("Remove item index of \(index)")
-                    if i == usedItemIndexArray.count-1 {
-                        //                        print("Item array is \(itemArray)")
-                        /* Reset position of display item */
-                        self.resetDisplayItem()
-                        /* Reset usedItemIndexArray */
-                        usedItemIndexArray.removeAll()
-                    }
-                }
+//                self.usedItemIndexArray.sort { $0 < $1 }
+//                for (i, index) in usedItemIndexArray.enumerated() {
+//                    itemArray.remove(at: index-i)
+//                    //                    print("Remove item index of \(index)")
+//                    if i == usedItemIndexArray.count-1 {
+//                        //                        print("Item array is \(itemArray)")
+//                        /* Reset position of display item */
+//                        self.resetDisplayItem()
+//                        /* Reset usedItemIndexArray */
+//                        usedItemIndexArray.removeAll()
+//                    }
+//                }
                 
                 /* Remove move area */
                 gridNode.resetSquareArray(color: "blue")
@@ -904,8 +908,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
                 
                 /* Remove used itemIcon from item array and Scene */
-                itemArray[usingItemIndex].removeFromParent()
-                usedItemIndexArray.append(usingItemIndex)
+                resetDisplayItem(index: usingItemIndex)
                 
                 /* Cover item area */
                 self.itemAreaCover.isHidden = false
@@ -965,8 +968,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
                 
                 /* Remove used itemIcon from item array and Scene */
-                itemArray[usingItemIndex].removeFromParent()
-                usedItemIndexArray.append(usingItemIndex)
+                resetDisplayItem(index: usingItemIndex)
                 
                 /* Cover item area */
                 self.itemAreaCover.isHidden = false
@@ -1009,6 +1011,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else if nodeAtPoint.name == "battleShip" {
                 /* Remove activeArea */
                 self.gridNode.resetSquareArray(color: "red")
+                self.gridNode.resetSquareArray(color: "green")
                 resetActiveAreaForCatapult()
                 
                 /* Set mine using state */
@@ -1133,7 +1136,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Other items */
                     } else {
                         item.removeFromParent()
-                        displayitem(name: item.name!)
+                        /* Make sure to have items up tp 8 */
+                        if itemArray.count >= 8 {
+                            self.resetDisplayItem(index: 0)
+                            displayitem(name: item.name!)
+                        } else {
+                            displayitem(name: item.name!)
+                        }
                     }
                 }
                 /* B is hero */
@@ -1159,7 +1168,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Other items */
                     } else {
                         item.removeFromParent()
-                        displayitem(name: item.name!)
+                        /* Make sure to have items up tp 8 */
+                        if itemArray.count >= 8 {
+                            self.resetDisplayItem(index: 0)
+                            displayitem(name: item.name!)
+                        } else {
+                            displayitem(name: item.name!)
+                        }
                     }
                 }
                 
@@ -1495,7 +1510,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     /* Reset position of item when use any */
-    func resetDisplayItem() {
+    func resetDisplayItem(index: Int) {
+        itemArray[index].removeFromParent()
+        itemArray.remove(at: index)
         for (i, item) in itemArray.enumerated() {
             item.position = CGPoint(x: i*90+50, y: 50)
         }
@@ -1815,15 +1832,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
-            /* Set boots */
-            let bootsArray = [[3,3],[5,3]]
-            for bootsPos in bootsArray {
-                let boots = Boots()
-                self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
-            }
-            
             /* Set mine */
-            let minesArray = [[1,1],[1,5],[5,0],[7,3],[7,7],[1,7]]
+            let minesArray = [[2,0],[6,0],[7,3]]
             for minePos in minesArray {
                 let mine = Mine()
                 self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
@@ -1834,14 +1844,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
             
             /* Set wall */
-            let wallsArray = [[3,0],[1,3],[7,1],[7,5]]
+            let wallsArray = [[4,0],[1,3]]
             for wallPos in wallsArray {
                 let wall = Wall()
                 self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
             }
             
             /* Set multiAttack */
-            let multiAttackArray = [[3,5],[5,5],[3,7],[5,7]]
+            let multiAttackArray = [[3,5],[5,5]]
             for multiAttackPos in multiAttackArray {
                 let multiAttack = MultiAttack()
                 self.gridNode.addObjectAtGrid(object: multiAttack, x: multiAttackPos[0], y: multiAttackPos[1])
@@ -1876,6 +1886,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
             }
             
+        /* Level 6 */
+        case 5:
+            /* Set enemy */
+            initialEnemyPosArray = [[2, 10], [6, 10], [2, 8], [6, 8], [4, 9]]
+            
+            /* Set total number of enemy */
+            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            
+            /* Set mine */
+            let minesArray = [[4,6],[4,0]]
+            for minePos in minesArray {
+                let mine = Mine()
+                self.gridNode.addObjectAtGrid(object: mine, x: minePos[0], y: minePos[1])
+            }
+            
+            /* Set multiAttack */
+            let multiAttackArray = [[3,5],[5,1]]
+            for multiAttackPos in multiAttackArray {
+                let multiAttack = MultiAttack()
+                self.gridNode.addObjectAtGrid(object: multiAttack, x: multiAttackPos[0], y: multiAttackPos[1])
+            }
+            
+            /* Set wall */
+            let wallsArray = [[2,4],[6,2]]
+            for wallPos in wallsArray {
+                let wall = Wall()
+                self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
+            }
+            
+            /* Set battle ship */
+            let battleShipsArray = [[1,3],[7,3]]
+            for battleShipPos in battleShipsArray {
+                let battleShip = BattleShip()
+                self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
+            }
             
         default:
             break;

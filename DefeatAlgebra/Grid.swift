@@ -92,7 +92,7 @@ class Grid: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("grid touchBegan")
+//        print("grid touchBegan")
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
@@ -139,7 +139,7 @@ class Grid: SKSpriteNode {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("grid touchMoved")
+//        print("grid touchMoved")
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
@@ -212,7 +212,7 @@ class Grid: SKSpriteNode {
 
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("grid touchEnded")
+//        print("grid touchEnded")
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
 
@@ -360,7 +360,7 @@ class Grid: SKSpriteNode {
                 
             /* If touch anywhere but activeArea, back to MoveState  */
             } else {
-                print("touch not activearea")
+//                print("touch not activearea")
                 /* Make sure to be invalid when using catpult */
                 guard gameScene.setCatapultDoneFlag == false else { return }
                 
@@ -424,8 +424,7 @@ class Grid: SKSpriteNode {
                     
                     //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
+                    gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
                     /* Use wall */
                 } else if gameScene.itemType == .Wall {
@@ -451,8 +450,7 @@ class Grid: SKSpriteNode {
                     
                     //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
+                    gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
                     /* Use magic sword */
                 } else if gameScene.itemType == .MagicSword {
@@ -509,8 +507,7 @@ class Grid: SKSpriteNode {
                     gameScene.itemAreaCover.isHidden = false
                     
                     /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
+                    gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
                     /* Touch ends on enemy for magic sword */
                     if nodeAtPoint.name == "enemy" {
@@ -564,8 +561,7 @@ class Grid: SKSpriteNode {
                     
                     //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
+                    gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                 
                 }
             /* Touch ends on somewhere but active area or enemy */
@@ -1254,14 +1250,16 @@ class Grid: SKSpriteNode {
         }
     }
     
-    /* Show mine setting area */
+    /* Show wall setting area */
     func showWallSettingArea() {
         for gridX in 0..<self.columns {
             for gridY in 0..<self.rows-1 {
                 self.squareGreenArray[gridX][gridY].isHidden = false
                 if gridX == self.columns-1 && gridY == self.rows-2 {
                     for enemy in self.enemyArray {
-                        self.squareGreenArray[enemy.positionX][enemy.positionY].isHidden = true
+                        if enemy.aliveFlag {
+                            self.squareGreenArray[enemy.positionX][enemy.positionY].isHidden = true
+                        }
                     }
                 }
             }
