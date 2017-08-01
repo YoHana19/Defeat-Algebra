@@ -20,12 +20,12 @@ class EnemyForTutorial: SKSpriteNode {
     var positionY = 0
     
     /* Enemy property */
-    var moveSpeed = 0.3
-    var punchSpeed: CGFloat = 0.005
+    var moveSpeed = 0.2
+    var punchSpeed: CGFloat = 0.004
     var direction: Direction = .front
     var punchInterval: Int!
     var punchIntervalForCount: Int = 0
-    var singleTurnDuration: TimeInterval = 1.0
+    var singleTurnDuration: TimeInterval = 0.8
     var vECategory = 0
     
     /* Enemy variable for punch */

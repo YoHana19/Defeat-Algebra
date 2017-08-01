@@ -186,7 +186,7 @@ class Hero: SKSpriteNode {
         /* right */
         let changeAnchorRight = SKAction.run({ self.anchorPoint = CGPoint(x: 0, y: 0.5) })
         let heroSwordAnimationRight = SKAction(named: "heroSwordRight")!
-        let seq = SKAction.sequence([changeAnchorFront, heroSwordAnimationFront, changeAnchorBack, heroSwordAnimationBack, changeAnchorLeft, heroSwordAnimationLeft, changeAnchorRight, heroSwordAnimationRight])
+        let seq = SKAction.sequence([changeAnchorRight, heroSwordAnimationRight, changeAnchorFront, heroSwordAnimationFront, changeAnchorLeft, heroSwordAnimationLeft, changeAnchorBack, heroSwordAnimationBack])
         self.run(seq)
     }
     

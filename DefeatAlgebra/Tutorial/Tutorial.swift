@@ -77,6 +77,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var initialAddEnemyFlag = true
     var showPlayerDiscriptionDone = false
     var showEnemyDiscriptionDone = false
+    var enemyPhaseLabelDoneFlag = false
     
     /* Player Control */
     var beganPos:CGPoint!
@@ -87,10 +88,11 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var countTurn = 0
     
     var tutorialLabelArray = [SKNode]()
-
+    
     
     /* Flash grid */
     var numOfFlashArray = [3, 1, 2, 3, 1, 3]
+//    var numOfFlashArray = [1, 1, 1, 1, 1, 1]
     var xValue: Int = 0
     
     /* Items */
@@ -102,8 +104,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     
     /* Castle life */
     var lifeLabel: SKLabelNode!
-    var maxLife = 5
-    var life: Int = 5 {
+    var maxLife = 6
+    var life: Int = 6 {
         willSet {
             lifeLabel.text = String(life)
         }
@@ -254,6 +256,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .PlayerTurn:
+            //            print("player turn")
             /* Check if all enemies are defeated or not */
             if totalNumOfEnemy <= 0 {
                 gameState = .StageClear
@@ -261,7 +264,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             
             switch playerTurnState {
             case .DisplayPhase:
-//                print("DisplayPhase")
+                //                print("DisplayPhase")
                 playerPhaseLabel.isHidden = false
                 let wait = SKAction.wait(forDuration: 1.0)
                 let moveState = SKAction.run({ self.playerTurnState = .ItemOn })
@@ -269,7 +272,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 self.run(seq)
                 break;
             case .ItemOn:
-//                print("itemOn")
+                //                print("itemOn")
                 
                 playerPhaseLabel.isHidden = true
                 
@@ -311,7 +314,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     playerTurnState = .MoveState
                 }
             case .MoveState:
-//                print("MoveState")
+                //                print("MoveState")
                 
                 /* Show tutorial */
                 if showPlayerDiscriptionDone == false {
@@ -409,39 +412,45 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Display enemy phase label */
-                enemyPhaseLabel.isHidden = false
-                let wait = SKAction.wait(forDuration: 1.0)
-                let moveState = SKAction.run({ self.gameState = .EnemyTurn })
-                let seq = SKAction.sequence([wait, moveState])
-                self.run(seq)
+                if enemyPhaseLabelDoneFlag == false {
+                    enemyPhaseLabelDoneFlag = true
+                    enemyPhaseLabel.isHidden = false
+                    let wait = SKAction.wait(forDuration: 1.0)
+                    let moveState = SKAction.run({ self.gameState = .EnemyTurn })
+                    let seq = SKAction.sequence([wait, moveState])
+                    self.run(seq)
+                }
                 break;
             }
             break;
         case .EnemyTurn:
-            //            print("EnemyTurn")
+            //                        print("EnemyTurn")
             /* Reset Flags */
             addEnemyDoneFlag = false
             playerTurnDoneFlag = false
             flashGridDoneFlag = false
-            
+            enemyPhaseLabelDoneFlag = false
             enemyPhaseLabel.isHidden = true
             
-            if countTurn < 3 {
-                if showEnemyDiscriptionDone == false {
-                    showEnemyDiscriptionDone = true
-                    tutorialManagementForEnemy()
-                    enemyTurnDoneFlag = true
-                    let wait = SKAction.wait(forDuration: 6.0)
-                    let tutorialDone = SKAction.run({
-                        self.removeTutorial()
-                        self.enemyTurnDoneFlag = false
-                    })
-                    let seq = SKAction.sequence([wait, tutorialDone])
-                    self.run(seq)
-                }
+            
+            if showEnemyDiscriptionDone == false {
+                showEnemyDiscriptionDone = true
+                tutorialManagementForEnemy()
+                enemyTurnDoneFlag = true
+                print("tutorial show")
+                let wait = SKAction.wait(forDuration: 9.0)
+                let tutorialDone = SKAction.run({
+                    self.removeTutorial()
+                    self.tutorialState = .T1
+                    self.enemyTurnDoneFlag = false
+                })
+                let seq = SKAction.sequence([wait, tutorialDone])
+                self.run(seq)
             }
             
+            
             if enemyTurnDoneFlag == false {
+                print("hey")
                 
                 /* Reset enemy position */
                 gridNode.resetEnemyPositon()
@@ -467,7 +476,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             
             /* All enemies finish their actions */
             if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
-                
+                print("hey2")
+                print(self.gridNode.enemyArray)
                 /* Remove dead hero from heroArray */
                 self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
                 
@@ -493,9 +503,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 gameState = .GridFlashing
                 playerTurnState = .DisplayPhase
             }
-            break;
         case .GridFlashing:
-            //            print("GridFlashing")
+            //                        print("GridFlashing")
             
             /* Make sure to call once */
             if flashGridDoneFlag == false {
@@ -508,7 +517,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     let rand = Int(arc4random_uniform(2)+1)
                     xValue = self.gridNode.flashGrid(labelNode: valueOfX, numOfFlash: rand)
                 }
-
+                
                 
                 /* Calculate each enemy's variable expression */
                 for enemy in self.gridNode.enemyArray {
@@ -538,7 +547,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        print("scene touchBegan")
+        //        print("scene touchBegan")
         
         guard gameState == .PlayerTurn else { return }
         
@@ -656,7 +665,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     self.playerTurnState = .AttackState
                 }
                 
-            /* Use mine */
+                /* Use mine */
             } else if nodeAtPoint.name == "mine" {
                 /* Remove activeArea for catapult */
                 self.gridNode.resetSquareArray(color: "red")
@@ -667,8 +676,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
                 //                print("Now item index is \(usingItemIndex)")
-            
-            /* If player touch other place than item icons, back to MoveState */
+                
+                /* If player touch other place than item icons, back to MoveState */
             } else {
                 
                 /* Show attack and item buttons */
@@ -688,12 +697,12 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             }
         }
         
-//        /* just for debug */
-//        if nodeAtPoint.name == "hero" {
-//            let hero = nodeAtPoint as! Hero
-//            print("(\(hero.positionX), \(hero.positionY))")
-//        }
-    
+        //        /* just for debug */
+        //        if nodeAtPoint.name == "hero" {
+        //            let hero = nodeAtPoint as! Hero
+        //            print("(\(hero.positionX), \(hero.positionY))")
+        //        }
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -726,18 +735,18 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                    /* Get heart */
+                        /* Get heart */
                     } else if item.name == "heart" {
                         item.removeFromParent()
                         maxLife += 1
                         life += 1
-                    /* Get spear */
+                        /* Get spear */
                     } else if item.name == "spear" {
                         item.removeFromParent()
                         if self.activeHero.attackType < 1 {
                             self.activeHero.attackType += 1
                         }
-                    /* Other items */
+                        /* Other items */
                     } else {
                         item.removeFromParent()
                         displayitem(name: item.name!)
@@ -757,20 +766,20 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         item.removeFromParent()
                         maxLife += 1
                         life += 1
-                    /* Get spear */
+                        /* Get spear */
                     } else if item.name == "spear" {
                         item.removeFromParent()
                         if self.activeHero.attackType < 1 {
                             self.activeHero.attackType += 1
                         }
-                    /* Other items */
+                        /* Other items */
                     } else {
                         item.removeFromParent()
                         displayitem(name: item.name!)
                     }
                 }
                 
-            /* Be hitten by enemy */
+                /* Be hitten by enemy */
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! HeroForTutorial
@@ -782,7 +791,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         
                         /* Move to next hero turn */
                         activeHero = heroArray[numOfTurnDoneHero+1]
-                    /* The last turn hero is killed */
+                        /* The last turn hero is killed */
                     } else {
                         /* Remove dead hero */
                         heroArray = heroArray.filter({ $0.aliveFlag == true })
@@ -805,7 +814,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         
                         /* Move to next hero turn */
                         activeHero = heroArray[numOfTurnDoneHero+1]
-                    /* The last turn hero is killed */
+                        /* The last turn hero is killed */
                     } else {
                         /* Remove dead hero */
                         heroArray = heroArray.filter({ $0.aliveFlag == true })
@@ -841,186 +850,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 
                 /* Stop arm and fist */
                 nodeB.removeAllActions()
-            }
-        }
-        
-        /* Items set hit enemy */
-        if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
-            
-            if contactA.categoryBitMask == 32 {
-                
-                /* Wall stop enemy punch or move */
-                if contactA.node?.name == "wall" {
-                    /* Get wall */
-                    let wall = contactA.node as! Wall
-                    
-                    /* Enemy hits wall */
-                    if contactB.categoryBitMask == 2 {
-                        /* Get enemy */
-                        let enemy = contactB.node as! Enemy
-                        /* Stop Enemy move */
-                        enemy.removeAllActions()
-                        
-                        /* move back according to direction of enemy */
-                        switch enemy.direction {
-                        case .front:
-                            /* Reposition enemy */
-                            let moveBack = SKAction.move(to: CGPoint(x: CGFloat(enemy.positionX*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY+1)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
-                            enemy.run(moveBack)
-                            
-                            /* Set enemy position */
-                            enemy.positionY = wall.posY+1
-                        case .left:
-                            /* Reposition enemy */
-                            let moveBack = SKAction.move(to: CGPoint(x: CGFloat((wall.posX+1)*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
-                            enemy.run(moveBack)
-                            /* Set enemy position */
-                            enemy.positionX = wall.posX+1
-                            enemy.positionY = wall.posY
-                        case .right:
-                            /* Reposition enemy */
-                            let moveBack = SKAction.move(to: CGPoint(x: CGFloat((wall.posX-1)*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
-                            enemy.run(moveBack)
-                            /* Set enemy position */
-                            enemy.positionX = wall.posX-1
-                            enemy.positionY = wall.posY
-                        default:
-                            break;
-                        }
-                        
-                        /* Get rid of all arms and fists */
-                        let punchDone = SKAction.run({
-                            enemy.removeAllChildren()
-                        })
-                        
-                        /* Set variable expression */
-                        let setVariableExpression = SKAction.run({
-                            enemy.makeTriangle()
-                            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
-                        })
-                        
-                        /* Move next enemy's turn */
-                        let moveTurnWait = SKAction.wait(forDuration: enemy.singleTurnDuration)
-                        let moveNextEnemy = SKAction.run({
-                            enemy.myTurnFlag = false
-                            if self.gridNode.turnIndex < self.gridNode.enemyArray.count-1 {
-                                self.gridNode.turnIndex += 1
-                                self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
-                            }
-                            
-                            /* Set enemy turn interval */
-                            enemy.setPunchIntervalLabel()
-                            
-                            /* Reset enemy animation */
-                            enemy.setMovingAnimation()
-                            
-                            /* To check all enemy turn done */
-                            self.gridNode.numOfTurnEndEnemy += 1
-                            
-                            /* Reset count down punchInterval */
-                            enemy.punchIntervalForCount = enemy.punchInterval
-                            
-                        })
-                        
-                        /* excute drawPunch */
-                        let seq = SKAction.sequence([punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
-                        self.run(seq)
-                        
-                        /* Fist and arm hits wall */
-                    } else {
-                        /* Get enemy arm or fist */
-                        let nodeB = contactB.node as! SKSpriteNode
-                        
-                        /* Stop arm and fist */
-                        nodeB.removeAllActions()
-                    }
-                /* bullet hit enemy */
-                } else if contactA.node?.name == "bullet" {
-                    print("bullet hit")
-                    let enemy = contactB.node as! Enemy
-                    enemy.aliveFlag = false
-                    enemy.removeFromParent()
-                    /* Count defeated enemy */
-                    totalNumOfEnemy -= 1
-                }
-                
-            }
-            
-            if contactB.categoryBitMask == 32 {
-                
-                /* Wall stop enemy punch or move */
-                if contactB.node?.name == "wall" {
-                    /* Get wall */
-                    let wall = contactB.node as! Wall
-                    
-                    /* Enemy hits wall */
-                    if contactA.categoryBitMask == 2 {
-                        /* Get enemy */
-                        let enemy = contactA.node as! Enemy
-                        /* Stop Enemy move */
-                        enemy.removeAllActions()
-                        
-                        /* Reposition enemy */
-                        let moveBack = SKAction.move(to: CGPoint(x: CGFloat(enemy.positionX*self.gridNode.cellWidth+self.gridNode.cellWidth/2), y: CGFloat((wall.posY+1)*self.gridNode.cellHeight+self.gridNode.cellHeight/2)), duration: 0.5)
-                        enemy.run(moveBack)
-                        
-                        /* Get rid of all arms and fists */
-                        let punchDone = SKAction.run({
-                            enemy.removeAllChildren()
-                        })
-                        
-                        /* Set variable expression */
-                        let setVariableExpression = SKAction.run({
-                            enemy.makeTriangle()
-                            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
-                        })
-                        
-                        /* Move next enemy's turn */
-                        let moveTurnWait = SKAction.wait(forDuration: enemy.singleTurnDuration)
-                        let moveNextEnemy = SKAction.run({
-                            enemy.myTurnFlag = false
-                            if self.gridNode.turnIndex < self.gridNode.enemyArray.count-1 {
-                                self.gridNode.turnIndex += 1
-                                self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
-                            }
-                            
-                            /* Set enemy turn interval */
-                            enemy.setPunchIntervalLabel()
-                            
-                            /* Reset enemy animation */
-                            enemy.setMovingAnimation()
-                            
-                            /* To check all enemy turn done */
-                            self.gridNode.numOfTurnEndEnemy += 1
-                            
-                            /* Reset count down punchInterval */
-                            enemy.punchIntervalForCount = enemy.punchInterval
-                            
-                            /* Set enemy position to edge */
-                            enemy.positionY = wall.posY+1
-                        })
-                        
-                        /* excute drawPunch */
-                        let seq = SKAction.sequence([punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
-                        self.run(seq)
-                        
-                        /* Fist and arm hits wall */
-                    } else {
-                        /* Get enemy arm or fist */
-                        let nodeA = contactA.node as! SKSpriteNode
-                        
-                        /* Stop arm and fist */
-                        nodeA.removeAllActions()
-                    }
-                /* Bullet hit enemy */
-                } else if contactB.node?.name == "bullet" {
-                    print("bullet hit")
-                    let enemy = contactA.node as! Enemy
-                    enemy.aliveFlag = false
-                    enemy.removeFromParent()
-                    /* Count defeated enemy */
-                    totalNumOfEnemy -= 1
-                }
             }
         }
     }
@@ -1160,6 +989,31 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         self.run(repeatAction)
     }
     
+    /* Set pointing icon for cancell swiping */
+    func setMovePointingIcon2(position: CGPoint) {
+        let single = SKAction.run({
+            let icon = SKSpriteNode(imageNamed: "pointing")
+            icon.position = position
+            icon.zPosition = 5
+            icon.name = "movingPoint"
+            self.tutorialLabelArray.append(icon)
+            self.addChild(icon)
+            let moveUp = SKAction.moveBy(x: 0, y: CGFloat(self.gridNode.cellHeight)*3, duration: 2.0)
+            icon.run(moveUp)
+        })
+        
+        let wait2 = SKAction.wait(forDuration: 2.2)
+        let remove = SKAction.run({
+            if let node = self.childNode(withName: "movingPoint") {
+                node.removeFromParent()
+            }
+        })
+        
+        let seq2 = SKAction.sequence([single, wait2, remove])
+        let repeatAction = SKAction.repeatForever(seq2)
+        self.run(repeatAction)
+    }
+    
     /* Tutorial management */
     func tutorialManagementForPlayer() {
         let basePosX = gridNode.position.x
@@ -1200,7 +1054,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     self.createTutorialLabel(text: "Since you got Boots", posY: 1150)
                     self.createTutorialLabel(text: "Now your move area expands!", posY: 1090)
                 })
-                let wait = SKAction.wait(forDuration: 4.0)
+                let wait = SKAction.wait(forDuration: 3.0)
                 let moveState = SKAction.run({
                     self.tutorialState = .T2
                     self.showPlayerDiscriptionDone = false
@@ -1252,7 +1106,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     self.createTutorialLabel(text: "Awesome!!", posY: 1100)
                     self.createTutorialLabel(text: "You destroy enemy with a mine!", posY: 1040)
                 })
-                let wait = SKAction.wait(forDuration: 4.0)
+                let wait = SKAction.wait(forDuration: 3.0)
                 let moveState = SKAction.run({
                     self.tutorialState = .T2
                     self.showPlayerDiscriptionDone = false
@@ -1261,6 +1115,20 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 self.run(seq)
             case .T2:
                 removeTutorial()
+                self.createTutorialLabel(text: "If you want to cancel", posY: 1100)
+                self.createTutorialLabel(text: "Just swipe out of the blue area!", posY: 1040)
+                setMovePointingIcon2(position: CGPoint(x: self.activeHero.position.x+20, y: self.activeHero.position.y+20))
+            case .T3:
+                removeTutorial()
+                self.createTutorialLabel(text: "If you want to stay", posY: 1100)
+                self.createTutorialLabel(text: "Just touch where you are!", posY: 1040)
+                setPointingIcon(position: CGPoint(x: self.activeHero.position.x+50, y: self.activeHero.position.y+50))
+            default:
+                break;
+            }
+        case 7:
+            switch tutorialState {
+            case .T1:
                 self.createTutorialLabel(text: "Let's try to defeat the last enemy!!", posY: 1100)
             default:
                 break;
@@ -1277,12 +1145,28 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         case 1:
             switch tutorialState {
             case .T1:
-                for enemy in self.gridNode.enemyArray {
-                    let icon = setPointingIcon2(position: CGPoint(x: -15, y: -45), size: CGSize(width: 35, height: 35))
-                    enemy.addChild(icon)
-                }
-                createTutorialLabel(text: "These numbers indicates how many", posY: 810)
-                createTutorialLabel(text: "turns left untill each enemy attacks", posY: 750)
+                let showDiscription = SKAction.run({
+                    for enemy in self.gridNode.enemyArray {
+                        let icon = self.setPointingIcon2(position: CGPoint(x: -15, y: -45), size: CGSize(width: 35, height: 35))
+                        enemy.addChild(icon)
+                    }
+                    self.createTutorialLabel(text: "These numbers indicates how many", posY: 810)
+                    self.createTutorialLabel(text: "turns left untill each enemy attacks", posY: 750)
+                })
+                let wait = SKAction.wait(forDuration: 4.0)
+                let moveState = SKAction.run({
+                    self.tutorialState = .T2
+                    self.showEnemyDiscriptionDone = false
+                })
+                let seq = SKAction.sequence([showDiscription, wait, moveState])
+                self.run(seq)
+            case .T2:
+                removeTutorial()
+                createTutorialLabel(text: "The value of 'X' will be enemys' energy", posY: 810)
+                createTutorialLabel(text: "When they attack!", posY: 750)
+                let icon = self.setPointingIcon2(position: CGPoint(x: self.valueOfX.position.x-40, y: self.valueOfX.position.y-30), size: CGSize(width: 80, height: 80))
+                self.addChild(icon)
+                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+50, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+50))
             default:
                 break;
             }
@@ -1304,14 +1188,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         switch tutorialState {
         case .T1:
             let showDiscription = SKAction.run({
-                self.createTutorialLabel(text: "Your mission is", posY: 960)
-                self.createTutorialLabel(text: "Defeat all enemies,", posY: 900)
-                self.createTutorialLabel(text: "Protecting your castle!!", posY: 840)
+                self.createTutorialLabel(text: "Your mission is", posY: 910)
+                self.createTutorialLabel(text: "Defeat all enemies,", posY: 850)
+                self.createTutorialLabel(text: "Protecting your castle!!", posY: 790)
             })
             let wait = SKAction.wait(forDuration: 4.0)
             let moveState = SKAction.run({
                 self.tutorialState = .T2
-                self.showPlayerDiscriptionDone = false
+                self.showEnemyDiscriptionDone = false
             })
             let seq = SKAction.sequence([showDiscription, wait, moveState])
             self.run(seq)

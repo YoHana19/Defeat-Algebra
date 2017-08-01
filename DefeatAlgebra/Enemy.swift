@@ -13,6 +13,21 @@ enum EnemyState {
     case Move, Punch
 }
 
+/* Shuffle array extension */
+extension Array {
+    func shuffled() -> [Element] {
+        var results = [Element]()
+        var indexes = (0 ..< count).map { $0 }
+        while indexes.count > 0 {
+            let indexOfIndexes = Int(arc4random_uniform(UInt32(indexes.count)))
+            let index = indexes[indexOfIndexes]
+            results.append(self[index])
+            indexes.remove(at: indexOfIndexes)
+        }
+        return results
+    }
+}
+
 class Enemy: SKSpriteNode {
     
     /* Enemy state management */
@@ -38,7 +53,7 @@ class Enemy: SKSpriteNode {
     var singlePunchLength: CGFloat = 78
     var punchLength: CGFloat! = 0
     var variableExpression: [Int]!
-    var variableExpressionForLabel: String!
+    var variableExpressionForLabel = ""
     
     /* For arms when punch hit wall */
     var armArrayForSubSet: [EnemyArm] = []
@@ -163,6 +178,258 @@ class Enemy: SKSpriteNode {
             variableExpressionForLabel = "\(variableExpression[1])×x"
         } else if variableExpression[0] == 3 {
             variableExpressionForLabel = "x×\(variableExpression[1])"
+        } else if variableExpression[0] == 4 {
+            variableExpressionForLabel = "\(variableExpression[1])x-\(variableExpression[2])"
+        } else if variableExpression[0] == 5 {
+            if variableExpression[1] == 1 {
+                variableExpressionForLabel = "\(variableExpression[2])-x"
+            } else {
+                variableExpressionForLabel = "\(variableExpression[2])-\(variableExpression[1])x"
+            }
+        } else if variableExpression[0] == 6 {
+            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
+            for (i, element) in source.enumerated() {
+                if i == 0 {
+                    variableExpressionForLabel += String(describing: element)
+                } else {
+                    if let num = element as? Int {
+                        if num < 0 {
+                            variableExpressionForLabel += String(num)
+                        } else {
+                            variableExpressionForLabel += "+\(num)"
+                        }
+                    } else {
+                        variableExpressionForLabel += "+\(element)"
+                    }
+                }
+            }
+        } else if variableExpression[0] == 7 {
+            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
+            for (i, element) in source.enumerated() {
+                if i == 0 {
+                    if let num = element as? Int {
+                        variableExpressionForLabel += String(num)
+                    } else {
+                        variableExpressionForLabel += "-\(element)"
+                    }
+                } else {
+                    if let num = element as? Int {
+                        if num < 0 {
+                            variableExpressionForLabel += String(num)
+                        } else {
+                            variableExpressionForLabel += "+\(num)"
+                        }
+                    } else {
+                        variableExpressionForLabel += "-\(element)"
+                    }
+                }
+            }
+        } else if variableExpression[0] == 8 {
+            let source = createVariableExpressionX(origin: [variableExpression[1], variableExpression[2]])
+            for (i, element) in source.enumerated() {
+                if i == 0 {
+                    variableExpressionForLabel += String(describing: element)
+                } else {
+                    if let num = element as? Int {
+                        if num < 0 {
+                            variableExpressionForLabel += String(num)
+                        } else if num > 0 {
+                            variableExpressionForLabel += "+\(num)"
+                        }
+                    } else if let string = element as? String {
+                        if string[string.startIndex] == "-" {
+                            variableExpressionForLabel += string
+                        } else {
+                            variableExpressionForLabel += "+\(element)"
+                        }
+                    }
+                }
+            }
+        } else if variableExpression[0] == 9 {
+            let source = createVariableExpressionXC(origin: [variableExpression[1], variableExpression[2]])
+            for (i, element) in source.enumerated() {
+                if i == 0 {
+                    variableExpressionForLabel += String(describing: element)
+                } else {
+                    if let num = element as? Int {
+                        if num < 0 {
+                            variableExpressionForLabel += String(num)
+                        } else {
+                            variableExpressionForLabel += "+\(num)"
+                        }
+                    } else if let string = element as? String {
+                        if string[string.startIndex] == "-" {
+                            variableExpressionForLabel += string
+                        } else {
+                            variableExpressionForLabel += "+\(element)"
+                        }
+                    }
+                }
+            }
+        } else if variableExpression[0] == 10 {
+            if variableExpression[2] == 2 {
+                variableExpressionForLabel = "2(x+1)"
+            } else if variableExpression[2] == 4 {
+                variableExpressionForLabel = "2(x+2)"
+            }
+        } else if variableExpression[0] == 11 {
+            if variableExpression[2] == 2 {
+                variableExpressionForLabel = "2(1+x)"
+            } else if variableExpression[2] == 4 {
+                variableExpressionForLabel = "2(2+x)"
+            }
+        } else if variableExpression[0] == 12 {
+            if variableExpression[2] == -2 {
+                variableExpressionForLabel = "2(2x-1)"
+            }
+        }
+    }
+    
+    
+    /* Create several equivalent variable expression randomly */
+    func createVariableExpressionC(origin: [Int], type: Int) -> [Any] {
+        var variableExpressionElements = [Any]()
+        variableExpressionElements = decomposeConstant(constant: origin[1], type: type)
+        /* Coefficient is 1 */
+        if origin[0] == 1 {
+            variableExpressionElements.append("x")
+            let result = variableExpressionElements.shuffled()
+            return result
+        /* Coefficient is any number but 1 */
+        } else {
+            variableExpressionElements.append("\(origin[0])x")
+            let result = variableExpressionElements.shuffled()
+            return result
+        }
+    }
+    
+    /* Create several equivalent variable expression randomly for x */
+    func createVariableExpressionX(origin: [Int]) -> [Any] {
+        var variableExpressionElements = [Any]()
+        /* Constant */
+        variableExpressionElements.append(origin[1])
+        /* Decompose coefficent of x */
+        let xElements = decomposeConstant(constant: origin[0], type: 1)
+        for xElement in xElements {
+            if xElement == 1 {
+                variableExpressionElements.append("x")
+            } else if xElement == -1 {
+                variableExpressionElements.append("-x")
+            } else {
+                variableExpressionElements.append("\(xElement)x")
+            }
+        }
+        let result = variableExpressionElements.shuffled()
+        return result
+    }
+    
+    /* Create several equivalent variable expression randomly for x */
+    func createVariableExpressionXC(origin: [Int]) -> [Any] {
+        var variableExpressionElements = [Any]()
+        /* Decompose constant */
+        variableExpressionElements = decomposeConstant(constant: origin[1], type: 1)
+        /* Decompose coefficent of x */
+        let xElements = decomposeConstant(constant: origin[0], type: 1)
+        for xElement in xElements {
+            if xElement == 1 {
+                variableExpressionElements.append("x")
+            } else if xElement == -1 {
+                variableExpressionElements.append("-x")
+            } else {
+                variableExpressionElements.append("\(xElement)x")
+            }
+        }
+        let result = variableExpressionElements.shuffled()
+        return result
+    }
+    
+    /* Decompose constant randomly */
+    func decomposeConstant(constant: Int, type: Int) -> [Int] {
+        switch constant {
+        case -2:
+            var temp = decomposeZero(type: type)
+            temp[temp.count-1] -= 2
+            return temp
+        case -1:
+            var temp = decomposeZero(type: type)
+            temp[temp.count-1] -= 1
+            return temp
+        case 0:
+            let result = decomposeZero(type: type)
+            return result
+        case 1:
+            var temp = decomposeZero(type: type)
+            temp[0] += 1
+            return temp
+        case 2:
+            let rand = arc4random_uniform(100)
+            if rand < 50 {
+                var temp = decomposeZero(type: type)
+                temp[0] += 2
+                return temp
+            } else {
+                return [1, 1]
+            }
+        case 3:
+            let rand = arc4random_uniform(100)
+            if rand < 50 {
+                var temp = decomposeZero(type: type)
+                temp[0] += 3
+                return temp
+            } else {
+                return [1, 2]
+            }
+        case 4:
+            let rand = arc4random_uniform(100)
+            if rand < 50 {
+                return [2,2]
+            } else {
+                return [1,3]
+            }
+        case 7:
+            let rand = arc4random_uniform(100)
+            if rand < 50 {
+                return [2,5]
+            } else {
+                return [3,4]
+            }
+        case 8:
+            let rand = arc4random_uniform(100)
+            if rand < 50 {
+                return [2,6]
+            } else {
+                return [3,5]
+            }
+        default:
+            return [0]
+        }
+    }
+    
+    /* Decompose 0 to 2 or 3 elements from -2 to 2*/
+    func decomposeZero(type: Int) -> [Int] {
+        let rand = arc4random_uniform(100)
+        if type == 0 {
+            if rand < 25 {
+                let result = [1, -1]
+                return result
+            } else if rand < 50 {
+                let result = [2, -2]
+                return result
+            } else if rand < 75 {
+                let result = [1, 1, -2]
+                return result
+            } else {
+                let result = [2, -1, -1]
+                return result
+            }
+        } else {
+            if rand < 50 {
+                let result = [1, -1]
+                return result
+            } else {
+                let result = [2, -2]
+                return result
+            }
         }
     }
     
@@ -406,7 +673,13 @@ class Enemy: SKSpriteNode {
     /* Calculate punch length */
     func calculatePunchLength(value: Int) {
         /* Calculate value of variable expression of enemy */
-        self.valueOfEnemy = value*self.variableExpression[1]+variableExpression[2]
+        if variableExpression[0] == 4 {
+            self.valueOfEnemy = value*self.variableExpression[1]-variableExpression[2]
+        } else if variableExpression[0] == 5 || variableExpression[0] == 7 {
+            self.valueOfEnemy = variableExpression[2]-value*self.variableExpression[1]
+        } else {
+            self.valueOfEnemy = value*self.variableExpression[1]+variableExpression[2]
+        }
         
         /* Calculate length of punch */
         self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
@@ -591,17 +864,15 @@ class Enemy: SKSpriteNode {
             /* Decrese life */
             let decreseLife = SKAction.run({
                 if self.wallHitFlag == false {
-                    print("decrease life")
                     gameScene.life -= 1
                 } else {
                     gameScene.life += 0
-                    print("wall protect")
                 }
             })
             
             /* Calculate punchlength */
             let originPosY = self.positionY
-            self.punchLength = CGFloat(originPosY*gridNode.cellHeight)+gameScene.bottomGap+30 /* 30 is a buffer */
+            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+gameScene.bottomGap+30 /* 30 is a buffer */
             
             /* Wait till punch streach out fully */
             let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
@@ -636,15 +907,15 @@ class Enemy: SKSpriteNode {
             
             /* Move enemy's body to punch position */
             let moveForward = SKAction.run({
-                let moveBody = SKAction.moveBy(x: 0, y: -CGFloat(originPosY*gridNode.cellHeight), duration: TimeInterval(self.punchLength*self.punchSpeed))
+                let moveBody = SKAction.moveBy(x: 0, y: -CGFloat(Double(originPosY)*gridNode.cellHeight), duration: TimeInterval(self.punchLength*self.punchSpeed))
                 self.run(moveBody)
                 for arm in self.armArrayForSubSet {
-                    let moveArm = SKAction.moveBy(x: 0, y: CGFloat(originPosY*gridNode.cellHeight), duration:
+                    let moveArm = SKAction.moveBy(x: 0, y: CGFloat(Double(originPosY)*gridNode.cellHeight), duration:
                         TimeInterval(self.punchLength*self.punchSpeed))
                     arm.run(moveArm)
                 }
                 for fist in armAndFist.fist {
-                    let moveFist = SKAction.moveBy(x: 0, y: CGFloat(originPosY*gridNode.cellHeight), duration:
+                    let moveFist = SKAction.moveBy(x: 0, y: CGFloat(Double(originPosY)*gridNode.cellHeight), duration:
                         TimeInterval(self.punchLength*self.punchSpeed))
                     fist.run(moveFist)
                 }
@@ -738,15 +1009,15 @@ class Enemy: SKSpriteNode {
             
             /* Move self's body to punch position */
             let moveForward = SKAction.run({
-                let moveBody = SKAction.moveBy(x: 0, y: -CGFloat(self.valueOfEnemy*gridNode.cellHeight), duration: TimeInterval(self.punchLength*self.punchSpeed))
+                let moveBody = SKAction.moveBy(x: 0, y: -CGFloat(Double(self.valueOfEnemy)*gridNode.cellHeight), duration: TimeInterval(self.punchLength*self.punchSpeed))
                 self.run(moveBody)
                 for arm in self.armArrayForSubSet {
-                    let moveArm = SKAction.moveBy(x: 0, y: CGFloat(self.valueOfEnemy*gridNode.cellHeight), duration:
+                    let moveArm = SKAction.moveBy(x: 0, y: CGFloat(Double(self.valueOfEnemy)*gridNode.cellHeight), duration:
                         TimeInterval(self.punchLength*self.punchSpeed))
                     arm.run(moveArm)
                 }
                 for fist in armAndFist.fist {
-                    let moveFist = SKAction.moveBy(x: 0, y: CGFloat(self.valueOfEnemy*gridNode.cellHeight), duration:
+                    let moveFist = SKAction.moveBy(x: 0, y: CGFloat(Double(self.valueOfEnemy)*gridNode.cellHeight), duration:
                         TimeInterval(self.punchLength*self.punchSpeed))
                     fist.run(moveFist)
                 }
@@ -874,10 +1145,10 @@ class Enemy: SKSpriteNode {
     /*== For Magic Sword ==*/
     /* Put color to enemy */
     func colorizeEnemy() {
-        self.run(SKAction.colorize(with: UIColor.green, colorBlendFactor: 1.0, duration: 0.50))
+        self.run(SKAction.colorize(with: UIColor.purple, colorBlendFactor: 1.0, duration: 0.50))
     }
     
     func resetColorizeEnemy() {
-        self.run(SKAction.colorize(with: UIColor.green, colorBlendFactor: 0, duration: 0.50))
+        self.run(SKAction.colorize(with: UIColor.purple, colorBlendFactor: 0, duration: 0.50))
     }
 }

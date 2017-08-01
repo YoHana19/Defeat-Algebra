@@ -19,6 +19,8 @@ class GridForTutorial: SKSpriteNode {
     var cellWidth = 0
     var cellHeight = 0
     
+    var cancellSwipingForTutorialFlag = false
+    
     /* Enemy move speed when adding */
     var addingMoveSpeed = 0.5
     
@@ -49,7 +51,7 @@ class GridForTutorial: SKSpriteNode {
     /* Mine */
     var mineSetPosArray = [[Int]]()
     var mineSetArray = [Mine]()
-        
+    
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -81,11 +83,11 @@ class GridForTutorial: SKSpriteNode {
         
         /* For display player move area */
         coverGrid()
-
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        print("grid touchBegan")
+        //        print("grid touchBegan")
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial
         
@@ -122,6 +124,10 @@ class GridForTutorial: SKSpriteNode {
             } else {
                 return
             }
+        } else if gameScene.countTurn == 6 {
+            guard gameScene.tutorialState == .T2 else { return }
+            guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY else { return }
+            cancellSwipingForTutorialFlag = true
         }
         
         /* Touch point to move to */
@@ -150,7 +156,7 @@ class GridForTutorial: SKSpriteNode {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial
-
+        
         guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
@@ -184,8 +190,10 @@ class GridForTutorial: SKSpriteNode {
             } else {
                 return
             }
+        } else if gameScene.countTurn == 6 {
+            guard gameScene.tutorialState == .T2 else { return }
         }
-
+        
         /* Touch ends on active area */
         if nodeAtPoint.name == "activeArea" {
             
@@ -230,7 +238,7 @@ class GridForTutorial: SKSpriteNode {
             resetMovePath()
         }
     }
-
+    
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
@@ -293,7 +301,24 @@ class GridForTutorial: SKSpriteNode {
                 return
             }
         } else if gameScene.countTurn == 6 {
-            guard gameScene.tutorialState == .T2 else { return }
+            guard gameScene.tutorialState != .T1 else { return }
+            if gameScene.tutorialState == .T2 {
+                guard cancellSwipingForTutorialFlag else { return }
+                if nodeAtPoint.name == "activeArea" {
+                    cancellSwipingForTutorialFlag = false
+                    resetMovePath()
+                    return
+                } else {
+                    if let node = gameScene.childNode(withName: "movingPoint") {
+                        node.removeFromParent()
+                    }
+                    gameScene.removeAllActions()
+                    gameScene.tutorialState = .T3
+                    gameScene.showPlayerDiscriptionDone = false
+                }
+            } else if gameScene.tutorialState == .T3 {
+                guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY else { return }
+            }
         }
         
         /* Touch ends on active area */
@@ -343,7 +368,7 @@ class GridForTutorial: SKSpriteNode {
                 let seq = SKAction.sequence([wait, nextHero])
                 self.run(seq)
                 
-            /* Touch point to attack to */
+                /* Touch point to attack to */
             } else if gameScene.playerTurnState == .AttackState {
                 
                 guard gameScene.heroMovingFlag == false else { return }
@@ -391,20 +416,20 @@ class GridForTutorial: SKSpriteNode {
                     let seq = SKAction.sequence([wait, moveState])
                     self.run(seq)
                     
-                /* If touch anywhere but activeArea, back to MoveState  */
+                    /* If touch anywhere but activeArea, back to MoveState  */
                 } else {
                     gameScene.playerTurnState = .MoveState
                 }
                 
-            /* Touch position to use item at */
+                /* Touch position to use item at */
             } else if gameScene.playerTurnState == .UsingItem {
-                    
+                
                 /* Use mine */
                 if gameScene.itemType == .Mine {
-                        
+                    
                     /* Store position of set mine */
                     self.mineSetPosArray.append([gridX, gridY])
-                        
+                    
                     /* Set mine at the location you touch */
                     let mine = Mine()
                     mine.texture = SKTexture(imageNamed: "mineToSet")
@@ -412,17 +437,17 @@ class GridForTutorial: SKSpriteNode {
                     mine.physicsBody = nil
                     self.mineSetArray.append(mine)
                     self.addObjectAtGrid(object: mine, x: gridX, y: gridY)
-                        
+                    
                     /* Remove item active areas */
                     self.resetSquareArray(color: "green")
                     /* Reset item type */
                     gameScene.itemType = .None
                     /* Set item area cover */
                     gameScene.itemAreaCover.isHidden = false
-                     
+                    
                     /* Back to MoveState */
                     gameScene.playerTurnState = .MoveState
-                        
+                    
                     //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
@@ -511,7 +536,7 @@ class GridForTutorial: SKSpriteNode {
         let gridPosition = CGPoint(x: x*cellWidth+cellWidth/2, y: y*cellHeight+cellHeight/2)
         object.position = gridPosition
         object.zPosition = 3
-    
+        
         /* Add mine to grid node */
         addChild(object)
     }
@@ -525,7 +550,7 @@ class GridForTutorial: SKSpriteNode {
             }
         }
     }
-        
+    
     /* Update enemy position at grid */
     func updateEnemyPositon() {
         for enemy in self.enemyArray {
@@ -838,7 +863,7 @@ class GridForTutorial: SKSpriteNode {
         let diffY = dest[1] - start[1]
         
         switch gameScene.activeHero.moveDirection {
-        /* Set move path horizontal → vertical */
+            /* Set move path horizontal → vertical */
         case .Horizontal:
             if diffY == 0 {
                 
@@ -898,7 +923,7 @@ class GridForTutorial: SKSpriteNode {
                 }
             }
             break;
-        /* Set move path horizontal → vertical */
+            /* Set move path horizontal → vertical */
         case .Vertical:
             if diffX == 0 {
                 /* To up */
@@ -956,19 +981,19 @@ class GridForTutorial: SKSpriteNode {
             break;
         }
     }
-
+    
     func brightRowAsPath(startPos: [Int], destPos: [Int]) {
         for i in startPos[0]...destPos[0] {
             brightCellAsPath(gridX: i, gridY: startPos[1])
         }
     }
-
+    
     func brightColumnlAsPath(startPos: [Int], destPos: [Int]) {
         for i in startPos[1]...destPos[1] {
             brightCellAsPath(gridX: startPos[0], gridY: i)
         }
     }
-
+    
     func brightCellAsPath(gridX: Int, gridY: Int) {
         squareBlueArray[gridX][gridY].alpha = 0.8
     }
@@ -981,7 +1006,7 @@ class GridForTutorial: SKSpriteNode {
             }
         }
     }
-
+    
     
 }
 
