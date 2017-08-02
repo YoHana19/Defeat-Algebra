@@ -48,9 +48,9 @@ class GridForTutorial: SKSpriteNode {
     /* Attack area position */
     var attackAreaPos = [[Int]]()
     
-    /* Mine */
-    var mineSetPosArray = [[Int]]()
-    var mineSetArray = [Mine]()
+    /* timeBomb */
+    var timeBombSetPosArray = [[Int]]()
+    var timeBombSetArray = [TimeBomb]()
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
@@ -424,19 +424,19 @@ class GridForTutorial: SKSpriteNode {
                 /* Touch position to use item at */
             } else if gameScene.playerTurnState == .UsingItem {
                 
-                /* Use mine */
-                if gameScene.itemType == .Mine {
+                /* Use timeBomb */
+                if gameScene.itemType == .timeBomb {
                     
-                    /* Store position of set mine */
-                    self.mineSetPosArray.append([gridX, gridY])
+                    /* Store position of set timeBomb */
+                    self.timeBombSetPosArray.append([gridX, gridY])
                     
-                    /* Set mine at the location you touch */
-                    let mine = Mine()
-                    mine.texture = SKTexture(imageNamed: "mineToSet")
+                    /* Set timeBomb at the location you touch */
+                    let timeBomb = TimeBomb()
+                    timeBomb.texture = SKTexture(imageNamed: "timeBombToSet")
                     /* Make sure not to collide to hero */
-                    mine.physicsBody = nil
-                    self.mineSetArray.append(mine)
-                    self.addObjectAtGrid(object: mine, x: gridX, y: gridY)
+                    timeBomb.physicsBody = nil
+                    self.timeBombSetArray.append(timeBomb)
+                    self.addObjectAtGrid(object: timeBomb, x: gridX, y: gridY)
                     
                     /* Remove item active areas */
                     self.resetSquareArray(color: "green")
@@ -537,7 +537,7 @@ class GridForTutorial: SKSpriteNode {
         object.position = gridPosition
         object.zPosition = 3
         
-        /* Add mine to grid node */
+        /* Add timeBomb to grid node */
         addChild(object)
     }
     
@@ -724,8 +724,8 @@ class GridForTutorial: SKSpriteNode {
         
     }
     
-    /* Show mine setting area */
-    func showMineSettingArea() {
+    /* Show timeBomb setting area */
+    func showtimeBombSettingArea() {
         for gridX in 0..<self.columns {
             for gridY in 1..<self.rows-1 {
                 self.squareGreenArray[gridX][gridY].isHidden = false
@@ -733,7 +733,7 @@ class GridForTutorial: SKSpriteNode {
         }
     }
     
-    /* Show mine setting area */
+    /* Show timeBomb setting area */
     func showWallSettingArea() {
         for gridX in 0..<self.columns {
             for gridY in 0..<self.rows-1 {

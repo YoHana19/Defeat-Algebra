@@ -46,9 +46,9 @@ class Grid: SKSpriteNode {
     var squarePurpleArray = [[SKShapeNode]]() /* for item */
     
     /*== Items ==*/
-    /* Mine */
-    var mineSetPosArray = [[Int]]()
-    var mineSetArray = [Mine]()
+    /* timeBomb */
+    var timeBombSetPosArray = [[Int]]()
+    var timeBombSetArray = [TimeBomb]()
     /* Wall */
     var wallSetArray = [Wall]()
     /* Magic sword */
@@ -404,19 +404,19 @@ class Grid: SKSpriteNode {
                 let gridX = Int(Double(location.x) / cellWidth)
                 let gridY = Int(Double(location.y) / cellHeight)
                 
-                /* Use mine */
-                if gameScene.itemType == .Mine {
+                /* Use timeBomb */
+                if gameScene.itemType == .timeBomb {
                     
-                    /* Store position of set mine */
-                    self.mineSetPosArray.append([gridX, gridY])
+                    /* Store position of set timeBomb */
+                    self.timeBombSetPosArray.append([gridX, gridY])
                     
-                    /* Set mine at the location you touch */
-                    let mine = Mine()
-                    mine.texture = SKTexture(imageNamed: "mineToSet")
+                    /* Set timeBomb at the location you touch */
+                    let timeBomb = TimeBomb()
+                    timeBomb.texture = SKTexture(imageNamed: "timeBombToSet")
                     /* Make sure not to collide to hero */
-                    mine.physicsBody = nil
-                    self.mineSetArray.append(mine)
-                    self.addObjectAtGrid(object: mine, x: gridX, y: gridY)
+                    timeBomb.physicsBody = nil
+                    self.timeBombSetArray.append(timeBomb)
+                    self.addObjectAtGrid(object: timeBomb, x: gridX, y: gridY)
                     
                     /* Remove item active areas */
                     self.resetSquareArray(color: "purple")
@@ -437,6 +437,7 @@ class Grid: SKSpriteNode {
                     /* Set wall */
                     let wall = Wall()
                     wall.texture = SKTexture(imageNamed: "wallToSet")
+                    wall.size = CGSize(width:50, height: 75)
                     wall.posX = gridX
                     wall.posY = gridY
                     wall.physicsBody?.categoryBitMask = 32
@@ -518,7 +519,7 @@ class Grid: SKSpriteNode {
                     /* Use battle ship */
                 } else if gameScene.itemType == .BattleShip {
                     
-                    /* Set mine at the location you touch */
+                    /* Set timeBomb at the location you touch */
                     let battleShip = BattleShip()
                     battleShip.texture = SKTexture(imageNamed: "battleShipToSet")
                     /* Make sure not to collide to hero */
@@ -677,7 +678,7 @@ class Grid: SKSpriteNode {
             }
             
             /* Attach variable expression */
-            enemy.makeTriangle()
+            //            enemy.makeTriangle()
             enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
             
             /* Set direction of enemy */
@@ -726,7 +727,7 @@ class Grid: SKSpriteNode {
             let enemy = Enemy(variableExpressionSource: variableExpressionSource)
             
             /* Attach variable expression */
-            enemy.makeTriangle()
+            //            enemy.makeTriangle()
             enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
             
             /* Set direction of enemy */
@@ -798,7 +799,7 @@ class Grid: SKSpriteNode {
         object.position = gridPosition
         object.zPosition = 3
         
-        /* Add mine to grid node */
+        /* Add timeBomb to grid node */
         addChild(object)
     }
     
@@ -1275,9 +1276,9 @@ class Grid: SKSpriteNode {
     }
     
     /*== Items ==*/
-    /* Mine */
-    /* Show mine setting area */
-    func showMineSettingArea() {
+    /* timeBomb */
+    /* Show timeBomb setting area */
+    func showtimeBombSettingArea() {
         for gridX in 0..<self.columns {
             for gridY in 1..<self.rows-1 {
                 self.squarePurpleArray[gridX][gridY].isHidden = false

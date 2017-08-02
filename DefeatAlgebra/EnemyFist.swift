@@ -17,8 +17,9 @@ class EnemyFist: SKSpriteNode {
     
     init(direction: Direction) {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "enemyFist")
-        super.init(texture: texture, color: UIColor.clear, size: texture.size())
+        let texture = SKTexture(imageNamed: "frontFistRight")
+        let bodySize = CGSize(width: 25, height: 39)
+        super.init(texture: texture, color: UIColor.clear, size: bodySize)
         
         /* Set enemy direction */
         self.direction = direction
@@ -30,7 +31,7 @@ class EnemyFist: SKSpriteNode {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         /* Set physics property */
-        physicsBody = SKPhysicsBody(rectangleOf: texture.size())
+        physicsBody = SKPhysicsBody(rectangleOf: bodySize)
         physicsBody?.categoryBitMask = 16
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 5

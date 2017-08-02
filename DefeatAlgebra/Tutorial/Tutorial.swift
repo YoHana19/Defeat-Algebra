@@ -14,7 +14,7 @@
  8: EnemyArm - 4
  16: EnemyFist - 5(1,4)
  32: setItems - wall-26(2,8,16)
- 64: getItems(Boots,mine,Heart,callHero,catapult,multiAttack) - 1
+ 64: getItems(Boots,timeBomb,Heart,callHero,catapult,multiAttack) - 1
  128:
  1024:
  */
@@ -92,7 +92,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     
     /* Flash grid */
     var numOfFlashArray = [3, 1, 2, 3, 1, 3]
-//    var numOfFlashArray = [1, 1, 1, 1, 1, 1]
+    //    var numOfFlashArray = [1, 1, 1, 1, 1, 1]
     var xValue: Int = 0
     
     /* Items */
@@ -227,11 +227,11 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         let boots2 = Boots()
         self.gridNode.addObjectAtGrid(object: boots2, x: 5, y: 4)
         
-        /* Set mine */
-        let mine = Mine()
-        self.gridNode.addObjectAtGrid(object: mine, x: 0, y: 5)
-        let mine2 = Mine()
-        self.gridNode.addObjectAtGrid(object: mine2, x: 8, y: 5)
+        /* Set timeBomb */
+        let timeBomb = TimeBomb()
+        self.gridNode.addObjectAtGrid(object: timeBomb, x: 0, y: 5)
+        let timeBomb2 = TimeBomb()
+        self.gridNode.addObjectAtGrid(object: timeBomb2, x: 8, y: 5)
         
     }
     
@@ -284,27 +284,27 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-                /* mine */
-                if self.gridNode.mineSetArray.count > 0 {
-                    for (i, minePos) in self.gridNode.mineSetPosArray.enumerated() {
+                /* timeBomb */
+                if self.gridNode.timeBombSetArray.count > 0 {
+                    for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
                         /* Look for the enemy to destroy  if any */
                         for enemy in self.gridNode.enemyArray {
                             /* Hit enemy! */
-                            if enemy.positionX == minePos[0] && enemy.positionY == minePos[1] {
+                            if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
                                 enemy.aliveFlag = false
                                 enemy.removeFromParent()
                                 /* Count defeated enemy */
                                 totalNumOfEnemy -= 1
                             }
                         }
-                        if i == self.gridNode.mineSetArray.count-1 {
-                            /* Reset mine array */
-                            self.gridNode.mineSetPosArray.removeAll()
-                            for (i, mine) in self.gridNode.mineSetArray.enumerated() {
-                                mine.removeFromParent()
-                                if i == self.gridNode.mineSetArray.count-1 {
+                        if i == self.gridNode.timeBombSetArray.count-1 {
+                            /* Reset timeBomb array */
+                            self.gridNode.timeBombSetPosArray.removeAll()
+                            for (i, timeBomb) in self.gridNode.timeBombSetArray.enumerated() {
+                                timeBomb.removeFromParent()
+                                if i == self.gridNode.timeBombSetArray.count-1 {
                                     /* Reset itemSet arrays */
-                                    self.gridNode.mineSetArray.removeAll()
+                                    self.gridNode.timeBombSetArray.removeAll()
                                     playerTurnState = .MoveState
                                 }
                             }
@@ -351,8 +351,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 switch itemType {
                 case .None:
                     break;
-                case .Mine:
-                    self.gridNode.showMineSettingArea()
+                case .timeBomb:
+                    self.gridNode.showtimeBombSettingArea()
                     break;
                 default:
                     break;
@@ -573,7 +573,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             guard tutorialState != .T3 else { return }
             guard tutorialState != .T4 else { return }
             if tutorialState == .T2 {
-                guard nodeAtPoint.name == "mine" else { return }
+                guard nodeAtPoint.name == "timeBomb" else { return }
                 showPlayerDiscriptionDone = false
                 tutorialState = .T3
             } else if tutorialState == .T1 {
@@ -665,13 +665,13 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     self.playerTurnState = .AttackState
                 }
                 
-                /* Use mine */
-            } else if nodeAtPoint.name == "mine" {
+                /* Use timeBomb */
+            } else if nodeAtPoint.name == "timeBomb" {
                 /* Remove activeArea for catapult */
                 self.gridNode.resetSquareArray(color: "red")
                 
-                /* Set mine using state */
-                itemType = .Mine
+                /* Set timeBomb using state */
+                itemType = .timeBomb
                 
                 /* Get index of game using */
                 usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
@@ -1073,7 +1073,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             switch tutorialState {
             case .T1:
                 self.createTutorialLabel(text: "Let's try to use an item", posY: 1100)
-                self.createTutorialLabel(text: "Get a mine!!", posY: 1040)
+                self.createTutorialLabel(text: "Get a timeBomb!!", posY: 1040)
                 setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*1+20, y: basePosY+CGFloat(gridNode.cellHeight)*6+20))
             default:
                 break;
@@ -1081,22 +1081,22 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         case 5:
             switch tutorialState {
             case .T1:
-                self.createTutorialLabel(text: "Time to set a mine!", posY: 430)
+                self.createTutorialLabel(text: "Time to set a timeBomb!", posY: 430)
                 self.createTutorialLabel(text: "Touch item icon!!", posY: 370)
                 setPointingIcon(position: CGPoint(x: self.buttonItem.position.x+55, y: self.buttonItem.position.y+65))
             case .T2:
                 removeTutorial()
-                self.createTutorialLabel(text: "Touch mine icon!!", posY: 430)
+                self.createTutorialLabel(text: "Touch timeBomb icon!!", posY: 430)
                 setPointingIcon(position: CGPoint(x: self.itemArray[0].position.x+55, y: self.itemArray[0].position.y+65))
             case .T3:
                 removeTutorial()
-                self.createTutorialLabel2(text: "You can set a mine", posX: self.size.width/2, posY: 1100, color: UIColor.yellow, size: 35)
+                self.createTutorialLabel2(text: "You can set a timeBomb", posX: self.size.width/2, posY: 1100, color: UIColor.yellow, size: 35)
                 self.createTutorialLabel2(text: "by touching green areas", posX: self.size.width/2, posY: 1040, color: UIColor.yellow, size: 35)
-                self.createTutorialLabel2(text: "Let's set a mine here!!",posX: self.size.width/2+100, posY: 650, color: UIColor.yellow, size: 35)
+                self.createTutorialLabel2(text: "Let's set a timeBomb here!!",posX: self.size.width/2+100, posY: 650, color: UIColor.yellow, size: 35)
                 setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*3+20, y: basePosY+CGFloat(gridNode.cellHeight)*4+20))
             case .T4:
                 removeTutorial()
-                self.createTutorialLabel(text: "The mine will explode next Player Phase!", posY: 1100)
+                self.createTutorialLabel(text: "The timeBomb will explode next Player Phase!", posY: 1100)
                 self.createTutorialLabel(text: "Move somewhere!", posY: 1040)
             }
         case 6:
@@ -1104,7 +1104,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             case .T1:
                 let showDiscription = SKAction.run({
                     self.createTutorialLabel(text: "Awesome!!", posY: 1100)
-                    self.createTutorialLabel(text: "You destroy enemy with a mine!", posY: 1040)
+                    self.createTutorialLabel(text: "You destroy enemy with a timeBomb!", posY: 1040)
                 })
                 let wait = SKAction.wait(forDuration: 3.0)
                 let moveState = SKAction.run({

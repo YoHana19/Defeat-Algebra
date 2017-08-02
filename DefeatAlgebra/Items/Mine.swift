@@ -9,11 +9,11 @@
 import Foundation
 import SpriteKit
 
-class Mine: SKSpriteNode {
+class TimeBomb: SKSpriteNode {
     
     init() {
         /* Initialize with 'mine' asset */
-        let texture = SKTexture(imageNamed: "mine")
+        let texture = SKTexture(imageNamed: "timeBomb")
         let bodySize = CGSize(width: 60, height: 60)
         super.init(texture: texture, color: UIColor.clear, size: bodySize)
         
@@ -39,6 +39,6 @@ class Mine: SKSpriteNode {
     }
     
     func setName() {
-        self.name = "mine"
+        self.name = "timeBomb"
     }
 }

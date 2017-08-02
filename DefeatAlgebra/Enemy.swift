@@ -67,7 +67,7 @@ class Enemy: SKSpriteNode {
     
     init(variableExpressionSource: [[Int]]) {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "front155")
+        let texture = SKTexture(imageNamed: "front1")
         let enemySize = CGSize(width: 61, height: 61)
         super.init(texture: texture, color: UIColor.clear, size: enemySize)
         
@@ -108,13 +108,13 @@ class Enemy: SKSpriteNode {
     func setStandingtexture() {
         switch direction {
         case .front:
-            self.texture = SKTexture(imageNamed: "front155")
+            self.texture = SKTexture(imageNamed: "front1")
         case .back:
-            self.texture = SKTexture(imageNamed: "back155")
+            self.texture = SKTexture(imageNamed: "back1")
         case .left:
-            self.texture = SKTexture(imageNamed: "left155")
+            self.texture = SKTexture(imageNamed: "left1")
         case .right:
-            self.texture = SKTexture(imageNamed: "right155")
+            self.texture = SKTexture(imageNamed: "right1")
         }
     }
     
@@ -455,7 +455,7 @@ class Enemy: SKSpriteNode {
         label.zPosition = 5
         
         /* Set position */
-        label.position = CGPoint(x:0, y: 50)
+        label.position = CGPoint(x:0, y: 35)
         
         /* Add to Scene */
         self.addChild(label)
@@ -689,7 +689,7 @@ class Enemy: SKSpriteNode {
     func setTextureInPunch() {
         switch direction {
         case .front:
-            self.texture = SKTexture(imageNamed: "frontPunch55")
+            self.texture = SKTexture(imageNamed: "frontPunch")
         case .back:
             self.texture = SKTexture(imageNamed: "backPunch55")
         case .left:
@@ -708,8 +708,8 @@ class Enemy: SKSpriteNode {
         /* Set position of arms */
         switch direction {
         case .front:
-            let armPos1 = CGPoint(x: -13, y: 5)
-            let armPos2 = CGPoint(x: 13, y: 5)
+            let armPos1 = CGPoint(x: -18, y: 5)
+            let armPos2 = CGPoint(x: 18, y: 5)
             arm[0].position = armPos1
             arm[1].position = armPos2
         case .back:
@@ -744,10 +744,11 @@ class Enemy: SKSpriteNode {
         /* Set position of fists */
         switch direction {
         case .front:
-            let fistPos1 = CGPoint(x: -13, y: 5)
-            let fistPos2 = CGPoint(x: 13, y: 5)
+            let fistPos1 = CGPoint(x: -20, y: 5)
+            let fistPos2 = CGPoint(x: 19, y: 5)
             fist[0].position = fistPos1
             fist[1].position = fistPos2
+            fist[1].texture = SKTexture(imageNamed: "frontFistLeft")
         case .back:
             let fistPos1 = CGPoint(x: -13, y: 10)
             let fistPos2 = CGPoint(x: 13, y: 10)
@@ -872,7 +873,7 @@ class Enemy: SKSpriteNode {
             
             /* Calculate punchlength */
             let originPosY = self.positionY
-            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+gameScene.bottomGap+30 /* 30 is a buffer */
+            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+gameScene.bottomGap+150 /* 150 is a buffer */
             
             /* Wait till punch streach out fully */
             let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
@@ -940,7 +941,7 @@ class Enemy: SKSpriteNode {
             
             /* Set variable expression */
             let setVariableExpression = SKAction.run({
-                self.makeTriangle()
+//                self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
             })
             
@@ -1044,7 +1045,7 @@ class Enemy: SKSpriteNode {
                 /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
                 /* Create variable expression */
-                self.makeTriangle()
+//                self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
             })
             
@@ -1115,7 +1116,7 @@ class Enemy: SKSpriteNode {
         
         /* Set variable expression */
         let setVariableExpression = SKAction.run({
-            self.makeTriangle()
+//            self.makeTriangle()
             self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
         })
         
