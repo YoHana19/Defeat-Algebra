@@ -30,6 +30,12 @@
 		201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF02F1F13E490001346C7 /* EnemyArm.swift */; };
 		201CF0321F140653001346C7 /* EnemyFist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0311F140653001346C7 /* EnemyFist.swift */; };
 		202049DD1F2EFA0F00FAD661 /* Teleport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202049DC1F2EFA0F00FAD661 /* Teleport.swift */; };
+		20232AF51F32493500898ACE /* DestroyEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20232AF41F32493500898ACE /* DestroyEnemy.sks */; };
+		20232AFB1F3252CD00898ACE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20232AF91F3252CD00898ACE /* Assets.xcassets */; };
+		20232AFF1F32535100898ACE /* TimeBombExplode.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20232AFE1F32535100898ACE /* TimeBombExplode.sks */; };
+		202BD1121F3269D500AEF49B /* TimeBombSmoke.sks in Resources */ = {isa = PBXBuildFile; fileRef = 202BD1111F3269D500AEF49B /* TimeBombSmoke.sks */; };
+		202BD1141F32832500AEF49B /* CatapultFire.sks in Resources */ = {isa = PBXBuildFile; fileRef = 202BD1131F32832400AEF49B /* CatapultFire.sks */; };
+		20369C961F32B49E008048AC /* MagicSwordEffect.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20369C951F32B49E008048AC /* MagicSwordEffect.sks */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
@@ -39,6 +45,7 @@
 		20AE7C881F2FF97400AF67AD /* GridForTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AE7C871F2FF97400AF67AD /* GridForTutorial.swift */; };
 		20B113ED1F19CB8E00CD5B4E /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20B113EC1F19CB8E00CD5B4E /* GameScene.sks */; };
 		20C22F451F19290500FFF90B /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C22F441F19290500FFF90B /* GameScene.swift */; };
+		20E9B1581F32882000CAC575 /* CatapultFire2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20E9B1571F32882000CAC575 /* CatapultFire2.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +72,12 @@
 		201CF02F1F13E490001346C7 /* EnemyArm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyArm.swift; sourceTree = "<group>"; };
 		201CF0311F140653001346C7 /* EnemyFist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyFist.swift; sourceTree = "<group>"; };
 		202049DC1F2EFA0F00FAD661 /* Teleport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Teleport.swift; sourceTree = "<group>"; };
+		20232AF41F32493500898ACE /* DestroyEnemy.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DestroyEnemy.sks; sourceTree = "<group>"; };
+		20232AF91F3252CD00898ACE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		20232AFE1F32535100898ACE /* TimeBombExplode.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = TimeBombExplode.sks; path = ../TimeBombExplode.sks; sourceTree = "<group>"; };
+		202BD1111F3269D500AEF49B /* TimeBombSmoke.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TimeBombSmoke.sks; sourceTree = "<group>"; };
+		202BD1131F32832400AEF49B /* CatapultFire.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = CatapultFire.sks; sourceTree = "<group>"; };
+		20369C951F32B49E008048AC /* MagicSwordEffect.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MagicSwordEffect.sks; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D8B1F074FE800F4DD11 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -76,6 +89,7 @@
 		20AE7C871F2FF97400AF67AD /* GridForTutorial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GridForTutorial.swift; sourceTree = "<group>"; };
 		20B113EC1F19CB8E00CD5B4E /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		20C22F441F19290500FFF90B /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		20E9B1571F32882000CAC575 /* CatapultFire2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = CatapultFire2.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +136,7 @@
 		204C7D771F074FE800F4DD11 = {
 			isa = PBXGroup;
 			children = (
+				20232AF91F3252CD00898ACE /* Assets.xcassets */,
 				204C7D821F074FE800F4DD11 /* DefeatAlgebra */,
 				204C7D811F074FE800F4DD11 /* Products */,
 			);
@@ -143,9 +158,15 @@
 				20C22F441F19290500FFF90B /* GameScene.swift */,
 				2019C37C1F0B5335003C7609 /* MainMenu.sks */,
 				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
+				20369C951F32B49E008048AC /* MagicSwordEffect.sks */,
+				202BD1131F32832400AEF49B /* CatapultFire.sks */,
+				20E9B1571F32882000CAC575 /* CatapultFire2.sks */,
 				2019C3821F0B5A91003C7609 /* Grid.swift */,
 				201CF02D1F134156001346C7 /* Hero.swift */,
 				2019C3801F0B5A85003C7609 /* Enemy.swift */,
+				20232AF41F32493500898ACE /* DestroyEnemy.sks */,
+				202BD1111F3269D500AEF49B /* TimeBombSmoke.sks */,
+				20232AFE1F32535100898ACE /* TimeBombExplode.sks */,
 				201CF02F1F13E490001346C7 /* EnemyArm.swift */,
 				201CF0311F140653001346C7 /* EnemyFist.swift */,
 				20107F041F268AD40087019A /* InputVariableExpression.swift */,
@@ -221,13 +242,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20232AFF1F32535100898ACE /* TimeBombExplode.sks in Resources */,
 				204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
+				202BD1141F32832500AEF49B /* CatapultFire.sks in Resources */,
 				204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */,
 				201CD4041F2CD113009CE633 /* Tutorial.sks in Resources */,
+				20369C961F32B49E008048AC /* MagicSwordEffect.sks in Resources */,
+				20232AFB1F3252CD00898ACE /* Assets.xcassets in Resources */,
+				202BD1121F3269D500AEF49B /* TimeBombSmoke.sks in Resources */,
+				20E9B1581F32882000CAC575 /* CatapultFire2.sks in Resources */,
 				2019C37D1F0B5335003C7609 /* MainMenu.sks in Resources */,
 				2019C37F1F0B5933003C7609 /* AnimationActions.sks in Resources */,
 				20B113ED1F19CB8E00CD5B4E /* GameScene.sks in Resources */,
+				20232AF51F32493500898ACE /* DestroyEnemy.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -194,6 +194,7 @@ class Hero: SKSpriteNode {
     func resetHero() {
         self.direction = .back
         self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.size = CGSize(width: 50, height: 50)
         self.setTexture()
         self.setMovingAnimation()
     }
@@ -464,6 +465,30 @@ class Hero: SKSpriteNode {
                     return
                 }
             }
+        }
+    }
+    
+    /*==========*/
+    /*== Item ==*/
+    /*==========*/
+    
+    /*== Magic Sword ==*/
+    /* Display variable expression you attack when using magic sword */
+    func setMagicSwordVE(vE: String) {
+        /* label of variable expresion */
+        let vELabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        vELabel.text = vE
+        vELabel.fontColor = UIColor.purple
+        vELabel.name = "vElabel"
+        vELabel.fontSize = 50
+        vELabel.position = CGPoint(x: 10, y: 55)
+        vELabel.zPosition = 102
+        addChild(vELabel)
+    }
+    
+    func removeMagicSwordVE() {
+        if let label = childNode(withName: "vElabel") {
+            label.removeFromParent()
         }
     }
     

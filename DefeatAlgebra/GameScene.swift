@@ -159,10 +159,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var usingItemIndex = 0
     var usedItemIndexArray = [Int]()
     var itemAreaCover: SKShapeNode!
+    /* Time bomb */
+    var bombExplodeDoneFlag = false
     /* Catapult */
     var setCatapult = Catapult()
     var inputBoard: InputVariableExpression!
-    var vELabel: SKLabelNode!
     var activeAreaForCatapult = [SKShapeNode]()
     var catapultXPos: Int = 0
     var setCatapultDoneFlag = false
@@ -332,12 +333,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
         levelLabel.text = String(stageLevel+1)
+        stageLevel = 6
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
+//        moveLevelArray = [3]
         /* Set hero */
         setHero()
         /* Items */
-        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+        var handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+        handedItemNameArray = ["magicSword", "catapult", "catapult", "catapult"]
         print(handedItemNameArray)
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
@@ -396,9 +400,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Set active area for catapult */
         setActiveAreaForCatapult()
-        
-        /* For magic sword */
-        setMagicSwordVE()
         
         /* Set castleWall physics property */
         castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
@@ -537,26 +538,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* timeBomb */
                 if self.gridNode.timeBombSetArray.count > 0 {
-                    for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
-                        /* Look for the enemy to destroy  if any */
-                        for enemy in self.gridNode.enemyArray {
-                            /* Hit enemy! */
-                            if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                                enemy.aliveFlag = false
-                                enemy.removeFromParent()
-                                /* Count defeated enemy */
-                                totalNumOfEnemy -= 1
+                    if bombExplodeDoneFlag == false {
+                        bombExplodeDoneFlag = true
+                        for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
+                            /* Look for the enemy to destroy  if any */
+                            for enemy in self.gridNode.enemyArray {
+                                /* Hit enemy! */
+                                if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
+                                    /* Effect */
+                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                    
+                                    /* Enemy */
+                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                    self.run(seqEnemy)
+                                    enemy.aliveFlag = false
+                                    /* Count defeated enemy */
+                                    totalNumOfEnemy -= 1
+                                }
                             }
-                        }
-                        if i == self.gridNode.timeBombSetArray.count-1 {
-                            /* Reset timeBomb array */
-                            self.gridNode.timeBombSetPosArray.removeAll()
-                            for (i, timeBomb) in self.gridNode.timeBombSetArray.enumerated() {
-                                timeBomb.removeFromParent()
-                                if i == self.gridNode.timeBombSetArray.count-1 {
-                                    /* Reset itemSet arrays */
-                                    self.gridNode.timeBombSetArray.removeAll()
-                                    timeBombDoneFlag = true
+                            if i == self.gridNode.timeBombSetArray.count-1 {
+                                /* Reset timeBomb array */
+                                self.gridNode.timeBombSetPosArray.removeAll()
+                                for (i, timeBomb) in self.gridNode.timeBombSetArray.enumerated() {
+                                    /* time bomb effect */
+                                    timeBombEffect(timeBomb: timeBomb)
+                                    timeBomb.removeFromParent()
                                 }
                             }
                         }
@@ -613,6 +621,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     wallDoneFlag = false
                     battleShipDoneFlag = false
                     battleShipOnceFlag = false
+                    bombExplodeDoneFlag = false
                 }
             case .MoveState:
                 if activeHero.moveDoneFlag == false {
@@ -651,14 +660,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             /* Set animation of catapult */
                             let catapultAni = SKAction(named: "catapult")
                             setCatapult.run(catapultAni!)
-                            /* Create stone */
-                            let catapultStone = SKSpriteNode(imageNamed: "stone")
-                            catapultStone.size = CGSize(width: 45, height: 45)
-                            catapultStone.position = setCatapult.position
-                            catapultStone.zPosition = 10
-                            addChild(catapultStone)
                             /* Throw stone */
-                            throwStone(obj: catapultStone, value: inputBoard.outputValue)
+                            throwBomb(value: inputBoard.outputValue)
                             
                         }
                         break;
@@ -990,8 +993,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         /* Look for the enemy to destroy */
                         for enemy in self.gridNode.enemyArray {
                             if enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.2 || enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.3 || enemy.positionX == hitSpotArray.0 && enemy.positionY == self.activeHero.positionY || enemy.positionX == hitSpotArray.1 && enemy.positionY == self.activeHero.positionY {
+                                /* Effect */
+                                self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                
+                                /* Enemy */
+                                let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                self.run(seqEnemy)
                                 enemy.aliveFlag = false
-                                enemy.removeFromParent()
                                 /* Count defeated enemy */
                                 self.totalNumOfEnemy -= 1
                             }
@@ -1132,6 +1142,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 playerTurnState = .MoveState
                 /* Set item area cover */
                 itemAreaCover.isHidden = false
+                
+                /* Reset hero */
+                activeHero.resetHero()
+                /* Remove effect */
+                removeMagicSowrdEffect()
+                
+                /* Reset color of enemy for magic sword */
+                for enemy in self.gridNode.enemyArray {
+                    enemy.resetColorizeEnemy()
+                }
+                
+                /* Remove variable expression display for magic sword */
+                activeHero.removeMagicSwordVE()
                 
                 /* Reset item type */
                 self.itemType = .None
@@ -1404,8 +1427,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 } else if contactA.node?.name == "bullet" {
                     print("bullet hit")
                     let enemy = contactB.node as! Enemy
+                    /* Effect */
+                    self.gridNode.enemyDestroyEffect(enemy: enemy)
+                    
+                    /* Enemy */
+                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                    self.run(seqEnemy)
                     enemy.aliveFlag = false
-                    enemy.removeFromParent()
                     /* Count defeated enemy */
                     totalNumOfEnemy -= 1
                 }
@@ -1482,8 +1512,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 } else if contactB.node?.name == "bullet" {
                     print("bullet hit")
                     let enemy = contactA.node as! Enemy
+                    /* Effect */
+                    self.gridNode.enemyDestroyEffect(enemy: enemy)
+                    
+                    /* Enemy */
+                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                    self.run(seqEnemy)
                     enemy.aliveFlag = false
-                    enemy.removeFromParent()
+
                     /* Count defeated enemy */
                     totalNumOfEnemy -= 1
                 }
@@ -1635,6 +1673,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(itemAreaCover)
     }
     
+    /*== Time bomb ==*/
+    /* Effect */
+    func timeBombEffect(timeBomb: TimeBomb) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "TimeBombExplode")!
+        let particles2 = SKEmitterNode(fileNamed: "TimeBombSmoke")!
+        particles.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
+        particles2.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
+        /* Add particles to scene */
+        self.addChild(particles)
+        self.addChild(particles2)
+        let waitRemoveExplode = SKAction.wait(forDuration: 0.5)
+        let waitRemoveSmoke = SKAction.wait(forDuration: 3.0)
+        let removeParticles = SKAction.removeFromParent()
+        let onFlag = SKAction.run({
+            self.timeBombDoneFlag = true
+            /* Reset itemSet arrays */
+            self.gridNode.timeBombSetArray.removeAll()
+        })
+        let seqEffect = SKAction.sequence([waitRemoveExplode, removeParticles])
+        let seqEffect2 = SKAction.sequence([waitRemoveSmoke, removeParticles, onFlag])
+        particles.run(seqEffect)
+        particles2.run(seqEffect2)
+    }
+    
     /*== Catapult ==*/
     /* Display active area for catapult */
     func setSingleActiveAreaForCatapult() -> SKShapeNode {
@@ -1677,106 +1740,146 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     /* Throw catapult stone animation */
-    func throwStone(obj: SKSpriteNode, value: Int) {
-        /* Throw beyond grid */
-        if value > self.gridNode.rows {
-            let duration = 4.5
-            let throwStone = SKAction.moveBy(x: 0, y: CGFloat(Double(value)*self.gridNode.cellHeight)+self.bottomGap, duration: duration)
-            let scale1 = SKAction.scale(by: 2.0, duration: duration/2)
-            let scale2 = SKAction.scale(by: 0.5, duration: duration/2)
-            let seq = SKAction.sequence([scale1, scale2])
-            let group = SKAction.group([throwStone, seq])
-            obj.run(group)
-            
-            /* Make sure to kill enemy after finishing throw animation */
-            let wait = SKAction.wait(forDuration: duration+0.2)
-            
-            /* Remove catapult and stone */
-            let removeCatapult = SKAction.run({
-                self.setCatapult.isHidden = true
-                obj.removeFromParent()
-                if let catapultBase = self.childNode(withName: "catapultBase") {
-                    catapultBase.removeFromParent()
-                }
-                self.inputBoard.outputValue = 0
-            })
-            /* Move state */
-            let moveState = SKAction.run({
-                self.playerTurnState = .MoveState
-                self.itemType = .None
-                self.inputBoard.isActive = false
-            })
-            let seq2 = SKAction.sequence([wait, removeCatapult, moveState])
-            self.run(seq2)
-            
-            /* Miss throw */
-        } else if value < 1 {
-            let throwStone = SKAction.moveBy(x: 0, y: self.bottomGap+30.0, duration: 0.5)
-            obj.run(throwStone)
-            /* Make sure to kill enemy after finishing throw animation */
-            let wait = SKAction.wait(forDuration: 0.5+0.2)
-            
-            /* Remove catapult and stone */
-            let removeCatapult = SKAction.run({
-                self.setCatapult.isHidden = true
-                if let catapultBase = self.childNode(withName: "catapultBase") {
-                    catapultBase.removeFromParent()
-                }
-                obj.removeFromParent()
-                self.inputBoard.outputValue = 0
-            })
-            /* Move state */
-            let moveState = SKAction.run({
-                self.playerTurnState = .MoveState
-                self.itemType = .None
-                self.inputBoard.isActive = false
-            })
-            let seq2 = SKAction.sequence([wait, removeCatapult, moveState])
-            self.run(seq2)
-            
-            /* no problem */
-        } else {
-            let duration = TimeInterval(value)*0.3
-            let throwStone = SKAction.moveBy(x: 0, y: CGFloat(Double(value)*self.gridNode.cellHeight)+self.bottomGap, duration: duration)
-            let scale1 = SKAction.scale(by: 2.0, duration: duration/2)
-            let scale2 = SKAction.scale(by: 0.5, duration: duration/2)
-            let seq = SKAction.sequence([scale1, scale2])
-            let group = SKAction.group([throwStone, seq])
-            obj.run(group)
-            
-            /* Make sure to kill enemy after finishing throw animation */
-            let wait = SKAction.wait(forDuration: duration+0.2)
-            /* Kill enemy */
-            let killEnemy = SKAction.run({
-                for enemy in self.gridNode.enemyArray {
-                    /* Hit enemy! */
-                    if enemy.positionX == self.catapultXPos && enemy.positionY == self.inputBoard.outputValue-1 || enemy.positionX == self.catapultXPos-1 && enemy.positionY == self.inputBoard.outputValue-1 || enemy.positionX == self.catapultXPos+1 && enemy.positionY == self.inputBoard.outputValue-1 || enemy.positionX == self.catapultXPos && enemy.positionY == self.inputBoard.outputValue || enemy.positionX == self.catapultXPos && enemy.positionY == self.inputBoard.outputValue-2 {
-                        enemy.aliveFlag = false
-                        enemy.removeFromParent()
-                        /* Count defeated enemy */
-                        self.totalNumOfEnemy -= 1
+    func throwBomb(value: Int) {
+        /* Create bomb */
+        let catapultBomb = SKSpriteNode(imageNamed: "catapultBomb")
+        catapultBomb.size = CGSize(width: 10, height: 10)
+        catapultBomb.position = setCatapult.position
+        catapultBomb.zPosition = 10
+        
+        let waitAni = SKAction.wait(forDuration: 0.5)
+        let addBomb = SKAction.run({ self.addChild(catapultBomb) })
+
+        let throwBomb = SKAction.run({
+            /* Throw beyond grid */
+            if value > self.gridNode.rows {
+                let duration = 4.5
+                let throwStone = SKAction.moveBy(x: 0, y: CGFloat(Double(value)*self.gridNode.cellHeight)+self.bottomGap, duration: duration)
+                let scale1 = SKAction.scale(by: 7.0, duration: duration/2)
+                let scale2 = SKAction.scale(by: 0.5, duration: duration/2)
+                let seq = SKAction.sequence([scale1, scale2])
+                let group = SKAction.group([throwStone, seq])
+                catapultBomb.run(group)
+                
+                /* Make sure to kill enemy after finishing throw animation */
+                let wait = SKAction.wait(forDuration: duration+0.2)
+                
+                /* Remove catapult and stone */
+                let removeCatapult = SKAction.run({
+                    self.setCatapult.isHidden = true
+                    catapultBomb.removeFromParent()
+                    if let catapultBase = self.childNode(withName: "catapultBase") {
+                        catapultBase.removeFromParent()
                     }
-                }
-            })
-            
-            /* Remove catapult and stone */
-            let removeCatapult = SKAction.run({
-                self.setCatapult.isHidden = true
-                if let catapultBase = self.childNode(withName: "catapultBase") {
-                    catapultBase.removeFromParent()
-                }
-                obj.removeFromParent()
-                self.inputBoard.outputValue = 0
-            })
-            /* Move state */
-            let moveState = SKAction.run({
-                self.playerTurnState = .MoveState
-                self.itemType = .None
-                self.inputBoard.isActive = false
-            })
-            let seq2 = SKAction.sequence([wait, killEnemy, removeCatapult, moveState])
-            self.run(seq2)
-        }
+                    self.inputBoard.outputValue = 0
+                })
+                /* Move state */
+                let moveState = SKAction.run({
+                    self.playerTurnState = .MoveState
+                    self.itemType = .None
+                    self.inputBoard.isActive = false
+                })
+                let seq2 = SKAction.sequence([wait, removeCatapult, moveState])
+                self.run(seq2)
+                
+                /* Miss throw */
+            } else if value < 1 {
+                let throwStone = SKAction.moveBy(x: 0, y: self.bottomGap+30.0, duration: 0.5)
+                catapultBomb.run(throwStone)
+                /* Make sure to kill enemy after finishing throw animation */
+                let wait = SKAction.wait(forDuration: 0.5+0.2)
+                
+                /* Remove catapult and stone */
+                let removeCatapult = SKAction.run({
+                    self.setCatapult.isHidden = true
+                    if let catapultBase = self.childNode(withName: "catapultBase") {
+                        catapultBase.removeFromParent()
+                    }
+                    catapultBomb.removeFromParent()
+                    self.inputBoard.outputValue = 0
+                })
+                /* Move state */
+                let moveState = SKAction.run({
+                    self.playerTurnState = .MoveState
+                    self.itemType = .None
+                    self.inputBoard.isActive = false
+                })
+                let seq2 = SKAction.sequence([wait, removeCatapult, moveState])
+                self.run(seq2)
+                
+                /* within grid */
+            } else {
+                let duration = TimeInterval(value)*0.3
+                let throwStone = SKAction.moveBy(x: 0, y: CGFloat(Double(value)*self.gridNode.cellHeight)+self.bottomGap, duration: duration)
+                let scale1 = SKAction.scale(by: 7.0, duration: duration/2)
+                let scale2 = SKAction.scale(by: 0.5, duration: duration/2)
+                let seq = SKAction.sequence([scale1, scale2])
+                let group = SKAction.group([throwStone, seq])
+                catapultBomb.run(group)
+                
+                /* Make sure to kill enemy after finishing throw animation */
+                let wait = SKAction.wait(forDuration: duration+0.2)
+                /* Kill enemy */
+                let killEnemy = SKAction.run({
+                    for enemy in self.gridNode.enemyArray {
+                        /* Hit enemy! */
+                        if enemy.positionX == self.catapultXPos && enemy.positionY == self.inputBoard.outputValue-1 || enemy.positionX == self.catapultXPos-1 && enemy.positionY == self.inputBoard.outputValue-1 || enemy.positionX == self.catapultXPos+1 && enemy.positionY == self.inputBoard.outputValue-1 || enemy.positionX == self.catapultXPos && enemy.positionY == self.inputBoard.outputValue || enemy.positionX == self.catapultXPos && enemy.positionY == self.inputBoard.outputValue-2 {
+                            /* Effect */
+                            self.gridNode.enemyDestroyEffect(enemy: enemy)
+                            
+                            /* Enemy */
+                            let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                            let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                            self.run(seqEnemy)
+                            enemy.aliveFlag = false
+                            /* Count defeated enemy */
+                            self.totalNumOfEnemy -= 1
+                        }
+                    }
+                })
+                
+                /* Effect */
+                let runEffect = SKAction.run({
+                    /* Load our particle effect */
+                    let particles = SKEmitterNode(fileNamed: "CatapultFire")!
+                    let particles2 = SKEmitterNode(fileNamed: "CatapultFire2")!
+                    particles.position = CGPoint(x: catapultBomb.position.x, y: catapultBomb.position.y-20)
+                    particles2.position = CGPoint(x: catapultBomb.position.x, y: catapultBomb.position.y-20)
+                    /* Add particles to scene */
+                    self.addChild(particles)
+                    self.addChild(particles2)
+                    let waitRemoveExplode = SKAction.wait(forDuration: 2.0)
+                    let removeParticles = SKAction.removeFromParent()
+                    let seqEffect = SKAction.sequence([waitRemoveExplode, removeParticles])
+                    let seqEffect2 = SKAction.sequence([waitRemoveExplode, removeParticles])
+                    particles.run(seqEffect)
+                    particles2.run(seqEffect2)
+                })
+                
+                let waitRemoveEffect = SKAction.wait(forDuration: 2.0)
+                
+                /* Remove catapult and stone */
+                let removeCatapult = SKAction.run({
+                    self.setCatapult.isHidden = true
+                    if let catapultBase = self.childNode(withName: "catapultBase") {
+                        catapultBase.removeFromParent()
+                    }
+                    catapultBomb.removeFromParent()
+                    self.inputBoard.outputValue = 0
+                })
+                /* Move state */
+                let moveState = SKAction.run({
+                    self.playerTurnState = .MoveState
+                    self.itemType = .None
+                    self.inputBoard.isActive = false
+                })
+                let seq2 = SKAction.sequence([wait, killEnemy, runEffect, waitRemoveEffect, removeCatapult, moveState])
+                self.run(seq2)
+            }
+        })
+        let seqBomb = SKAction.sequence([waitAni, addBomb, throwBomb])
+        self.run(seqBomb)
     }
     
     /* Check within grid for catapult */
@@ -1834,6 +1937,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    /*== Magic Sword ==*/
+    /* Set effect when using magic sword */
+    func setMagicSowrdEffect() {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "MagicSwordEffect")!
+        particles.position = activeHero.position
+        particles.name = "magicSwordEffect"
+        /* Add particles to scene */
+        addChild(particles)
+    }
+    
+    /* Set effect to enemy when using magic sword */
+    func setMagicSowrdEffectToEnemy(enemy: Enemy) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "MagicSwordEffect")!
+        particles.position = CGPoint(x: enemy.position.x+gridNode.position.x, y: enemy.position.y+gridNode.position.y)
+        particles.name = "magicSwordEffectToEnemy"
+        /* Add particles to scene */
+        addChild(particles)
+    }
+    
+    /* Remove effect when using magic sword */
+    func removeMagicSowrdEffect() {
+        if let effect = childNode(withName: "magicSwordEffect") {
+            effect.removeFromParent()
+        }
+    }
+    
+    /* Remove effect of enemy when using magic sword */
+    func removeMagicSowrdEffectToEnemy() {
+        if let effect = childNode(withName: "magicSwordEffectToEnemy") {
+            effect.removeFromParent()
+        }
+    }
+    
     /*== Call Hero ==*/
     func addHero() {
         
@@ -1861,23 +1999,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Add screen and heroArray */
         addChild(hero)
         heroArray.append(hero)
-    }
-    
-    /*== Magic Sword ==*/
-    /* Display variable expression you attack when using magic sword */
-    func setMagicSwordVE() {
-        /* label of variable expresion */
-        vELabel = SKLabelNode(fontNamed: "GillSans-Bold")
-        vELabel.text = "0"
-        vELabel.fontSize = 96
-        vELabel.position = CGPoint(x: self.size.width/2, y: 170)
-        vELabel.zPosition = 20
-        vELabel.isHidden = true
-        addChild(vELabel)
-    }
-    func dispMagicSwordVE(vE: String) {
-        vELabel.text = vE
-        vELabel.isHidden = false
     }
     
     /*================*/

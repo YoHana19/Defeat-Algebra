@@ -313,19 +313,26 @@ class Grid: SKSpriteNode {
                     
                     /* If hitting enemy! */
                     if self.positionEnemyAtGrid[gridX][gridY] {
-                        let waitAni = SKAction.wait(forDuration: 1.0)
-                        let removeEnemy = SKAction.run({
+                        let waitAni = SKAction.wait(forDuration: 0.5)
+                        let destroyEnemy = SKAction.run({
                             /* Look for the enemy to destroy */
                             for enemy in self.enemyArray {
                                 if enemy.positionX == gridX && enemy.positionY == gridY {
+                                    /* Effect */
+                                    self.enemyDestroyEffect(enemy: enemy)
+
+                                    /* Enemy */
+                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                    self.run(seqEnemy)
                                     enemy.aliveFlag = false
-                                    enemy.removeFromParent()
                                     /* Count defeated enemy */
                                     gameScene.totalNumOfEnemy -= 1
                                 }
                             }
                         })
-                        let seq = SKAction.sequence([waitAni, removeEnemy])
+                        let seq = SKAction.sequence([waitAni, destroyEnemy])
                         self.run(seq)
                     }
                     
@@ -336,13 +343,20 @@ class Grid: SKSpriteNode {
                     let hitSpots = self.hitSpotsForSpear()
                     /* If hitting enemy! */
                     if self.positionEnemyAtGrid[hitSpots.0[0]][hitSpots.0[1]] || self.positionEnemyAtGrid[hitSpots.1[0]][hitSpots.1[1]] {
-                        let waitAni = SKAction.wait(forDuration: 1.0)
+                        let waitAni = SKAction.wait(forDuration: 0.5)
                         let removeEnemy = SKAction.run({
                             /* Look for the enemy to destroy */
                             for enemy in self.enemyArray {
                                 if enemy.positionX == hitSpots.0[0] && enemy.positionY == hitSpots.0[1] || enemy.positionX == hitSpots.1[0] && enemy.positionY == hitSpots.1[1] {
+                                    /* Effect */
+                                    self.enemyDestroyEffect(enemy: enemy)
+                                    
+                                    /* Enemy */
+                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                    self.run(seqEnemy)
                                     enemy.aliveFlag = false
-                                    enemy.removeFromParent()
                                     /* Count defeated enemy */
                                     gameScene.totalNumOfEnemy -= 1
                                 }
@@ -384,7 +398,7 @@ class Grid: SKSpriteNode {
                 }
                 
                 /* Remove variable expression display */
-                gameScene.vELabel.isHidden = true
+                gameScene.activeHero.removeMagicSwordVE()
                 
                 /* Remove active area */
                 gameScene.gridNode.resetSquareArray(color: "purple")
@@ -475,20 +489,43 @@ class Grid: SKSpriteNode {
                     
                     /* If hitting enemy! */
                     if self.positionEnemyAtGrid[gridX][gridY] {
-                        let waitAni = SKAction.wait(forDuration: 1.0)
+                        let waitAni = SKAction.wait(forDuration: 0.5)
                         let removeEnemy = SKAction.run({
                             /* Look for the enemy to destroy */
                             for enemy in self.enemyArray {
                                 enemy.colorizeEnemy()
                                 if enemy.positionX == gridX && enemy.positionY == gridY {
                                     self.vEindex = enemy.vECategory
-                                    enemy.aliveFlag = false
-                                    enemy.removeFromParent()
+                                    /* Effect */
+                                    gameScene.setMagicSowrdEffectToEnemy(enemy: enemy)
+                                    
+                                    /* Enemy */
+                                    let waitEffectRemove = SKAction.wait(forDuration: 2.5)
+                                    let removeEnemy = SKAction.run({
+                                        enemy.removeFromParent()
+                                        gameScene.removeMagicSowrdEffectToEnemy()
+                                    })
+                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                    self.run(seqEnemy)
+                                    
                                     /* Count defeated enemy */
                                     gameScene.totalNumOfEnemy -= 1
-                                    gameScene.activeHero.resetHero()
-                                    /* Display variale expression you attacked */
-                                    gameScene.dispMagicSwordVE(vE: enemy.variableExpressionForLabel)
+                                    enemy.aliveFlag = false
+                                    
+                                    /* Set hero texture */
+                                    let setTexture = SKAction.run({
+                                        /* Set texture */
+                                        gameScene.activeHero.removeAllActions()
+                                        gameScene.activeHero.texture = SKTexture(imageNamed: "heroMagicSword")
+                                        gameScene.activeHero.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+                                        gameScene.activeHero.size = CGSize(width: 54, height: 85)
+                                        /* Display variale expression you attacked */
+                                        gameScene.activeHero.setMagicSwordVE(vE: enemy.variableExpressionForLabel)
+                                        /* Set effect */
+                                        gameScene.setMagicSowrdEffect()
+                                    })
+                                    let seqHero = SKAction.sequence([waitEffectRemove, setTexture])
+                                    self.run(seqHero)
                                 }
                             }
                         })
@@ -578,8 +615,19 @@ class Grid: SKSpriteNode {
                 guard gameScene.magicSwordAttackDone else { return }
                 
                 if enemy.vECategory == vEindex {
+                    /* Effect */
+                    gameScene.setMagicSowrdEffectToEnemy(enemy: enemy)
+                    
+                    /* Enemy */
+                    let waitEffectRemove = SKAction.wait(forDuration: 2.5)
+                    let removeEnemy = SKAction.run({
+                        enemy.removeFromParent()
+                        gameScene.removeMagicSowrdEffectToEnemy()
+                    })
+                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                    self.run(seqEnemy)
+                    
                     enemy.aliveFlag = false
-                    enemy.removeFromParent()
                     /* Count defeated enemy */
                     gameScene.totalNumOfEnemy -= 1
                     /* Touch wrong enemy */
@@ -587,6 +635,10 @@ class Grid: SKSpriteNode {
                     
                     guard gameScene.magicSwordAttackDone else { return }
                     
+                    /* Reset hero */
+                    gameScene.activeHero.resetHero()
+                    /* Remove effect */
+                    gameScene.removeMagicSowrdEffect()
                     /* Back to MoveState */
                     gameScene.playerTurnState = .MoveState
                     /* Reset item type */
@@ -597,7 +649,7 @@ class Grid: SKSpriteNode {
                         enemy.resetColorizeEnemy()
                     }
                     /* Remove variable expression display */
-                    gameScene.vELabel.isHidden = true
+                    gameScene.activeHero.removeMagicSwordVE()
                 }
                 
                 /* Touch ends on somewhere but active area or enemy */
@@ -605,6 +657,11 @@ class Grid: SKSpriteNode {
                 print("touch not activearea")
                 /* Make sure to be invalid when using catpult */
                 guard gameScene.setCatapultDoneFlag == false else { return }
+                
+                /* Reset hero */
+                gameScene.activeHero.resetHero()
+                /* Remove effect */
+                gameScene.removeMagicSowrdEffect()
                 
                 gameScene.playerTurnState = .MoveState
                 /* Set item area cover */
@@ -620,7 +677,7 @@ class Grid: SKSpriteNode {
                 }
                 
                 /* Remove variable expression display */
-                gameScene.vELabel.isHidden = true
+                gameScene.activeHero.removeMagicSwordVE()
                 
                 /* Remove active area */
                 gameScene.gridNode.resetSquareArray(color: "purple")
@@ -655,6 +712,19 @@ class Grid: SKSpriteNode {
         enemy.physicsBody?.categoryBitMask = 2
         enemy.physicsBody?.collisionBitMask = 0
         enemy.physicsBody?.contactTestBitMask = 1
+    }
+    
+    /*== Set effect when enemy destroyed ==*/
+    func enemyDestroyEffect(enemy: Enemy) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "DestroyEnemy")!
+        particles.position = CGPoint(x: enemy.position.x, y: enemy.position.y-20)
+        /* Add particles to scene */
+        self.addChild(particles)
+        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+        let removeParticles = SKAction.removeFromParent()
+        let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
+        particles.run(seqEffect)
     }
     
     /*== Adding Enemy ==*/
@@ -1308,7 +1378,7 @@ class Grid: SKSpriteNode {
         for i in 1..<self.rows-1 {
             squarePurpleArray[0][i].isHidden = false
         }
-    }
+    }   
     
     /* Teleport */
     /* Show active area for teleport */
