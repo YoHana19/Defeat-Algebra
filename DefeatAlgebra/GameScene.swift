@@ -333,7 +333,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
         levelLabel.text = String(stageLevel+1)
-        stageLevel = 6
+//        stageLevel = 0
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
 //        moveLevelArray = [3]
@@ -341,7 +341,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setHero()
         /* Items */
         var handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-        handedItemNameArray = ["magicSword", "catapult", "catapult", "catapult"]
+//        handedItemNameArray = ["magicSword", "catapult", "catapult", "catapult"]
         print(handedItemNameArray)
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
@@ -561,7 +561,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             if i == self.gridNode.timeBombSetArray.count-1 {
                                 /* Reset timeBomb array */
                                 self.gridNode.timeBombSetPosArray.removeAll()
-                                for (i, timeBomb) in self.gridNode.timeBombSetArray.enumerated() {
+                                for timeBomb in self.gridNode.timeBombSetArray {
                                     /* time bomb effect */
                                     timeBombEffect(timeBomb: timeBomb)
                                     timeBomb.removeFromParent()

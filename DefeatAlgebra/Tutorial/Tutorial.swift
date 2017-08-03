@@ -78,6 +78,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var showPlayerDiscriptionDone = false
     var showEnemyDiscriptionDone = false
     var enemyPhaseLabelDoneFlag = false
+    var bombExplodeDoneFlag = false
+    var timeBombDoneFlag = false
     
     /* Player Control */
     var beganPos:CGPoint!
@@ -236,6 +238,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        print(buttonSkip)
         switch gameState {
         case .AddEnemy:
             /* Add enemy */
@@ -286,35 +289,52 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 
                 /* timeBomb */
                 if self.gridNode.timeBombSetArray.count > 0 {
-                    for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
-                        /* Look for the enemy to destroy  if any */
-                        for enemy in self.gridNode.enemyArray {
-                            /* Hit enemy! */
-                            if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                                enemy.aliveFlag = false
-                                enemy.removeFromParent()
-                                /* Count defeated enemy */
-                                totalNumOfEnemy -= 1
+                    if bombExplodeDoneFlag == false {
+                        bombExplodeDoneFlag = true
+                        for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
+                            /* Look for the enemy to destroy  if any */
+                            for enemy in self.gridNode.enemyArray {
+                                /* Hit enemy! */
+                                if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
+                                    /* Effect */
+                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                    
+                                    /* Enemy */
+                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                    self.run(seqEnemy)
+                                    enemy.aliveFlag = false
+                                    /* Count defeated enemy */
+                                    totalNumOfEnemy -= 1
+                                }
                             }
-                        }
-                        if i == self.gridNode.timeBombSetArray.count-1 {
-                            /* Reset timeBomb array */
-                            self.gridNode.timeBombSetPosArray.removeAll()
-                            for (i, timeBomb) in self.gridNode.timeBombSetArray.enumerated() {
-                                timeBomb.removeFromParent()
-                                if i == self.gridNode.timeBombSetArray.count-1 {
-                                    /* Reset itemSet arrays */
-                                    self.gridNode.timeBombSetArray.removeAll()
-                                    playerTurnState = .MoveState
+                            if i == self.gridNode.timeBombSetArray.count-1 {
+                                /* Reset timeBomb array */
+                                self.gridNode.timeBombSetPosArray.removeAll()
+                                for timeBomb in self.gridNode.timeBombSetArray {
+                                    /* time bomb effect */
+                                    timeBombEffect(timeBomb: timeBomb)
+                                    timeBomb.removeFromParent()
                                 }
                             }
                         }
                     }
                 } else {
+                    timeBombDoneFlag = true
+                }
+                
+                
+                if timeBombDoneFlag {
                     playerTurnState = .MoveState
                 }
+                
+                
             case .MoveState:
                 //                print("MoveState")
+                
+                timeBombDoneFlag = false
+                bombExplodeDoneFlag = false
                 
                 /* Show tutorial */
                 if showPlayerDiscriptionDone == false {
@@ -384,21 +404,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 buttonAttack.isHidden = true
                 buttonItem.isHidden = true
                 
-                /* Remove used items from itemArray */
-                //                print("Item index array is \(usedItemIndexArray)")
-                self.usedItemIndexArray.sort { $0 < $1 }
-                for (i, index) in usedItemIndexArray.enumerated() {
-                    itemArray.remove(at: index-i)
-                    //                    print("Remove item index of \(index)")
-                    if i == usedItemIndexArray.count-1 {
-                        //                        print("Item array is \(itemArray)")
-                        /* Reset position of display item */
-                        self.resetDisplayItem()
-                        /* Reset usedItemIndexArray */
-                        usedItemIndexArray.removeAll()
-                    }
-                }
-                
                 /* Remove move area */
                 gridNode.resetSquareArray(color: "blue")
                 gridNode.resetSquareArray(color: "red")
@@ -450,7 +455,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             
             
             if enemyTurnDoneFlag == false {
-                print("hey")
                 
                 /* Reset enemy position */
                 gridNode.resetEnemyPositon()
@@ -476,8 +480,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             
             /* All enemies finish their actions */
             if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
-                print("hey2")
-                print(self.gridNode.enemyArray)
                 /* Remove dead hero from heroArray */
                 self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
                 
@@ -674,8 +676,9 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 itemType = .timeBomb
                 
                 /* Get index of game using */
-                usingItemIndex = (Int(nodeAtPoint.position.x)-50)/90
+                usingItemIndex = Int((Double(nodeAtPoint.position.x)-56.5)/91)
                 //                print("Now item index is \(usingItemIndex)")
+                
                 
                 /* If player touch other place than item icons, back to MoveState */
             } else {
@@ -858,7 +861,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     func displayitem(name: String) {
         let index = self.itemArray.count
         let item = SKSpriteNode(imageNamed: name)
-        item.position = CGPoint(x: index*90+50, y: 50)
+        item.size = CGSize(width: 69, height: 69)
+        item.position = CGPoint(x: Double(index)*91+56.5, y: 47.5)
         item.zPosition = 2
         item.name = name
         self.itemArray.append(item)
@@ -866,9 +870,11 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     /* Reset position of item when use any */
-    func resetDisplayItem() {
+    func resetDisplayItem(index: Int) {
+        itemArray[index].removeFromParent()
+        itemArray.remove(at: index)
         for (i, item) in itemArray.enumerated() {
-            item.position = CGPoint(x: i*90+50, y: 50)
+            item.position = CGPoint(x: Double(i)*91+56.5, y: 47.5)
         }
     }
     
@@ -940,7 +946,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     func setPointingIcon(position: CGPoint) {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.position = position
-        icon.zPosition = 5
+        icon.zPosition = 100
         let shakePoint = SKAction(named: "shakePoint")
         let repeatAction = SKAction.repeatForever(shakePoint!)
         icon.run(repeatAction)
@@ -953,7 +959,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.position = position
         icon.zRotation = -.pi
-        icon.zPosition = 5
+        icon.zPosition = 100
         icon.size = size
         let shakePoint = SKAction(named: "shakePoint")
         let repeatAction = SKAction.repeatForever(shakePoint!)
@@ -1216,5 +1222,30 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 tutorialLabelArray.removeAll()
             }
         }
+    }
+    
+    /*== Time bomb ==*/
+    /* Effect */
+    func timeBombEffect(timeBomb: TimeBomb) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "TimeBombExplode")!
+        let particles2 = SKEmitterNode(fileNamed: "TimeBombSmoke")!
+        particles.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
+        particles2.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
+        /* Add particles to scene */
+        self.addChild(particles)
+        self.addChild(particles2)
+        let waitRemoveExplode = SKAction.wait(forDuration: 0.5)
+        let waitRemoveSmoke = SKAction.wait(forDuration: 3.0)
+        let removeParticles = SKAction.removeFromParent()
+        let onFlag = SKAction.run({
+            self.timeBombDoneFlag = true
+            /* Reset itemSet arrays */
+            self.gridNode.timeBombSetArray.removeAll()
+        })
+        let seqEffect = SKAction.sequence([waitRemoveExplode, removeParticles])
+        let seqEffect2 = SKAction.sequence([waitRemoveSmoke, removeParticles, onFlag])
+        particles.run(seqEffect)
+        particles2.run(seqEffect2)
     }
 }

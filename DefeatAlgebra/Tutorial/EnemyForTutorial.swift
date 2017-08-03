@@ -50,7 +50,7 @@ class EnemyForTutorial: SKSpriteNode {
     
     init(variableExpressionSource: [[Int]], interval: Int) {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "front155")
+        let texture = SKTexture(imageNamed: "front1")
         let enemySize = CGSize(width: 61, height: 61)
         super.init(texture: texture, color: UIColor.clear, size: enemySize)
         
@@ -259,7 +259,7 @@ class EnemyForTutorial: SKSpriteNode {
     func setTextureInPunch() {
         switch direction {
         case .front:
-            self.texture = SKTexture(imageNamed: "frontPunch55")
+            self.texture = SKTexture(imageNamed: "frontPunch")
         case .back:
             self.texture = SKTexture(imageNamed: "backPunch55")
         case .left:
@@ -318,6 +318,7 @@ class EnemyForTutorial: SKSpriteNode {
             let fistPos2 = CGPoint(x: 13, y: 5)
             fist[0].position = fistPos1
             fist[1].position = fistPos2
+            fist[1].texture = SKTexture(imageNamed: "frontFistLeft")
         case .back:
             let fistPos1 = CGPoint(x: -13, y: 10)
             let fistPos2 = CGPoint(x: 13, y: 10)

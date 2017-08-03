@@ -393,8 +393,15 @@ class GridForTutorial: SKSpriteNode {
                                 /* Look for the enemy to destroy */
                                 for enemy in self.enemyArray {
                                     if enemy.positionX == gridX && enemy.positionY == gridY {
+                                        /* Effect */
+                                        self.enemyDestroyEffect(enemy: enemy)
+                                        
+                                        /* Enemy */
+                                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                        self.run(seqEnemy)
                                         enemy.aliveFlag = false
-                                        enemy.removeFromParent()
                                         /* Count defeated enemy */
                                         gameScene.totalNumOfEnemy -= 1
                                     }
@@ -450,8 +457,7 @@ class GridForTutorial: SKSpriteNode {
                     
                     //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
-                    gameScene.itemArray[gameScene.usingItemIndex].removeFromParent()
-                    gameScene.usedItemIndexArray.append(gameScene.usingItemIndex)
+                    gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                 }
             }
         }
@@ -722,6 +728,19 @@ class GridForTutorial: SKSpriteNode {
             break;
         }
         
+    }
+    
+    /*== Set effect when enemy destroyed ==*/
+    func enemyDestroyEffect(enemy: EnemyForTutorial) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "DestroyEnemy")!
+        particles.position = CGPoint(x: enemy.position.x, y: enemy.position.y-20)
+        /* Add particles to scene */
+        self.addChild(particles)
+        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+        let removeParticles = SKAction.removeFromParent()
+        let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
+        particles.run(seqEffect)
     }
     
     /* Show timeBomb setting area */
