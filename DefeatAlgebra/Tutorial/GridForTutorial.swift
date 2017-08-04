@@ -43,7 +43,7 @@ class GridForTutorial: SKSpriteNode {
     /* Move & Attack & item setting area for player */
     var squareRedArray = [[SKShapeNode]]() /* for attack */
     var squareBlueArray = [[SKShapeNode]]() /* for move */
-    var squareGreenArray = [[SKShapeNode]]() /* for item */
+    var squarePurpleArray = [[SKShapeNode]]() /* for item */
     
     /* Attack area position */
     var attackAreaPos = [[Int]]()
@@ -263,7 +263,7 @@ class GridForTutorial: SKSpriteNode {
             if gameScene.tutorialState == .T2 {
                 guard gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY+1 else { return }
                 gameScene.removeTutorial()
-                let wait = SKAction.wait(forDuration: 1.2)
+                let wait = SKAction.wait(forDuration: 2.2)
                 let moveState = SKAction.run({
                     gameScene.tutorialState = .T3
                     gameScene.showPlayerDiscriptionDone = false
@@ -446,7 +446,7 @@ class GridForTutorial: SKSpriteNode {
                     self.addObjectAtGrid(object: timeBomb, x: gridX, y: gridY)
                     
                     /* Remove item active areas */
-                    self.resetSquareArray(color: "green")
+                    self.resetSquareArray(color: "purple")
                     /* Reset item type */
                     gameScene.itemType = .None
                     /* Set item area cover */
@@ -481,7 +481,6 @@ class GridForTutorial: SKSpriteNode {
             let enemy = EnemyForTutorial(variableExpressionSource: variableExpressionSource, interval: i)
             
             /* Attach variable expression */
-            enemy.makeTriangle()
             enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
             
             /* Set direction of enemy */
@@ -747,7 +746,7 @@ class GridForTutorial: SKSpriteNode {
     func showtimeBombSettingArea() {
         for gridX in 0..<self.columns {
             for gridY in 1..<self.rows-1 {
-                self.squareGreenArray[gridX][gridY].isHidden = false
+                self.squarePurpleArray[gridX][gridY].isHidden = false
             }
         }
     }
@@ -756,10 +755,10 @@ class GridForTutorial: SKSpriteNode {
     func showWallSettingArea() {
         for gridX in 0..<self.columns {
             for gridY in 0..<self.rows-1 {
-                self.squareGreenArray[gridX][gridY].isHidden = false
+                self.squarePurpleArray[gridX][gridY].isHidden = false
                 if gridX == self.columns-1 && gridY == self.rows-1 {
                     for enemy in self.enemyArray {
-                        self.squareGreenArray[enemy.positionX][enemy.positionY].isHidden = true
+                        self.squarePurpleArray[enemy.positionX][enemy.positionY].isHidden = true
                     }
                 }
             }
@@ -783,11 +782,11 @@ class GridForTutorial: SKSpriteNode {
                     squareBlueArray[x][y].isHidden = true
                 }
             }
-        case "green":
+        case "purple":
             for x in 0..<columns {
                 /* Loop through rows */
                 for y in 0..<rows {
-                    squareGreenArray[x][y].isHidden = true
+                    squarePurpleArray[x][y].isHidden = true
                 }
             }
         default:
@@ -823,15 +822,15 @@ class GridForTutorial: SKSpriteNode {
             }
         }
         
-        /* Green square */
+        /* purple square */
         /* Loop through columns */
         for gridX in 0..<columns {
             /* Initialize empty column */
-            squareGreenArray.append([])
+            squarePurpleArray.append([])
             /* Loop through rows */
             for gridY in 0..<rows {
                 /* Createa new creature at row / column position */
-                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.green)
+                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.purple)
             }
         }
     }
@@ -862,8 +861,8 @@ class GridForTutorial: SKSpriteNode {
             squareRedArray[x].append(square)
         case UIColor.blue:
             squareBlueArray[x].append(square)
-        case UIColor.green:
-            squareGreenArray[x].append(square)
+        case UIColor.purple:
+            squarePurpleArray[x].append(square)
         default:
             break;
         }

@@ -209,7 +209,7 @@ class EnemyForTutorial: SKSpriteNode {
         label.zPosition = 5
         
         /* Set position */
-        label.position = CGPoint(x:0, y: 50)
+        label.position = CGPoint(x:0, y: 35)
         
         /* Add to Scene */
         self.addChild(label)
@@ -413,7 +413,10 @@ class EnemyForTutorial: SKSpriteNode {
         if self.positionY < self.valueOfEnemy {
             
             /* Decrese life */
-            let decreseLife = SKAction.run({ gameScene.life -= 1 })
+            let decreseLife = SKAction.run({
+                gameScene.life -= 1
+                gameScene.setLife(numOflife: gameScene.life)
+            })
             
             /* Calculate punchlength */
             let originPosY = self.positionY
@@ -485,7 +488,6 @@ class EnemyForTutorial: SKSpriteNode {
             
             /* Set variable expression */
             let setVariableExpression = SKAction.run({
-                self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
             })
             
@@ -586,7 +588,6 @@ class EnemyForTutorial: SKSpriteNode {
                 /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
                 /* Create variable expression */
-                self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
             })
             
@@ -666,10 +667,14 @@ class EnemyForTutorial: SKSpriteNode {
         let gameScene = gridNode.parent as! Tutorial
         
         /* Decrese life */
-        let decreseLife = SKAction.run({ gameScene.life -= 1 })
+        let decreseLife = SKAction.run({
+            gameScene.life -= 1
+            gameScene.setLife(numOflife: gameScene.life)
+        })
         
         /* Set punchLength */
-        self.punchLength = 80
+        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
+        print(punchLength)
         
         /* Do punch */
         let armAndFist = self.punch()
@@ -692,7 +697,6 @@ class EnemyForTutorial: SKSpriteNode {
         
         /* Set variable expression */
         let setVariableExpression = SKAction.run({
-            self.makeTriangle()
             self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
         })
         
@@ -746,14 +750,5 @@ class EnemyForTutorial: SKSpriteNode {
                 fist.moveFistBackward(length: arms[0].size.height, speed: self.punchSpeed)
             }
         }
-    }
-    
-    /* Put color to enemy */
-    func colorizeEnemy() {
-        self.run(SKAction.colorize(with: UIColor.green, colorBlendFactor: 1.0, duration: 0.50))
-    }
-    
-    func resetColorizeEnemy() {
-        self.run(SKAction.colorize(with: UIColor.green, colorBlendFactor: 0, duration: 0.50))
     }
 }

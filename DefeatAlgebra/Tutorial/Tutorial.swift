@@ -105,16 +105,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     
     
     /* Castle life */
-    var lifeLabel: SKLabelNode!
-    var maxLife = 6
-    var life: Int = 6 {
-        willSet {
-            lifeLabel.text = String(life)
-        }
-        didSet {
-            lifeLabel.text = String(life)
-        }
-    }
+    var maxLife = 5
+    var life: Int = 5
     
     override func didMove(to view: SKView) {
         /* Connect scene objects */
@@ -162,6 +154,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         /* Play button */
         buttonPlay.selectedHandler = {
             
+            /* On flag user start to play */
+            MainMenu.playDoneFlag = true
+            
+            /* Store game property */
+            let ud = UserDefaults.standard
+            /* user flag */
+            ud.set(MainMenu.playDoneFlag, forKey: "userPlayed")
+            
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
             
@@ -179,6 +179,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         
         /* Skip button */
         buttonSkip.selectedHandler = {
+            
+            /* On flag user start to play */
+            MainMenu.playDoneFlag = true
+            
+            /* Store game property */
+            let ud = UserDefaults.standard
+            /* user flag */
+            ud.set(MainMenu.playDoneFlag, forKey: "userPlayed")
             
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
@@ -204,14 +212,17 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         /* Display value of x */
         valueOfX = childNode(withName: "valueOfX") as! SKLabelNode
         
-        /* Life label */
-        lifeLabel = childNode(withName: "lifeLabel") as! SKLabelNode
-        
         /* Set physics contact delegate */
         physicsWorld.contactDelegate = self
         
         /* Set no gravity */
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
+        
+        /* Set castleWall physics property */
+        castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
+        castleNode.physicsBody?.categoryBitMask = 4
+        castleNode.physicsBody?.collisionBitMask = 0
+        castleNode.physicsBody?.contactTestBitMask = 24
         
         /* Set item area */
         setItemAreaCover()
@@ -235,10 +246,12 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         let timeBomb2 = TimeBomb()
         self.gridNode.addObjectAtGrid(object: timeBomb2, x: 8, y: 5)
         
+        /* Set life */
+        setLife(numOflife: maxLife)
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
-        print(buttonSkip)
         switch gameState {
         case .AddEnemy:
             /* Add enemy */
@@ -407,7 +420,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 /* Remove move area */
                 gridNode.resetSquareArray(color: "blue")
                 gridNode.resetSquareArray(color: "red")
-                gridNode.resetSquareArray(color: "green")
+                gridNode.resetSquareArray(color: "purple")
                 
                 /* Remove dead enemy from enemyArray */
                 self.gridNode.enemyArray = self.gridNode.enemyArray.filter({ $0.aliveFlag == true })
@@ -542,6 +555,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             break;
             
         case .GameOver:
+            removeTutorial()
             gameOverLabel.isHidden = false
             buttonRetry.state = .msButtonNodeStateActive
             break;
@@ -567,6 +581,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 guard nodeAtPoint.name == "buttonAttack" else { return }
                 showPlayerDiscriptionDone = false
                 tutorialState = .T2
+                print(playerTurnState)
             }
         }
         guard countTurn != 3 else { return }
@@ -599,7 +614,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     
                     /* Reset active area */
                     self.gridNode.resetSquareArray(color: "blue")
-                    self.gridNode.resetSquareArray(color: "green")
+                    self.gridNode.resetSquareArray(color: "purple")
                     
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
@@ -658,7 +673,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     
                     /* Reset active area */
                     self.gridNode.resetSquareArray(color: "blue")
-                    self.gridNode.resetSquareArray(color: "green")
+                    self.gridNode.resetSquareArray(color: "purple")
                     
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
@@ -695,7 +710,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 self.itemType = .None
                 
                 /* Remove active area */
-                self.gridNode.resetSquareArray(color: "green")
+                self.gridNode.resetSquareArray(color: "purple")
                 self.gridNode.resetSquareArray(color: "red")
             }
         }
@@ -738,18 +753,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                        /* Get heart */
-                    } else if item.name == "heart" {
-                        item.removeFromParent()
-                        maxLife += 1
-                        life += 1
-                        /* Get spear */
-                    } else if item.name == "spear" {
-                        item.removeFromParent()
-                        if self.activeHero.attackType < 1 {
-                            self.activeHero.attackType += 1
-                        }
-                        /* Other items */
                     } else {
                         item.removeFromParent()
                         displayitem(name: item.name!)
@@ -764,18 +767,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                        /* Get heart */
-                    } else if item.name == "heart" {
-                        item.removeFromParent()
-                        maxLife += 1
-                        life += 1
-                        /* Get spear */
-                    } else if item.name == "spear" {
-                        item.removeFromParent()
-                        if self.activeHero.attackType < 1 {
-                            self.activeHero.attackType += 1
-                        }
-                        /* Other items */
+                    /* Other items */
                     } else {
                         item.removeFromParent()
                         displayitem(name: item.name!)
@@ -1079,7 +1071,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             switch tutorialState {
             case .T1:
                 self.createTutorialLabel(text: "Let's try to use an item", posY: 1100)
-                self.createTutorialLabel(text: "Get a timeBomb!!", posY: 1040)
+                self.createTutorialLabel(text: "Get a time bomb!!", posY: 1040)
                 setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*1+20, y: basePosY+CGFloat(gridNode.cellHeight)*6+20))
             default:
                 break;
@@ -1087,23 +1079,24 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         case 5:
             switch tutorialState {
             case .T1:
-                self.createTutorialLabel(text: "Time to set a timeBomb!", posY: 430)
+                self.createTutorialLabel(text: "Time to set a time bomb!", posY: 430)
                 self.createTutorialLabel(text: "Touch item icon!!", posY: 370)
                 setPointingIcon(position: CGPoint(x: self.buttonItem.position.x+55, y: self.buttonItem.position.y+65))
             case .T2:
                 removeTutorial()
-                self.createTutorialLabel(text: "Touch timeBomb icon!!", posY: 430)
+                self.createTutorialLabel(text: "Touch the time bomb icon!!", posY: 430)
                 setPointingIcon(position: CGPoint(x: self.itemArray[0].position.x+55, y: self.itemArray[0].position.y+65))
             case .T3:
                 removeTutorial()
-                self.createTutorialLabel2(text: "You can set a timeBomb", posX: self.size.width/2, posY: 1100, color: UIColor.yellow, size: 35)
-                self.createTutorialLabel2(text: "by touching green areas", posX: self.size.width/2, posY: 1040, color: UIColor.yellow, size: 35)
-                self.createTutorialLabel2(text: "Let's set a timeBomb here!!",posX: self.size.width/2+100, posY: 650, color: UIColor.yellow, size: 35)
+                self.createTutorialLabel2(text: "You can set a time bomb", posX: self.size.width/2, posY: 1100, color: UIColor.white, size: 35)
+                self.createTutorialLabel2(text: "by touching purple areas", posX: self.size.width/2, posY: 1040, color: UIColor.white, size: 35)
+                self.createTutorialLabel2(text: "Let's set a time bomb here!!",posX: self.size.width/2+100, posY: 650, color: UIColor.white, size: 35)
                 setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*3+20, y: basePosY+CGFloat(gridNode.cellHeight)*4+20))
             case .T4:
                 removeTutorial()
-                self.createTutorialLabel(text: "The timeBomb will explode next Player Phase!", posY: 1100)
-                self.createTutorialLabel(text: "Move somewhere!", posY: 1040)
+                self.createTutorialLabel(text: "A time bomb will explode", posY: 1100)
+                self.createTutorialLabel(text: "next Player Phase!", posY: 1040)
+                self.createTutorialLabel(text: "Move somewhere!", posY: 980)
             }
         case 6:
             switch tutorialState {
@@ -1112,7 +1105,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     self.createTutorialLabel(text: "Awesome!!", posY: 1100)
                     self.createTutorialLabel(text: "You destroy enemy with a timeBomb!", posY: 1040)
                 })
-                let wait = SKAction.wait(forDuration: 3.0)
+                let wait = SKAction.wait(forDuration: 3.5)
                 let moveState = SKAction.run({
                     self.tutorialState = .T2
                     self.showPlayerDiscriptionDone = false
@@ -1168,11 +1161,11 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 self.run(seq)
             case .T2:
                 removeTutorial()
-                createTutorialLabel(text: "The value of 'X' will be enemys' energy", posY: 810)
+                createTutorialLabel(text: "The value of 'X' is an energy of enemies", posY: 810)
                 createTutorialLabel(text: "When they attack!", posY: 750)
-                let icon = self.setPointingIcon2(position: CGPoint(x: self.valueOfX.position.x-40, y: self.valueOfX.position.y-30), size: CGSize(width: 80, height: 80))
+                let icon = self.setPointingIcon2(position: CGPoint(x: self.valueOfX.position.x-150, y: self.valueOfX.position.y-25), size: CGSize(width: 60, height: 52))
                 self.addChild(icon)
-                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+50, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+50))
+                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+45, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+90))
             default:
                 break;
             }
@@ -1185,7 +1178,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     func setDiscriptionForLife() {
         self.createTutorialLabel(text: "enemy's punch could damage", posY: 540)
         self.createTutorialLabel(text: "the life of the castle wall!", posY: 480)
-        setPointingIcon(position: CGPoint(x: self.lifeLabel.position.x+55, y: self.lifeLabel.position.y+65))
+        setPointingIcon(position: CGPoint(x: 170, y: 215))
         
     }
     
@@ -1220,6 +1213,25 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             label.removeFromParent()
             if i == tutorialLabelArray.count-1 {
                 tutorialLabelArray.removeAll()
+            }
+        }
+    }
+    
+    /* Life */
+    func setLife(numOflife: Int) {
+        for i in 0..<maxLife {
+            if let node = childNode(withName: "life") {
+                node.removeFromParent()
+            }
+            if i == maxLife-1 {
+                for i in 0..<numOflife {
+                    let life = SKSpriteNode(imageNamed: "heart")
+                    life.size = CGSize(width: 50, height: 50)
+                    life.position = CGPoint(x: Double(i)*60+45, y: 140)
+                    life.name = "life"
+                    life.zPosition = 90
+                    addChild(life)
+                }
             }
         }
     }

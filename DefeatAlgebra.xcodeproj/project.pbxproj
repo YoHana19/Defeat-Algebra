@@ -35,6 +35,9 @@
 		201CF02E1F134157001346C7 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF02D1F134156001346C7 /* Hero.swift */; };
 		201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF02F1F13E490001346C7 /* EnemyArm.swift */; };
 		201CF0321F140653001346C7 /* EnemyFist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0311F140653001346C7 /* EnemyFist.swift */; };
+		201DCC801F339D5A008EC82C /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201DCC7F1F339D5A008EC82C /* MainMenu.swift */; };
+		201ECBA41F34B64300FB833A /* ResetCatapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA31F34B64300FB833A /* ResetCatapult.swift */; };
+		201ECBA61F34B64F00FB833A /* Cane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA51F34B64F00FB833A /* Cane.swift */; };
 		202049DD1F2EFA0F00FAD661 /* Teleport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202049DC1F2EFA0F00FAD661 /* Teleport.swift */; };
 		20232AFB1F3252CD00898ACE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20232AF91F3252CD00898ACE /* Assets.xcassets */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
@@ -77,6 +80,9 @@
 		201CF02D1F134156001346C7 /* Hero.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hero.swift; sourceTree = "<group>"; };
 		201CF02F1F13E490001346C7 /* EnemyArm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyArm.swift; sourceTree = "<group>"; };
 		201CF0311F140653001346C7 /* EnemyFist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyFist.swift; sourceTree = "<group>"; };
+		201DCC7F1F339D5A008EC82C /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		201ECBA31F34B64300FB833A /* ResetCatapult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetCatapult.swift; sourceTree = "<group>"; };
+		201ECBA51F34B64F00FB833A /* Cane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cane.swift; sourceTree = "<group>"; };
 		202049DC1F2EFA0F00FAD661 /* Teleport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Teleport.swift; sourceTree = "<group>"; };
 		20232AF91F3252CD00898ACE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,6 +148,8 @@
 				201CD40E1F2CD28D009CE633 /* MultiAttack.swift */,
 				201CD40F1F2CD28D009CE633 /* Spear.swift */,
 				201CD4101F2CD28D009CE633 /* Wall.swift */,
+				201ECBA51F34B64F00FB833A /* Cane.swift */,
+				201ECBA31F34B64300FB833A /* ResetCatapult.swift */,
 			);
 			path = Items;
 			sourceTree = "<group>";
@@ -170,6 +178,7 @@
 				20B113EC1F19CB8E00CD5B4E /* GameScene.sks */,
 				20C22F441F19290500FFF90B /* GameScene.swift */,
 				2019C37C1F0B5335003C7609 /* MainMenu.sks */,
+				201DCC7F1F339D5A008EC82C /* MainMenu.swift */,
 				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
 				2019C3821F0B5A91003C7609 /* Grid.swift */,
 				201CF02D1F134156001346C7 /* Hero.swift */,
@@ -287,6 +296,7 @@
 				201CD4161F2CD28D009CE633 /* MagicSword.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				201CD4191F2CD28D009CE633 /* Spear.swift in Sources */,
+				201DCC801F339D5A008EC82C /* MainMenu.swift in Sources */,
 				201CD4181F2CD28D009CE633 /* MultiAttack.swift in Sources */,
 				201CD4111F2CD28D009CE633 /* BattleShip.swift in Sources */,
 				201CD4171F2CD28D009CE633 /* Mine.swift in Sources */,
@@ -296,6 +306,8 @@
 				201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */,
 				201CD4131F2CD28D009CE633 /* CallHero.swift in Sources */,
 				20107F051F268AD40087019A /* InputVariableExpression.swift in Sources */,
+				201ECBA41F34B64300FB833A /* ResetCatapult.swift in Sources */,
+				201ECBA61F34B64F00FB833A /* Cane.swift in Sources */,
 				20C22F451F19290500FFF90B /* GameScene.swift in Sources */,
 				201CD4151F2CD28D009CE633 /* Heart.swift in Sources */,
 				201CD41A1F2CD28D009CE633 /* Wall.swift in Sources */,

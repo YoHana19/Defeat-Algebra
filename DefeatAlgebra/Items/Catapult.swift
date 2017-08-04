@@ -11,6 +11,13 @@ import SpriteKit
 
 class Catapult: SKSpriteNode {
     
+    var numOfTurn = 3
+    var constantsArray = [Int]()
+    var coefficientArray = [Int]()
+    var activeFlag = true
+    var xPos: Int = 0
+    var variableExpression: String = ""
+    
     init() {
         /* Initialize with 'mine' asset */
         let texture = SKTexture(imageNamed: "catapult")
@@ -40,5 +47,50 @@ class Catapult: SKSpriteNode {
     
     func setName() {
         self.name = "catapult"
+    }
+    
+    /* Calculate the distance to throw bomb */
+    func calculateCatapultValue() -> Int {
+        /* Get gameScene */
+        let gameScene = self.parent as! GameScene
+        var outPut = 0
+        for constant in constantsArray {
+            outPut += constant
+        }
+        for coeffcient in coefficientArray {
+            outPut += coeffcient*gameScene.xValue
+        }
+        return outPut
+    }
+    
+    func resetVEElementArray() {
+        constantsArray.removeAll()
+        coefficientArray.removeAll()
+    }
+    
+    func setCatapultVELabel(vE: String) {
+        /* Set label with font */
+        let label = SKLabelNode(fontNamed: "GillSans-Bold")
+        /* Set text */
+        label.text = vE
+        /* Set font size */
+        label.fontSize = 30
+        /* Set font color */
+        label.fontColor = UIColor.white
+        /* Set zPosition */
+        label.zPosition = 10
+        /* Set position */
+        label.position = CGPoint(x: 0, y: -38)
+        /* Add to Scene */
+        addChild(label)
+
+    }
+    
+    func setCatapultBase() {
+        let catapultBase = SKSpriteNode(imageNamed: "catapultBase")
+        catapultBase.name = "catapultBase"
+        catapultBase.zPosition = -1
+        catapultBase.position = CGPoint(x: 0, y: -22)
+        addChild(catapultBase)
     }
 }

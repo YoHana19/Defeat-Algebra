@@ -866,6 +866,7 @@ class Enemy: SKSpriteNode {
             let decreseLife = SKAction.run({
                 if self.wallHitFlag == false {
                     gameScene.life -= 1
+                    gameScene.setLife(numOflife: gameScene.life)
                 } else {
                     gameScene.life += 0
                 }
@@ -1090,10 +1091,13 @@ class Enemy: SKSpriteNode {
         let gameScene = gridNode.parent as! GameScene
         
         /* Decrese life */
-        let decreseLife = SKAction.run({ gameScene.life -= 1 })
+        let decreseLife = SKAction.run({
+            gameScene.life -= 1
+            gameScene.setLife(numOflife: gameScene.life)
+        })
         
         /* Set punchLength */
-        self.punchLength = 80
+        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
         
         /* Do punch */
         let armAndFist = self.punch()

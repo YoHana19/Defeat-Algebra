@@ -115,16 +115,20 @@ class InputVariableExpression: SKSpriteNode {
             if operant == 0 {
                 if coefficientFlag == false {
                     outputValue += gameScene.xValue
+                    gameScene.activeCatapult.coefficientArray.append(1)
                 } else {
                     outputValue += tempSpot*gameScene.xValue
+                    gameScene.activeCatapult.coefficientArray.append(tempSpot)
                     coefficientFlag = false
                     tempSpot = 0
                 }
             } else {
                 if coefficientFlag == false {
                     outputValue -= gameScene.xValue
+                    gameScene.activeCatapult.coefficientArray.append(-1)
                 } else {
                     outputValue -= tempSpot*gameScene.xValue
+                    gameScene.activeCatapult.coefficientArray.append(-tempSpot)
                     coefficientFlag = false
                     tempSpot = 0
                 }
@@ -133,7 +137,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button 1 */
         if nodeAtPoint.name == "button1" {
-//            print("1")
+            //            print("1")
             /* Display variable expression */
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
@@ -163,7 +167,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button 2 */
         if nodeAtPoint.name == "button2" {
-//            print("2")
+            //            print("2")
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -192,7 +196,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button 3 */
         if nodeAtPoint.name == "button3" {
-//            print("3")
+            //            print("3")
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -221,7 +225,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button + */
         if nodeAtPoint.name == "button+" {
-//            print("+")
+            //            print("+")
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -242,11 +246,13 @@ class InputVariableExpression: SKSpriteNode {
             if coefficientFlag {
                 if operant == 0 {
                     outputValue += tempSpot
+                    gameScene.activeCatapult.constantsArray.append(tempSpot)
                     operant = 0
                     coefficientFlag = false
                     tempSpot = 0
                 } else {
                     outputValue -= tempSpot
+                    gameScene.activeCatapult.constantsArray.append(-tempSpot)
                     operant = 0
                     coefficientFlag = false
                     tempSpot = 0
@@ -259,7 +265,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button - */
         if nodeAtPoint.name == "button-" {
-//            print("-")
+            //            print("-")
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -280,11 +286,13 @@ class InputVariableExpression: SKSpriteNode {
             if coefficientFlag {
                 if operant == 0 {
                     outputValue += tempSpot
+                    gameScene.activeCatapult.constantsArray.append(tempSpot)
                     operant = 1
                     coefficientFlag = false
                     tempSpot = 0
                 } else {
                     outputValue -= tempSpot
+                    gameScene.activeCatapult.constantsArray.append(-tempSpot)
                     operant = 1
                     coefficientFlag = false
                     tempSpot = 0
@@ -297,7 +305,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button clear */
         if nodeAtPoint.name == "buttonClear" {
-//            print("clear")
+            //            print("clear")
             
             guard errorFlag == false else { return }
             
@@ -318,23 +326,30 @@ class InputVariableExpression: SKSpriteNode {
             coverOperant()
             coverFire()
             
+            /* Reset elemnts of variable expression of catapult */
+            gameScene.activeCatapult.resetVEElementArray()
+            
             
         }
         
         /* Touch button Fire */
-        if nodeAtPoint.name == "buttonFire" {    
-//            print("fire")
+        if nodeAtPoint.name == "buttonFire" {
+            //            print("fire")
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
             } else {
+                gameScene.activeCatapult.variableExpression = variableExpression
                 if operant == 0 {
                     outputValue += tempSpot
+                    variableExpression = String(outputValue)
+                    gameScene.activeCatapult.constantsArray.append(tempSpot)
                 } else {
                     outputValue -= tempSpot
+                    variableExpression = String(outputValue)
+                    gameScene.activeCatapult.constantsArray.append(-tempSpot)
                 }
-                variableExpression = String(outputValue)
                 
                 let wait = SKAction.wait(forDuration: 1.0)
                 let removeBoard = SKAction.run({ self.isActive = !self.isActive })
@@ -381,6 +396,9 @@ class InputVariableExpression: SKSpriteNode {
             /* Invalid +-, fire */
             coverOperant()
             coverFire()
+            
+            /* Reset elemnts of variable expression of catapult */
+            gameScene.activeCatapult.resetVEElementArray()
         }
     }
     
@@ -505,8 +523,8 @@ class InputVariableExpression: SKSpriteNode {
     
     /* Toggle +- buttons */
     func coverOperant() {
-            coverArray[4].isHidden = false
-            coverArray[5].isHidden = false
+        coverArray[4].isHidden = false
+        coverArray[5].isHidden = false
     }
     func uncoverOperant() {
         coverArray[4].isHidden = true
@@ -524,9 +542,9 @@ class InputVariableExpression: SKSpriteNode {
     
     /* Toggle 1,2,3 buttons */
     func coverNumber() {
-            coverArray[1].isHidden = false
-            coverArray[2].isHidden = false
-            coverArray[3].isHidden = false
+        coverArray[1].isHidden = false
+        coverArray[2].isHidden = false
+        coverArray[3].isHidden = false
     }
     func uncoverNumber() {
         coverArray[1].isHidden = true
