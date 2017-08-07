@@ -652,11 +652,12 @@ class Grid: SKSpriteNode {
                     gameScene.activeHero.removeMagicSwordVE()
                 }
                 
-                /* Touch ends on somewhere but active area or enemy */
+            /* Touch ends on anywhere but active area or enemy */
             } else {
                 print("touch not activearea")
                 /* Make sure to be invalid when using catpult */
                 guard gameScene.setCatapultDoneFlag == false else { return }
+                guard gameScene.selectCatapultDoneFlag == false else { return }
                 
                 /* Reset hero */
                 gameScene.activeHero.resetHero()
@@ -683,6 +684,22 @@ class Grid: SKSpriteNode {
                 gameScene.gridNode.resetSquareArray(color: "purple")
                 gameScene.gridNode.resetSquareArray(color: "red")
                 gameScene.resetActiveAreaForCatapult()
+                
+                /* Remove triangle except the one of selected catapult */
+                for catapult in gameScene.setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                
+                /* Remove input board for cane */
+                gameScene.inputBoardForCane.isHidden = true
+            }
+        } else if gameScene.playerTurnState == .ShowingCard {
+            gameScene.showinCardFlag = false
+            gameScene.playerTurnState = .TurnEnd
+            if let card = childNode(withName: "itemCard") {
+                card.removeFromParent()
             }
         }
     }
@@ -741,7 +758,7 @@ class Grid: SKSpriteNode {
             let enemy = Enemy(variableExpressionSource: variableExpressionSource)
             
             /* Set enemy speed according to stage level */
-            if gameScene.stageLevel < 2 {
+            if gameScene.stageLevel < 1 {
                 enemy.moveSpeed = 0.2
                 enemy.punchSpeed = 0.0025
                 enemy.singleTurnDuration = 1.0
@@ -858,6 +875,22 @@ class Grid: SKSpriteNode {
         self.run(seq)
         
         return numOfFlash
+    }
+    
+    func flashGridForCane(labelNode: SKLabelNode, numOfFlash: Int) {
+        /* Set flash animation */
+        let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+        let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+        let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+        let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+        let flash = SKAction.repeat(seqFlash, count: numOfFlash)
+        self.run(flash)
+        
+        /* Display the number of flash */
+        let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))
+        let display = SKAction.run({ labelNode.text = String(numOfFlash) })
+        let seq = SKAction.sequence([wholeWait, display])
+        self.run(seq)
     }
     
     /*== Items ==*/

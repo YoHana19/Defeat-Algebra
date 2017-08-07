@@ -17,6 +17,7 @@ class Catapult: SKSpriteNode {
     var activeFlag = true
     var xPos: Int = 0
     var variableExpression: String = ""
+    var spotPos = [Int]()
     
     init() {
         /* Initialize with 'mine' asset */
@@ -92,5 +93,31 @@ class Catapult: SKSpriteNode {
         catapultBase.zPosition = -1
         catapultBase.position = CGPoint(x: 0, y: -22)
         addChild(catapultBase)
+    }
+    
+    func makeTriangle() {
+        /* length of one side */
+        let length: CGFloat = 15
+        
+        /* Set 4 points from start point to end point */
+        var points = [CGPoint(x: 0.0, y: -length),
+                      CGPoint(x: -length, y: length / 2.0),
+                      CGPoint(x: length, y: length / 2.0),
+                      CGPoint(x: 0.0, y: -length)]
+        
+        /* Make triangle */
+        let triangle = SKShapeNode(points: &points, count: points.count)
+        
+        /* Set triangle position */
+        triangle.position = CGPoint(x: 0, y: 45)
+        triangle.zPosition = 3
+        
+        
+        /* Colorlize triangle to red */
+        triangle.fillColor = UIColor.red
+        triangle.strokeColor = UIColor.red
+        
+        triangle.name = "pointingCatapult"
+        self.addChild(triangle)
     }
 }

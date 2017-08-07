@@ -11,6 +11,8 @@ import SpriteKit
 
 class TimeBomb: SKSpriteNode {
     
+    var spotPos = [Int]()
+    
     init() {
         /* Initialize with 'mine' asset */
         let texture = SKTexture(imageNamed: "timeBomb")

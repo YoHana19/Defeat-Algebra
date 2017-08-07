@@ -11,6 +11,8 @@ import SpriteKit
 
 class Spear: SKSpriteNode {
     
+    var spotPos = [Int]()
+    
     init() {
         /* Initialize with 'mine' asset */
         let texture = SKTexture(imageNamed: "spear")

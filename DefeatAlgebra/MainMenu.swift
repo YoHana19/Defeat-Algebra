@@ -18,6 +18,9 @@ class MainMenu: SKScene {
     
     /* Flag */
     static var playDoneFlag = false
+    static var tutorialHeroDone = false
+    static var tutorialEnemyDone = false
+    static var tutorialAttackDone = false
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
@@ -25,6 +28,9 @@ class MainMenu: SKScene {
         /* Check user has played */
         let ud = UserDefaults.standard
         MainMenu.playDoneFlag = ud.bool(forKey: "userPlayed")
+        MainMenu.tutorialHeroDone = ud.bool(forKey: "tutorialHeroDone")
+        MainMenu.tutorialEnemyDone = ud.bool(forKey: "tutorialEnemyDone")
+        MainMenu.tutorialAttackDone = ud.bool(forKey: "tutorialAttackDone")
         
         /* Set UI connections */
         buttonNewGame = self.childNode(withName: "buttonNewGame") as! MSButtonNode

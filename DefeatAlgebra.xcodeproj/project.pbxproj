@@ -27,7 +27,7 @@
 		201CD4141F2CD28D009CE633 /* Catapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40A1F2CD28D009CE633 /* Catapult.swift */; };
 		201CD4151F2CD28D009CE633 /* Heart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40B1F2CD28D009CE633 /* Heart.swift */; };
 		201CD4161F2CD28D009CE633 /* MagicSword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40C1F2CD28D009CE633 /* MagicSword.swift */; };
-		201CD4171F2CD28D009CE633 /* Mine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40D1F2CD28D009CE633 /* Mine.swift */; };
+		201CD4171F2CD28D009CE633 /* TimeBomb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40D1F2CD28D009CE633 /* TimeBomb.swift */; };
 		201CD4181F2CD28D009CE633 /* MultiAttack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40E1F2CD28D009CE633 /* MultiAttack.swift */; };
 		201CD4191F2CD28D009CE633 /* Spear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40F1F2CD28D009CE633 /* Spear.swift */; };
 		201CD41A1F2CD28D009CE633 /* Wall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4101F2CD28D009CE633 /* Wall.swift */; };
@@ -38,8 +38,16 @@
 		201DCC801F339D5A008EC82C /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201DCC7F1F339D5A008EC82C /* MainMenu.swift */; };
 		201ECBA41F34B64300FB833A /* ResetCatapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA31F34B64300FB833A /* ResetCatapult.swift */; };
 		201ECBA61F34B64F00FB833A /* Cane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA51F34B64F00FB833A /* Cane.swift */; };
+		201ECBA81F34E3D500FB833A /* InputVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA71F34E3D500FB833A /* InputVariable.swift */; };
+		201ECBAC1F351AED00FB833A /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAA1F351AED00FB833A /* Fabric.framework */; };
+		201ECBAD1F351AEE00FB833A /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAB1F351AED00FB833A /* Crashlytics.framework */; };
 		202049DD1F2EFA0F00FAD661 /* Teleport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202049DC1F2EFA0F00FAD661 /* Teleport.swift */; };
 		20232AFB1F3252CD00898ACE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20232AF91F3252CD00898ACE /* Assets.xcassets */; };
+		203777AE1F37F05F00A91B52 /* Tutorial2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203777AD1F37F05F00A91B52 /* Tutorial2.sks */; };
+		203777B01F37F08700A91B52 /* Tutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203777AF1F37F08700A91B52 /* Tutorial2.swift */; };
+		203777B21F37F0A300A91B52 /* EnemyForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203777B11F37F0A300A91B52 /* EnemyForTutorial2.swift */; };
+		203777B41F37F0B300A91B52 /* GridForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203777B31F37F0B300A91B52 /* GridForTutorial2.swift */; };
+		203777B61F37F0C300A91B52 /* HeroForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203777B51F37F0C300A91B52 /* HeroForTutorial2.swift */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
@@ -72,7 +80,7 @@
 		201CD40A1F2CD28D009CE633 /* Catapult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Catapult.swift; sourceTree = "<group>"; };
 		201CD40B1F2CD28D009CE633 /* Heart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Heart.swift; sourceTree = "<group>"; };
 		201CD40C1F2CD28D009CE633 /* MagicSword.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MagicSword.swift; sourceTree = "<group>"; };
-		201CD40D1F2CD28D009CE633 /* Mine.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Mine.swift; sourceTree = "<group>"; };
+		201CD40D1F2CD28D009CE633 /* TimeBomb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeBomb.swift; sourceTree = "<group>"; };
 		201CD40E1F2CD28D009CE633 /* MultiAttack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultiAttack.swift; sourceTree = "<group>"; };
 		201CD40F1F2CD28D009CE633 /* Spear.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spear.swift; sourceTree = "<group>"; };
 		201CD4101F2CD28D009CE633 /* Wall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Wall.swift; sourceTree = "<group>"; };
@@ -83,8 +91,16 @@
 		201DCC7F1F339D5A008EC82C /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		201ECBA31F34B64300FB833A /* ResetCatapult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetCatapult.swift; sourceTree = "<group>"; };
 		201ECBA51F34B64F00FB833A /* Cane.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cane.swift; sourceTree = "<group>"; };
+		201ECBA71F34E3D500FB833A /* InputVariable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputVariable.swift; sourceTree = "<group>"; };
+		201ECBAA1F351AED00FB833A /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		201ECBAB1F351AED00FB833A /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		202049DC1F2EFA0F00FAD661 /* Teleport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Teleport.swift; sourceTree = "<group>"; };
 		20232AF91F3252CD00898ACE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		203777AD1F37F05F00A91B52 /* Tutorial2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Tutorial2.sks; sourceTree = "<group>"; };
+		203777AF1F37F08700A91B52 /* Tutorial2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Tutorial2.swift; path = DefeatAlgebra/Tutorial2.swift; sourceTree = SOURCE_ROOT; };
+		203777B11F37F0A300A91B52 /* EnemyForTutorial2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EnemyForTutorial2.swift; path = ../EnemyForTutorial2.swift; sourceTree = "<group>"; };
+		203777B31F37F0B300A91B52 /* GridForTutorial2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GridForTutorial2.swift; path = ../GridForTutorial2.swift; sourceTree = "<group>"; };
+		203777B51F37F0C300A91B52 /* HeroForTutorial2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HeroForTutorial2.swift; path = ../HeroForTutorial2.swift; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D8B1F074FE800F4DD11 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -103,6 +119,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				201ECBAD1F351AEE00FB833A /* Crashlytics.framework in Frameworks */,
+				201ECBAC1F351AED00FB833A /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,10 +144,15 @@
 			isa = PBXGroup;
 			children = (
 				200829E31F330C940038AEC0 /* Tutorial.sks */,
+				203777AD1F37F05F00A91B52 /* Tutorial2.sks */,
 				20AE7C851F2FF95E00AF67AD /* Tutorial.swift */,
+				203777AF1F37F08700A91B52 /* Tutorial2.swift */,
 				201CD3FC1F2CD113009CE633 /* EnemyForTutorial.swift */,
+				203777B11F37F0A300A91B52 /* EnemyForTutorial2.swift */,
 				20AE7C871F2FF97400AF67AD /* GridForTutorial.swift */,
+				203777B31F37F0B300A91B52 /* GridForTutorial2.swift */,
 				201CD3FE1F2CD113009CE633 /* HeroForTutorial.swift */,
+				203777B51F37F0C300A91B52 /* HeroForTutorial2.swift */,
 			);
 			path = Tutorial;
 			sourceTree = "<group>";
@@ -144,7 +167,7 @@
 				201CD40A1F2CD28D009CE633 /* Catapult.swift */,
 				201CD40B1F2CD28D009CE633 /* Heart.swift */,
 				201CD40C1F2CD28D009CE633 /* MagicSword.swift */,
-				201CD40D1F2CD28D009CE633 /* Mine.swift */,
+				201CD40D1F2CD28D009CE633 /* TimeBomb.swift */,
 				201CD40E1F2CD28D009CE633 /* MultiAttack.swift */,
 				201CD40F1F2CD28D009CE633 /* Spear.swift */,
 				201CD4101F2CD28D009CE633 /* Wall.swift */,
@@ -174,6 +197,8 @@
 		204C7D821F074FE800F4DD11 /* DefeatAlgebra */ = {
 			isa = PBXGroup;
 			children = (
+				201ECBAA1F351AED00FB833A /* Fabric.framework */,
+				201ECBAB1F351AED00FB833A /* Crashlytics.framework */,
 				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
 				20B113EC1F19CB8E00CD5B4E /* GameScene.sks */,
 				20C22F441F19290500FFF90B /* GameScene.swift */,
@@ -186,6 +211,7 @@
 				201CF02F1F13E490001346C7 /* EnemyArm.swift */,
 				201CF0311F140653001346C7 /* EnemyFist.swift */,
 				20107F041F268AD40087019A /* InputVariableExpression.swift */,
+				201ECBA71F34E3D500FB833A /* InputVariable.swift */,
 				201CD3FB1F2CD113009CE633 /* Tutorial */,
 				201CD4061F2CD28D009CE633 /* Items */,
 				200829D61F32CA860038AEC0 /* Effects */,
@@ -209,6 +235,8 @@
 				204C7D7C1F074FE800F4DD11 /* Sources */,
 				204C7D7D1F074FE800F4DD11 /* Frameworks */,
 				204C7D7E1F074FE800F4DD11 /* Resources */,
+				201ECBA91F351AA000FB833A /* ShellScript */,
+				2055D4EF1F3520970071F6C5 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -260,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				200829E01F32CA860038AEC0 /* MagicSwordEffect.sks in Resources */,
+				203777AE1F37F05F00A91B52 /* Tutorial2.sks in Resources */,
 				200829E11F32CA860038AEC0 /* TimeBombExplode.sks in Resources */,
 				204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
@@ -278,6 +307,35 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		201ECBA91F351AA000FB833A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run e91a320e059ab6724f7cc1de8059c13860d62491 c06df219d83af7afd55f8952bad38243f1028f461fecd046e7ba00137737e5ba";
+		};
+		2055D4EF1F3520970071F6C5 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run e91a320e059ab6724f7cc1de8059c13860d62491 c06df219d83af7afd55f8952bad38243f1028f461fecd046e7ba00137737e5ba";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		204C7D7C1F074FE800F4DD11 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -292,16 +350,20 @@
 				20AE7C861F2FF95E00AF67AD /* Tutorial.swift in Sources */,
 				201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */,
 				201CF02E1F134157001346C7 /* Hero.swift in Sources */,
+				203777B41F37F0B300A91B52 /* GridForTutorial2.swift in Sources */,
 				2019C3831F0B5A91003C7609 /* Grid.swift in Sources */,
 				201CD4161F2CD28D009CE633 /* MagicSword.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
+				203777B01F37F08700A91B52 /* Tutorial2.swift in Sources */,
 				201CD4191F2CD28D009CE633 /* Spear.swift in Sources */,
 				201DCC801F339D5A008EC82C /* MainMenu.swift in Sources */,
 				201CD4181F2CD28D009CE633 /* MultiAttack.swift in Sources */,
 				201CD4111F2CD28D009CE633 /* BattleShip.swift in Sources */,
-				201CD4171F2CD28D009CE633 /* Mine.swift in Sources */,
+				201CD4171F2CD28D009CE633 /* TimeBomb.swift in Sources */,
 				201CD4011F2CD113009CE633 /* EnemyForTutorial.swift in Sources */,
+				203777B61F37F0C300A91B52 /* HeroForTutorial2.swift in Sources */,
 				202049DD1F2EFA0F00FAD661 /* Teleport.swift in Sources */,
+				201ECBA81F34E3D500FB833A /* InputVariable.swift in Sources */,
 				201CD4031F2CD113009CE633 /* HeroForTutorial.swift in Sources */,
 				201CF0301F13E490001346C7 /* EnemyArm.swift in Sources */,
 				201CD4131F2CD28D009CE633 /* CallHero.swift in Sources */,
@@ -310,6 +372,7 @@
 				201ECBA61F34B64F00FB833A /* Cane.swift in Sources */,
 				20C22F451F19290500FFF90B /* GameScene.swift in Sources */,
 				201CD4151F2CD28D009CE633 /* Heart.swift in Sources */,
+				203777B21F37F0A300A91B52 /* EnemyForTutorial2.swift in Sources */,
 				201CD41A1F2CD28D009CE633 /* Wall.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -433,7 +496,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = T2HM3LUVY9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DefeatAlgebra",
+				);
 				INFOPLIST_FILE = DefeatAlgebra/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makeschool.DefeatAlgebra;
@@ -447,6 +515,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = T2HM3LUVY9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DefeatAlgebra",
+				);
 				INFOPLIST_FILE = DefeatAlgebra/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.makeschool.DefeatAlgebra;

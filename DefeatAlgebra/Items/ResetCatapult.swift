@@ -11,8 +11,7 @@ import SpriteKit
 
 class ResetCatapult: SKSpriteNode {
     
-    var posX = 0
-    var posY = 0
+    var spotPos = [Int]()
     
     init() {
         /* Initialize with 'mine' asset */

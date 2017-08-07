@@ -23,7 +23,7 @@ import SpriteKit
 import GameplayKit
 
 enum TutorialState {
-    case T1, T2, T3, T4
+    case T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16
 }
 
 class Tutorial: SKScene, SKPhysicsContactDelegate {
@@ -38,14 +38,16 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     
     /* Game labels */
     var valueOfX: SKLabelNode!
+    var touchScreenLabel: SKLabelNode!
     var gameOverLabel: SKNode!
     var playerPhaseLabel: SKNode!
     var enemyPhaseLabel: SKNode!
     
     /* Game buttons */
     var buttonRetry: MSButtonNode!
-    var buttonPlay: MSButtonNode!
     var buttonSkip: MSButtonNode!
+    var buttonNext: MSButtonNode!
+    var buttonAgain: MSButtonNode!
     
     /* Distance of objects in Scene */
     var topGap: CGFloat = 0.0  /* the length between top of scene and grid */
@@ -58,11 +60,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     /* Game Management */
     var gameState: GameSceneState = .AddEnemy
     var playerTurnState: PlayerTurnState = .DisplayPhase
-    var tutorialState: TutorialState = .T1
+    var tutorialState: TutorialState = .T0
+    static var tutorialPhase = 0
     var itemType: ItemType = .None
     var stageLevel: Int = 0
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 3
+    var tutorialDone = false
+    var gameOverDoneFlag = false
     
     /* Game flags */
     var addEnemyDoneFlag = false
@@ -80,6 +85,16 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var enemyPhaseLabelDoneFlag = false
     var bombExplodeDoneFlag = false
     var timeBombDoneFlag = false
+    var enemyTurnEndFlag = false
+    
+    /* Tuotrial temp stuff */
+    var tutorial1T7Done = false
+    var tutorial1T9Arm = [EnemyArm]()
+    var tutorial1T9Fist = [EnemyFist]()
+    var tutorial1T9Done = false
+    var tutorial1T11Done = false
+    var tutorial1T13Index = 0
+    var hitByEnemyFlag = false
     
     /* Player Control */
     var beganPos:CGPoint!
@@ -95,7 +110,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     /* Flash grid */
     var numOfFlashArray = [3, 1, 2, 3, 1, 3]
     //    var numOfFlashArray = [1, 1, 1, 1, 1, 1]
-    var xValue: Int = 0
+    var xValue: Int = 3
     
     /* Items */
     var itemArray = [SKSpriteNode]()
@@ -105,8 +120,9 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     
     
     /* Castle life */
-    var maxLife = 5
-    var life: Int = 5
+    var maxLife = 3
+    var life: Int = 3
+    
     
     override func didMove(to view: SKView) {
         /* Connect scene objects */
@@ -125,13 +141,17 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         playerPhaseLabel.isHidden = true
         enemyPhaseLabel = childNode(withName: "enemyPhaseLabel")
         enemyPhaseLabel.isHidden = true
+        touchScreenLabel = childNode(withName: "touchScreenLabel") as! SKLabelNode
+        touchScreenLabel.isHidden = true
         
         /* Connect game buttons */
         buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
         buttonRetry.state = .msButtonNodeStateHidden
-        buttonPlay = childNode(withName: "buttonPlay") as! MSButtonNode
-        buttonPlay.state = .msButtonNodeStateHidden
         buttonSkip = childNode(withName: "buttonSkip") as! MSButtonNode
+        buttonNext = childNode(withName: "buttonNext") as! MSButtonNode
+        buttonNext.state = .msButtonNodeStateHidden
+        buttonAgain = childNode(withName: "buttonAgain") as! MSButtonNode
+        buttonAgain.state = .msButtonNodeStateHidden
         
         /* Retry button */
         buttonRetry.selectedHandler = {
@@ -151,48 +171,101 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
-        /* Play button */
-        buttonPlay.selectedHandler = {
-            
-            /* On flag user start to play */
-            MainMenu.playDoneFlag = true
-            
-            /* Store game property */
-            let ud = UserDefaults.standard
-            /* user flag */
-            ud.set(MainMenu.playDoneFlag, forKey: "userPlayed")
-            
-            /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
-            
-            /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
-                return
-            }
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
-        }
-        
         /* Skip button */
         buttonSkip.selectedHandler = {
             
-            /* On flag user start to play */
-            MainMenu.playDoneFlag = true
+            if Tutorial.tutorialPhase == 2 {
+                /* Grab reference to the SpriteKit view */
+                let skView = self.view as SKView!
+                
+                Tutorial.tutorialPhase += 1
+                
+                /* Load Game scene */
+                guard let scene = Tutorial2(fileNamed:"Tutorial2") as Tutorial2! else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFill
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+                
+            } else {
+                /* Grab reference to the SpriteKit view */
+                let skView = self.view as SKView!
+                
+                Tutorial.tutorialPhase += 1
+                
+                /* Load Game scene */
+                guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFill
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+            }
+        }
+        
+        /* Next button */
+        buttonNext.selectedHandler = {
             
-            /* Store game property */
+            /* Store flag of this tutorial done */
             let ud = UserDefaults.standard
-            /* user flag */
-            ud.set(MainMenu.playDoneFlag, forKey: "userPlayed")
+            if Tutorial.tutorialPhase == 0 {
+                ud.set(true, forKey: "tutorialHeroDone")
+            } else if Tutorial.tutorialPhase == 1 {
+                ud.set(true, forKey: "tutorialEnemyDone")
+            } else {
+                ud.set(true, forKey: "tutorialAttackDone")
+            }
+            
+            if Tutorial.tutorialPhase == 2 {
+                /* Grab reference to the SpriteKit view */
+                let skView = self.view as SKView!
+                
+                Tutorial.tutorialPhase += 1
+                
+                /* Load Game scene */
+                guard let scene = Tutorial2(fileNamed:"Tutorial2") as Tutorial2! else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFill
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+            } else {
+                /* Grab reference to the SpriteKit view */
+                let skView = self.view as SKView!
+                
+                Tutorial.tutorialPhase += 1
+                
+                /* Load Game scene */
+                guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFill
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+            }
+        }
+        
+        /* Again button */
+        buttonAgain.selectedHandler = {
             
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
             
             /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
+            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
                 return
             }
             
@@ -203,7 +276,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
-        
+        /* Set initial objects */
+        setInitialObjects()
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
@@ -227,492 +301,580 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         /* Set item area */
         setItemAreaCover()
         
-        /* Set hero */
-        activeHero.position = CGPoint(x: self.size.width/2, y: self.gridNode.position.y+CGFloat(self.gridNode.cellHeight)*3.5)
-        activeHero.positionX = 4
-        activeHero.positionY = 3
-        addChild(activeHero)
-        self.heroArray.append(activeHero)
-        
-        /* Set boots */
-        let boots = Boots()
-        self.gridNode.addObjectAtGrid(object: boots, x: 3, y: 4)
-        let boots2 = Boots()
-        self.gridNode.addObjectAtGrid(object: boots2, x: 5, y: 4)
-        
-        /* Set timeBomb */
-        let timeBomb = TimeBomb()
-        self.gridNode.addObjectAtGrid(object: timeBomb, x: 0, y: 5)
-        let timeBomb2 = TimeBomb()
-        self.gridNode.addObjectAtGrid(object: timeBomb2, x: 8, y: 5)
-        
         /* Set life */
         setLife(numOflife: maxLife)
         
     }
     
     override func update(_ currentTime: TimeInterval) {
-        switch gameState {
-        case .AddEnemy:
-            /* Add enemy */
-            if addEnemyDoneFlag == false {
-                addEnemyDoneFlag = true
-                let addEnemy = SKAction.run({ self.gridNode.addInitialEnemyAtGrid(enemyPosArray: [[4, 8], [2, 10], [6, 10]], variableExpressionSource: [[0, 1, 0, 0]]) })
-                let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*4+1.0) /* 4 is distance, 1.0 is buffer */
-                let moveState = SKAction.run({
-                    /* Update enemy position */
-                    self.gridNode.updateEnemyPositon()
-                    
-                    /* Move to next state */
-                    self.gameState = .GridFlashing
-                    
-                })
-                let seq = SKAction.sequence([addEnemy, wait, moveState])
-                self.run(seq)
+//        print(tutorialState)
+        switch Tutorial.tutorialPhase {
+        case 0:
+            /* Make sure to call once at each tutorial state */
+            if tutorialDone == false {
+                tutorialDone = true
+                tutorialFlow()
             }
             break;
-        case .PlayerTurn:
-            //            print("player turn")
-            /* Check if all enemies are defeated or not */
-            if totalNumOfEnemy <= 0 {
-                gameState = .StageClear
+        case 1:
+            if tutorialDone == false {
+                tutorialDone = true
+                tutorialFlow()
             }
-            
-            switch playerTurnState {
-            case .DisplayPhase:
-                //                print("DisplayPhase")
-                playerPhaseLabel.isHidden = false
-                let wait = SKAction.wait(forDuration: 1.0)
-                let moveState = SKAction.run({ self.playerTurnState = .ItemOn })
-                let seq = SKAction.sequence([wait, moveState])
-                self.run(seq)
-                break;
-            case .ItemOn:
-                //                print("itemOn")
-                
-                playerPhaseLabel.isHidden = true
-                
-                if countTurn == 6 {
-                    /* Show tutorial */
-                    if showPlayerDiscriptionDone == false {
-                        showPlayerDiscriptionDone = true
-                        tutorialManagementForPlayer()
-                    }
-                }
-                
-                /* timeBomb */
-                if self.gridNode.timeBombSetArray.count > 0 {
-                    if bombExplodeDoneFlag == false {
-                        bombExplodeDoneFlag = true
-                        for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
-                            /* Look for the enemy to destroy  if any */
-                            for enemy in self.gridNode.enemyArray {
-                                /* Hit enemy! */
-                                if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                                    /* Effect */
-                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                    
-                                    /* Enemy */
-                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                    self.run(seqEnemy)
-                                    enemy.aliveFlag = false
-                                    /* Count defeated enemy */
-                                    totalNumOfEnemy -= 1
-                                }
-                            }
-                            if i == self.gridNode.timeBombSetArray.count-1 {
-                                /* Reset timeBomb array */
-                                self.gridNode.timeBombSetPosArray.removeAll()
-                                for timeBomb in self.gridNode.timeBombSetArray {
-                                    /* time bomb effect */
-                                    timeBombEffect(timeBomb: timeBomb)
-                                    timeBomb.removeFromParent()
-                                }
+            if tutorialState == .T12 {
+                switch gameState {
+                case .EnemyTurn:
+                    //                        print("EnemyTurn")
+                    flashGridDoneFlag = false
+                    
+                    if enemyTurnDoneFlag == false {
+                        
+                        /* Reset enemy position */
+                        gridNode.resetEnemyPositon()
+                        
+                        for enemy in self.gridNode.enemyArray {
+                            /* Enemy reach to castle */
+                            if enemy.reachCastleFlag {
+                                enemy.punchToCastle()
+                                /* Enemy move */
+                            } else if enemy.punchIntervalForCount > 0 {
+                                enemy.enemyMove()
+                                /* Enemy punch */
+                            } else {
+                                enemy.punchAndMove()
                             }
                         }
+                        
+                        /* If life is 0, GameOver */
+                        if self.life < 1 {
+                            gameState = .GameOver
+                        }
                     }
-                } else {
-                    timeBombDoneFlag = true
-                }
-                
-                
-                if timeBombDoneFlag {
-                    playerTurnState = .MoveState
-                }
-                
-                
-            case .MoveState:
-                //                print("MoveState")
-                
-                timeBombDoneFlag = false
-                bombExplodeDoneFlag = false
-                
-                /* Show tutorial */
-                if showPlayerDiscriptionDone == false {
-                    showPlayerDiscriptionDone = true
-                    tutorialManagementForPlayer()
-                }
-                
-                if activeHero.moveDoneFlag == false {
-                    /* Display move area */
-                    self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
-                }
-                
-                /* Display action buttons */
-                buttonAttack.isHidden = false
-                buttonItem.isHidden = false
-                
-                /* Wait for player touch to move */
-                
-                break;
-            case .AttackState:
-                /* Show tutorial */
-                if showPlayerDiscriptionDone == false {
-                    showPlayerDiscriptionDone = true
-                    tutorialManagementForPlayer()
-                }
-                /* Wait for player touch to attack */
-                break;
-            case .UsingItem:
-                /* Show tutorial */
-                if showPlayerDiscriptionDone == false {
-                    showPlayerDiscriptionDone = true
-                    tutorialManagementForPlayer()
-                }
-                switch itemType {
-                case .None:
+                    
+                    /* All enemies finish their actions */
+                    if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
+                        
+                        enemyTurnDoneFlag = true
+                        /* Reset all stuffs */
+                        gridNode.turnIndex = 0
+                        gridNode.numOfTurnEndEnemy = 0
+                        for enemy in gridNode.enemyArray {
+                            enemy.turnDoneFlag = false
+                            enemy.myTurnFlag = false
+                        }
+                        
+                        /* Update enemy position */
+                        gridNode.updateEnemyPositon()
+                        
+                        /* Check if enemy reach to castle */
+                        for enemy in self.gridNode.enemyArray {
+                            if enemy.positionY == 0 {
+                                enemy.reachCastleFlag = true
+                                enemy.punchIntervalForCount = 0
+                                if let node = enemy.childNode(withName:"punchInterval") {
+                                    node.removeFromParent()
+                                }
+                                enemy.setPunchIntervalLabel()
+                            }
+                        }
+                        
+                        gameState = .GridFlashing
+                    }
+                case .GridFlashing:
+                    //                        print("GridFlashing")
+                    
+                    /* Make sure to call once */
+                    if flashGridDoneFlag == false {
+                        flashGridDoneFlag = true
+                        
+                        /* Make grid flash */
+                        xValue = self.gridNode.flashGrid(labelNode: valueOfX)
+                        
+                        /* Calculate each enemy's variable expression */
+                        for enemy in self.gridNode.enemyArray {
+                            enemy.calculatePunchLength(value: xValue)
+                        }
+                        
+                        let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
+                        let moveState = SKAction.run({
+                            self.removeTutorial()
+                            self.enemyTurnDoneFlag = false
+                            self.gridNode.enemyArray[0].myTurnFlag = true
+                            self.gameState = .EnemyTurn
+                        })
+                        let seq = SKAction.sequence([wait, moveState])
+                        self.run(seq)
+                    }
                     break;
-                case .timeBomb:
-                    self.gridNode.showtimeBombSettingArea()
+                case .StageClear:
+                    gridNode.resetSquareArray(color: "blue")
+                    break;
+                    
+                case .GameOver:
+                    removeTutorial()
+                    gameOverLabel.isHidden = false
+                    buttonRetry.state = .msButtonNodeStateActive
                     break;
                 default:
                     break;
                 }
-                /* Wait for player touch to point position to use item at */
-                break;
-            case .TurnEnd:
-                /* Remove dead hero from heroArray */
-                self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
-                
-                //                print(heroArray)
-                
-                /* Remove tutorial discription */
-                removeTutorial()
-                showPlayerDiscriptionDone = false
-                tutorialState = .T1
-                
-                /* Reset Flags */
-                addEnemyDoneFlag = false
-                enemyTurnDoneFlag = false
-                for hero in heroArray {
-                    hero.attackDoneFlag = false
-                    hero.moveDoneFlag = false
-                }
-                
-                numOfTurnDoneHero = 0
-                
-                /* Remove action buttons */
-                buttonAttack.isHidden = true
-                buttonItem.isHidden = true
-                
-                /* Remove move area */
-                gridNode.resetSquareArray(color: "blue")
-                gridNode.resetSquareArray(color: "red")
-                gridNode.resetSquareArray(color: "purple")
-                
-                /* Remove dead enemy from enemyArray */
-                self.gridNode.enemyArray = self.gridNode.enemyArray.filter({ $0.aliveFlag == true })
-                
-                if gridNode.enemyArray.count > 0 {
-                    gridNode.enemyArray[0].myTurnFlag = true
-                }
-                
-                /* Display enemy phase label */
-                if enemyPhaseLabelDoneFlag == false {
-                    enemyPhaseLabelDoneFlag = true
-                    enemyPhaseLabel.isHidden = false
-                    let wait = SKAction.wait(forDuration: 1.0)
-                    let moveState = SKAction.run({ self.gameState = .EnemyTurn })
-                    let seq = SKAction.sequence([wait, moveState])
-                    self.run(seq)
-                }
-                break;
             }
             break;
-        case .EnemyTurn:
-            //                        print("EnemyTurn")
-            /* Reset Flags */
-            addEnemyDoneFlag = false
-            playerTurnDoneFlag = false
-            flashGridDoneFlag = false
-            enemyPhaseLabelDoneFlag = false
-            enemyPhaseLabel.isHidden = true
-            
-            
-            if showEnemyDiscriptionDone == false {
-                showEnemyDiscriptionDone = true
-                tutorialManagementForEnemy()
-                enemyTurnDoneFlag = true
-                print("tutorial show")
-                let wait = SKAction.wait(forDuration: 9.0)
-                let tutorialDone = SKAction.run({
-                    self.removeTutorial()
-                    self.tutorialState = .T1
-                    self.enemyTurnDoneFlag = false
-                })
-                let seq = SKAction.sequence([wait, tutorialDone])
-                self.run(seq)
+        case 2:
+//            print(tutorialState)
+            if tutorialDone == false {
+                tutorialDone = true
+                tutorialFlow()
             }
-            
-            
-            if enemyTurnDoneFlag == false {
-                
-                /* Reset enemy position */
-                gridNode.resetEnemyPositon()
-                
-                for enemy in self.gridNode.enemyArray {
-                    /* Enemy reach to castle */
-                    if enemy.reachCastleFlag {
-                        enemy.punchToCastle()
-                        /* Enemy move */
-                    } else if enemy.punchIntervalForCount > 0 {
-                        enemy.enemyMove()
-                        /* Enemy punch */
-                    } else {
-                        enemy.punchAndMove()
+            if tutorialState == .T3 {
+//                print(gameState)
+                switch gameState {
+                case .PlayerTurn:
+                    //            print("player turn")
+                    /* Check if all enemies are defeated or not */
+                    if totalNumOfEnemy <= 0 {
+                        gameState = .StageClear
                     }
-                }
-                
-                /* If life is 0, GameOver */
-                if self.life < 1 {
-                    gameState = .GameOver
-                }
-            }
-            
-            /* All enemies finish their actions */
-            if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
-                /* Remove dead hero from heroArray */
-                self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
-                
-                enemyTurnDoneFlag = true
-                /* Reset all stuffs */
-                gridNode.turnIndex = 0
-                gridNode.numOfTurnEndEnemy = 0
-                for enemy in gridNode.enemyArray {
-                    enemy.turnDoneFlag = false
-                    enemy.myTurnFlag = false
-                }
-                
-                /* Update enemy position */
-                gridNode.updateEnemyPositon()
-                
-                /* Check if enemy reach to castle */
-                for enemy in self.gridNode.enemyArray {
-                    if enemy.positionY == 0 {
-                        enemy.reachCastleFlag = true
+                    
+                    switch playerTurnState {
+                    case .DisplayPhase:
+                        //                print("DisplayPhase")
+                        playerPhaseLabel.isHidden = false
+                        let wait = SKAction.wait(forDuration: 1.0)
+                        let moveState = SKAction.run({ self.playerTurnState = .ItemOn })
+                        let seq = SKAction.sequence([wait, moveState])
+                        self.run(seq)
+                        break;
+                    case .ItemOn:
+                        //                print("itemOn")
+                        
+                        playerPhaseLabel.isHidden = true
+                        
+                        let hitSpotArray = checkWithinGrid()
+                        
+                        /* Make it to next to enemy! */
+                        if self.gridNode.positionEnemyAtGrid[hitSpotArray.0][activeHero.positionY] || self.gridNode.positionEnemyAtGrid[hitSpotArray.1][activeHero.positionY] || self.gridNode.positionEnemyAtGrid[activeHero.positionX][hitSpotArray.2] || self.gridNode.positionEnemyAtGrid[activeHero.positionX][hitSpotArray.3] {
+                            tutorialDone = false
+                            tutorialState = .T4
+                        } else {
+                            playerTurnState = .MoveState
+                        }
+                        
+                    case .MoveState:
+                        //                print("MoveState")
+                        
+                        timeBombDoneFlag = false
+                        bombExplodeDoneFlag = false
+                        
+                        if activeHero.moveDoneFlag == false {
+                            /* Display move area */
+                            self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                        }
+                        
+                        /* Display action buttons */
+                        buttonAttack.isHidden = false
+                        buttonItem.isHidden = false
+                        
+                        /* Wait for player touch to move */
+                        
+                        break;
+                    case .AttackState:
+                        /* Wait for player touch to attack */
+                        break;
+                    case .UsingItem:
+                        switch itemType {
+                        case .None:
+                            break;
+                        case .timeBomb:
+                            self.gridNode.showtimeBombSettingArea()
+                            break;
+                        default:
+                            break;
+                        }
+                        /* Wait for player touch to point position to use item at */
+                        break;
+                    case .TurnEnd:
+                        /* Remove dead hero from heroArray */
+                        self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
+                        
+                        //                print(heroArray)
+                        
+                        /* Reset Flags */
+                        addEnemyDoneFlag = false
+                        enemyTurnDoneFlag = false
+                        activeHero.attackDoneFlag = false
+                        activeHero.moveDoneFlag = false
+                        
+                        
+                        numOfTurnDoneHero = 0
+                        
+                        /* Remove action buttons */
+                        buttonAttack.isHidden = true
+                        buttonItem.isHidden = true
+                        
+                        /* Remove move area */
+                        gridNode.resetSquareArray(color: "blue")
+                        gridNode.resetSquareArray(color: "red")
+                        gridNode.resetSquareArray(color: "purple")
+                        
+                        /* Remove dead enemy from enemyArray */
+                        self.gridNode.enemyArray = self.gridNode.enemyArray.filter({ $0.aliveFlag == true })
+                        
+                        if gridNode.enemyArray.count > 0 {
+                            gridNode.enemyArray[0].myTurnFlag = true
+                        }
+                        
+                        /* Display enemy phase label */
+                        if enemyPhaseLabelDoneFlag == false {
+                            enemyPhaseLabelDoneFlag = true
+                            enemyPhaseLabel.isHidden = false
+                            let wait = SKAction.wait(forDuration: 1.0)
+                            let moveState = SKAction.run({ self.gameState = .EnemyTurn })
+                            let seq = SKAction.sequence([wait, moveState])
+                            self.run(seq)
+                        }
+                        break;
+                    default:
+                        break;
                     }
+                    break;
+                case .EnemyTurn:
+                    //                        print("EnemyTurn")
+                    /* Reset Flags */
+                    addEnemyDoneFlag = false
+                    playerTurnDoneFlag = false
+                    flashGridDoneFlag = false
+                    enemyPhaseLabelDoneFlag = false
+                    enemyPhaseLabel.isHidden = true
+                    
+                    if enemyTurnDoneFlag == false {
+                        
+                        /* Reset enemy position */
+                        gridNode.resetEnemyPositon()
+                        
+                        for enemy in self.gridNode.enemyArray {
+                            /* Enemy reach to castle */
+                            if enemy.reachCastleFlag {
+                                enemy.punchToCastle()
+                                /* Enemy move */
+                            } else if enemy.punchIntervalForCount > 0 {
+                                enemy.enemyMove()
+                                /* Enemy punch */
+                            } else {
+                                enemy.punchAndMove()
+                            }
+                        }
+                        
+                        /* If life is 0, GameOver */
+                        if self.life < 1 {
+                            gameState = .GameOver
+                        }
+                    }
+                    
+                    /* All enemies finish their actions */
+                    if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
+                        /* Remove dead hero from heroArray */
+                        self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
+                        
+                        enemyTurnDoneFlag = true
+                        /* Reset all stuffs */
+                        gridNode.turnIndex = 0
+                        gridNode.numOfTurnEndEnemy = 0
+                        for enemy in gridNode.enemyArray {
+                            enemy.turnDoneFlag = false
+                            enemy.myTurnFlag = false
+                        }
+                        
+                        /* Update enemy position */
+                        gridNode.updateEnemyPositon()
+                        
+                        /* Check if enemy reach to castle */
+                        for enemy in self.gridNode.enemyArray {
+                            if enemy.positionY == 0 {
+                                enemy.reachCastleFlag = true
+                            }
+                        }
+                        
+                        gameState = .GridFlashing
+                        playerTurnState = .DisplayPhase
+                    }
+                case .GridFlashing:
+                    //                        print("GridFlashing")
+                    
+                    /* Make sure to call once */
+                    if flashGridDoneFlag == false {
+                        flashGridDoneFlag = true
+                        
+                        xValue = self.gridNode.flashGrid(labelNode: valueOfX)
+                        
+                        
+                        /* Calculate each enemy's variable expression */
+                        for enemy in self.gridNode.enemyArray {
+                            enemy.calculatePunchLength(value: xValue)
+                        }
+                        
+                        let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
+                        let moveState = SKAction.run({
+                            self.removeTutorial()
+                            self.gameState = .PlayerTurn
+                            self.countTurn += 1
+                        })
+                        let seq = SKAction.sequence([wait, moveState])
+                        self.run(seq)
+                    }
+                    break;
+                case .GameOver:
+                    gameOverLabel.isHidden = false
+                    if gameOverDoneFlag == false {
+                        gameOverDoneFlag = true
+                        if hitByEnemyFlag {
+                            self.createTutorialLabel(text: "If a hero hits enemy, he'll die!", posY: 720)
+                            buttonRetry.state = .msButtonNodeStateActive
+                        } else {
+                            self.createTutorialLabel(text: "If the town wall life comes to 0", posY: 750)
+                            self.createTutorialLabel(text: "Game over", posY: 690)
+                            buttonRetry.state = .msButtonNodeStateActive
+                        }
+                    }
+                    break;
+                default:
+                    break;
                 }
                 
-                gameState = .GridFlashing
-                playerTurnState = .DisplayPhase
+                break;
+
             }
-        case .GridFlashing:
-            //                        print("GridFlashing")
-            
-            /* Make sure to call once */
-            if flashGridDoneFlag == false {
-                flashGridDoneFlag = true
-                
-                /* Make grid flash */
-                if countTurn < numOfFlashArray.count {
-                    xValue = self.gridNode.flashGrid(labelNode: valueOfX, numOfFlash: numOfFlashArray[countTurn])
-                } else {
-                    let rand = Int(arc4random_uniform(2)+1)
-                    xValue = self.gridNode.flashGrid(labelNode: valueOfX, numOfFlash: rand)
-                }
-                
-                
-                /* Calculate each enemy's variable expression */
-                for enemy in self.gridNode.enemyArray {
-                    enemy.calculatePunchLength(value: xValue)
-                }
-                
-                let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
-                let moveState = SKAction.run({
-                    self.removeTutorial()
-                    self.gameState = .PlayerTurn
-                    self.countTurn += 1
-                })
-                let seq = SKAction.sequence([wait, moveState])
-                self.run(seq)
-            }
-            break;
-        case .StageClear:
-            gridNode.resetSquareArray(color: "blue")
-            setDiscriptionStageClear()
-            break;
-            
-        case .GameOver:
-            removeTutorial()
-            gameOverLabel.isHidden = false
-            buttonRetry.state = .msButtonNodeStateActive
+        default:
             break;
         }
+        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("scene touchBegan")
-        
-        guard gameState == .PlayerTurn else { return }
-        
-        /* Get touch point */
-        let touch = touches.first!              // Get the first touch
-        let location = touch.location(in: self) // Find the location of that touch in this view
-        let nodeAtPoint = atPoint(location)     // Find the node at that location
-        
-        
-        /* Manage flow for tutorial */
-        guard countTurn != 1 else { return }
-        if countTurn == 2 {
-            guard tutorialState == .T1 else { return }
-            if tutorialState == .T1 {
-                guard nodeAtPoint.name == "buttonAttack" else { return }
-                showPlayerDiscriptionDone = false
+        switch Tutorial.tutorialPhase {
+        case 0:
+            switch tutorialState {
+            case .T1:
+                tutorialDone = false
                 tutorialState = .T2
-                print(playerTurnState)
+                break;
+            case .T4:
+                tutorialDone = false
+                tutorialState = .T5
+                break;
+            case .T5:
+                tutorialDone = false
+                tutorialState = .T6
+                break;
+            case .T9:
+                tutorialDone = false
+                tutorialState = .T10
+            default:
+                break;
             }
-        }
-        guard countTurn != 3 else { return }
-        guard countTurn != 4 else { return }
-        if countTurn == 5 {
-            guard tutorialState != .T3 else { return }
-            guard tutorialState != .T4 else { return }
-            if tutorialState == .T2 {
-                guard nodeAtPoint.name == "timeBomb" else { return }
-                showPlayerDiscriptionDone = false
+            break;
+        case 1:
+            switch tutorialState {
+            case .T1:
+                tutorialDone = false
+                tutorialState = .T2
+                break;
+            case .T5:
+                tutorialDone = false
+                tutorialState = .T6
+                break;
+            case .T6:
+                tutorialDone = false
+                tutorialState = .T7
+                break;
+            case .T7:
+                if tutorial1T7Done {
+                    tutorialDone = false
+                    tutorialState = .T8
+                }
+                break;
+            case .T8:
+                tutorialDone = false
+                tutorialState = .T9
+                break;
+            case .T9:
+                if tutorial1T9Done {
+                    tutorialDone = false
+                    tutorialState = .T10
+                }
+                break;
+            case .T11:
+                if tutorial1T11Done {
+                    tutorialDone = false
+                    tutorialState = .T12
+                }
+                break;
+            case .T13:
+                tutorialDone = false
+                tutorialState = .T14
+                break;
+            case .T15:
+                tutorialDone = false
+                tutorialState = .T16
+                break;
+            default:
+                break;
+            }
+            break;
+        case 2:
+            switch tutorialState {
+            case .T1:
+                tutorialDone = false
+                tutorialState = .T2
+                break;
+            case .T2:
+                tutorialDone = false
                 tutorialState = .T3
-            } else if tutorialState == .T1 {
-                guard nodeAtPoint.name == "buttonItem" else { return }
-                showPlayerDiscriptionDone = false
-                tutorialState = .T2
-            }
-        }
-        guard countTurn != 6 else { return }
-        
-        if playerTurnState == .MoveState {
-            /* Touch attack button */
-            if nodeAtPoint.name == "buttonAttack" {
-                guard self.heroMovingFlag == false else { return }
+                break;
+            case .T3:
+                guard gameState == .PlayerTurn else { return }
                 
-                if self.activeHero.attackDoneFlag {
-                    return
-                } else {
-                    /* Reset item type */
-                    self.itemType = .None
+                /* Get touch point */
+                let touch = touches.first!              // Get the first touch
+                let location = touch.location(in: self) // Find the location of that touch in this view
+                let nodeAtPoint = atPoint(location)     // Find the node at that location
+                
+                if playerTurnState == .MoveState {
+                    /* Touch attack button */
+                    if nodeAtPoint.name == "buttonAttack" {
+                        guard self.heroMovingFlag == false else { return }
+                        
+                        if self.activeHero.attackDoneFlag {
+                            return
+                        } else {
+                            /* Reset item type */
+                            self.itemType = .None
+                            
+                            /* Reset active area */
+                            self.gridNode.resetSquareArray(color: "blue")
+                            self.gridNode.resetSquareArray(color: "purple")
+                            
+                            /* Set item area cover */
+                            self.itemAreaCover.isHidden = false
+                            
+                            self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
+                            self.playerTurnState = .AttackState
+                        }
+                        /* Touch item button */
+                    } else if nodeAtPoint.name == "buttonItem" {
+                        guard self.heroMovingFlag == false else { return }
+                        
+                        /* Reset active area */
+                        self.gridNode.resetSquareArray(color: "red")
+                        self.gridNode.resetSquareArray(color: "blue")
+                        
+                        /* Remove item area cover */
+                        self.itemAreaCover.isHidden = true
+                        
+                        /* Change state to UsingItem */
+                        self.playerTurnState = .UsingItem
+                    }
                     
-                    /* Reset active area */
-                    self.gridNode.resetSquareArray(color: "blue")
-                    self.gridNode.resetSquareArray(color: "purple")
+                    /* Select attack position */
+                } else if playerTurnState == .AttackState {
+                    /* Touch item button */
+                    if nodeAtPoint.name == "buttonItem" {
+                        guard self.heroMovingFlag == false else { return }
+                        
+                        /* Reset active area */
+                        self.gridNode.resetSquareArray(color: "red")
+                        self.gridNode.resetSquareArray(color: "blue")
+                        
+                        /* Remove item area cover */
+                        self.itemAreaCover.isHidden = true
+                        
+                        /* Change state to UsingItem */
+                        self.playerTurnState = .UsingItem
+                        
+                        /* If touch anywhere but activeArea, back to MoveState  */
+                    } else if nodeAtPoint.name != "activeArea" {
+                        self.gridNode.resetSquareArray(color: "red")
+                        self.playerTurnState = .MoveState
+                    }
                     
-                    /* Set item area cover */
-                    self.itemAreaCover.isHidden = false
-                    
+                    /* Use item from itemArea */
+                } else if playerTurnState == .UsingItem {
+                    /* Touch attack button */
+                    if nodeAtPoint.name == "buttonAttack" {
+                        guard self.heroMovingFlag == false else { return }
+                        
+                        if self.activeHero.attackDoneFlag {
+                            return
+                        } else {
+                            /* Reset item type */
+                            self.itemType = .None
+                            
+                            /* Reset active area */
+                            self.gridNode.resetSquareArray(color: "blue")
+                            self.gridNode.resetSquareArray(color: "purple")
+                            
+                            /* Set item area cover */
+                            self.itemAreaCover.isHidden = false
+                            
+                            self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
+                            self.playerTurnState = .AttackState
+                        }
+                        
+                        /* Use timeBomb */
+                    } else if nodeAtPoint.name == "timeBomb" {
+                        /* Remove activeArea for catapult */
+                        self.gridNode.resetSquareArray(color: "red")
+                        
+                        /* Set timeBomb using state */
+                        itemType = .timeBomb
+                        
+                        /* Get index of game using */
+                        usingItemIndex = Int((Double(nodeAtPoint.position.x)-56.5)/91)
+                        //                print("Now item index is \(usingItemIndex)")
+                        
+                        
+                        /* If player touch other place than item icons, back to MoveState */
+                    } else {
+                        
+                        /* Show attack and item buttons */
+                        buttonAttack.isHidden = false
+                        buttonItem.isHidden = false
+                        
+                        playerTurnState = .MoveState
+                        /* Set item area cover */
+                        itemAreaCover.isHidden = false
+                        
+                        /* Reset item type */
+                        self.itemType = .None
+                        
+                        /* Remove active area */
+                        self.gridNode.resetSquareArray(color: "purple")
+                        self.gridNode.resetSquareArray(color: "red")
+                    }
+                }
+                break;
+            case .T4:
+                /* Get touch point */
+                let touch = touches.first!              // Get the first touch
+                let location = touch.location(in: self) // Find the location of that touch in this view
+                let nodeAtPoint = atPoint(location)     // Find the node at that location
+                /* Touch attack button */
+                if nodeAtPoint.name == "buttonAttack" {
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
+                    tutorialDone = false
+                    tutorialState = .T5
                 }
-                /* Touch item button */
-            } else if nodeAtPoint.name == "buttonItem" {
-                guard self.heroMovingFlag == false else { return }
-                
-                /* Reset active area */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "blue")
-                
-                /* Remove item area cover */
-                self.itemAreaCover.isHidden = true
-                
-                /* Change state to UsingItem */
-                self.playerTurnState = .UsingItem
+                break;
+            case .T6:
+                tutorialDone = false
+                tutorialState = .T7
+                break;
+            default:
+                break;
             }
-            
-            /* Select attack position */
-        } else if playerTurnState == .AttackState {
-            /* Touch item button */
-            if nodeAtPoint.name == "buttonItem" {
-                guard self.heroMovingFlag == false else { return }
-                
-                /* Reset active area */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "blue")
-                
-                /* Remove item area cover */
-                self.itemAreaCover.isHidden = true
-                
-                /* Change state to UsingItem */
-                self.playerTurnState = .UsingItem
-                
-                /* If touch anywhere but activeArea, back to MoveState  */
-            } else if nodeAtPoint.name != "activeArea" {
-                self.gridNode.resetSquareArray(color: "red")
-                self.playerTurnState = .MoveState
-            }
-            
-            /* Use item from itemArea */
-        } else if playerTurnState == .UsingItem {
-            /* Touch attack button */
-            if nodeAtPoint.name == "buttonAttack" {
-                guard self.heroMovingFlag == false else { return }
-                
-                if self.activeHero.attackDoneFlag {
-                    return
-                } else {
-                    /* Reset item type */
-                    self.itemType = .None
-                    
-                    /* Reset active area */
-                    self.gridNode.resetSquareArray(color: "blue")
-                    self.gridNode.resetSquareArray(color: "purple")
-                    
-                    /* Set item area cover */
-                    self.itemAreaCover.isHidden = false
-                    
-                    self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
-                    self.playerTurnState = .AttackState
-                }
-                
-                /* Use timeBomb */
-            } else if nodeAtPoint.name == "timeBomb" {
-                /* Remove activeArea for catapult */
-                self.gridNode.resetSquareArray(color: "red")
-                
-                /* Set timeBomb using state */
-                itemType = .timeBomb
-                
-                /* Get index of game using */
-                usingItemIndex = Int((Double(nodeAtPoint.position.x)-56.5)/91)
-                //                print("Now item index is \(usingItemIndex)")
-                
-                
-                /* If player touch other place than item icons, back to MoveState */
-            } else {
-                
-                /* Show attack and item buttons */
-                buttonAttack.isHidden = false
-                buttonItem.isHidden = false
-                
-                playerTurnState = .MoveState
-                /* Set item area cover */
-                itemAreaCover.isHidden = false
-                
-                /* Reset item type */
-                self.itemType = .None
-                
-                /* Remove active area */
-                self.gridNode.resetSquareArray(color: "purple")
-                self.gridNode.resetSquareArray(color: "red")
-            }
+        default:
+            break;
         }
         
         //        /* just for debug */
@@ -750,9 +912,22 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     /* Get boots */
                     if item.name == "boots" {
                         item.removeFromParent()
-                        if activeHero.moveLevel < 4 {
-                            self.activeHero.moveLevel += 1
+                        self.activeHero.moveLevel += 1
+                        if Tutorial.tutorialPhase == 0 && tutorialState == .T3 {
+                            let wait = SKAction.wait(forDuration: 0.5)
+                            let moveState = SKAction.run({
+                                self.tutorialDone = false
+                                self.tutorialState = .T4
+                            })
+                            let seq = SKAction.sequence([wait, moveState])
+                            self.run(seq)
                         }
+                        
+                        /* Store game property */
+                        let ud = UserDefaults.standard
+                        /* user flag */
+                        GameScene.firstGetItemFlagArray[0] = true
+                        ud.set(GameScene.firstGetItemFlagArray[0], forKey: "firstGetItemFlagArray")
                     } else {
                         item.removeFromParent()
                         displayitem(name: item.name!)
@@ -764,9 +939,22 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     /* Get boots */
                     if item.name == "boots" {
                         item.removeFromParent()
-                        if activeHero.moveLevel < 4 {
-                            self.activeHero.moveLevel += 1
+                        self.activeHero.moveLevel += 1
+                        
+                        if Tutorial.tutorialPhase == 0 && tutorialState == .T3 {
+                            let wait = SKAction.wait(forDuration: 0.5)
+                            let moveState = SKAction.run({
+                                self.tutorialDone = false
+                                self.tutorialState = .T4
+                            })
+                            let seq = SKAction.sequence([wait, moveState])
+                            self.run(seq)
                         }
+                        /* Store game property */
+                        let ud = UserDefaults.standard
+                        /* user flag */
+                        GameScene.firstGetItemFlagArray[0] = true
+                        ud.set(GameScene.firstGetItemFlagArray[0], forKey: "firstGetItemFlagArray")
                     /* Other items */
                     } else {
                         item.removeFromParent()
@@ -776,60 +964,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 
                 /* Be hitten by enemy */
             } else {
-                if contactA.categoryBitMask == 1 {
-                    let hero = contactA.node as! HeroForTutorial
-                    hero.removeFromParent()
-                    /* Still hero turn undone left */
-                    if numOfTurnDoneHero < heroArray.count-1 {
-                        /* On dead flag */
-                        hero.aliveFlag = false
-                        
-                        /* Move to next hero turn */
-                        activeHero = heroArray[numOfTurnDoneHero+1]
-                        /* The last turn hero is killed */
-                    } else {
-                        /* Remove dead hero */
-                        heroArray = heroArray.filter({ $0.aliveFlag == true })
-                        /* The last hero is killed? */
-                        if heroArray.count == 1 {
-                            self.gameState = .GameOver
-                        } else {
-                            /* On dead flag */
-                            hero.aliveFlag = false
-                            playerTurnState = .TurnEnd
-                        }
-                    }
-                } else if contactB.categoryBitMask == 1 {
-                    let hero = contactB.node as! Hero
-                    hero.removeFromParent()
-                    /* Still hero turn undone left */
-                    if numOfTurnDoneHero < heroArray.count-1 {
-                        /* On dead flag */
-                        hero.aliveFlag = false
-                        
-                        /* Move to next hero turn */
-                        activeHero = heroArray[numOfTurnDoneHero+1]
-                        /* The last turn hero is killed */
-                    } else {
-                        /* Remove dead hero */
-                        heroArray = heroArray.filter({ $0.aliveFlag == true })
-                        /* The last hero is killed? */
-                        if heroArray.count == 1 {
-                            self.gameState = .GameOver
-                        } else {
-                            /* On dead flag */
-                            hero.aliveFlag = false
-                            playerTurnState = .TurnEnd
-                        }
-                    }
-                }
+                hitByEnemyFlag = true
+                activeHero.removeFromParent()
+                gameState = .GameOver
             }
         }
         
         /* Enemy's arm or fist hits castle wall */
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
-            
-            setDiscriptionForLife()
             
             if contactA.categoryBitMask == 4 {
                 /* Get enemy body or arm or fist */
@@ -837,14 +979,43 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 
                 /* Stop arm and fist */
                 nodeB.removeAllActions()
+                
+                if Tutorial.tutorialPhase == 1 {
+                    if life <= 0 {
+                        self.removeAllActions()
+                        tutorialDone = false
+                        tutorialState = .T15
+                    } else {
+                        let enemy = nodeB.parent as! EnemyForTutorial
+                        self.removeAllActions()
+                        tutorialDone = false
+                        tutorialState = .T13
+                        tutorial1T13Index = enemy.indexOfArray
+                    }
+                }
+                
             }
             
             if contactB.categoryBitMask == 4 {
                 /* Get enemy body or arm or fist */
-                let nodeB = contactB.node as! SKSpriteNode
+                let nodeA = contactA.node as! SKSpriteNode
                 
                 /* Stop arm and fist */
-                nodeB.removeAllActions()
+                nodeA.removeAllActions()
+                
+                if Tutorial.tutorialPhase == 1 {
+                    if life <= 1 {
+                        self.removeAllActions()
+                        tutorialDone = false
+                        tutorialState = .T15
+                    } else {
+                        let enemy = nodeA.parent as! EnemyForTutorial
+                        self.removeAllActions()
+                        tutorialDone = false
+                        tutorialState = .T13
+                        tutorial1T13Index = enemy.indexOfArray
+                    }
+                }
             }
         }
     }
@@ -935,10 +1106,11 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     /* Set pointing icon */
-    func setPointingIcon(position: CGPoint) {
+    func setPointingIcon(position: CGPoint, size: CGSize) {
         let icon = SKSpriteNode(imageNamed: "pointing")
+        icon.size = size
         icon.position = position
-        icon.zPosition = 100
+        icon.zPosition = 120
         let shakePoint = SKAction(named: "shakePoint")
         let repeatAction = SKAction.repeatForever(shakePoint!)
         icon.run(repeatAction)
@@ -951,7 +1123,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.position = position
         icon.zRotation = -.pi
-        icon.zPosition = 100
+        icon.zPosition = 120
         icon.size = size
         let shakePoint = SKAction(named: "shakePoint")
         let repeatAction = SKAction.repeatForever(shakePoint!)
@@ -969,8 +1141,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             icon.name = "movingPoint"
             self.tutorialLabelArray.append(icon)
             self.addChild(icon)
-            let moveUp = SKAction.moveBy(x: 0, y: CGFloat(self.gridNode.cellHeight), duration: 1.0)
-            let moveLeft = SKAction.moveBy(x: -CGFloat(self.gridNode.cellWidth), y: 0, duration: 1.0)
+            let moveUp = SKAction.moveBy(x: 0, y: -CGFloat(self.gridNode.cellHeight), duration: 1.0)
+            let moveLeft = SKAction.moveBy(x: CGFloat(self.gridNode.cellWidth), y: 0, duration: 1.0)
             let seq = SKAction.sequence([moveUp, moveLeft])
             icon.run(seq)
         })
@@ -996,7 +1168,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             icon.name = "movingPoint"
             self.tutorialLabelArray.append(icon)
             self.addChild(icon)
-            let moveUp = SKAction.moveBy(x: 0, y: CGFloat(self.gridNode.cellHeight)*3, duration: 2.0)
+            let moveUp = SKAction.moveBy(x: -3*CGFloat(self.gridNode.cellWidth), y: 0, duration: 2.0)
             icon.run(moveUp)
         })
         
@@ -1012,196 +1184,427 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         self.run(repeatAction)
     }
     
-    /* Tutorial management */
-    func tutorialManagementForPlayer() {
-        let basePosX = gridNode.position.x
-        let basePosY = gridNode.position.y
-        
-        switch countTurn {
+    /* Show touch screen popUp */
+    func showTouchScreen(waitTime: TimeInterval) {
+        let wait = SKAction.wait(forDuration: waitTime)
+        let show = SKAction.run({ self.touchScreenLabel.isHidden = false })
+        let seq = SKAction.sequence([wait, show])
+        self.run(seq)
+    }
+    
+    /* Reset stuff when moving next discription */
+    func resetDiscription() {
+        removeTutorial()
+        self.removeAllActions()
+        touchScreenLabel.isHidden = true
+    }
+    
+    /* Tutorial flow of setting initial objects */
+    func setInitialObjects() {
+        switch Tutorial.tutorialPhase {
+        case 0:
+            /* Hero */
+            activeHero = HeroForTutorial()
+            activeHero.position = CGPoint(x: self.size.width/2, y: self.castleNode.position.y)
+            activeHero.positionX = 4
+            activeHero.positionY = 2
+            addChild(activeHero)
+            let iniMove = SKAction.moveTo(y: self.gridNode.position.y+CGFloat(2.5*Double(self.gridNode.cellHeight)), duration: 2.0)
+            self.activeHero.run(iniMove)
+            break;
         case 1:
-            switch tutorialState {
-            case .T1:
-                createTutorialLabel(text: "You can move by touching blue areas!", posY: 810)
-                createTutorialLabel(text: "Let's touch here!!", posY: 750)
-                setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*5+20, y: basePosY+CGFloat(gridNode.cellHeight)*5+20))
-            default:
-                break;
-            }
+            /* Enemy */
+            self.gridNode.addInitialEnemyAtGrid(enemyPosArray: [[1,8],[4,6],[7,8]], variableExpressionSource: [[0,1,0,0]])
+            break;
         case 2:
+            /* Hero */
+            activeHero = HeroForTutorial()
+            activeHero.position = CGPoint(x: self.size.width/2, y: self.castleNode.position.y)
+            activeHero.positionX = 4
+            activeHero.positionY = 3
+            addChild(activeHero)
+            let iniMove = SKAction.moveTo(y: self.gridNode.position.y+CGFloat(3.5*Double(self.gridNode.cellHeight)), duration: 2.0)
+            self.activeHero.run(iniMove)
+            /* Enemy */
+            self.gridNode.addInitialEnemyAtGrid(enemyPosArray: [[4,8]], variableExpressionSource: [[0,1,0,0]])
+            break;
+        default:
+            break;
+        }
+    }
+    
+    /* Tutorial flow */
+    func tutorialFlow() {
+        switch Tutorial.tutorialPhase {
+        case 0:
             switch tutorialState {
-            case .T1:
-                createTutorialLabel(text: "You can kill an enemy next to you!", posY: 430)
-                createTutorialLabel(text: "Let's touch attack icon!!", posY: 370)
-                setPointingIcon(position: CGPoint(x: self.buttonAttack.position.x+55, y: self.buttonAttack.position.y+65))
-            case .T2:
-                removeTutorial()
-                createTutorialLabel(text: "You can attack by touching red areas!", posY: 890)
-                createTutorialLabel(text: "Let's touch the red area!!", posY: 830)
-                setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*5+20, y: basePosY+CGFloat(gridNode.cellHeight)*6+20))
-            case .T3:
-                createTutorialLabel(text: "Great!! Try to get items, next!", posY: 890)
-                createTutorialLabel(text: "Let's touch here!!", posY: 830)
-                setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*4+20, y: basePosY+CGFloat(gridNode.cellHeight)*5+20))
-            default:
-                break;
-            }
-        case 3:
-            switch tutorialState {
-            case .T1:
-                let showDiscription = SKAction.run({
-                    self.createTutorialLabel(text: "Since you got Boots", posY: 1150)
-                    self.createTutorialLabel(text: "Now your move area expands!", posY: 1090)
-                })
-                let wait = SKAction.wait(forDuration: 3.0)
+            case .T0:
+                let wait1 = SKAction.wait(forDuration: 2.0)
+                let showDisc = SKAction.run({ self.createTutorialLabel(text: "He is a hero protecting the town!", posY: 1100) })
+                let wait2 = SKAction.wait(forDuration: 0.5)
                 let moveState = SKAction.run({
-                    self.tutorialState = .T2
-                    self.showPlayerDiscriptionDone = false
+                    self.tutorialDone = false
+                    self.tutorialState = .T1
                 })
-                let seq = SKAction.sequence([showDiscription, wait, moveState])
+                let seq = SKAction.sequence([wait1, showDisc, wait2, moveState])
                 self.run(seq)
-            case .T2:
-                removeTutorial()
-                self.createTutorialLabel(text: "You can also move by swiping", posY: 1150)
-                self.createTutorialLabel(text: "Let's swipe like bellow!!", posY: 1090)
-                setMovePointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*3.5+20, y: basePosY+CGFloat(gridNode.cellHeight)*4.5+20))
-            default:
                 break;
-            }
-        case 4:
-            switch tutorialState {
             case .T1:
-                self.createTutorialLabel(text: "Let's try to use an item", posY: 1100)
-                self.createTutorialLabel(text: "Get a time bomb!!", posY: 1040)
-                setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*1+20, y: basePosY+CGFloat(gridNode.cellHeight)*6+20))
-            default:
+                showTouchScreen(waitTime: 1.5)
                 break;
-            }
-        case 5:
-            switch tutorialState {
-            case .T1:
-                self.createTutorialLabel(text: "Time to set a time bomb!", posY: 430)
-                self.createTutorialLabel(text: "Touch item icon!!", posY: 370)
-                setPointingIcon(position: CGPoint(x: self.buttonItem.position.x+55, y: self.buttonItem.position.y+65))
             case .T2:
-                removeTutorial()
-                self.createTutorialLabel(text: "Touch the time bomb icon!!", posY: 430)
-                setPointingIcon(position: CGPoint(x: self.itemArray[0].position.x+55, y: self.itemArray[0].position.y+65))
+                resetDiscription()
+                createTutorialLabel(text: "Let's move him!", posY: 1100)
+                createTutorialLabel(text: "Touch the bule area", posY: 1040)
+                /* Show move area */
+                self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                break;
             case .T3:
                 removeTutorial()
-                self.createTutorialLabel2(text: "You can set a time bomb", posX: self.size.width/2, posY: 1100, color: UIColor.white, size: 35)
-                self.createTutorialLabel2(text: "by touching purple areas", posX: self.size.width/2, posY: 1040, color: UIColor.white, size: 35)
-                self.createTutorialLabel2(text: "Let's set a time bomb here!!",posX: self.size.width/2+100, posY: 650, color: UIColor.white, size: 35)
-                setPointingIcon(position: CGPoint(x: basePosX+CGFloat(gridNode.cellWidth)*3+20, y: basePosY+CGFloat(gridNode.cellHeight)*4+20))
+                createTutorialLabel(text: "Great!", posY: 1100)
+                createTutorialLabel(text: "Go to the point of boots to get it", posY: 1040)
+                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+CGFloat(self.gridNode.cellWidth*4.5)+55, y: self.gridNode.position.y+CGFloat(self.gridNode.cellHeight*6.5)+55), size: CGSize(width: 60, height: 52))
+                /* Show move area */
+                self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                break;
             case .T4:
                 removeTutorial()
-                self.createTutorialLabel(text: "A time bomb will explode", posY: 1100)
-                self.createTutorialLabel(text: "next Player Phase!", posY: 1040)
-                self.createTutorialLabel(text: "Move somewhere!", posY: 980)
-            }
-        case 6:
-            switch tutorialState {
-            case .T1:
-                let showDiscription = SKAction.run({
-                    self.createTutorialLabel(text: "Awesome!!", posY: 1100)
-                    self.createTutorialLabel(text: "You destroy enemy with a timeBomb!", posY: 1040)
-                })
-                let wait = SKAction.wait(forDuration: 3.5)
-                let moveState = SKAction.run({
-                    self.tutorialState = .T2
-                    self.showPlayerDiscriptionDone = false
-                })
-                let seq = SKAction.sequence([showDiscription, wait, moveState])
-                self.run(seq)
-            case .T2:
+                showItemCard(item: "cardBoots")
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T5:
+                resetDiscription()
+                if let card = childNode(withName: "itemCard") {
+                    card.removeFromParent()
+                }
+                createTutorialLabel(text: "Since you got boots", posY: 1100)
+                createTutorialLabel(text: "Your move area expands!", posY: 1040)
+                /* Show move area */
+                self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T6:
+                resetDiscription()
+                createTutorialLabel(text: "You can also set an exact path to move", posY: 1100)
+                createTutorialLabel(text: "by swiping within the blue area", posY: 1040)
+                setMovePointingIcon(position: CGPoint(x: activeHero.position.x+20, y: activeHero.position.y+20))
+                /* Show move area */
+                self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                break;
+            case .T7:
                 removeTutorial()
-                self.createTutorialLabel(text: "If you want to cancel", posY: 1100)
-                self.createTutorialLabel(text: "Just swipe out of the blue area!", posY: 1040)
+                createTutorialLabel(text: "If you want to cancel setting a path", posY: 1100)
+                createTutorialLabel(text: "Just swipe out of the blue area", posY: 1040)
                 setMovePointingIcon2(position: CGPoint(x: self.activeHero.position.x+20, y: self.activeHero.position.y+20))
-            case .T3:
+                /* Show move area */
+                self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                break;
+            case .T8:
                 removeTutorial()
                 self.createTutorialLabel(text: "If you want to stay", posY: 1100)
                 self.createTutorialLabel(text: "Just touch where you are!", posY: 1040)
-                setPointingIcon(position: CGPoint(x: self.activeHero.position.x+50, y: self.activeHero.position.y+50))
+                setPointingIcon(position: CGPoint(x: self.activeHero.position.x+50, y: self.activeHero.position.y+50), size: CGSize(width: 60, height: 52))
+                /* Show move area */
+                self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                break;
+            case .T9:
+                removeTutorial()
+                self.createTutorialLabel(text: "Now,", posY: 1100)
+                self.createTutorialLabel(text: "You master how to move a hero!!", posY: 1040)
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T10:
+                resetDiscription()
+                buttonNext.state = .msButtonNodeStateActive
+                buttonAgain.state = .msButtonNodeStateActive
+                break;
             default:
                 break;
             }
-        case 7:
-            switch tutorialState {
-            case .T1:
-                self.createTutorialLabel(text: "Let's try to defeat the last enemy!!", posY: 1100)
-            default:
-                break;
-            }
-        default:
             break;
-        }
-    }
-    
-    /* Tutorial management */
-    func tutorialManagementForEnemy() {
-        
-        switch countTurn {
         case 1:
             switch tutorialState {
-            case .T1:
-                let showDiscription = SKAction.run({
-                    for enemy in self.gridNode.enemyArray {
-                        let icon = self.setPointingIcon2(position: CGPoint(x: -15, y: -45), size: CGSize(width: 35, height: 35))
-                        enemy.addChild(icon)
-                    }
-                    self.createTutorialLabel(text: "These numbers indicates how many", posY: 810)
-                    self.createTutorialLabel(text: "turns left untill each enemy attacks", posY: 750)
-                })
-                let wait = SKAction.wait(forDuration: 4.0)
+            case .T0:
+                let wait1 = SKAction.wait(forDuration: 3.0)
+                let showDisc = SKAction.run({ self.createTutorialLabel(text: "They are 'Algebra Robot'!!", posY: 1100) })
+                let wait2 = SKAction.wait(forDuration: 0.5)
                 let moveState = SKAction.run({
-                    self.tutorialState = .T2
-                    self.showEnemyDiscriptionDone = false
+                    self.tutorialDone = false
+                    self.tutorialState = .T1
                 })
-                let seq = SKAction.sequence([showDiscription, wait, moveState])
+                let seq = SKAction.sequence([wait1, showDisc, wait2, moveState])
                 self.run(seq)
+                break;
+            case .T1:
+                showTouchScreen(waitTime: 1.5)
+                break;
             case .T2:
-                removeTutorial()
-                createTutorialLabel(text: "The value of 'X' is an energy of enemies", posY: 810)
-                createTutorialLabel(text: "When they attack!", posY: 750)
+                resetDiscription()
+                self.createTutorialLabel(text: "They are heading to the town", posY: 1100)
+                self.createTutorialLabel(text: "To destroy!", posY: 1040)
+                gridNode.enemyArray[0].myTurnFlag = true
+                tutorialState = .T3
+                tutorialDone = false
+                break;
+            case .T3:
+                enemyActionForTutorial1(nextState: .T4)
+                break;
+            case .T4:
+                enemyActionForTutorial1(nextState: .T5)
+                break;
+            case .T5:
+                resetDiscription()
+                for enemy in self.gridNode.enemyArray {
+                    let icon = self.setPointingIcon2(position: CGPoint(x: -15, y: -45), size: CGSize(width: 35, height: 35))
+                    enemy.addChild(icon)
+                }
+                self.createTutorialLabel(text: "These numbers indicate", posY: 1100)
+                self.createTutorialLabel(text: "when each enemy attacks", posY: 1040)
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T6:
+                resetDiscription()
+                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+55, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+80), size: CGSize(width: 60, height: 52))
+                self.createTutorialLabel(text: "If it says 0,", posY: 1100)
+                self.createTutorialLabel(text: "The enemy attacks", posY: 1040)
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T7:
+                resetDiscription()
+                self.valueOfX.text = "3"
+                self.createTutorialLabel(text: "'Algebra Robot' attacks by punching", posY: 1100)
+                self.createTutorialLabel(text: "according to its 'variable expression'!", posY: 1040)
+                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+40, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+85), size: CGSize(width: 35, height: 35))
+                self.gridNode.enemyArray[0].calculatePunchLength(value: xValue)
+                let armAndFist = self.gridNode.enemyArray[0].punch()
+                self.tutorial1T9Arm = armAndFist.arm
+                self.tutorial1T9Fist = armAndFist.fist
+                let wait = SKAction.wait(forDuration: 2.0)
+                let moveState = SKAction.run({
+                    self.tutorial1T7Done = true
+                    self.showTouchScreen(waitTime: 0.1)
+                })
+                let seq = SKAction.sequence([wait, moveState])
+                self.run(seq)
+                break;
+            case .T8:
+                resetDiscription()
+                self.createTutorialLabel(text: "In this case, since the value of 'X' is 3", posY: 1100)
+                self.createTutorialLabel(text: "The 'Algebera Robot' punches for 3!", posY: 1040)
+                let icon = self.setPointingIcon2(position: CGPoint(x: self.valueOfX.position.x-150, y: self.valueOfX.position.y-25), size: CGSize(width: 60, height: 52))
+                addChild(icon)
+                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+80, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y-50), size: CGSize(width: 60, height: 52))
+                self.gridNode.squareRedArray[self.gridNode.enemyArray[0].positionX][self.gridNode.enemyArray[0].positionY-1].isHidden = false
+                self.gridNode.squareRedArray[self.gridNode.enemyArray[0].positionX][self.gridNode.enemyArray[0].positionY-2].isHidden = false
+                self.gridNode.squareRedArray[self.gridNode.enemyArray[0].positionX][self.gridNode.enemyArray[0].positionY-3].isHidden = false
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T9:
+                resetDiscription()
+                self.gridNode.resetSquareArray(color: "red")
+                self.createTutorialLabel(text: "After attacking,", posY: 1100)
+                self.createTutorialLabel(text: "An enemy also moves forward!", posY: 1040)
+                /* Keep track enemy position */
+                self.gridNode.enemyArray[0].positionY -= self.gridNode.enemyArray[0].valueOfEnemy
+
+                /* Subsutitute arm with opposite direction arm for shrink it the other way around */
+                let subSetArm = SKAction.run({
+                    for arm in self.tutorial1T9Arm {
+                        let size = arm.size
+                        let posX = arm.position.x
+                        let posY = arm.position.y-size.height
+                        let newArm = EnemyArm(direction: self.gridNode.enemyArray[0].direction)
+                        newArm.yScale = (size.height)/newArm.size.height
+                        newArm.position = CGPoint(x: posX, y: posY)
+                        newArm.anchorPoint = CGPoint(x: 0.5, y: 1)
+                        newArm.physicsBody = nil
+                        self.gridNode.enemyArray[0].addChild(newArm)
+                        self.gridNode.enemyArray[0].armArrayForSubSet.append(newArm)
+                    }
+                })
+                
+                /* Make sure to remove old arm after setting new arm done */
+                let waitForSubSet = SKAction.wait(forDuration: 0.1)
+                
+                /* Remove old arms */
+                let removeArm = SKAction.run({
+                    for arm in self.tutorial1T9Arm {
+                        arm.removeFromParent()
+                    }
+                })
+                
+                /* Move self's body to punch position */
+                let moveForward = SKAction.run({
+                    let moveBody = SKAction.moveBy(x: 0, y: -CGFloat(Double(self.gridNode.enemyArray[0].valueOfEnemy)*self.gridNode.cellHeight), duration: TimeInterval(self.gridNode.enemyArray[0].punchLength*self.gridNode.enemyArray[0].punchSpeed))
+                    self.gridNode.enemyArray[0].run(moveBody)
+                    for arm in self.gridNode.enemyArray[0].armArrayForSubSet {
+                        let moveArm = SKAction.moveBy(x: 0, y: CGFloat(Double(self.gridNode.enemyArray[0].valueOfEnemy)*self.gridNode.cellHeight), duration:
+                            TimeInterval(self.gridNode.enemyArray[0].punchLength*self.gridNode.enemyArray[0].punchSpeed))
+                        arm.run(moveArm)
+                    }
+                    for fist in self.tutorial1T9Fist {
+                        let moveFist = SKAction.moveBy(x: 0, y: CGFloat(Double(self.gridNode.enemyArray[0].valueOfEnemy)*self.gridNode.cellHeight), duration:
+                            TimeInterval(self.gridNode.enemyArray[0].punchLength*self.gridNode.enemyArray[0].punchSpeed))
+                        fist.run(moveFist)
+                    }
+                })
+                
+                
+                /* Shrink arms */
+                let shrinkArm = SKAction.run({
+                    for arm in self.gridNode.enemyArray[0].armArrayForSubSet {
+                        arm.ShrinkArm(length: self.gridNode.enemyArray[0].punchLength, speed: self.gridNode.enemyArray[0].punchSpeed)
+                    }
+                })
+                
+                /* Make sure delete arms & fists after finishing punch drawing */
+                let drawWait = SKAction.wait(forDuration: TimeInterval(self.gridNode.enemyArray[0].punchLength*self.gridNode.enemyArray[0].punchSpeed-0.1)) /* 0.1 is buffer */
+                
+                /* Get rid of all arms and fists */
+                let punchDone = SKAction.run({
+                    self.gridNode.enemyArray[0].removeAllChildren()
+                })
+                
+                /* Set variable expression */
+                let setVariableExpression = SKAction.run({
+                    /* Reset count down punchInterval */
+                    self.gridNode.enemyArray[0].punchIntervalForCount = self.gridNode.enemyArray[0].punchInterval
+                    /* Create variable expression */
+                    self.gridNode.enemyArray[0].setVariableExpressionLabel(text: self.gridNode.enemyArray[0].variableExpressionForLabel)
+                    self.gridNode.enemyArray[0].setMovingAnimation()
+                    /* Display left trun till punch */
+                    self.gridNode.enemyArray[0].setPunchIntervalLabel()
+                })
+                
+                let showTouch = SKAction.run({
+                    self.tutorial1T9Done = true
+                    self.showTouchScreen(waitTime: 0.5)
+                    self.gridNode.enemyArray[0].myTurnFlag = false
+                    self.gridNode.enemyArray[1].myTurnFlag = true
+                    self.gridNode.turnIndex = 1
+                    self.gridNode.numOfTurnEndEnemy = 1
+                })
+                
+                /* excute drawPunch */
+                let seq = SKAction.sequence([subSetArm, waitForSubSet, removeArm, moveForward, shrinkArm, drawWait, punchDone, setVariableExpression, showTouch])
+                self.gridNode.enemyArray[0].run(seq)
+                break;
+            case .T10:
+                resetDiscription()
+                enemyActionForTutorial1(nextState: .T11)
+                break;
+            case .T11:
+                resetDiscription()
+                self.createTutorialLabel(text: "The value of 'X' is changed", posY: 1100)
+                self.createTutorialLabel(text: "by the number of times of flashing!", posY: 1040)
                 let icon = self.setPointingIcon2(position: CGPoint(x: self.valueOfX.position.x-150, y: self.valueOfX.position.y-25), size: CGSize(width: 60, height: 52))
                 self.addChild(icon)
-                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+45, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+90))
+                let wait1 = SKAction.wait(forDuration: 1.0)
+                let flash = SKAction.run({
+                    self.xValue = self.gridNode.flashGrid(labelNode: self.valueOfX)
+                    /* Calculate each enemy's variable expression */
+                    for enemy in self.gridNode.enemyArray {
+                        enemy.calculatePunchLength(value: self.xValue)
+                    }
+                })
+                let wait2 = SKAction.wait(forDuration: 1.5)
+                let onFlag = SKAction.run({ self.tutorial1T11Done = true })
+                let seq = SKAction.sequence([wait1, flash, wait2, onFlag])
+                self.run(seq)
+                showTouchScreen(waitTime: 4.5)
+                break;
+            case .T12:
+                resetDiscription()
+                gameState = .EnemyTurn
+                break;
+            case .T13:
+                self.createTutorialLabel(text: "Enemy's punch could damage", posY: 1100)
+                self.createTutorialLabel(text: "the town wall life!", posY: 1040)
+                setPointingIcon(position: CGPoint(x: 170, y: 215), size: CGSize(width: 60, height: 52))
+                showTouchScreen(waitTime: 2.0)
+                for i in 0..<tutorial1T13Index {
+                    self.gridNode.enemyArray[i].myTurnFlag = false
+                }
+                self.gridNode.enemyArray[tutorial1T13Index].myTurnFlag = true
+                self.gridNode.turnIndex = tutorial1T13Index
+                self.gridNode.numOfTurnEndEnemy = tutorial1T13Index
+                break;
+            case .T14:
+                resetDiscription()
+                enemyActionForTutorial1(nextState: .T12)
+                break;
+            case .T15:
+                resetDiscription()
+                self.createTutorialLabel(text: "If the town wall life comes to 0", posY: 1100)
+                self.createTutorialLabel(text: "Game over", posY: 1040)
+                gameOverLabel.isHidden = false
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T16:
+                resetDiscription()
+                gameOverLabel.isHidden = true
+                buttonNext.state = .msButtonNodeStateActive
+                buttonAgain.state = .msButtonNodeStateActive
+                break;
+            }
+            break;
+        case 2:
+            switch tutorialState {
+            case .T0:
+                let wait1 = SKAction.wait(forDuration: 2.0)
+                let showDisc = SKAction.run({
+                    self.createTutorialLabel(text: "An enemy is approaching!!", posY: 780)
+                    self.createTutorialLabel(text: "Defeat the enemy to protect the town!", posY: 720)
+                })
+                let wait2 = SKAction.wait(forDuration: 0.5)
+                let moveState = SKAction.run({
+                    self.tutorialDone = false
+                    self.tutorialState = .T1
+                })
+                let seq = SKAction.sequence([wait1, showDisc, wait2, moveState])
+                self.run(seq)
+                break;
+            case .T1:
+                showTouchScreen(waitTime: 1.5)
+                break;
+            case .T2:
+                resetDiscription()
+                self.createTutorialLabel(text: "Make it to next to enemy!!", posY: 750)
+                gameState = .PlayerTurn
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T3:
+                resetDiscription()
+                break;
+            case .T4:
+                /* Display action buttons */
+                buttonAttack.isHidden = false
+                buttonItem.isHidden = false
+                self.createTutorialLabel(text: "Now, you can attack the enemy!", posY: 1100)
+                self.createTutorialLabel(text: "Touch attack icon!!", posY: 1040)
+                setPointingIcon(position: CGPoint(x: self.buttonAttack.position.x+55, y: self.buttonAttack.position.y+65), size: CGSize(width: 60, height: 52))
+                break;
+            case .T5:
+                resetDiscription()
+                createTutorialLabel(text: "You can attack by touching red areas!", posY: 1100)
+                createTutorialLabel(text: "Touch the red area!!", posY: 1040)
+                setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+55, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+80), size: CGSize(width: 60, height: 52))
+                break;
+            case .T6:
+                resetDiscription()
+                createTutorialLabel(text: "Great!", posY: 1100)
+                createTutorialLabel(text: "Now, you are ready to", posY: 1000)
+                createTutorialLabel(text: "Protect the town!!", posY: 940)
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T7:
+                resetDiscription()
+                buttonNext.state = .msButtonNodeStateActive
+                buttonAgain.state = .msButtonNodeStateActive
+                break;
             default:
                 break;
             }
-        default:
-            break;
-        }
-    }
-    
-    /* Dicription for life */
-    func setDiscriptionForLife() {
-        self.createTutorialLabel(text: "enemy's punch could damage", posY: 540)
-        self.createTutorialLabel(text: "the life of the castle wall!", posY: 480)
-        setPointingIcon(position: CGPoint(x: 170, y: 215))
-        
-    }
-    
-    /* Discription at stage clear */
-    func setDiscriptionStageClear() {
-        switch tutorialState {
-        case .T1:
-            let showDiscription = SKAction.run({
-                self.createTutorialLabel(text: "Your mission is", posY: 910)
-                self.createTutorialLabel(text: "Defeat all enemies,", posY: 850)
-                self.createTutorialLabel(text: "Protecting your castle!!", posY: 790)
-            })
-            let wait = SKAction.wait(forDuration: 4.0)
-            let moveState = SKAction.run({
-                self.tutorialState = .T2
-                self.showEnemyDiscriptionDone = false
-            })
-            let seq = SKAction.sequence([showDiscription, wait, moveState])
-            self.run(seq)
-        case .T2:
-            removeTutorial()
-            self.createTutorialLabel2(text: "Are you ready?", posX: self.size.width/2, posY: 810, color: UIColor.white, size: 60)
-            self.buttonPlay.state = .msButtonNodeStateActive
         default:
             break;
         }
@@ -1259,5 +1662,127 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         let seqEffect2 = SKAction.sequence([waitRemoveSmoke, removeParticles, onFlag])
         particles.run(seqEffect)
         particles2.run(seqEffect2)
+    }
+    
+    /* Show item card when get it */
+    func showItemCard(item: String) {
+        let card = SKSpriteNode(imageNamed: item)
+        card.size = CGSize(width: 550, height: 769)
+        card.position = CGPoint(x: self.size.width/2, y: self.size.height/2+100)
+        card.name = "itemCard"
+        card.zPosition = 10
+        addChild(card)
+    }
+    
+    /* Enemy action for tutorial1 */
+    func enemyActionForTutorial1(nextState: TutorialState) {
+        if enemyTurnDoneFlag == false {
+            //                print("\(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
+            enemyTurnEndFlag = false
+            tutorialDone = false
+            /* Reset enemy position */
+            gridNode.resetEnemyPositon()
+            
+            for enemy in self.gridNode.enemyArray {
+                enemy.calculatePunchLength(value: xValue)
+                /* Enemy reach to castle */
+                if enemy.reachCastleFlag {
+                    enemy.punchToCastle()
+                    /* Enemy move */
+                } else if enemy.punchIntervalForCount > 0 {
+                    enemy.enemyMove()
+                    /* Enemy punch */
+                } else {
+                    enemy.punchAndMove()
+                }
+            }
+            
+            /* If life is 0, GameOver */
+            if self.life < 1 {
+                gameState = .GameOver
+            }
+        }
+        
+        /* All enemies finish their actions */
+        if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
+            enemyTurnDoneFlag = true
+            /* Reset all stuffs */
+            gridNode.turnIndex = 0
+            gridNode.numOfTurnEndEnemy = 0
+            for (i, enemy) in gridNode.enemyArray.enumerated() {
+                enemy.turnDoneFlag = false
+                enemy.myTurnFlag = false
+                if i == gridNode.enemyArray.count-1 {
+                    tutorialState = nextState
+                    enemyTurnDoneFlag = false
+                    gridNode.enemyArray[0].myTurnFlag = true
+                }
+            }
+                    
+            /* Update enemy position */
+            gridNode.updateEnemyPositon()
+            
+            /* Check if enemy reach to castle */
+            for enemy in self.gridNode.enemyArray {
+                if enemy.positionY == 0 {
+                    enemy.reachCastleFlag = true
+                }
+            }
+        }
+    }
+    
+    /* Check within grid for catapult */
+    func checkWithinGrid() -> (Int, Int, Int, Int) {
+        /* Calculate hit spots */
+        /* Make sure hit spots within grid */
+        if activeHero.positionX == 0 {
+            let hitSpotXLeft = 0
+            let hitSpotXRight = activeHero.positionX+1
+            if activeHero.positionY == 0 {
+                let hitSpotYDown = 0
+                let hitSpotYUp = activeHero.positionY+1
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            } else if activeHero.positionX == 8 {
+                let hitSpotYDown = activeHero.positionY-1
+                let hitSpotYUp = 11
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            } else {
+                let hitSpotYDown = activeHero.positionY-1
+                let hitSpotYUp = activeHero.positionY+1
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            }
+        } else if activeHero.positionX == 8 {
+            let hitSpotXLeft = activeHero.positionX-1
+            let hitSpotXRight = 8
+            if activeHero.positionY == 0 {
+                let hitSpotYDown = 0
+                let hitSpotYUp = activeHero.positionY+1
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            } else if activeHero.positionX == 8 {
+                let hitSpotYDown = activeHero.positionY-1
+                let hitSpotYUp = 11
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            } else {
+                let hitSpotYDown = activeHero.positionY-1
+                let hitSpotYUp = activeHero.positionY+1
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            }
+        } else {
+            let hitSpotXLeft = activeHero.positionX-1
+            let hitSpotXRight = activeHero.positionX+1
+            if activeHero.positionY == 0 {
+                let hitSpotYDown = 0
+                let hitSpotYUp = activeHero.positionY+1
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            } else if activeHero.positionX == 8 {
+                let hitSpotYDown = activeHero.positionY-1
+                let hitSpotYUp = 11
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            } else {
+                let hitSpotYDown = activeHero.positionY-1
+                let hitSpotYUp = activeHero.positionY+1
+                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
+            }
+        }
     }
 }

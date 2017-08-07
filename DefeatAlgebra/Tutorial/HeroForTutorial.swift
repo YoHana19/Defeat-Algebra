@@ -452,6 +452,29 @@ class HeroForTutorial: SKSpriteNode {
         self.setMovingAnimation()
     }
     
+    /* For tutorial */
+    func tutorial0Move(posX: Int, posY: Int, state: TutorialState, waitTime: TimeInterval) {
+        /* Get gameScene */
+        let gameScene = self.parent as! Tutorial
+        
+        /* Stop showing move pass */
+        gameScene.gridNode.resetMovePath()
+        /* Reset hero move direction flag */
+        gameScene.gridNode.directionJudgeDoneFlag = false
+        /* Move hero to touch location */
+        self.heroMoveToDest(posX: posX, posY: posY)
+        self.positionX = posX
+        self.positionY = posY
+        gameScene.gridNode.resetSquareArray(color: "blue")
+        let wait = SKAction.wait(forDuration: waitTime)
+        let moveState = SKAction.run({
+            gameScene.tutorialDone = false
+            gameScene.tutorialState = state
+        })
+        let seq = SKAction.sequence([wait, moveState])
+        self.run(seq)
+    }
+    
     
     
 }

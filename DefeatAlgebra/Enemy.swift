@@ -943,7 +943,12 @@ class Enemy: SKSpriteNode {
             /* Set variable expression */
             let setVariableExpression = SKAction.run({
 //                self.makeTriangle()
+                /* Reset count down punchInterval */
+                self.punchIntervalForCount = self.punchInterval
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
+                /* Reset enemy animation */
+                self.setMovingAnimation()
+                self.setPunchIntervalLabel()
             })
             
             /* Move next enemy's turn */
@@ -955,17 +960,11 @@ class Enemy: SKSpriteNode {
                     gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
                 }
                 
-                /* Reset enemy animation */
-                self.setMovingAnimation()
-                
                 /* To check all enemy turn done */
                 gridNode.numOfTurnEndEnemy += 1
                 
                 /* Reset flag */
                 self.wallHitFlag = false
-                
-                /* Reset count down punchInterval */
-                self.punchIntervalForCount = self.punchInterval
                 
                 /* Set enemy position to edge */
                 self.positionY = 0
@@ -1048,6 +1047,10 @@ class Enemy: SKSpriteNode {
                 /* Create variable expression */
 //                self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
+                /* Reset enemy animation */
+                self.setMovingAnimation()
+                /* Display left trun till punch */
+                self.setPunchIntervalLabel()
             })
             
             /* Move next enemy's turn */
@@ -1059,14 +1062,10 @@ class Enemy: SKSpriteNode {
                     gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
                 }
                 
-                /* Reset enemy animation */
-                self.setMovingAnimation()
-                
                 /* To check all enemy turn done */
                 gridNode.numOfTurnEndEnemy += 1
                 
-                /* Display left trun till punch */
-                self.setPunchIntervalLabel()
+               
             })
             
             /* excute drawPunch */
@@ -1122,6 +1121,7 @@ class Enemy: SKSpriteNode {
         let setVariableExpression = SKAction.run({
 //            self.makeTriangle()
             self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
+            self.setPunchIntervalLabel()
         })
         
         /* Move next enemy's turn */

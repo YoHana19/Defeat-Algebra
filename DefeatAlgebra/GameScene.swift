@@ -13,8 +13,8 @@
  4: castleNode - 24(8,16)
  8: EnemyArm - 4
  16: EnemyFist - 5(1,4)
- 32: setItems - wall-26(2,8,16), bullet-2
- 64: getItems(Boots,timeBomb,Heart,callHero,catapult,multiAttack, battleShip) - 1
+ 32: setItems - 3.wall-26(2,8,16), bullet-2
+ 64: getItems(0.Boots,1.timeBomb,2.Heart,callHero,6.catapult,4.multiAttack,5.battleShip,7.resetCatapult,8.cane,9.magicsword,10.teleport,11.spear,12.callHero) - 1
  128:
  1024:
  */
@@ -31,11 +31,11 @@ enum Direction: Int {
 }
 
 enum PlayerTurnState {
-    case DisplayPhase, ItemOn, MoveState, AttackState, UsingItem, TurnEnd
+    case DisplayPhase, ItemOn, MoveState, AttackState, UsingItem, TurnEnd, ShowingCard
 }
 
 enum ItemType {
-    case None, timeBomb, Catapult, Wall, MagicSword, BattleShip, Teleport
+    case None, timeBomb, Catapult, Wall, MagicSword, BattleShip, Teleport, ResetCatapult, Cane
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -122,7 +122,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*== Add enemy management ==*/
     var initialEnemyPosArray = [[Int]]()
     var initialAddEnemyFlag = true
-    /* [0: number of adding enemy, 1: inteval of adding enemy, 2: number of times of adding enemy] */
+    /* [0: number of adding enemy, 1: inteval of adding enemy, 2: number of times of adding enemy, 3: range of start yPos] */
     var addEnemyManagement = [
         [0, 0, 0, 1],
         [0, 0, 0, 1],
@@ -159,6 +159,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var usingItemIndex = 0
     var usedItemIndexArray = [Int]()
     var itemAreaCover: SKShapeNode!
+    var itemSpot = [[Int]]()
+    var showinCardFlag = false
+    static var firstGetItemFlagArray: [Bool] = [false, false, false, false, false, false, false, false, false, false, false, false, false]
     /* Time bomb */
     var bombExplodeDoneFlag = false
     /* Catapult */
@@ -171,6 +174,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var catapultDoneFlag = false
     var activateCatapultDone = false
     var catapultOnceFlag = false
+    /* Reset catapult */
+    var usingResetCatapultFlag = false
+    var selecttingCatapultFlag = false
+    var selectCatapultDoneFlag = false
+    var resettingCatapultFlag = false
+    var selectedCatapult = Catapult()
     /* Magic sword */
     var magicSwordAttackDone = false
     /* timeBomb */
@@ -180,6 +189,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Battle ship */
     var battleShipDoneFlag = false
     var battleShipOnceFlag = false
+    /* cane */
+    var inputBoardForCane: InputVariable!
     
     /*================*/
     /*== Grid Flash ==*/
@@ -290,27 +301,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Back to Level 1 button */
         buttonToL1.selectedHandler = {
-            /* To next stage level */
-            self.stageLevel = 0
-            
-            /* Store game property */
-            let ud = UserDefaults.standard
-            /* Stage level */
-            ud.set(self.stageLevel, forKey: "stageLevel")
-            /* Hero */
-            self.moveLevelArray = [1]
-            ud.set(self.moveLevelArray, forKey: "moveLevelArray")
-            /* item */
-            let itemNameArray = [String]()
-            ud.set(itemNameArray, forKey: "itemNameArray")
-            /* life */
-            ud.set(3, forKey: "life")
+            /* To main menu level */
             
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
             
             /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
+            guard let scene = MainMenu(fileNamed:"MainMenu") as MainMenu! else {
                 return
             }
             
@@ -321,21 +318,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
-        /* Pick game property from user data and set them */
+        /*== Pick game property from user data and set them ==*/
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
-        stageLevel = 7
+//        stageLevel = 8
         levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
-        moveLevelArray = [4]
+//        moveLevelArray = [4]
         /* Set hero */
         setHero()
         /* Items */
-        var handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
 //        handedItemNameArray = ["magicSword", "catapult", "catapult", "catapult"]
-        print(handedItemNameArray)
+//        print(handedItemNameArray)
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
@@ -345,9 +342,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if maxLife == 0 {
             maxLife = 3
         }
+        /* Item flag */
+        GameScene.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [false, false, false, false, false, false, false, false, false, false, false, false, false]
+        GameScene.firstGetItemFlagArray = [true, false, false, false, false, false, false, false, false, false, false, false, false]
         
-        /* Set input board */
+        /* Set input boards */
         setInputBoard()
+        setInputBoardForCane()
         
         
         /* For testing: initialize userDefaults */
@@ -376,6 +377,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set no gravity */
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
+        /* Set item spot */
+        setItemSpot()
+        
         /* Set initial objects */
         setInitialObj(level: self.stageLevel)
         
@@ -400,7 +404,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set life */
         setLife(numOflife: maxLife)
         
-        
         /* Check available fonts */
         //        for family in UIFont.familyNames {
         //            print("Font family name: \(family)")
@@ -412,6 +415,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        if showinCardFlag {
+            gameState = .PlayerTurn
+            playerTurnState = .ShowingCard
+        }
         switch gameState {
         case .AddEnemy:
             //                        print("AddEnemy")
@@ -691,7 +698,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 case .Teleport:
                     self.gridNode.showTeleportSettingArea()
                     break;
-                    
+                case .ResetCatapult:
+                    /* Make sure to call once */
+                    if usingResetCatapultFlag {
+                        usingResetCatapultFlag = false
+                        /* Make red tiriangle pointing catapult */
+                        for catapult in setCatapultArray {
+                            catapult.makeTriangle()
+                        }
+                        /* On flag selecttingCatapult */
+                        selecttingCatapultFlag = true
+                    }
+                    if selectCatapultDoneFlag {
+                        self.showActiveAreaForCatapult()
+                    }
+                    break;
+                case .Cane:
+                    inputBoardForCane.isHidden = false
+                    break;
                 }
                 
                 /* Wait for player touch to point position to use item at */
@@ -740,6 +764,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Remove unactive cataapult from setCatapultArray */
                 self.setCatapultArray = self.setCatapultArray.filter({ $0.activeFlag == true })
                 
+                break;
+            case .ShowingCard:
                 break;
             }
             break;
@@ -798,6 +824,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 for enemy in self.gridNode.enemyArray {
                     if enemy.positionY == 0 {
                         enemy.reachCastleFlag = true
+                        if let node = enemy.childNode(withName: "punchInterval") {
+                            node.removeFromParent()
+                        }
+                        enemy.punchIntervalForCount = 0
+                        enemy.setPunchIntervalLabel()
                     }
                 }
                 
@@ -931,13 +962,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
+                    
+                    /* Remove triangle except the one of selected catapult */
+                    for catapult in setCatapultArray {
+                        if let node = catapult.childNode(withName: "pointingCatapult") {
+                            node.removeFromParent()
+                        }
+                    }
+                    
+                    /* Remove input board for cane */
+                    inputBoardForCane.isHidden = true
                 }
                 
                 /* Use timeBomb */
             } else if nodeAtPoint.name == "timeBomb" {
                 /* Remove activeArea for catapult */
                 self.gridNode.resetSquareArray(color: "red")
+                self.gridNode.resetSquareArray(color: "purple")
                 resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Set timeBomb using state */
                 itemType = .timeBomb
@@ -951,6 +1001,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.resetSquareArray(color: "purple")
                 self.gridNode.resetSquareArray(color: "red")
                 resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Set none using state */
                 itemType = .None
@@ -978,6 +1036,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Remove active area if any */
                 self.gridNode.resetSquareArray(color: "purple")
                 self.gridNode.resetSquareArray(color: "red")
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Remove attack and item buttons */
                 buttonAttack.isHidden = true
@@ -992,8 +1058,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Use multiAttack */
             } else if nodeAtPoint.name == "multiAttack" {
                 /* Remove active area if any */
+                self.gridNode.resetSquareArray(color: "red")
                 self.gridNode.resetSquareArray(color: "purple")
                 resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Do attack animation */
                 activeHero.setMultiSwordAttackAnimation()
@@ -1048,7 +1123,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else if nodeAtPoint.name == "wall" {
                 /* Remove activeArea */
                 self.gridNode.resetSquareArray(color: "red")
+                self.gridNode.resetSquareArray(color: "purple")
                 resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Set timeBomb using state */
                 itemType = .Wall
@@ -1060,7 +1144,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else if nodeAtPoint.name == "magicSword" {
                 /* Remove activeArea */
                 self.gridNode.resetSquareArray(color: "red")
+                self.gridNode.resetSquareArray(color: "purple")
                 resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Set timeBomb using state */
                 itemType = .MagicSword
@@ -1074,6 +1167,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.resetSquareArray(color: "red")
                 self.gridNode.resetSquareArray(color: "purple")
                 resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Set timeBomb using state */
                 itemType = .BattleShip
@@ -1087,6 +1188,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.resetSquareArray(color: "red")
                 self.gridNode.resetSquareArray(color: "purple")
                 resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
                 
                 /* Set timeBomb using state */
                 itemType = .Teleport
@@ -1094,10 +1203,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* Touch active area  */
+            /* resetCatapult */
+            } else if nodeAtPoint.name == "resetCatapult" {
+                /* Remove activeArea */
+                self.gridNode.resetSquareArray(color: "red")
+                self.gridNode.resetSquareArray(color: "purple")
+                resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
+                
+                /* Set resetCatapult using state */
+                itemType = .ResetCatapult
+                usingResetCatapultFlag = true
+                
+                /* Get index of game using */
+                usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
+                
+            /* cane */
+            } else if nodeAtPoint.name == "cane" {
+                /* Remove activeArea */
+                self.gridNode.resetSquareArray(color: "red")
+                self.gridNode.resetSquareArray(color: "purple")
+                resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                
+                /* Set timeBomb using state */
+                itemType = .Cane
+                
+                /* Get index of game using */
+                usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
+                
+            /* Touch active area  */
             } else if nodeAtPoint.name == "activeArea" {
                 /* Using catapult */
                 if itemType == .Catapult {
+                    
                     /* On set catapult done flag */
                     setCatapultDoneFlag = true
                     
@@ -1137,15 +1288,65 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Remove used itemIcon from item array and Scene */
                     resetDisplayItem(index: usingItemIndex)
                     
+                /* Using resetCatapult */
+                } else if itemType == .ResetCatapult {
+                    selectCatapultDoneFlag = false
+                    /* Remove active area */
+                    resetActiveAreaForCatapult()
+                    
+                    /* Calculate touch x position of grid */
+                    let gridX = Int(Double(location.x-gridNode.position.x)/gridNode.cellWidth)
+                    
+                    /* Update x position of catapult */
+                    selectedCatapult.xPos = gridX
+                    
+                    /* Reposition catapult */
+                    selectedCatapult.position = CGPoint(x: gridNode.position.x+CGFloat(gridNode.cellWidth)/2+CGFloat(Double(gridX)*gridNode.cellWidth), y: 256)
+                    
+                    /* Remove triangle */
+                    if let node = selectedCatapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                    
+                    itemType = .None
+                    playerTurnState = .MoveState
+
                 }
-                /* Toggle input board visibility */
+            /* Reset position of catapult or Toggle input board visibility */
             } else if nodeAtPoint.name == "catapultToSet" {
-                guard catapultFireReady == false else { return }
-                self.inputBoard.isActive = !self.inputBoard.isActive
+                /* using resetCatapult */
+                if selecttingCatapultFlag {
+                    selecttingCatapultFlag = false
+                    selectCatapultDoneFlag = true
+                    
+                    /* Cover item area */
+                    itemAreaCover.isHidden = false
+                    
+                    /* Remove attack and item buttons */
+                    buttonAttack.isHidden = true
+                    buttonItem.isHidden = true
+                    
+                    /* Remove used itemIcon from item array and Scene */
+                    resetDisplayItem(index: usingItemIndex)
+                    
+                    /* Remove triangle except the one of selected catapult */
+                    for catapult in setCatapultArray {
+                        if let node = catapult.childNode(withName: "pointingCatapult") {
+                            node.removeFromParent()
+                        }
+                    }
+                    selectedCatapult = nodeAtPoint as! Catapult
+                    selectedCatapult.makeTriangle()
+                /* using catapult */
+                } else if catapultFireReady == false {
+                    guard itemType == .Catapult else { return }
+                    self.inputBoard.isActive = !self.inputBoard.isActive
+                }
                 
-                /* If player touch other place than item icons, back to MoveState */
+            /* If player touch other place than item icons, back to MoveState */
             } else {
                 guard setCatapultDoneFlag == false else { return }
+                guard selectCatapultDoneFlag == false else { return }
                 
                 /* Show attack and item buttons */
                 buttonAttack.isHidden = false
@@ -1175,6 +1376,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.resetSquareArray(color: "purple")
                 self.gridNode.resetSquareArray(color: "red")
                 resetActiveAreaForCatapult()
+                
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                
+                /* Remove input board for cane */
+                inputBoardForCane.isHidden = true
+            }
+        } else if playerTurnState == .ShowingCard {
+            showinCardFlag = false
+            playerTurnState = .TurnEnd
+            if let card = childNode(withName: "itemCard") {
+                card.removeFromParent()
             }
         }
         
@@ -1222,6 +1439,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
+                        if stageLevel >= 8 {
+//                            itemSpot.append(item.spotPos)
+                            autoSetItems()
+                        }
                         /* Get spear */
                     } else if item.name == "spear" {
                         item.removeFromParent()
@@ -1231,12 +1452,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         /* Other items */
                     } else {
                         item.removeFromParent()
+                        checkFirstItem(itemName: item.name!)
                         /* Make sure to have items up tp 8 */
                         if itemArray.count >= 8 {
                             self.resetDisplayItem(index: 0)
                             displayitem(name: item.name!)
                         } else {
                             displayitem(name: item.name!)
+                        }
+                        if stageLevel >= 8 {
+//                            itemSpot.append(item.spotPos)
+                            autoSetItems()
                         }
                     }
                 }
@@ -1255,6 +1481,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
+                        if stageLevel >= 8 {
+//                            itemSpot.append(item.spotPos)
+                            autoSetItems()
+                        }
                         /* Get spear */
                     } else if item.name == "spear" {
                         item.removeFromParent()
@@ -1264,12 +1494,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         /* Other items */
                     } else {
                         item.removeFromParent()
+                        checkFirstItem(itemName: item.name!)
                         /* Make sure to have items up tp 8 */
                         if itemArray.count >= 8 {
                             self.resetDisplayItem(index: 0)
                             displayitem(name: item.name!)
                         } else {
                             displayitem(name: item.name!)
+                        }
+                        if stageLevel >= 8 {
+//                            itemSpot.append(item.spotPos)
+                            autoSetItems()
                         }
                     }
                 }
@@ -1340,10 +1575,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             if contactB.categoryBitMask == 4 {
                 /* Get enemy body or arm or fist */
-                let nodeB = contactB.node as! SKSpriteNode
+                let nodeA = contactA.node as! SKSpriteNode
                 
                 /* Stop arm and fist */
-                nodeB.removeAllActions()
+                nodeA.removeAllActions()
             }
         }
         
@@ -1687,6 +1922,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(itemAreaCover)
     }
     
+    /* Check it is first time to get or not */
+    func checkFirstItem(itemName: String) {
+        /* Store game property */
+        let ud = UserDefaults.standard
+        showinCardFlag = true
+        switch itemName {
+        case "timeBomb":
+            if GameScene.firstGetItemFlagArray[1] == false {
+                showItemCard(item: "cardTimeBomb")
+                GameScene.firstGetItemFlagArray[1] = true
+                ud.set(GameScene.firstGetItemFlagArray[1], forKey: "firstGetItemFlagArray")
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    
+    /* Show item card when get it firstly */
+    func showItemCard(item: String) {
+        let card = SKSpriteNode(imageNamed: item)
+        card.size = CGSize(width: 500, height: 693)
+        card.position = CGPoint(x: self.size.width/2, y: self.size.height/2+100)
+        card.name = "itemCard"
+        card.zPosition = 10
+        addChild(card)
+    }
+    
     /*== Time bomb ==*/
     /* Effect */
     func timeBombEffect(timeBomb: TimeBomb) {
@@ -2007,6 +2270,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    /*== Cane ==*/
+    /* Set input board for setiing variable expression */
+    func setInputBoardForCane() {
+        inputBoardForCane = InputVariable()
+        inputBoardForCane.isHidden = true
+        addChild(inputBoardForCane)
+    }
+    
     /*== Call Hero ==*/
     func addHero() {
         
@@ -2064,6 +2335,73 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*== Game Management ==*/
     /*=====================*/
     
+//    /*== Reset All Stuff ==*/
+//    func resetStuff() {
+//        
+//    }
+    
+    /* Set item spot */
+    func setItemSpot() {
+        for i in 1...7 {
+            for v in 0...6 {
+                itemSpot.append([i, v])
+            }
+        }
+    }
+    
+    /* Auto Set item */
+    func autoSetItems() {
+        /* Determine position to set */
+        let randPos = Int(arc4random_uniform(UInt32(itemSpot.count)))
+        let position = itemSpot[randPos]
+        itemSpot.remove(at: randPos)
+        
+        /* Determine item to set */
+        let rand = arc4random_uniform(100)
+        if rand < 10 {
+            let timeBomb = TimeBomb()
+            timeBomb.spotPos = position
+            self.gridNode.addObjectAtGrid(object: timeBomb, x: position[0], y: position[1])
+        } else if rand < 20 {
+            let battleShip = BattleShip()
+            battleShip.spotPos = position
+            self.gridNode.addObjectAtGrid(object: battleShip, x: position[0], y: position[1])
+        } else if rand < 30 {
+            let teleport = Teleport()
+            teleport.spotPos = position
+            self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
+        } else if rand < 40 {
+            let catapult = Catapult()
+            catapult.spotPos = position
+            self.gridNode.addObjectAtGrid(object: catapult, x: position[0], y: position[1])
+        } else if rand < 50 {
+            let resetCatapult = ResetCatapult()
+            resetCatapult.spotPos = position
+            self.gridNode.addObjectAtGrid(object: resetCatapult, x: position[0], y: position[1])
+        } else if rand < 60 {
+            let magicSword = MagicSword()
+            magicSword.spotPos = position
+            self.gridNode.addObjectAtGrid(object: magicSword, x: position[0], y: position[1])
+        } else if rand < 70 {
+            let multiAttack = MultiAttack()
+            multiAttack.spotPos = position
+            self.gridNode.addObjectAtGrid(object: multiAttack, x: position[0], y: position[1])
+        } else if rand < 80 {
+            let wall = Wall()
+            wall.spotPos = position
+            self.gridNode.addObjectAtGrid(object: wall, x: position[0], y: position[1])
+        } else if rand < 90 {
+            let cane = Cane()
+            cane.spotPos = position
+            self.gridNode.addObjectAtGrid(object: cane, x: position[0], y: position[1])
+        } else if rand < 100 {
+            let heart = Heart()
+            heart.spotPos = position
+            self.gridNode.addObjectAtGrid(object: heart, x: position[0], y: position[1])
+            
+        }
+    }
+    
     /*== Set Life ==*/
     func setLife(numOflife: Int) {
         for i in 0..<maxLife {
@@ -2090,22 +2428,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         life = maxLife
         
         switch level {
-            /* Level 1 */
+        /* Level 1 */
         case 0:
             /* Set enemy */
-            initialEnemyPosArray = [[2, 9], [6, 9]]
+            initialEnemyPosArray = [[1, 9], [4, 9], [7, 9]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
             /* Set boots */
-            let bootsArray = [[4,5]]
+            let bootsArray = [[3,3]]
             for bootsPos in bootsArray {
                 let boots = Boots()
                 self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
             }
             
-            /* Level 2 */
+            /* Set timeBomb */
+            let timeBombsArray = [[5,3]]
+            for timeBombPos in timeBombsArray {
+                let timeBomb = TimeBomb()
+                self.gridNode.addObjectAtGrid(object: timeBomb, x: timeBombPos[0], y: timeBombPos[1])
+            }
+        /* Level 2 */
         case 1:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
@@ -2114,7 +2458,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
             /* Set boots */
-            let bootsArray = [[4,5]]
+            let bootsArray = [[4,6]]
             for bootsPos in bootsArray {
                 let boots = Boots()
                 self.gridNode.addObjectAtGrid(object: boots, x: bootsPos[0], y: bootsPos[1])
@@ -2134,7 +2478,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: heart, x: heartPos[0], y: heartPos[1])
             }
             
-            /* Level 3 */
+        /* Level 3 */
         case 2:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 9], [4, 9], [6, 9]]
@@ -2161,7 +2505,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
             
             
-            /* Level 4 */
+        /* Level 4 */
         case 3:
             /* Set enemy */
             initialEnemyPosArray = [[0, 10], [2, 10], [4, 10], [6, 10], [8, 10], [3, 8], [5, 8]]
@@ -2194,7 +2538,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: multiAttack, x: multiAttackPos[0], y: multiAttackPos[1])
             }
             
-            /* Level 5 */
+        /* Level 5 */
         case 4:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [1, 9], [3, 9], [5, 9], [7, 9]]
@@ -2223,7 +2567,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
             }
             
-            /* Level 6 */
+        /* Level 6 */
         case 5:
             /* Set enemy */
             initialEnemyPosArray = [[2, 10], [6, 10], [2, 8], [6, 8], [4, 9]]
@@ -2259,7 +2603,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
             }
             
-            /* Level 7 */
+        /* Level 7 */
         case 6:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [2, 10], [3, 9], [7, 11], [6, 10], [5, 9]]
@@ -2301,56 +2645,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let heart = Heart()
                 self.gridNode.addObjectAtGrid(object: heart, x: heartPos[0], y: heartPos[1])
             }
-            /* Level 8 */
+        /* Level 8 */
         case 7:
             /* Set enemy */
-            initialEnemyPosArray = [[1, 11], [2, 9], [4, 7], [6, 9], [7, 11]]
+            initialEnemyPosArray = [[0, 9], [1, 11], [2, 9], [3, 11], [4, 9], [5, 11], [6, 9], [7, 11], [8, 9]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
-            /* Set wall */
-            let wallsArray = [[1,3]]
-            for wallPos in wallsArray {
-                let wall = Wall()
-                self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
-            }
-            
-            /* Set battle ship */
-            let battleShipsArray = [[7,3]]
-            for battleShipPos in battleShipsArray {
-                let battleShip = BattleShip()
-                self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
+            /* Set cane */
+            let caneArray = [[4,4], [4,2]]
+            for canePos in caneArray {
+                let cane = Cane()
+                self.gridNode.addObjectAtGrid(object: cane, x: canePos[0], y: canePos[1])
             }
             
             /* Set catapult */
-            let catapultArray = [[6,1],[2,5]]
+            let catapultArray = [[2,1],[2,5]]
             for catapultPos in catapultArray {
                 let catapult = Catapult()
                 self.gridNode.addObjectAtGrid(object: catapult, x: catapultPos[0], y: catapultPos[1])
             }
             
             /* Set resetCatapult */
-            let resetCatapultArray = [[4,4],[2,5]]
+            let resetCatapultArray = [[4,0],[7,3]]
             for resetCatapultPos in resetCatapultArray {
                 let resetCatapult = ResetCatapult()
                 self.gridNode.addObjectAtGrid(object: resetCatapult, x: resetCatapultPos[0], y: resetCatapultPos[1])
-            }
+            }            
             
-            /* Set cane */
-            let caneArray = [[4,6]]
-            for canePos in caneArray {
-                let cane = Cane()
-                self.gridNode.addObjectAtGrid(object: cane, x: canePos[0], y: canePos[1])
-            }
             
             /* Set magicSword */
-            let magicSwordArray = [[2,1],[6,5]]
+            let magicSwordArray = [[6,1],[6,5],[1,3]]
             for magicSwordPos in magicSwordArray {
                 let magicSword = MagicSword()
                 self.gridNode.addObjectAtGrid(object: magicSword, x: magicSwordPos[0], y: magicSwordPos[1])
             }
-            /* Level 9 */
+        /* Level 9 */
         case 8:
             /* Set enemy */
             initialEnemyPosArray = [[0, 9], [1, 11], [2, 9], [3, 11], [4, 9], [5, 11], [6, 9], [7, 11], [8, 9]]
@@ -2358,28 +2689,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
-            /* Set battle ship */
-            let battleShipsArray = [[4,0]]
-            for battleShipPos in battleShipsArray {
-                let battleShip = BattleShip()
-                self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
+            /* Add 6 items initially */
+            for _ in 0..<6 {
+                autoSetItems()
             }
             
-            /* Set catapult */
-            let catapultArray = [[6,2],[6,4]]
-            for catapultPos in catapultArray {
-                let catapult = Catapult()
-                self.gridNode.addObjectAtGrid(object: catapult, x: catapultPos[0], y: catapultPos[1])
-            }
-            
-            /* Set magicSword */
-            let magicSwordArray = [[2,2],[2,4],[4,5]]
-            for magicSwordPos in magicSwordArray {
-                let magicSword = MagicSword()
-                self.gridNode.addObjectAtGrid(object: magicSword, x: magicSwordPos[0], y: magicSwordPos[1])
-            }
-            
-            /* Level 10 */
+        /* Level 10 */
         case 9:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
@@ -2392,6 +2707,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             for battleShipPos in battleShipsArray {
                 let battleShip = BattleShip()
                 self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
+            }
+            
+            /* Set cane */
+            let caneArray = [[4,6]]
+            for canePos in caneArray {
+                let cane = Cane()
+                self.gridNode.addObjectAtGrid(object: cane, x: canePos[0], y: canePos[1])
             }
             
             /* Set catapult */
@@ -2414,7 +2736,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let teleport = Teleport()
                 self.gridNode.addObjectAtGrid(object: teleport, x: teleportPos[0], y: teleportPos[1])
             }
-            /* Level 11 */
+        /* Level 11 */
         case 10:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
@@ -2449,7 +2771,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let teleport = Teleport()
                 self.gridNode.addObjectAtGrid(object: teleport, x: teleportPos[0], y: teleportPos[1])
             }
-            /* Level 12 */
+        /* Level 12 */
         case 11:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
@@ -2489,6 +2811,5 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break;
         }
     }
-    
     
 }

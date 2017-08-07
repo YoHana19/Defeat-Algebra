@@ -11,6 +11,8 @@ import SpriteKit
 
 class MultiAttack: SKSpriteNode {
     
+    var spotPos = [Int]()
+    
     init() {
         /* Initialize with 'mine' asset */
         let texture = SKTexture(imageNamed: "multiAttack")

@@ -11,6 +11,8 @@ import SpriteKit
 
 class Teleport: SKSpriteNode {
     
+    var spotPos = [Int]()
+    
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "teleport")
