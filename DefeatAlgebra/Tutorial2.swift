@@ -31,6 +31,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     var itemAreaNode: SKSpriteNode!
     var buttonAttack: SKNode!
     var buttonItem: SKNode!
+     var pauseScreen: PauseScreenForTutorial2!
     
     /*== Game labels ==*/
     var valueOfX: SKLabelNode!
@@ -48,6 +49,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     var buttonNext: MSButtonNode!
     var buttonAgain: MSButtonNode!
     var buttonSkip: MSButtonNode!
+    var buttonPause: MSButtonNode!
     
     /*== Game constants ==*/
     let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
@@ -61,6 +63,8 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     var tutorial4T8Done = false
     var gameOverDoneFlag = false
     var stageClearDoneFlag = false
+    var hitByEnemyFlag = false
+    var pauseFlag = false
     /* Game Speed */
     let turnEndWait: TimeInterval = 1.0
     let phaseLabelTime: TimeInterval = 0.3
@@ -204,8 +208,24 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         buttonNext.state = .msButtonNodeStateHidden
         buttonAgain = childNode(withName: "buttonAgain") as! MSButtonNode
         buttonAgain.state = .msButtonNodeStateHidden
+        buttonPause = childNode(withName: "buttonPause") as! MSButtonNode
         buttonSkip = childNode(withName: "buttonSkip") as! MSButtonNode
         
+        /* Make sure to show skip button when player done once */
+        if Tutorial.tutorialPhase == 3 {
+            if MainMenu.tutorialPracticeDone {
+                buttonSkip.state = .msButtonNodeStateActive
+            } else {
+                buttonSkip.state = .msButtonNodeStateHidden
+            }
+        } else if Tutorial.tutorialPhase == 4 {
+            if MainMenu.tutorialTimeBombDone {
+                buttonSkip.state = .msButtonNodeStateActive
+            } else {
+                buttonSkip.state = .msButtonNodeStateHidden
+            }
+        }
+            
         /* Skip button */
         buttonSkip.selectedHandler = {
             if Tutorial.tutorialPhase < 4 {
@@ -263,6 +283,11 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         
         /* Next button */
         buttonNext.selectedHandler = {
+            
+            /* Store flag of this tutorial done */
+            let ud = UserDefaults.standard
+            ud.set(true, forKey: "tutorialPracticeDone")
+            
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
                 
@@ -301,6 +326,11 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         /* Play button */
         buttonPlay.selectedHandler = {
             
+            /* Store flag of this tutorial done */
+            let ud = UserDefaults.standard
+            ud.set(true, forKey: "tutorialTimeBombDone")
+            ud.set(true, forKey: "tutorialAllDone")
+            
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
             
@@ -317,6 +347,16 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             /* Restart GameScene */
             skView?.presentScene(scene)
         }
+        
+        /* Pause button */
+        buttonPause.selectedHandler = {
+            self.pauseFlag = true
+            self.pauseScreen.isHidden = false
+        }
+        
+        /* Set puase screen */
+        pauseScreen = PauseScreenForTutorial2()
+        addChild(pauseScreen)
         
         GameScene.firstGetItemFlagArray = [true, false, false, false, false, false, false, false, false, false, false, false, false]
         
@@ -790,8 +830,16 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         case .GameOver:
             if gameOverDoneFlag == false {
                 gameOverDoneFlag = true
-                gameOverLabel.isHidden = false
-                buttonRetry.state = .msButtonNodeStateActive
+                if hitByEnemyFlag {
+                    self.createTutorialLabel(text: "If a hero hits enemy, he'll die!", posY: 720)
+                    gameOverLabel.isHidden = false
+                    buttonRetry.state = .msButtonNodeStateActive
+                } else {
+                    self.createTutorialLabel(text: "If the town wall life comes to 0", posY: 750)
+                    self.createTutorialLabel(text: "Game over", posY: 690)
+                    gameOverLabel.isHidden = false
+                    buttonRetry.state = .msButtonNodeStateActive
+                }
             }
             break;
         }
@@ -799,6 +847,8 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //        print("scene touchBegan")
+        
+        guard pauseFlag == false else { return }
         
         if Tutorial.tutorialPhase == 3 && tutorialState == .T1 {
             gameState = .GridFlashing
@@ -952,15 +1002,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
                     
-                    /* Remove triangle except the one of selected catapult */
-                    for catapult in setCatapultArray {
-                        if let node = catapult.childNode(withName: "pointingCatapult") {
-                            node.removeFromParent()
-                        }
-                    }
-                    
-                    /* Remove input board for cane */
-                    inputBoardForCane.isHidden = true
+                   
                 }
                 
                 /* Use timeBomb */
@@ -968,16 +1010,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 /* Remove activeArea for catapult */
                 self.gridNode.resetSquareArray(color: "red")
                 self.gridNode.resetSquareArray(color: "purple")
-                resetActiveAreaForCatapult()
-                /* Remove triangle except the one of selected catapult */
-                for catapult in setCatapultArray {
-                    if let node = catapult.childNode(withName: "pointingCatapult") {
-                        node.removeFromParent()
-                    }
-                }
-                /* Remove input board for cane */
-                inputBoardForCane.isHidden = true
-                
                 /* Set timeBomb using state */
                 itemType = .timeBomb
                 
@@ -1000,16 +1032,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 
                 /* Reset hero */
                 activeHero.resetHero()
-                /* Remove effect */
-                removeMagicSowrdEffect()
-                
-                /* Reset color of enemy for magic sword */
-                for enemy in self.gridNode.enemyArray {
-                    enemy.resetColorizeEnemy()
-                }
-                
-                /* Remove variable expression display for magic sword */
-                activeHero.removeMagicSwordVE()
                 
                 /* Reset item type */
                 self.itemType = .None
@@ -1017,17 +1039,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 /* Remove active area */
                 self.gridNode.resetSquareArray(color: "purple")
                 self.gridNode.resetSquareArray(color: "red")
-                resetActiveAreaForCatapult()
                 
-                /* Remove triangle except the one of selected catapult */
-                for catapult in setCatapultArray {
-                    if let node = catapult.childNode(withName: "pointingCatapult") {
-                        node.removeFromParent()
-                    }
-                }
-                
-                /* Remove input board for cane */
-                inputBoardForCane.isHidden = true
             }
         } else if playerTurnState == .ShowingCard {
             showinCardFlag = false
@@ -1078,6 +1090,11 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     /* Other items */
                     } else {
                         item.removeFromParent()
+                        /* Store game property */
+                        let ud = UserDefaults.standard
+                        /* user flag */
+                        GameScene.firstGetItemFlagArray[1] = true
+                        ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
                         /* Make sure to have items up tp 8 */
                         if itemArray.count >= 8 {
                             self.resetDisplayItem(index: 0)
@@ -1103,6 +1120,11 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     /* Other items */
                     } else {
                         item.removeFromParent()
+                        /* Store game property */
+                        let ud = UserDefaults.standard
+                        /* user flag */
+                        GameScene.firstGetItemFlagArray[1] = true
+                        ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
                         /* Make sure to have items up tp 8 */
                         if itemArray.count >= 8 {
                             self.resetDisplayItem(index: 0)
@@ -1119,6 +1141,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 
             /* Be hitten by enemy */
             } else {
+                hitByEnemyFlag = true
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! HeroForTutorial2
                     hero.removeFromParent()

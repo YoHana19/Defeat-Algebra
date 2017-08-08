@@ -35,6 +35,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var itemAreaNode: SKSpriteNode!
     var buttonAttack: SKNode!
     var buttonItem: SKNode!
+    var pauseScreen: PauseScreenForTutorial!
     
     /* Game labels */
     var valueOfX: SKLabelNode!
@@ -48,6 +49,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var buttonSkip: MSButtonNode!
     var buttonNext: MSButtonNode!
     var buttonAgain: MSButtonNode!
+    var buttonPause: MSButtonNode!
     
     /* Distance of objects in Scene */
     var topGap: CGFloat = 0.0  /* the length between top of scene and grid */
@@ -86,6 +88,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var bombExplodeDoneFlag = false
     var timeBombDoneFlag = false
     var enemyTurnEndFlag = false
+    var pauseFlag = false
     
     /* Tuotrial temp stuff */
     var tutorial1T7Done = false
@@ -147,11 +150,34 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         /* Connect game buttons */
         buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
         buttonRetry.state = .msButtonNodeStateHidden
-        buttonSkip = childNode(withName: "buttonSkip") as! MSButtonNode
         buttonNext = childNode(withName: "buttonNext") as! MSButtonNode
         buttonNext.state = .msButtonNodeStateHidden
         buttonAgain = childNode(withName: "buttonAgain") as! MSButtonNode
         buttonAgain.state = .msButtonNodeStateHidden
+        buttonPause = childNode(withName: "buttonPause") as! MSButtonNode
+        buttonSkip = childNode(withName: "buttonSkip") as! MSButtonNode
+        
+        
+        /* Make sure to show skip button when player done once */
+        if Tutorial.tutorialPhase == 0 {
+            if MainMenu.tutorialHeroDone {
+                buttonSkip.state = .msButtonNodeStateActive
+            } else {
+                buttonSkip.state = .msButtonNodeStateHidden
+            }
+        } else if Tutorial.tutorialPhase == 1 {
+            if MainMenu.tutorialEnemyDone {
+                buttonSkip.state = .msButtonNodeStateActive
+            } else {
+                buttonSkip.state = .msButtonNodeStateHidden
+            }
+        } else if Tutorial.tutorialPhase == 2 {
+            if MainMenu.tutorialAttackDone {
+                buttonSkip.state = .msButtonNodeStateActive
+            } else {
+                buttonSkip.state = .msButtonNodeStateHidden
+            }
+        }
         
         /* Retry button */
         buttonRetry.selectedHandler = {
@@ -219,7 +245,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 ud.set(true, forKey: "tutorialHeroDone")
             } else if Tutorial.tutorialPhase == 1 {
                 ud.set(true, forKey: "tutorialEnemyDone")
-            } else {
+            } else if Tutorial.tutorialPhase == 2 {
                 ud.set(true, forKey: "tutorialAttackDone")
             }
             
@@ -275,6 +301,16 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             /* Restart GameScene */
             skView?.presentScene(scene)
         }
+        
+        /* Pause button */
+        buttonPause.selectedHandler = {
+            self.pauseFlag = true
+            self.pauseScreen.isHidden = false
+        }
+        
+        /* Set puase screen */
+        pauseScreen = PauseScreenForTutorial()
+        addChild(pauseScreen)
         
         /* Set initial objects */
         setInitialObjects()
@@ -426,7 +462,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 tutorialDone = true
                 tutorialFlow()
             }
-            if tutorialState == .T3 {
+            if tutorialState == .T5 {
 //                print(gameState)
                 switch gameState {
                 case .PlayerTurn:
@@ -455,7 +491,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         /* Make it to next to enemy! */
                         if self.gridNode.positionEnemyAtGrid[hitSpotArray.0][activeHero.positionY] || self.gridNode.positionEnemyAtGrid[hitSpotArray.1][activeHero.positionY] || self.gridNode.positionEnemyAtGrid[activeHero.positionX][hitSpotArray.2] || self.gridNode.positionEnemyAtGrid[activeHero.positionX][hitSpotArray.3] {
                             tutorialDone = false
-                            tutorialState = .T4
+                            tutorialState = .T6
                         } else {
                             playerTurnState = .MoveState
                         }
@@ -651,6 +687,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard pauseFlag == false else { return }
+        
         switch Tutorial.tutorialPhase {
         case 0:
             switch tutorialState {
@@ -732,6 +770,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 tutorialState = .T3
                 break;
             case .T3:
+                tutorialDone = false
+                tutorialState = .T4
+                break;
+            case .T4:
+                tutorialDone = false
+                tutorialState = .T5
+                break;
+            case .T5:
                 guard gameState == .PlayerTurn else { return }
                 
                 /* Get touch point */
@@ -853,7 +899,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 break;
-            case .T4:
+            case .T6:
                 /* Get touch point */
                 let touch = touches.first!              // Get the first touch
                 let location = touch.location(in: self) // Find the location of that touch in this view
@@ -863,12 +909,12 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
                     tutorialDone = false
-                    tutorialState = .T5
+                    tutorialState = .T7
                 }
                 break;
-            case .T6:
+            case .T8:
                 tutorialDone = false
-                tutorialState = .T7
+                tutorialState = .T9
                 break;
             default:
                 break;
@@ -927,7 +973,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         let ud = UserDefaults.standard
                         /* user flag */
                         GameScene.firstGetItemFlagArray[0] = true
-                        ud.set(GameScene.firstGetItemFlagArray[0], forKey: "firstGetItemFlagArray")
+                        ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
                     } else {
                         item.removeFromParent()
                         displayitem(name: item.name!)
@@ -954,7 +1000,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         let ud = UserDefaults.standard
                         /* user flag */
                         GameScene.firstGetItemFlagArray[0] = true
-                        ud.set(GameScene.firstGetItemFlagArray[0], forKey: "firstGetItemFlagArray")
+                        ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
                     /* Other items */
                     } else {
                         item.removeFromParent()
@@ -1255,14 +1301,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             case .T2:
                 resetDiscription()
                 createTutorialLabel(text: "Let's move him!", posY: 1100)
-                createTutorialLabel(text: "Touch the bule area", posY: 1040)
+                createTutorialLabel(text: "Touch the blue area", posY: 1040)
                 /* Show move area */
                 self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
                 break;
             case .T3:
                 removeTutorial()
                 createTutorialLabel(text: "Great!", posY: 1100)
-                createTutorialLabel(text: "Go to the point of boots to get it", posY: 1040)
+                createTutorialLabel(text: "Get the boots, next!", posY: 1040)
                 setPointingIcon(position: CGPoint(x: self.gridNode.position.x+CGFloat(self.gridNode.cellWidth*4.5)+55, y: self.gridNode.position.y+CGFloat(self.gridNode.cellHeight*6.5)+55), size: CGSize(width: 60, height: 52))
                 /* Show move area */
                 self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
@@ -1569,14 +1615,27 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 break;
             case .T2:
                 resetDiscription()
-                self.createTutorialLabel(text: "Make it to next to enemy!!", posY: 750)
-                gameState = .PlayerTurn
+                self.createTutorialLabel(text: "You can attack the red area next to you!", posY: 750)
+                gridNode.showAttackArea(posX: activeHero.positionX, posY: activeHero.positionY, attackType: 0)
                 showTouchScreen(waitTime: 2.0)
                 break;
             case .T3:
                 resetDiscription()
+                self.createTutorialLabel(text: "So you must be next to enemies", posY: 780)
+                self.createTutorialLabel(text: "When you want to attack them!", posY: 720)
+                showTouchScreen(waitTime: 2.0)
                 break;
             case .T4:
+                resetDiscription()
+                gridNode.resetSquareArray(color: "red")
+                self.createTutorialLabel(text: "Move next to the enemy to attack!!", posY: 750)
+                gameState = .PlayerTurn
+                showTouchScreen(waitTime: 2.0)
+                break;
+            case .T5:
+                resetDiscription()
+                break;
+            case .T6:
                 /* Display action buttons */
                 buttonAttack.isHidden = false
                 buttonItem.isHidden = false
@@ -1584,20 +1643,20 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 self.createTutorialLabel(text: "Touch attack icon!!", posY: 1040)
                 setPointingIcon(position: CGPoint(x: self.buttonAttack.position.x+55, y: self.buttonAttack.position.y+65), size: CGSize(width: 60, height: 52))
                 break;
-            case .T5:
+            case .T7:
                 resetDiscription()
                 createTutorialLabel(text: "You can attack by touching red areas!", posY: 1100)
                 createTutorialLabel(text: "Touch the red area!!", posY: 1040)
                 setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+55, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+80), size: CGSize(width: 60, height: 52))
                 break;
-            case .T6:
+            case .T8:
                 resetDiscription()
                 createTutorialLabel(text: "Great!", posY: 1100)
                 createTutorialLabel(text: "Now, you are ready to", posY: 1000)
                 createTutorialLabel(text: "Protect the town!!", posY: 940)
                 showTouchScreen(waitTime: 2.0)
                 break;
-            case .T7:
+            case .T9:
                 resetDiscription()
                 buttonNext.state = .msButtonNodeStateActive
                 buttonAgain.state = .msButtonNodeStateActive

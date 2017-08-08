@@ -91,6 +91,8 @@ class GridForTutorial: SKSpriteNode {
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial
         
+        guard gameScene.pauseFlag == false else { return }
+        
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
@@ -229,6 +231,14 @@ class GridForTutorial: SKSpriteNode {
                 gameScene.tutorialState = .T3
                 break;
             case .T3:
+                gameScene.tutorialDone = false
+                gameScene.tutorialState = .T4
+                break;
+            case .T4:
+                gameScene.tutorialDone = false
+                gameScene.tutorialState = .T5
+                break;
+            case .T5:
                 guard gameScene.gameState == .PlayerTurn else { return }
                 
                 /* Touch point to move to */
@@ -253,9 +263,9 @@ class GridForTutorial: SKSpriteNode {
                     }
                 }
                 break;
-            case .T6:
+            case .T8:
                 gameScene.tutorialDone = false
-                gameScene.tutorialState = .T7
+                gameScene.tutorialState = .T9
                 break;
             default:
                 break;
@@ -269,6 +279,8 @@ class GridForTutorial: SKSpriteNode {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial
+        
+        guard gameScene.pauseFlag == false else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
@@ -327,7 +339,7 @@ class GridForTutorial: SKSpriteNode {
             break;
         case 2:
             switch gameScene.tutorialState {
-            case .T3:
+            case .T5:
                 guard gameScene.gameState == .PlayerTurn else { return }
                 
                 /* Touch ends on active area */
@@ -388,6 +400,8 @@ class GridForTutorial: SKSpriteNode {
         
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial
+        
+        guard gameScene.pauseFlag == false else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
@@ -455,7 +469,7 @@ class GridForTutorial: SKSpriteNode {
             break;
         case 2:
             switch gameScene.tutorialState {
-            case .T3:
+            case .T5:
                 guard gameScene.gameState == .PlayerTurn else { return }
                                
                 /* Touch ends on active area */
@@ -599,7 +613,7 @@ class GridForTutorial: SKSpriteNode {
                     }
                 }
                 break;
-            case .T5:
+            case .T7:
                 /* Get gameScene */
                 let gameScene = self.parent as! Tutorial
                 
@@ -653,7 +667,7 @@ class GridForTutorial: SKSpriteNode {
                             /* Reset hero animation to back */
                             gameScene.activeHero.resetHero()
                             gameScene.tutorialDone = false
-                            gameScene.tutorialState = .T6
+                            gameScene.tutorialState = .T8
                         })
                         let seq2 = SKAction.sequence([wait, moveState])
                         self.run(seq2)

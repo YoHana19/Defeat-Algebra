@@ -58,21 +58,33 @@ class InputVariable: SKSpriteNode {
         if nodeAtPoint.name == "button1" {
             inputDone(value: 1)
             gameScene.xValue = 1
+            for enemy in gameScene.gridNode.enemyArray {
+                enemy.calculatePunchLength(value: gameScene.xValue)
+            }
             gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 1)
+            gameScene.caneOnFlag = true
         }
         
         /* Touch button 2 */
         if nodeAtPoint.name == "button2" {
             inputDone(value: 2)
             gameScene.xValue = 2
+            for enemy in gameScene.gridNode.enemyArray {
+                enemy.calculatePunchLength(value: gameScene.xValue)
+            }
             gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 2)
+            gameScene.caneOnFlag = true
         }
         
         /* Touch button 3 */
         if nodeAtPoint.name == "button3" {
             inputDone(value: 3)
             gameScene.xValue = 3
+            for enemy in gameScene.gridNode.enemyArray {
+                enemy.calculatePunchLength(value: gameScene.xValue)
+            }
             gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 3)
+            gameScene.caneOnFlag = true
         }
         
     }

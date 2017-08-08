@@ -95,6 +95,7 @@ class GridForTutorial2: SKSpriteNode {
         //        print("grid touchBegan")
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial2
+        guard gameScene.pauseFlag == false else { return }
         
         if Tutorial.tutorialPhase == 4 {
             if gameScene.tutorialState == .T2 {
@@ -208,6 +209,7 @@ class GridForTutorial2: SKSpriteNode {
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial2
         
+        guard gameScene.pauseFlag == false else { return }
         guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
@@ -282,6 +284,8 @@ class GridForTutorial2: SKSpriteNode {
         //        print("grid touchEnded")
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial2
+        
+        guard gameScene.pauseFlag == false else { return }
         
         if Tutorial.tutorialPhase == 3 && gameScene.tutorialState == .T1 {
             gameScene.gameState = .GridFlashing

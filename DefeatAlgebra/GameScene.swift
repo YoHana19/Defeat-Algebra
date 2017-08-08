@@ -47,6 +47,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var itemAreaNode: SKSpriteNode!
     var buttonAttack: SKNode!
     var buttonItem: SKNode!
+    var pauseScreen: PauseScreen!
     
     /*== Game labels ==*/
     var valueOfX: SKLabelNode!
@@ -59,7 +60,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*== Game buttons ==*/
     var buttonRetry: MSButtonNode!
     var buttonNextLevel: MSButtonNode!
-    var buttonToL1: MSButtonNode!
+    var buttonRestartLastLevel: MSButtonNode!
+    var buttonPause: MSButtonNode!
     
     /*== Game constants ==*/
     let fixedDelta: CFTimeInterval = 1.0/60.0 /* 60 FPS */
@@ -67,6 +69,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var topGap: CGFloat = 0.0  /* the length between top of scene and grid */
     var bottomGap: CGFloat = 0.0  /* the length between castle and grid */
     /* Game Management */
+    var pauseFlag = false
     /* Game Speed */
     let turnEndWait: TimeInterval = 1.0
     let phaseLabelTime: TimeInterval = 0.3
@@ -160,8 +163,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var usedItemIndexArray = [Int]()
     var itemAreaCover: SKShapeNode!
     var itemSpot = [[Int]]()
-    var showinCardFlag = false
-    static var firstGetItemFlagArray: [Bool] = [false, false, false, false, false, false, false, false, false, false, false, false, false]
+    var cardArray = [SKSpriteNode]()
+    static var firstGetItemFlagArray: [Bool] = [true, true, false, false, false, false, false, false, false, false, false, false, false]
     /* Time bomb */
     var bombExplodeDoneFlag = false
     /* Catapult */
@@ -191,6 +194,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var battleShipOnceFlag = false
     /* cane */
     var inputBoardForCane: InputVariable!
+    var caneOnFlag = false
+    /* spear */
+    var spearTurnCount = 0
     
     /*================*/
     /*== Grid Flash ==*/
@@ -232,10 +238,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Connect game buttons */
         buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
         buttonNextLevel = childNode(withName: "buttonNextLevel") as! MSButtonNode
-        buttonToL1 = childNode(withName: "buttonToL1") as! MSButtonNode
+        buttonRestartLastLevel = childNode(withName: "buttonRestartLastLevel") as! MSButtonNode
+        buttonPause = childNode(withName: "buttonPause") as! MSButtonNode
         buttonRetry.state = .msButtonNodeStateHidden
         buttonNextLevel.state = .msButtonNodeStateHidden
-        buttonToL1.state = .msButtonNodeStateHidden
+        buttonRestartLastLevel.state = .msButtonNodeStateHidden
         
         
         /* Retry button */
@@ -258,6 +265,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Next Level button */
         buttonNextLevel.selectedHandler = {
+            if self.stageLevel >= 1 {
+                /* Store previous game property */
+                let ud = UserDefaults.standard
+                /* stageLevel */
+                let tempStageLevel = ud.integer(forKey: "stageLevel")
+                ud.set(tempStageLevel, forKey: "stageLevelLast")
+                /* Hero */
+                let tempMoveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
+                ud.set(tempMoveLevelArray, forKey: "moveLevelArrayLast")
+                /* Items */
+                let tempHandedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+                ud.set(tempHandedItemNameArray, forKey: "itemNameArrayLast")
+                /* Life */
+                let tempMaxLife = ud.integer(forKey: "life")
+                ud.set(tempMaxLife, forKey: "lifeLast")
+            }
+            
             /* To next stage level */
             self.stageLevel += 1
             
@@ -299,15 +323,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
-        /* Back to Level 1 button */
-        buttonToL1.selectedHandler = {
-            /* To main menu level */
+        /* Restart from last level button */
+        buttonRestartLastLevel.selectedHandler = {
+            
+            /* Set previous level property */
+            let ud = UserDefaults.standard
+            /* stageLevel */
+            let tempStageLevel = ud.integer(forKey: "stageLevelLast")
+            ud.set(tempStageLevel, forKey: "stageLevel")
+            /* Hero */
+            let tempMoveLevelArray = ud.array(forKey: "moveLevelArrayLast") as? [Int] ?? [1]
+            ud.set(tempMoveLevelArray, forKey: "moveLevelArray")
+            /* Items */
+            let tempHandedItemNameArray = ud.array(forKey: "itemNameArrayLast") as? [String] ?? []
+            ud.set(tempHandedItemNameArray, forKey: "itemNameArray")
+            /* Life */
+            let tempMaxLife = ud.integer(forKey: "lifeLast")
+            ud.set(tempMaxLife, forKey: "life")
             
             /* Grab reference to the SpriteKit view */
             let skView = self.view as SKView!
             
             /* Load Game scene */
-            guard let scene = MainMenu(fileNamed:"MainMenu") as MainMenu! else {
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
                 return
             }
             
@@ -318,7 +356,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             skView?.presentScene(scene)
         }
         
+        /* Pause button */
+        buttonPause.selectedHandler = {
+            self.pauseFlag = true
+            self.pauseScreen.isHidden = false
+        }
+
+        /*====================================================*/
         /*== Pick game property from user data and set them ==*/
+        /*====================================================*/
+        
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
@@ -330,8 +377,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set hero */
         setHero()
         /* Items */
-        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-//        handedItemNameArray = ["magicSword", "catapult", "catapult", "catapult"]
+        var handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+//        handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "cane", "cane"]
 //        print(handedItemNameArray)
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
@@ -343,12 +390,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             maxLife = 3
         }
         /* Item flag */
-        GameScene.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [false, false, false, false, false, false, false, false, false, false, false, false, false]
-        GameScene.firstGetItemFlagArray = [true, false, false, false, false, false, false, false, false, false, false, false, false]
+        GameScene.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [true, true, false, false, false, false, false, false, false, false, false, false, false]
+//        GameScene.firstGetItemFlagArray = [true, true, false, false, false, false, false, false, false, false, false, false, false]
         
         /* Set input boards */
         setInputBoard()
         setInputBoardForCane()
+        
+        /* Set Pause screen */
+        pauseScreen = PauseScreen()
+        addChild(pauseScreen)
         
         
         /* For testing: initialize userDefaults */
@@ -415,7 +466,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
-        if showinCardFlag {
+//        print(gameState)
+        if cardArray.count > 0 {
             gameState = .PlayerTurn
             playerTurnState = .ShowingCard
         }
@@ -524,6 +576,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let moveState = SKAction.run({ self.playerTurnState = .ItemOn })
                 let seq = SKAction.sequence([wait, moveState])
                 self.run(seq)
+                /* For used cane */
+                caneOnFlag = false
                 break;
             case .ItemOn:
                 /* Check game over */
@@ -535,6 +589,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 playerPhaseLabel.isHidden = true
+                
+                /* spear */
+                if spearTurnCount > 0 {
+                    print("spear")
+                    print(activeHero.attackType)
+                    spearTurnCount -= 1
+                } else {
+                    activeHero.attackType = 0
+                }
                 
                 /* timeBomb */
                 if self.gridNode.timeBombSetArray.count > 0 {
@@ -726,6 +789,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 //                print(heroArray)
                 
+//                print(GameScene.firstGetItemFlagArray)
+                
                 /* Reset Flags */
                 addEnemyDoneFlag = false
                 enemyTurnDoneFlag = false
@@ -838,9 +903,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .GridFlashing:
-            //                        print("GridFlashing")
             /* Make sure to call once */
-            if flashGridDoneFlag == false {
+            if caneOnFlag {
+                gameState = .PlayerTurn
+                gridNode.numOfTurnEndEnemy = 0
+                return
+            } else if flashGridDoneFlag == false {
                 flashGridDoneFlag = true
                 
                 gridNode.numOfTurnEndEnemy = 0
@@ -868,13 +936,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         case .GameOver:
             gameOverLabel.isHidden = false
             buttonRetry.state = .msButtonNodeStateActive
-            buttonToL1.state = .msButtonNodeStateActive
+            if stageLevel >= 1 {
+                buttonRestartLastLevel.state = .msButtonNodeStateActive
+            }
             break;
         }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         //        print("scene touchBegan")
+        
+        guard pauseFlag == false else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
@@ -1388,10 +1460,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 inputBoardForCane.isHidden = true
             }
         } else if playerTurnState == .ShowingCard {
-            showinCardFlag = false
-            playerTurnState = .TurnEnd
-            if let card = childNode(withName: "itemCard") {
-                card.removeFromParent()
+            cardArray[0].removeFromParent()
+            cardArray.removeFirst()
+            heroArray = heroArray.filter({ $0.aliveFlag == true })
+            if heroArray.count > 0{
+                playerTurnState = .TurnEnd
+            } else {
+                gameState = .GameOver
             }
         }
         
@@ -1435,19 +1510,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         }
                         /* Get heart */
                     } else if item.name == "heart" {
+                        checkFirstItem(itemName: item.name!)
                         item.removeFromParent()
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
                         if stageLevel >= 8 {
 //                            itemSpot.append(item.spotPos)
-                            autoSetItems()
+//                            autoSetItems()
                         }
                         /* Get spear */
                     } else if item.name == "spear" {
+                        checkFirstItem(itemName: item.name!)
                         item.removeFromParent()
                         if self.activeHero.attackType < 1 {
                             self.activeHero.attackType += 1
+                            self.spearTurnCount = 3
                         }
                         /* Other items */
                     } else {
@@ -1462,7 +1540,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         }
                         if stageLevel >= 8 {
 //                            itemSpot.append(item.spotPos)
-                            autoSetItems()
+//                            autoSetItems()
                         }
                     }
                 }
@@ -1477,19 +1555,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         }
                         /* Get heart */
                     } else if item.name == "heart" {
+                        checkFirstItem(itemName: item.name!)
                         item.removeFromParent()
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
                         if stageLevel >= 8 {
 //                            itemSpot.append(item.spotPos)
-                            autoSetItems()
+//                            autoSetItems()
                         }
                         /* Get spear */
                     } else if item.name == "spear" {
+                        checkFirstItem(itemName: item.name!)
                         item.removeFromParent()
                         if self.activeHero.attackType < 1 {
                             self.activeHero.attackType += 1
+                            self.spearTurnCount = 3
                         }
                         /* Other items */
                     } else {
@@ -1504,7 +1585,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         }
                         if stageLevel >= 8 {
 //                            itemSpot.append(item.spotPos)
-                            autoSetItems()
+//                            autoSetItems()
                         }
                     }
                 }
@@ -1527,6 +1608,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         heroArray = heroArray.filter({ $0.aliveFlag == true })
                         /* The last hero is killed? */
                         if heroArray.count == 1 {
+                            hero.aliveFlag = false
                             self.gameState = .GameOver
                         } else {
                             /* On dead flag */
@@ -1544,12 +1626,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Move to next hero turn */
                         activeHero = heroArray[numOfTurnDoneHero+1]
-                        /* The last turn hero is killed */
+                    /* The last turn hero is killed */
                     } else {
                         /* Remove dead hero */
                         heroArray = heroArray.filter({ $0.aliveFlag == true })
                         /* The last hero is killed? */
                         if heroArray.count == 1 {
+                            hero.aliveFlag = false
                             self.gameState = .GameOver
                         } else {
                             /* On dead flag */
@@ -1926,13 +2009,82 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func checkFirstItem(itemName: String) {
         /* Store game property */
         let ud = UserDefaults.standard
-        showinCardFlag = true
         switch itemName {
-        case "timeBomb":
-            if GameScene.firstGetItemFlagArray[1] == false {
-                showItemCard(item: "cardTimeBomb")
-                GameScene.firstGetItemFlagArray[1] = true
-                ud.set(GameScene.firstGetItemFlagArray[1], forKey: "firstGetItemFlagArray")
+        case "heart":
+            if GameScene.firstGetItemFlagArray[2] == false {
+                showItemCard(item: "cardHeart")
+                GameScene.firstGetItemFlagArray[2] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "wall":
+            if GameScene.firstGetItemFlagArray[3] == false {
+                showItemCard(item: "cardWall")
+                GameScene.firstGetItemFlagArray[3] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "multiAttack":
+            if GameScene.firstGetItemFlagArray[4] == false {
+                showItemCard(item: "cardMultiAttack")
+                GameScene.firstGetItemFlagArray[4] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "battleShip":
+            if GameScene.firstGetItemFlagArray[5] == false {
+                showItemCard(item: "cardBattleShip")
+                GameScene.firstGetItemFlagArray[5] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "catapult":
+            if GameScene.firstGetItemFlagArray[6] == false {
+                showItemCard(item: "cardCatapult")
+                GameScene.firstGetItemFlagArray[6] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "resetCatapult":
+            if GameScene.firstGetItemFlagArray[7] == false {
+                showItemCard(item: "cardResetCatapult")
+                GameScene.firstGetItemFlagArray[7] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "cane":
+            if GameScene.firstGetItemFlagArray[8] == false {
+                showItemCard(item: "cardCane")
+                GameScene.firstGetItemFlagArray[8] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "magicSword":
+            if GameScene.firstGetItemFlagArray[9] == false {
+                showItemCard(item: "cardMagicSword")
+                GameScene.firstGetItemFlagArray[9] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "teleport":
+            if GameScene.firstGetItemFlagArray[10] == false {
+                showItemCard(item: "cardTeleport")
+                GameScene.firstGetItemFlagArray[10] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "spear":
+            if GameScene.firstGetItemFlagArray[11] == false {
+                showItemCard(item: "cardSpear")
+                GameScene.firstGetItemFlagArray[11] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
+            }
+            break;
+        case "callHero":
+            if GameScene.firstGetItemFlagArray[12] == false {
+                showItemCard(item: "cardCallHero")
+                GameScene.firstGetItemFlagArray[12] = true
+                ud.set(GameScene.firstGetItemFlagArray, forKey: "firstGetItemFlagArray")
             }
             break;
         default:
@@ -1945,8 +2097,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let card = SKSpriteNode(imageNamed: item)
         card.size = CGSize(width: 500, height: 693)
         card.position = CGPoint(x: self.size.width/2, y: self.size.height/2+100)
-        card.name = "itemCard"
-        card.zPosition = 10
+        cardArray.append(card)
+        card.zPosition = 50
         addChild(card)
     }
     
@@ -2684,58 +2836,105 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 9 */
         case 8:
             /* Set enemy */
-            initialEnemyPosArray = [[0, 9], [1, 11], [2, 9], [3, 11], [4, 9], [5, 11], [6, 9], [7, 11], [8, 9]]
+            initialEnemyPosArray = [[1, 11], [2, 9], [1, 7], [4, 9], [6, 9], [7, 11], [7, 7]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
-            
-            /* Add 6 items initially */
-            for _ in 0..<6 {
-                autoSetItems()
-            }
-            
-        /* Level 10 */
-        case 9:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
-            
-            /* Set battle ship */
-            let battleShipsArray = [[4,0]]
-            for battleShipPos in battleShipsArray {
-                let battleShip = BattleShip()
-                self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
-            }
-            
-            /* Set cane */
-            let caneArray = [[4,6]]
-            for canePos in caneArray {
-                let cane = Cane()
-                self.gridNode.addObjectAtGrid(object: cane, x: canePos[0], y: canePos[1])
-            }
             
             /* Set catapult */
-            let catapultArray = [[6,2],[6,4]]
+            let catapultArray = [[3,1]]
             for catapultPos in catapultArray {
                 let catapult = Catapult()
                 self.gridNode.addObjectAtGrid(object: catapult, x: catapultPos[0], y: catapultPos[1])
             }
             
+            /* Set resetCatapult */
+            let resetCatapultArray = [[2,2]]
+            for resetCatapultPos in resetCatapultArray {
+                let resetCatapult = ResetCatapult()
+                self.gridNode.addObjectAtGrid(object: resetCatapult, x: resetCatapultPos[0], y: resetCatapultPos[1])
+            }
+            
             /* Set magicSword */
-            let magicSwordArray = [[2,2],[2,4],[4,5]]
+            let magicSwordArray = [[5,5],[6,4]]
             for magicSwordPos in magicSwordArray {
                 let magicSword = MagicSword()
                 self.gridNode.addObjectAtGrid(object: magicSword, x: magicSwordPos[0], y: magicSwordPos[1])
             }
             
             /* Set teleport */
-            let teleportArray = [[4,1]]
+            let teleportArray = [[2,4]]
             for teleportPos in teleportArray {
                 let teleport = Teleport()
                 self.gridNode.addObjectAtGrid(object: teleport, x: teleportPos[0], y: teleportPos[1])
             }
+            
+            /* Set cane */
+            let caneArray = [[3,5]]
+            for canePos in caneArray {
+                let cane = Cane()
+                self.gridNode.addObjectAtGrid(object: cane, x: canePos[0], y: canePos[1])
+            }
+            
+            /* Set wall */
+            let wallsArray = [[5,1]]
+            for wallPos in wallsArray {
+                let wall = Wall()
+                self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
+            }
+            
+            /* Set timeBomb */
+            let timeBombsArray = [[6,2]]
+            for timeBombPos in timeBombsArray {
+                let timeBomb = TimeBomb()
+                self.gridNode.addObjectAtGrid(object: timeBomb, x: timeBombPos[0], y: timeBombPos[1])
+            }
+            
+            
+        /* Level 10 */
+        case 9:
+            /* Set enemy */
+            initialEnemyPosArray = [[0, 11], [0, 7], [2, 10], [2, 8], [6, 10], [6, 8], [8, 7], [8, 11]]
+            
+            /* Set total number of enemy */
+            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            
+            
+            /* Set cane */
+            let caneArray = [[1,5],[4,0]]
+            for canePos in caneArray {
+                let cane = Cane()
+                self.gridNode.addObjectAtGrid(object: cane, x: canePos[0], y: canePos[1])
+            }
+            
+            /* Set catapult */
+            let catapultArray = [[3,4],[5,2]]
+            for catapultPos in catapultArray {
+                let catapult = Catapult()
+                self.gridNode.addObjectAtGrid(object: catapult, x: catapultPos[0], y: catapultPos[1])
+            }
+            
+            /* Set magicSword */
+            let magicSwordArray = [[1,1],[4,6],[7,5]]
+            for magicSwordPos in magicSwordArray {
+                let magicSword = MagicSword()
+                self.gridNode.addObjectAtGrid(object: magicSword, x: magicSwordPos[0], y: magicSwordPos[1])
+            }
+            
+            /* Set teleport */
+            let teleportArray = [[0,3],[8,3]]
+            for teleportPos in teleportArray {
+                let teleport = Teleport()
+                self.gridNode.addObjectAtGrid(object: teleport, x: teleportPos[0], y: teleportPos[1])
+            }
+            
+            /* Set spear */
+            let spearArray = [[7,1]]
+            for spearPos in spearArray {
+                let spear = Spear()
+                self.gridNode.addObjectAtGrid(object: spear, x: spearPos[0], y: spearPos[1])
+            }
+            
         /* Level 11 */
         case 10:
             /* Set enemy */

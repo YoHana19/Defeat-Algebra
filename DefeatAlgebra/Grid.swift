@@ -96,6 +96,8 @@ class Grid: SKSpriteNode {
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
+        guard gameScene.pauseFlag == false else { return }
+        
         guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
@@ -148,6 +150,7 @@ class Grid: SKSpriteNode {
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
+        guard gameScene.pauseFlag == false else { return }
         guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
@@ -223,6 +226,7 @@ class Grid: SKSpriteNode {
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
+        guard gameScene.pauseFlag == false else { return }
         guard gameScene.gameState == .PlayerTurn else { return }
         
         /* Reset enemy position after checking variable expression */
@@ -696,10 +700,13 @@ class Grid: SKSpriteNode {
                 gameScene.inputBoardForCane.isHidden = true
             }
         } else if gameScene.playerTurnState == .ShowingCard {
-            gameScene.showinCardFlag = false
-            gameScene.playerTurnState = .TurnEnd
-            if let card = childNode(withName: "itemCard") {
-                card.removeFromParent()
+            gameScene.cardArray[0].removeFromParent()
+            gameScene.cardArray.removeFirst()
+            gameScene.heroArray = gameScene.heroArray.filter({ $0.aliveFlag == true })
+            if gameScene.heroArray.count > 0{
+                gameScene.playerTurnState = .TurnEnd
+            } else {
+                gameScene.gameState = .GameOver
             }
         }
     }

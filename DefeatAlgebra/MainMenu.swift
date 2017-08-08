@@ -16,57 +16,59 @@ class MainMenu: SKScene {
     var buttonContinue: MSButtonNode!
 //    var buttonTutorial: MSButtonNode!
     
+    var settingScreen: SettingScreen!
+    var confirmScreen: ConfirmScreen!
+    
     /* Flag */
-    static var playDoneFlag = false
     static var tutorialHeroDone = false
     static var tutorialEnemyDone = false
     static var tutorialAttackDone = false
+    static var tutorialPracticeDone = false
+    static var tutorialTimeBombDone = false
+    static var tutorialAllDone = false
+    
+    var confirmingNewGameFlag = false
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
         /* Check user has played */
         let ud = UserDefaults.standard
-        MainMenu.playDoneFlag = ud.bool(forKey: "userPlayed")
         MainMenu.tutorialHeroDone = ud.bool(forKey: "tutorialHeroDone")
         MainMenu.tutorialEnemyDone = ud.bool(forKey: "tutorialEnemyDone")
         MainMenu.tutorialAttackDone = ud.bool(forKey: "tutorialAttackDone")
+        MainMenu.tutorialPracticeDone = ud.bool(forKey: "tutorialPracticeDone")
+        MainMenu.tutorialTimeBombDone = ud.bool(forKey: "tutorialTimeBombDone")
+        MainMenu.tutorialAllDone = ud.bool(forKey: "tutorialAllDone")
         
         /* Set UI connections */
         buttonNewGame = self.childNode(withName: "buttonNewGame") as! MSButtonNode
         buttonContinue = self.childNode(withName: "buttonContinue") as! MSButtonNode
-//        buttonTutorial = self.childNode(withName: "buttonTutorial") as! MSButtonNode
-        if MainMenu.playDoneFlag == false {
+        if MainMenu.tutorialAllDone == false {
             buttonContinue.state = .msButtonNodeStateHidden
-//            buttonTutorial.state = .msButtonNodeStateHidden
+            buttonNewGame.position.y = 365
         }
         
         buttonNewGame.selectedHandler = {
-            /* Store game property */
-            let ud = UserDefaults.standard
-            /* Stage level */
-            ud.set(0, forKey: "stageLevel")
-            /* Hero */
-            ud.set([1], forKey: "moveLevelArray")
-            /* item */
-            let itemNameArray = [String]()
-            ud.set(itemNameArray, forKey: "itemNameArray")
-            /* life */
-            ud.set(3, forKey: "life")
-            
-            /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
-            
-            /* Load Game scene */
-            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
-                return
+            if MainMenu.tutorialAllDone {
+                self.confirmScreen.isHidden = false
+                self.confirmingNewGameFlag = true
+            /* First Play */
+            } else {
+                /* Grab reference to the SpriteKit view */
+                let skView = self.view as SKView!
+                
+                /* Load Game scene */
+                guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFill
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
             }
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
         }
         
         buttonContinue.selectedHandler = {
@@ -104,6 +106,28 @@ class MainMenu: SKScene {
         /* Set Algebra Robot */
 //        setEnemy()
         
+        /* Set setting screen */
+        settingScreen = SettingScreen()
+        addChild(settingScreen)
+        
+        /* Set confirm screen for new game */
+        confirmScreen = ConfirmScreen()
+        addChild(confirmScreen)
+        
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        guard confirmingNewGameFlag == false else { return }
+        
+        /* Get touch point */
+        let touch = touches.first!              // Get the first touch
+        let location = touch.location(in: self) // Find the location of that touch in this view
+        let nodeAtPoint = atPoint(location)     // Find the node at that location
+        
+        if nodeAtPoint.name == "buttonSetting" {
+            settingScreen.isActive = !settingScreen.isActive
+        }
     }
     
     /* Set Algebra Robot */
