@@ -11,6 +11,8 @@ import SpriteKit
 
 class Boots: SKSpriteNode {
     
+    var spotPos = [Int]()
+    
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "boots")

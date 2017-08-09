@@ -49,6 +49,13 @@ class ConfirmScreen: SKSpriteNode {
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
         if nodeAtPoint.name == "yes" {
+            
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
+                self.run(sound)
+            }
+            
             mainMenu.confirmingNewGameFlag = false
             self.isHidden = true
             
@@ -79,6 +86,12 @@ class ConfirmScreen: SKSpriteNode {
             skView?.presentScene(scene)
             
         } else if nodeAtPoint.name == "no" {
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                let sound = SKAction.playSoundFileNamed("buttonBack.wav", waitForCompletion: true)
+                self.run(sound)
+            }
+            
             mainMenu.confirmingNewGameFlag = false
             self.isHidden = true
         }

@@ -61,8 +61,16 @@ class InputVariable: SKSpriteNode {
             for enemy in gameScene.gridNode.enemyArray {
                 enemy.calculatePunchLength(value: gameScene.xValue)
             }
-            gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 1)
-            gameScene.caneOnFlag = true
+            /* Play Sound */
+            let blessing = SKAction.playSoundFileNamed("cane.mp3", waitForCompletion: true)
+            self.run(blessing)
+            let wait = SKAction.wait(forDuration: 4.0)
+            let flash = SKAction.run({
+                gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 1)
+                gameScene.caneOnFlag = true
+            })
+            let seq = SKAction.sequence([wait, flash])
+            self.run(seq)
         }
         
         /* Touch button 2 */
@@ -72,8 +80,16 @@ class InputVariable: SKSpriteNode {
             for enemy in gameScene.gridNode.enemyArray {
                 enemy.calculatePunchLength(value: gameScene.xValue)
             }
-            gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 2)
-            gameScene.caneOnFlag = true
+            /* Play Sound */
+            let blessing = SKAction.playSoundFileNamed("cane.mp3", waitForCompletion: true)
+            self.run(blessing)
+            let wait = SKAction.wait(forDuration: 3.0)
+            let flash = SKAction.run({
+                gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 2)
+                gameScene.caneOnFlag = true
+            })
+            let seq = SKAction.sequence([wait, flash])
+            self.run(seq)
         }
         
         /* Touch button 3 */
@@ -83,8 +99,16 @@ class InputVariable: SKSpriteNode {
             for enemy in gameScene.gridNode.enemyArray {
                 enemy.calculatePunchLength(value: gameScene.xValue)
             }
-            gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 3)
-            gameScene.caneOnFlag = true
+            /* Play Sound */
+            let blessing = SKAction.playSoundFileNamed("cane.mp3", waitForCompletion: true)
+            self.run(blessing)
+            let wait = SKAction.wait(forDuration: 3.0)
+            let flash = SKAction.run({
+                gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 3)
+                gameScene.caneOnFlag = true
+            })
+            let seq = SKAction.sequence([wait, flash])
+            self.run(seq)
         }
         
     }
@@ -96,7 +120,7 @@ class InputVariable: SKSpriteNode {
         gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
         self.isHidden = true
         gameScene.itemType = .None
-        let waitForFlash = SKAction.wait(forDuration: TimeInterval(value)*0.5+0.3)
+        let waitForFlash = SKAction.wait(forDuration: TimeInterval(value)*1.0+3.0)
         let moveState = SKAction.run({
             gameScene.playerTurnState = .MoveState
         })
@@ -111,7 +135,7 @@ class InputVariable: SKSpriteNode {
         /* button 1 */
         let button1 = SKSpriteNode(imageNamed: "input1")
         button1.size = buttonSize
-        button1.position = CGPoint(x: -100, y: 0)
+        button1.position = CGPoint(x: -170, y: 0)
         button1.name = "button1"
         button1.zPosition = 3
         addChild(button1)
@@ -127,7 +151,7 @@ class InputVariable: SKSpriteNode {
         /* button 3 */
         let button3 = SKSpriteNode(imageNamed: "input3")
         button3.size = buttonSize
-        button3.position = CGPoint(x: 100, y: 0)
+        button3.position = CGPoint(x: 170, y: 0)
         button3.name = "button3"
         button3.zPosition = 3
         addChild(button3)

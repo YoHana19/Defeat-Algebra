@@ -314,7 +314,11 @@ class Grid: SKSpriteNode {
                 /* Sword attack */
                 if gameScene.activeHero.attackType == 0 {
                     gameScene.activeHero.setSwordAnimation()
-                    
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
+                        self.run(attack)
+                    }
                     /* If hitting enemy! */
                     if self.positionEnemyAtGrid[gridX][gridY] {
                         let waitAni = SKAction.wait(forDuration: 0.5)
@@ -749,6 +753,12 @@ class Grid: SKSpriteNode {
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
         particles.run(seqEffect)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
+            self.run(dead)
+        }
+
     }
     
     /*== Adding Enemy ==*/
@@ -867,13 +877,28 @@ class Grid: SKSpriteNode {
         /* Set the number of times of flash randomly */
         let numOfFlash = Int(arc4random_uniform(UInt32(numOfFlashUp)))+1
         
-        /* Set flash animation */
-        let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-        let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-        let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-        let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-        let flash = SKAction.repeat(seqFlash, count: numOfFlash)
-        self.run(flash)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let sound = SKAction.playSoundFileNamed("flash.wav", waitForCompletion: true)
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let group = SKAction.group([sound, seqFlash])
+            let flash = SKAction.repeat(group, count: numOfFlash)
+            self.run(flash)
+            
+        } else {
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let flash = SKAction.repeat(seqFlash, count: numOfFlash)
+            self.run(flash)
+            
+        }
         
         /* Display the number of flash */
         let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))

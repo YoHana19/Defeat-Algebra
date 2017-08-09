@@ -188,6 +188,14 @@ class Hero: SKSpriteNode {
         let heroSwordAnimationRight = SKAction(named: "heroSwordRight")!
         let seq = SKAction.sequence([changeAnchorRight, heroSwordAnimationRight, changeAnchorFront, heroSwordAnimationFront, changeAnchorLeft, heroSwordAnimationLeft, changeAnchorBack, heroSwordAnimationBack])
         self.run(seq)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let sword = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
+            let wait = SKAction.wait(forDuration: 0.6)
+            let seqSound = SKAction.sequence([sword, wait])
+            let keepPlaying = SKAction.repeat(seqSound, count: 4)
+            self.run(keepPlaying)
+        }
     }
     
     /* Reset hero position and animation */

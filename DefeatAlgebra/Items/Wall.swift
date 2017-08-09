@@ -14,6 +14,7 @@ class Wall: SKSpriteNode {
     var posX = 0
     var posY = 0
     var spotPos = [Int]()
+    
     init() {
         /* Initialize with 'mine' asset */
         let texture = SKTexture(imageNamed: "wall")

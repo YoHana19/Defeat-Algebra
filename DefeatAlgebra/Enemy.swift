@@ -859,8 +859,6 @@ class Enemy: SKSpriteNode {
         
         /* Enemy punch beyond edge of grid */
         if self.positionY < self.valueOfEnemy {
-            print("beyond edge")
-            print(self.wallHitFlag)
             
             /* Decrese life */
             let decreseLife = SKAction.run({
@@ -955,6 +953,8 @@ class Enemy: SKSpriteNode {
             let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
             let moveNextEnemy = SKAction.run({
                 self.myTurnFlag = false
+                /* For sound */
+                gameScene.hitCastleWallSoundDone = false
                 if gridNode.turnIndex < gridNode.enemyArray.count-1 {
                     gridNode.turnIndex += 1
                     gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
@@ -1128,7 +1128,7 @@ class Enemy: SKSpriteNode {
         let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
         let moveNextEnemy = SKAction.run({
             self.myTurnFlag = false
-            
+            gameScene.hitCastleWallSoundDone = false
             /* Reset enemy animation */
             self.setMovingAnimation()
             

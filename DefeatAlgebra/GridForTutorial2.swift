@@ -190,18 +190,6 @@ class GridForTutorial2: SKSpriteNode {
             }
         }
         
-        /* Touch enemy to check variable expression */
-        if touchingEnemyFlag == false {
-            if nodeAtPoint.name == "enemy" {
-                /* Make sure to be invalid when using magicSword */
-                guard gameScene.magicSwordAttackDone == false else { return }
-                
-                touchingEnemyFlag = true
-                touchedEnemy = nodeAtPoint as! Enemy
-                touchedEnemy.position = location
-                touchedEnemy.physicsBody = nil
-            }
-        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

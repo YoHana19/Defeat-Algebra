@@ -15,8 +15,16 @@ class ItemList: SKScene {
     var lockedArray = [SKSpriteNode]()
     var showingCardFlag = false
     
+    /* Sound */
+    var sound = BGM(bgm: 3)
+    
     override func didMove(to view: SKView) {
         /* Setup your scene here */
+        
+        /* Sound */
+        if MainMenu.soundOnFlag {
+            sound.play()
+        }
         
         setItem(itemArray: itemArray)
         setCoverItem()
@@ -35,6 +43,7 @@ class ItemList: SKScene {
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
         if nodeAtPoint.name == "buttonBack" {
+            
             if showingCardFlag {
                 if let card = childNode(withName: "itemCard") {
                     card.removeFromParent()
@@ -48,6 +57,12 @@ class ItemList: SKScene {
             /* Load Game scene */
             guard let scene = MainMenu(fileNamed:"MainMenu") as MainMenu! else {
                 return
+            }
+            
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                let sound = SKAction.playSoundFileNamed("buttonBack.wav", waitForCompletion: true)
+                scene.run(sound)
             }
             
             /* Ensure correct aspect mode */

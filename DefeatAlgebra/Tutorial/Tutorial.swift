@@ -180,10 +180,10 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Retry button */
-        buttonRetry.selectedHandler = {
+        buttonRetry.selectedHandler = { [weak self] in
             
             /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
+            let skView = self?.view as SKView!
             
             /* Load Game scene */
             guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
@@ -198,11 +198,11 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Skip button */
-        buttonSkip.selectedHandler = {
+        buttonSkip.selectedHandler = { [weak self] in
             
             if Tutorial.tutorialPhase == 2 {
                 /* Grab reference to the SpriteKit view */
-                let skView = self.view as SKView!
+                let skView = self?.view as SKView!
                 
                 Tutorial.tutorialPhase += 1
                 
@@ -219,7 +219,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 
             } else {
                 /* Grab reference to the SpriteKit view */
-                let skView = self.view as SKView!
+                let skView = self?.view as SKView!
                 
                 Tutorial.tutorialPhase += 1
                 
@@ -237,7 +237,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Next button */
-        buttonNext.selectedHandler = {
+        buttonNext.selectedHandler = { [weak self] in
             
             /* Store flag of this tutorial done */
             let ud = UserDefaults.standard
@@ -251,7 +251,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             
             if Tutorial.tutorialPhase == 2 {
                 /* Grab reference to the SpriteKit view */
-                let skView = self.view as SKView!
+                let skView = self?.view as SKView!
                 
                 Tutorial.tutorialPhase += 1
                 
@@ -267,7 +267,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 skView?.presentScene(scene)
             } else {
                 /* Grab reference to the SpriteKit view */
-                let skView = self.view as SKView!
+                let skView = self?.view as SKView!
                 
                 Tutorial.tutorialPhase += 1
                 
@@ -285,10 +285,10 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Again button */
-        buttonAgain.selectedHandler = {
+        buttonAgain.selectedHandler = { [weak self] in
             
             /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
+            let skView = self?.view as SKView!
             
             /* Load Game scene */
             guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
@@ -303,9 +303,9 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Pause button */
-        buttonPause.selectedHandler = {
-            self.pauseFlag = true
-            self.pauseScreen.isHidden = false
+        buttonPause.selectedHandler = { [weak self] in
+            self?.pauseFlag = true
+            self?.pauseScreen.isHidden = false
         }
         
         /* Set puase screen */

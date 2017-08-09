@@ -21,6 +21,9 @@
 
 import SpriteKit
 import GameplayKit
+import Fabric
+import Crashlytics
+import AVFoundation
 
 enum GameSceneState {
     case AddEnemy, PlayerTurn, EnemyTurn, GridFlashing, StageClear, GameOver
@@ -81,6 +84,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var stageLevel: Int = 0
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 0
+    
+    /*== Game Sounds ==*/
+//    var playerTurn = BGM(bgm: 4)
+    var playerSoundCalled = false
+//    var enemyTurn = BGM(bgm: 1)
+    var enemySoundCalled = false
+    var main = BGM(bgm: 0)
+    var stageClear = BGM(bgm: 2)
+    var gameOverSoundDone = false
+    var stageClearSoundDone = false
+    var hitCastleWallSoundDone = false
     
     /*===========*/
     /*== Hero ==*/
@@ -162,7 +176,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var usingItemIndex = 0
     var usedItemIndexArray = [Int]()
     var itemAreaCover: SKShapeNode!
-    var itemSpot = [[Int]]()
+    var itemSpot = [[2,1],[2,3],[2,5],[4,1],[4,5],[6,1],[6,3],[6,5]]
     var cardArray = [SKSpriteNode]()
     static var firstGetItemFlagArray: [Bool] = [true, true, false, false, false, false, false, false, false, false, false, false, false]
     /* Time bomb */
@@ -197,6 +211,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var caneOnFlag = false
     /* spear */
     var spearTurnCount = 0
+    var checkSpearDone = false
+    /* call hero */
+    var callHeroCount = 0
+    var callHeroCountDone = false
+    var callingHero = false
     
     /*================*/
     /*== Grid Flash ==*/
@@ -215,6 +234,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var life: Int = 3
     
     override func didMove(to view: SKView) {
+        
         /* Connect scene objects */
         gridNode = childNode(withName: "gridNode") as! Grid
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
@@ -223,6 +243,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         buttonItem = childNode(withName: "buttonItem")
         buttonAttack.isHidden = true
         buttonItem.isHidden = true
+        
+        /* Sound */
+        if MainMenu.soundOnFlag {
+            main.play()
+            main.numberOfLoops = -1
+        }
         
         /* Labels */
         gameOverLabel = childNode(withName: "gameOverLabel")
@@ -246,10 +272,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         /* Retry button */
-        buttonRetry.selectedHandler = {
+        buttonRetry.selectedHandler = { [weak self] in
             
             /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
+            let skView = self?.view as SKView!
             
             /* Load Game scene */
             guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
@@ -264,8 +290,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Next Level button */
-        buttonNextLevel.selectedHandler = {
-            if self.stageLevel >= 1 {
+        buttonNextLevel.selectedHandler = { [weak self] in
+            if (self?.stageLevel)! >= 1 {
                 /* Store previous game property */
                 let ud = UserDefaults.standard
                 /* stageLevel */
@@ -283,33 +309,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             /* To next stage level */
-            self.stageLevel += 1
+            self?.stageLevel += 1
             
             /* Store game property */
             let ud = UserDefaults.standard
             /* Stage level */
-            ud.set(self.stageLevel, forKey: "stageLevel")
+            ud.set(self?.stageLevel, forKey: "stageLevel")
             /* Hero */
-            self.moveLevelArray = []
-            for (i, hero) in self.heroArray.enumerated() {
-                self.moveLevelArray.append(hero.moveLevel)
-                if i == self.heroArray.count-1 {
-                    ud.set(self.moveLevelArray, forKey: "moveLevelArray")
+            self?.moveLevelArray = []
+            for (i, hero) in (self?.heroArray.enumerated())! {
+                self?.moveLevelArray.append(hero.moveLevel)
+                if i == (self?.heroArray.count)!-1 {
+                    ud.set(self?.moveLevelArray, forKey: "moveLevelArray")
                 }
             }
             /* Items */
             var itemNameArray = [String]()
-            for (i, item) in self.itemArray.enumerated() {
+            for (i, item) in (self?.itemArray.enumerated())! {
                 itemNameArray.append(item.name!)
-                if i == self.itemArray.count-1 {
+                if i == (self?.itemArray.count)!-1 {
                     ud.set(itemNameArray, forKey: "itemNameArray")
                 }
             }
             /* Life */
-            ud.set(self.maxLife, forKey: "life")
+            ud.set(self?.maxLife, forKey: "life")
             
             /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
+            let skView = self?.view as SKView!
             
             /* Load Game scene */
             guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
@@ -324,7 +350,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Restart from last level button */
-        buttonRestartLastLevel.selectedHandler = {
+        buttonRestartLastLevel.selectedHandler = { [weak self] in
             
             /* Set previous level property */
             let ud = UserDefaults.standard
@@ -342,7 +368,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             ud.set(tempMaxLife, forKey: "life")
             
             /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
+            let skView = self?.view as SKView!
             
             /* Load Game scene */
             guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
@@ -357,9 +383,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Pause button */
-        buttonPause.selectedHandler = {
-            self.pauseFlag = true
-            self.pauseScreen.isHidden = false
+        buttonPause.selectedHandler = { [weak self] in
+            self?.pauseFlag = true
+            self?.pauseScreen.isHidden = false
         }
 
         /*====================================================*/
@@ -369,7 +395,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
-//        stageLevel = 8
+//        stageLevel = 10
         levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
@@ -378,7 +404,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setHero()
         /* Items */
         var handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-//        handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "cane", "cane"]
+//        handedItemNameArray = ["catapult"]
 //        print(handedItemNameArray)
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
@@ -392,6 +418,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Item flag */
         GameScene.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [true, true, false, false, false, false, false, false, false, false, false, false, false]
 //        GameScene.firstGetItemFlagArray = [true, true, false, false, false, false, false, false, false, false, false, false, false]
+        
+        /* For Analytics */
+        Answers.logLevelStart("Level \(stageLevel)")
         
         /* Set input boards */
         setInputBoard()
@@ -427,9 +456,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Set no gravity */
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
-        
-        /* Set item spot */
-        setItemSpot()
         
         /* Set initial objects */
         setInitialObj(level: self.stageLevel)
@@ -569,6 +595,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 gameState = .StageClear
             }
             
+            /* Sounds */
+            if MainMenu.soundOnFlag {
+                /* Make sure to call once */
+                if playerSoundCalled == false {
+                    playerSoundCalled = true
+                    enemySoundCalled = false
+//                    playerTurn.play()
+//                    enemyTurn.stop()
+                }
+            }
+            
             switch playerTurnState {
             case .DisplayPhase:
                 playerPhaseLabel.isHidden = false
@@ -591,18 +628,59 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 playerPhaseLabel.isHidden = true
                 
                 /* spear */
-                if spearTurnCount > 0 {
-                    print("spear")
-                    print(activeHero.attackType)
-                    spearTurnCount -= 1
-                } else {
-                    activeHero.attackType = 0
+                /* Make sure to call once */
+                if checkSpearDone == false {
+                    checkSpearDone = true
+                    if spearTurnCount < 1 {
+                        activeHero.attackType = 0
+                    } else {
+                        spearTurnCount -= 1
+                    }
+                }
+                
+//                print(callingHero)
+//                print(callHeroCountDone)
+//                print(callHeroCount)
+//                print(heroArray.count)
+                
+                /* callHero */
+                if callingHero {
+                    /* Make sure to call once */
+                    if callHeroCountDone == false {
+                        callHeroCountDone = true
+                        if callHeroCount < 1 {
+                            print(callHeroCount)
+                            if heroArray.count > 1 {
+                                print("hero Get out")
+                                let calledHero = heroArray.last!
+                                calledHero.direction = .front
+                                calledHero.setMovingAnimation()
+                                calledHero.physicsBody = nil
+                                let getOut = SKAction.moveTo(y: -30, duration: 3.0)
+                                let wait = SKAction.wait(forDuration: 3.0)
+                                let removeHero = SKAction.run({
+                                    calledHero.removeFromParent()
+                                    self.heroArray.removeLast()
+                                })
+                                let seq = SKAction.sequence([getOut, wait, removeHero])
+                                calledHero.run(seq)
+                            }
+                            callingHero = false
+                        } else {
+                            callHeroCount -= 1
+                        }
+                    }
                 }
                 
                 /* timeBomb */
                 if self.gridNode.timeBombSetArray.count > 0 {
                     if bombExplodeDoneFlag == false {
                         bombExplodeDoneFlag = true
+                        /* Play Sound */
+                        if MainMenu.soundOnFlag {
+                            let explode = SKAction.playSoundFileNamed("timeBombExplosion.mp3", waitForCompletion: true)
+                            self.run(explode)
+                        }
                         for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
                             /* Look for the enemy to destroy  if any */
                             for enemy in self.gridNode.enemyArray {
@@ -658,6 +736,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         let shoot = SKAction.run({
                             for battleShip in self.gridNode.battleShipSetArray {
                                 battleShip.shootBullet()
+                                /* Play Sound */
+                                if MainMenu.soundOnFlag {
+                                    let shoot = SKAction.playSoundFileNamed("battleShipShoot.wav", waitForCompletion: true)
+                                    self.run(shoot)
+                                }
+
                             }
                         })
                         let wait = SKAction.wait(forDuration: 4.0)
@@ -799,6 +883,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     hero.moveDoneFlag = false
                 }
                 numOfTurnDoneHero = 0
+                checkSpearDone = false
+                callHeroCountDone = false
                 
                 /* Remove action buttons */
                 buttonAttack.isHidden = true
@@ -835,7 +921,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .EnemyTurn:
-            //                        print("EnemyTurn")
+            
+            /* Sounds */
+            if MainMenu.soundOnFlag {
+                /* Make sure to call once */
+                if enemySoundCalled == false {
+                    playerSoundCalled = false
+                    enemySoundCalled = true
+//                    playerTurn.stop()
+//                    enemyTurn.play()
+                }
+            }
+            
             /* Reset Flags */
             addEnemyDoneFlag = false
             playerTurnDoneFlag = false
@@ -929,12 +1026,29 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break;
         case .StageClear:
             gridNode.resetSquareArray(color: "blue")
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                if stageClearSoundDone == false {
+                    stageClearSoundDone = true
+                    stageClear.play()
+                    main.stop()
+                }
+            }
             clearLabel.isHidden = false
             buttonNextLevel.state = .msButtonNodeStateActive
             break;
             
         case .GameOver:
             gameOverLabel.isHidden = false
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                if gameOverSoundDone == false {
+                    gameOverSoundDone = true
+                    main.stop()
+                    let sound = SKAction.playSoundFileNamed("gameOver.wav", waitForCompletion: true)
+                    self.run(sound)
+                }
+            }
             buttonRetry.state = .msButtonNodeStateActive
             if stageLevel >= 1 {
                 buttonRestartLastLevel.state = .msButtonNodeStateActive
@@ -1087,6 +1201,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Call another hero */
                 addHero()
+                
+                /* On flag */
+                callingHero = true
+                callHeroCount = 3
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
@@ -1316,6 +1434,43 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
+            /* spear */
+            } else if nodeAtPoint.name == "spear" {
+                /* Remove activeArea */
+                self.gridNode.resetSquareArray(color: "red")
+                self.gridNode.resetSquareArray(color: "purple")
+                resetActiveAreaForCatapult()
+                /* Remove triangle except the one of selected catapult */
+                for catapult in setCatapultArray {
+                    if let node = catapult.childNode(withName: "pointingCatapult") {
+                        node.removeFromParent()
+                    }
+                }
+                
+                if self.activeHero.attackType < 1 {
+                    self.activeHero.attackType += 1
+                    self.spearTurnCount = 3
+                }
+                
+                /* Get index of game using */
+                usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
+                
+                /* Remove used itemIcon from item array and Scene */
+                resetDisplayItem(index: usingItemIndex)
+                
+                /* Cover item area */
+                self.itemAreaCover.isHidden = false
+                
+                /* Change state to MoveState */
+                let wait = SKAction.wait(forDuration: 0.1)
+                let moveState = SKAction.run({
+                    /* Reset hero animation */
+                    self.activeHero.resetHero()
+                    self.playerTurnState = .MoveState
+                })
+                let seq = SKAction.sequence([wait, moveState])
+                self.run(seq)
+                
             /* Touch active area  */
             } else if nodeAtPoint.name == "activeArea" {
                 /* Using catapult */
@@ -1499,8 +1654,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if contactA.categoryBitMask == 1 || contactB.categoryBitMask == 1 {
             /* Get item */
             if contactA.categoryBitMask == 64 || contactB.categoryBitMask == 64 {
+                
                 /* A is hero */
                 if contactA.categoryBitMask == 1 {
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
+                        self.run(get)
+                    }
                     let item = contactB.node as! SKSpriteNode
                     /* Get boots */
                     if item.name == "boots" {
@@ -1508,26 +1669,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                        /* Get heart */
+                        if stageLevel >= 10 {
+                            let boots = item as! Boots
+                            autoSetItems()
+                            itemSpot.append(boots.spotPos)
+                        }
+                    /* Get heart */
                     } else if item.name == "heart" {
                         checkFirstItem(itemName: item.name!)
                         item.removeFromParent()
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if stageLevel >= 8 {
-//                            itemSpot.append(item.spotPos)
-//                            autoSetItems()
+                        if stageLevel >= 10 {
+                            let heart = item as! Heart
+                            autoSetItems()
+                            itemSpot.append(heart.spotPos)
                         }
-                        /* Get spear */
-                    } else if item.name == "spear" {
-                        checkFirstItem(itemName: item.name!)
-                        item.removeFromParent()
-                        if self.activeHero.attackType < 1 {
-                            self.activeHero.attackType += 1
-                            self.spearTurnCount = 3
-                        }
-                        /* Other items */
+                    /* Other items */
                     } else {
                         item.removeFromParent()
                         checkFirstItem(itemName: item.name!)
@@ -1538,14 +1697,62 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         } else {
                             displayitem(name: item.name!)
                         }
-                        if stageLevel >= 8 {
-//                            itemSpot.append(item.spotPos)
-//                            autoSetItems()
+                        if stageLevel >= 10 {
+                            if item.name == "timeBomb" {
+                                let temp = item as! TimeBomb
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "multiAttack" {
+                                let temp = item as! MultiAttack
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "wall" {
+                                let temp = item as! Wall
+                                itemSpot.append(temp.spotPos)
+                                autoSetItems()
+                            } else if item.name == "battleShip" {
+                                let temp = item as! BattleShip
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "magicSword" {
+                                let temp = item as! MagicSword
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "catapult" {
+                                let temp = item as! Catapult
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "resetCatapult" {
+                                let temp = item as! ResetCatapult
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "cane" {
+                                let temp = item as! Cane
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "spear" {
+                                let temp = item as! Spear
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "teleport" {
+                                let temp = item as! Teleport
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "callHero" {
+                                let temp = item as! CallHero
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            }
                         }
                     }
                 }
                 /* B is hero */
                 if contactB.categoryBitMask == 1 {
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
+                        self.run(get)
+                    }
                     let item = contactA.node as! SKSpriteNode
                     /* Get boots */
                     if item.name == "boots" {
@@ -1553,6 +1760,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
+                        if stageLevel >= 10 {
+                            let boots = item as! Boots
+                            autoSetItems()
+                            itemSpot.append(boots.spotPos)
+                        }
                         /* Get heart */
                     } else if item.name == "heart" {
                         checkFirstItem(itemName: item.name!)
@@ -1560,19 +1772,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if stageLevel >= 8 {
+                        if stageLevel >= 10 {
 //                            itemSpot.append(item.spotPos)
-//                            autoSetItems()
+                            autoSetItems()
                         }
-                        /* Get spear */
-                    } else if item.name == "spear" {
-                        checkFirstItem(itemName: item.name!)
-                        item.removeFromParent()
-                        if self.activeHero.attackType < 1 {
-                            self.activeHero.attackType += 1
-                            self.spearTurnCount = 3
+                        if stageLevel >= 10 {
+                            let heart = item as! Heart
+                            autoSetItems()
+                            itemSpot.append(heart.spotPos)
                         }
-                        /* Other items */
+                    /* Other items */
                     } else {
                         item.removeFromParent()
                         checkFirstItem(itemName: item.name!)
@@ -1583,14 +1792,57 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         } else {
                             displayitem(name: item.name!)
                         }
-                        if stageLevel >= 8 {
-//                            itemSpot.append(item.spotPos)
-//                            autoSetItems()
+                        if stageLevel >= 10 {
+                            if item.name == "timeBomb" {
+                                let temp = item as! TimeBomb
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "multiAttack" {
+                                let temp = item as! MultiAttack
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "wall" {
+                                let temp = item as! Wall
+                                itemSpot.append(temp.spotPos)
+                                autoSetItems()
+                            } else if item.name == "battleShip" {
+                                let temp = item as! BattleShip
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "magicSword" {
+                                let temp = item as! MagicSword
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "catapult" {
+                                let temp = item as! Catapult
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "resetCatapult" {
+                                let temp = item as! ResetCatapult
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "cane" {
+                                let temp = item as! Cane
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "spear" {
+                                let temp = item as! Spear
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "teleport" {
+                                let temp = item as! Teleport
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            } else if item.name == "callHero" {
+                                let temp = item as! CallHero
+                                autoSetItems()
+                                itemSpot.append(temp.spotPos)
+                            }
                         }
                     }
                 }
                 
-                /* Be hitten by enemy */
+            /* Hit enemy */
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! Hero
@@ -1648,6 +1900,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
             //            print("cate 4 hit")
             
+            /* Make sure to call once at each enemy */
+            if hitCastleWallSoundDone == false {
+                hitCastleWallSoundDone = true
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
+                    self.run(sound)
+                }
+            }
+            
             if contactA.categoryBitMask == 4 {
                 /* Get enemy body or arm or fist */
                 let nodeB = contactB.node as! SKSpriteNode
@@ -1674,6 +1936,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if contactA.node?.name == "wall" {
                     /* Get wall */
                     let wall = contactA.node as! Wall
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let hitWall = SKAction.playSoundFileNamed("hitWall.wav", waitForCompletion: false)
+                        self.run(hitWall)
+                    }
                     
                     /* Enemy hits wall */
                     if contactB.categoryBitMask == 2 {
@@ -1780,6 +2047,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if contactB.node?.name == "wall" {
                     /* Get wall */
                     let wall = contactB.node as! Wall
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let hitWall = SKAction.playSoundFileNamed("hitWall.wav", waitForCompletion: true)
+                        self.run(hitWall)
+                    }
+
                     
                     /* Enemy hits wall */
                     if contactA.categoryBitMask == 2 {
@@ -2278,6 +2551,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let seqEffect2 = SKAction.sequence([waitRemoveExplode, removeParticles])
                     particles.run(seqEffect)
                     particles2.run(seqEffect2)
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let explode = SKAction.playSoundFileNamed("catapultBomb.mp3", waitForCompletion: true)
+                        self.run(explode)
+                    }
+
                 })
                 
                 let waitRemoveEffect = SKAction.wait(forDuration: 2.0)
@@ -2396,6 +2675,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         particles.name = "magicSwordEffect"
         /* Add particles to scene */
         addChild(particles)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let magicSword = SKAction.playSoundFileNamed("magicSword.wav", waitForCompletion: true)
+            let keepPlaying = SKAction.repeatForever(magicSword)
+            particles.run(keepPlaying)
+        }
     }
     
     /* Set effect to enemy when using magic sword */
@@ -2406,6 +2691,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         particles.name = "magicSwordEffectToEnemy"
         /* Add particles to scene */
         addChild(particles)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let magicSword = SKAction.playSoundFileNamed("magicSword.wav", waitForCompletion: true)
+            let keepPlaying = SKAction.repeatForever(magicSword)
+            particles.run(keepPlaying)
+        }
     }
     
     /* Remove effect when using magic sword */
@@ -2454,6 +2745,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hero.positionX = 4
         hero.positionY = 0
         
+        hero.moveLevel = 2
+        
         /* Add screen and heroArray */
         addChild(hero)
         heroArray.append(hero)
@@ -2492,15 +2785,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        
 //    }
     
-    /* Set item spot */
-    func setItemSpot() {
-        for i in 1...7 {
-            for v in 0...6 {
-                itemSpot.append([i, v])
-            }
-        }
-    }
-    
     /* Auto Set item */
     func autoSetItems() {
         /* Determine position to set */
@@ -2510,47 +2794,122 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Determine item to set */
         let rand = arc4random_uniform(100)
-        if rand < 10 {
+        if rand < 3 {
+            let boots = Boots()
+            boots.spotPos = position
+            self.gridNode.addObjectAtGrid(object: boots, x: position[0], y: position[1])
+        } else if rand < 10 {
             let timeBomb = TimeBomb()
             timeBomb.spotPos = position
             self.gridNode.addObjectAtGrid(object: timeBomb, x: position[0], y: position[1])
-        } else if rand < 20 {
-            let battleShip = BattleShip()
-            battleShip.spotPos = position
-            self.gridNode.addObjectAtGrid(object: battleShip, x: position[0], y: position[1])
-        } else if rand < 30 {
-            let teleport = Teleport()
-            teleport.spotPos = position
-            self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
-        } else if rand < 40 {
-            let catapult = Catapult()
-            catapult.spotPos = position
-            self.gridNode.addObjectAtGrid(object: catapult, x: position[0], y: position[1])
-        } else if rand < 50 {
-            let resetCatapult = ResetCatapult()
-            resetCatapult.spotPos = position
-            self.gridNode.addObjectAtGrid(object: resetCatapult, x: position[0], y: position[1])
-        } else if rand < 60 {
-            let magicSword = MagicSword()
-            magicSword.spotPos = position
-            self.gridNode.addObjectAtGrid(object: magicSword, x: position[0], y: position[1])
-        } else if rand < 70 {
-            let multiAttack = MultiAttack()
-            multiAttack.spotPos = position
-            self.gridNode.addObjectAtGrid(object: multiAttack, x: position[0], y: position[1])
-        } else if rand < 80 {
-            let wall = Wall()
-            wall.spotPos = position
-            self.gridNode.addObjectAtGrid(object: wall, x: position[0], y: position[1])
-        } else if rand < 90 {
-            let cane = Cane()
-            cane.spotPos = position
-            self.gridNode.addObjectAtGrid(object: cane, x: position[0], y: position[1])
-        } else if rand < 100 {
+        } else if rand < 15 {
             let heart = Heart()
             heart.spotPos = position
             self.gridNode.addObjectAtGrid(object: heart, x: position[0], y: position[1])
+        } else if rand < 22 {
+            let multiAttack = MultiAttack()
+            multiAttack.spotPos = position
+            self.gridNode.addObjectAtGrid(object: multiAttack, x: position[0], y: position[1])
+        } else if rand < 32 {
+            let wall = Wall()
+            wall.spotPos = position
+            self.gridNode.addObjectAtGrid(object: wall, x: position[0], y: position[1])
+        } else if rand < 37 {
+            let battleShip = BattleShip()
+            battleShip.spotPos = position
+            self.gridNode.addObjectAtGrid(object: battleShip, x: position[0], y: position[1])
+        } else if rand < 55 {
+            let magicSword = MagicSword()
+            magicSword.spotPos = position
+            self.gridNode.addObjectAtGrid(object: magicSword, x: position[0], y: position[1])
+        } else if rand < 73 {
+            let catapult = Catapult()
+            catapult.spotPos = position
+            self.gridNode.addObjectAtGrid(object: catapult, x: position[0], y: position[1])
+        } else if rand < 78 {
+            let resetCatapult = ResetCatapult()
+            resetCatapult.spotPos = position
+            self.gridNode.addObjectAtGrid(object: resetCatapult, x: position[0], y: position[1])
+        } else if rand < 88 {
+            let cane = Cane()
+            cane.spotPos = position
+            self.gridNode.addObjectAtGrid(object: cane, x: position[0], y: position[1])
+        } else if rand < 93 {
+            let teleport = Teleport()
+            teleport.spotPos = position
+            self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
+        } else if rand < 97 {
+            let spear = Spear()
+            spear.spotPos = position
+            self.gridNode.addObjectAtGrid(object: spear, x: position[0], y: position[1])
+        } else if rand < 100 {
+            let callHero = CallHero()
+            callHero.spotPos = position
+            self.gridNode.addObjectAtGrid(object: callHero, x: position[0], y: position[1])
             
+        }
+    }
+    
+    func autoSetInitialItems(posArray: [[Int]]) {
+        
+        for position in posArray {
+            itemSpot = itemSpot.filter({ $0 != position })
+            /* Determine item to set */
+            let rand = arc4random_uniform(100)
+            if rand < 3 {
+                let boots = Boots()
+                boots.spotPos = position
+                self.gridNode.addObjectAtGrid(object: boots, x: position[0], y: position[1])
+            } else if rand < 10 {
+                let timeBomb = TimeBomb()
+                timeBomb.spotPos = position
+                self.gridNode.addObjectAtGrid(object: timeBomb, x: position[0], y: position[1])
+            } else if rand < 15 {
+                let heart = Heart()
+                heart.spotPos = position
+                self.gridNode.addObjectAtGrid(object: heart, x: position[0], y: position[1])
+            } else if rand < 22 {
+                let multiAttack = MultiAttack()
+                multiAttack.spotPos = position
+                self.gridNode.addObjectAtGrid(object: multiAttack, x: position[0], y: position[1])
+            } else if rand < 32 {
+                let wall = Wall()
+                wall.spotPos = position
+                self.gridNode.addObjectAtGrid(object: wall, x: position[0], y: position[1])
+            } else if rand < 37 {
+                let battleShip = BattleShip()
+                battleShip.spotPos = position
+                self.gridNode.addObjectAtGrid(object: battleShip, x: position[0], y: position[1])
+            } else if rand < 55 {
+                let magicSword = MagicSword()
+                magicSword.spotPos = position
+                self.gridNode.addObjectAtGrid(object: magicSword, x: position[0], y: position[1])
+            } else if rand < 73 {
+                let catapult = Catapult()
+                catapult.spotPos = position
+                self.gridNode.addObjectAtGrid(object: catapult, x: position[0], y: position[1])
+            } else if rand < 78 {
+                let resetCatapult = ResetCatapult()
+                resetCatapult.spotPos = position
+                self.gridNode.addObjectAtGrid(object: resetCatapult, x: position[0], y: position[1])
+            } else if rand < 88 {
+                let cane = Cane()
+                cane.spotPos = position
+                self.gridNode.addObjectAtGrid(object: cane, x: position[0], y: position[1])
+            } else if rand < 93 {
+                let teleport = Teleport()
+                teleport.spotPos = position
+                self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
+            } else if rand < 97 {
+                let spear = Spear()
+                spear.spotPos = position
+                self.gridNode.addObjectAtGrid(object: spear, x: position[0], y: position[1])
+            } else if rand < 100 {
+                let callHero = CallHero()
+                callHero.spotPos = position
+                self.gridNode.addObjectAtGrid(object: callHero, x: position[0], y: position[1])
+                
+            }
         }
     }
     
@@ -2922,7 +3281,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Set teleport */
-            let teleportArray = [[0,3],[8,3]]
+            let teleportArray = [[0,3]]
             for teleportPos in teleportArray {
                 let teleport = Teleport()
                 self.gridNode.addObjectAtGrid(object: teleport, x: teleportPos[0], y: teleportPos[1])
@@ -2935,6 +3294,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: spear, x: spearPos[0], y: spearPos[1])
             }
             
+            /* Set spear */
+            let callHeroArray = [[8,3]]
+            for callHeroPos in callHeroArray {
+                let callHero = CallHero()
+                self.gridNode.addObjectAtGrid(object: callHero, x: callHeroPos[0], y: callHeroPos[1])
+            }
+            
         /* Level 11 */
         case 10:
             /* Set enemy */
@@ -2943,33 +3309,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
-            /* Set battle ship */
-            let battleShipsArray = [[4,0]]
-            for battleShipPos in battleShipsArray {
-                let battleShip = BattleShip()
-                self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
-            }
+            /* Set initial items */
+            autoSetInitialItems(posArray: [[2, 1], [2, 5], [6, 1], [6, 5]])
             
-            /* Set catapult */
-            let catapultArray = [[6,2],[6,4]]
-            for catapultPos in catapultArray {
-                let catapult = Catapult()
-                self.gridNode.addObjectAtGrid(object: catapult, x: catapultPos[0], y: catapultPos[1])
-            }
-            
-            /* Set magicSword */
-            let magicSwordArray = [[2,2],[2,4],[4,5]]
-            for magicSwordPos in magicSwordArray {
-                let magicSword = MagicSword()
-                self.gridNode.addObjectAtGrid(object: magicSword, x: magicSwordPos[0], y: magicSwordPos[1])
-            }
-            
-            /* Set teleport */
-            let teleportArray = [[4,1]]
-            for teleportPos in teleportArray {
-                let teleport = Teleport()
-                self.gridNode.addObjectAtGrid(object: teleport, x: teleportPos[0], y: teleportPos[1])
-            }
         /* Level 12 */
         case 11:
             /* Set enemy */

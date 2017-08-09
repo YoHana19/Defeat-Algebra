@@ -19,6 +19,27 @@
 		2019C37F1F0B5933003C7609 /* AnimationActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2019C37E1F0B5933003C7609 /* AnimationActions.sks */; };
 		2019C3811F0B5A85003C7609 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019C3801F0B5A85003C7609 /* Enemy.swift */; };
 		2019C3831F0B5A91003C7609 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2019C3821F0B5A91003C7609 /* Grid.swift */; };
+		201B8C4D1F3A2D2800E91301 /* timeBombExplosion.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C4C1F3A2D2800E91301 /* timeBombExplosion.mp3 */; };
+		201B8C4F1F3A307B00E91301 /* swordSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C4E1F3A307B00E91301 /* swordSound.wav */; };
+		201B8C511F3A325A00E91301 /* catapultBomb.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C501F3A325A00E91301 /* catapultBomb.mp3 */; };
+		201B8C531F3A326000E91301 /* enemyKilled.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C521F3A326000E91301 /* enemyKilled.mp3 */; };
+		201B8C551F3A326600E91301 /* battleShipShoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C541F3A326600E91301 /* battleShipShoot.wav */; };
+		201B8C571F3A365700E91301 /* hitWall.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C561F3A365700E91301 /* hitWall.wav */; };
+		201B8C5B1F3A439800E91301 /* magicSword.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5A1F3A439800E91301 /* magicSword.wav */; };
+		201B8C5D1F3A47BA00E91301 /* cane.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5C1F3A47BA00E91301 /* cane.mp3 */; };
+		201B8C5F1F3A533900E91301 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5E1F3A533900E91301 /* gameOver.wav */; };
+		201B8C631F3A589D00E91301 /* castleWallHit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C621F3A589C00E91301 /* castleWallHit.mp3 */; };
+		201B8C651F3A5C6E00E91301 /* ItemGet.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C641F3A5C6E00E91301 /* ItemGet.wav */; };
+		201B8C671F3A67F200E91301 /* BGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B8C661F3A67F100E91301 /* BGM.swift */; };
+		201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C681F3A682700E91301 /* mainBGM.mp3 */; };
+		201B8C6D1F3AD7EE00E91301 /* itemScreen.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */; };
+		201B8C6F1F3ADB9B00E91301 /* stageClear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */; };
+		201B8C711F3AE08400E91301 /* playerTurn.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C701F3AE08400E91301 /* playerTurn.wav */; };
+		201B8C731F3AE1F400E91301 /* enemyTurn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C721F3AE1F400E91301 /* enemyTurn.mp3 */; };
+		201B8C751F3AE7E900E91301 /* flash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C741F3AE7E900E91301 /* flash.wav */; };
+		201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C761F3AEA4F00E91301 /* buttonMove.wav */; };
+		201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C781F3AEA7E00E91301 /* buttonBack.wav */; };
+		201B8C7B1F3AEB1B00E91301 /* selectNewGame.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C7A1F3AEB1B00E91301 /* selectNewGame.wav */; };
 		201CD4011F2CD113009CE633 /* EnemyForTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD3FC1F2CD113009CE633 /* EnemyForTutorial.swift */; };
 		201CD4031F2CD113009CE633 /* HeroForTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD3FE1F2CD113009CE633 /* HeroForTutorial.swift */; };
 		201CD4111F2CD28D009CE633 /* BattleShip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4071F2CD28D009CE633 /* BattleShip.swift */; };
@@ -51,6 +72,7 @@
 		203777B21F37F0A300A91B52 /* EnemyForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203777B11F37F0A300A91B52 /* EnemyForTutorial2.swift */; };
 		203777B41F37F0B300A91B52 /* GridForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203777B31F37F0B300A91B52 /* GridForTutorial2.swift */; };
 		203777B61F37F0C300A91B52 /* HeroForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203777B51F37F0C300A91B52 /* HeroForTutorial2.swift */; };
+		203AEA991F3AFFF300C5CD4E /* mainMenu.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
@@ -81,6 +103,27 @@
 		2019C37E1F0B5933003C7609 /* AnimationActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = AnimationActions.sks; path = ../AnimationActions.sks; sourceTree = "<group>"; };
 		2019C3801F0B5A85003C7609 /* Enemy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		2019C3821F0B5A91003C7609 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
+		201B8C4C1F3A2D2800E91301 /* timeBombExplosion.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = timeBombExplosion.mp3; sourceTree = "<group>"; };
+		201B8C4E1F3A307B00E91301 /* swordSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = swordSound.wav; sourceTree = "<group>"; };
+		201B8C501F3A325A00E91301 /* catapultBomb.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = catapultBomb.mp3; sourceTree = "<group>"; };
+		201B8C521F3A326000E91301 /* enemyKilled.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = enemyKilled.mp3; sourceTree = "<group>"; };
+		201B8C541F3A326600E91301 /* battleShipShoot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = battleShipShoot.wav; sourceTree = "<group>"; };
+		201B8C561F3A365700E91301 /* hitWall.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitWall.wav; sourceTree = "<group>"; };
+		201B8C5A1F3A439800E91301 /* magicSword.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = magicSword.wav; sourceTree = "<group>"; };
+		201B8C5C1F3A47BA00E91301 /* cane.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cane.mp3; sourceTree = "<group>"; };
+		201B8C5E1F3A533900E91301 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = gameOver.wav; path = ../Items/gameOver.wav; sourceTree = "<group>"; };
+		201B8C621F3A589C00E91301 /* castleWallHit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = castleWallHit.mp3; sourceTree = "<group>"; };
+		201B8C641F3A5C6E00E91301 /* ItemGet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ItemGet.wav; sourceTree = "<group>"; };
+		201B8C661F3A67F100E91301 /* BGM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BGM.swift; sourceTree = "<group>"; };
+		201B8C681F3A682700E91301 /* mainBGM.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainBGM.mp3; sourceTree = "<group>"; };
+		201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = itemScreen.wav; sourceTree = "<group>"; };
+		201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = stageClear.mp3; sourceTree = "<group>"; };
+		201B8C701F3AE08400E91301 /* playerTurn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = playerTurn.wav; sourceTree = "<group>"; };
+		201B8C721F3AE1F400E91301 /* enemyTurn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = enemyTurn.mp3; sourceTree = "<group>"; };
+		201B8C741F3AE7E900E91301 /* flash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = flash.wav; sourceTree = "<group>"; };
+		201B8C761F3AEA4F00E91301 /* buttonMove.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buttonMove.wav; sourceTree = "<group>"; };
+		201B8C781F3AEA7E00E91301 /* buttonBack.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buttonBack.wav; sourceTree = "<group>"; };
+		201B8C7A1F3AEB1B00E91301 /* selectNewGame.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = selectNewGame.wav; sourceTree = "<group>"; };
 		201CD3FC1F2CD113009CE633 /* EnemyForTutorial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyForTutorial.swift; sourceTree = "<group>"; };
 		201CD3FE1F2CD113009CE633 /* HeroForTutorial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeroForTutorial.swift; sourceTree = "<group>"; };
 		201CD4071F2CD28D009CE633 /* BattleShip.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BattleShip.swift; sourceTree = "<group>"; };
@@ -113,6 +156,7 @@
 		203777B11F37F0A300A91B52 /* EnemyForTutorial2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EnemyForTutorial2.swift; path = ../EnemyForTutorial2.swift; sourceTree = "<group>"; };
 		203777B31F37F0B300A91B52 /* GridForTutorial2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GridForTutorial2.swift; path = ../GridForTutorial2.swift; sourceTree = "<group>"; };
 		203777B51F37F0C300A91B52 /* HeroForTutorial2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = HeroForTutorial2.swift; path = ../HeroForTutorial2.swift; sourceTree = "<group>"; };
+		203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainMenu.mp3; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D8B1F074FE800F4DD11 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -158,6 +202,34 @@
 			path = Effects;
 			sourceTree = "<group>";
 		};
+		201B8C461F3A2C2E00E91301 /* SFX */ = {
+			isa = PBXGroup;
+			children = (
+				201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */,
+				201B8C681F3A682700E91301 /* mainBGM.mp3 */,
+				201B8C701F3AE08400E91301 /* playerTurn.wav */,
+				201B8C721F3AE1F400E91301 /* enemyTurn.mp3 */,
+				203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */,
+				201B8C641F3A5C6E00E91301 /* ItemGet.wav */,
+				201B8C621F3A589C00E91301 /* castleWallHit.mp3 */,
+				201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */,
+				201B8C5E1F3A533900E91301 /* gameOver.wav */,
+				201B8C5C1F3A47BA00E91301 /* cane.mp3 */,
+				201B8C5A1F3A439800E91301 /* magicSword.wav */,
+				201B8C561F3A365700E91301 /* hitWall.wav */,
+				201B8C741F3AE7E900E91301 /* flash.wav */,
+				201B8C541F3A326600E91301 /* battleShipShoot.wav */,
+				201B8C521F3A326000E91301 /* enemyKilled.mp3 */,
+				201B8C501F3A325A00E91301 /* catapultBomb.mp3 */,
+				201B8C4E1F3A307B00E91301 /* swordSound.wav */,
+				201B8C4C1F3A2D2800E91301 /* timeBombExplosion.mp3 */,
+				201B8C761F3AEA4F00E91301 /* buttonMove.wav */,
+				201B8C781F3AEA7E00E91301 /* buttonBack.wav */,
+				201B8C7A1F3AEB1B00E91301 /* selectNewGame.wav */,
+			);
+			path = SFX;
+			sourceTree = "<group>";
+		};
 		201CD3FB1F2CD113009CE633 /* Tutorial */ = {
 			isa = PBXGroup;
 			children = (
@@ -180,19 +252,19 @@
 		201CD4061F2CD28D009CE633 /* Items */ = {
 			isa = PBXGroup;
 			children = (
-				201CD4071F2CD28D009CE633 /* BattleShip.swift */,
 				201CD4081F2CD28D009CE633 /* Boots.swift */,
-				202049DC1F2EFA0F00FAD661 /* Teleport.swift */,
-				201CD4091F2CD28D009CE633 /* CallHero.swift */,
-				201CD40A1F2CD28D009CE633 /* Catapult.swift */,
-				201CD40B1F2CD28D009CE633 /* Heart.swift */,
-				201CD40C1F2CD28D009CE633 /* MagicSword.swift */,
 				201CD40D1F2CD28D009CE633 /* TimeBomb.swift */,
+				201CD40B1F2CD28D009CE633 /* Heart.swift */,
 				201CD40E1F2CD28D009CE633 /* MultiAttack.swift */,
-				201CD40F1F2CD28D009CE633 /* Spear.swift */,
 				201CD4101F2CD28D009CE633 /* Wall.swift */,
-				201ECBA51F34B64F00FB833A /* Cane.swift */,
+				201CD4071F2CD28D009CE633 /* BattleShip.swift */,
+				201CD40C1F2CD28D009CE633 /* MagicSword.swift */,
+				201CD40A1F2CD28D009CE633 /* Catapult.swift */,
 				201ECBA31F34B64300FB833A /* ResetCatapult.swift */,
+				201ECBA51F34B64F00FB833A /* Cane.swift */,
+				202049DC1F2EFA0F00FAD661 /* Teleport.swift */,
+				201CD40F1F2CD28D009CE633 /* Spear.swift */,
+				201CD4091F2CD28D009CE633 /* CallHero.swift */,
 			);
 			path = Items;
 			sourceTree = "<group>";
@@ -239,9 +311,11 @@
 				208A710F1F39187C0044D543 /* PauseScreen.swift */,
 				208A710D1F390FFE0044D543 /* ConfirmScreen.swift */,
 				201ECBA71F34E3D500FB833A /* InputVariable.swift */,
+				201B8C661F3A67F100E91301 /* BGM.swift */,
 				201CD3FB1F2CD113009CE633 /* Tutorial */,
 				201CD4061F2CD28D009CE633 /* Items */,
 				200829D61F32CA860038AEC0 /* Effects */,
+				201B8C461F3A2C2E00E91301 /* SFX */,
 				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
 				201CF0291F11BE1D001346C7 /* MSButtonNode.swift */,
 				204C7D8D1F074FE800F4DD11 /* Main.storyboard */,
@@ -316,18 +390,39 @@
 			files = (
 				200829E01F32CA860038AEC0 /* MagicSwordEffect.sks in Resources */,
 				203777AE1F37F05F00A91B52 /* Tutorial2.sks in Resources */,
+				201B8C4D1F3A2D2800E91301 /* timeBombExplosion.mp3 in Resources */,
 				200829E11F32CA860038AEC0 /* TimeBombExplode.sks in Resources */,
+				201B8C6F1F3ADB9B00E91301 /* stageClear.mp3 in Resources */,
+				201B8C5D1F3A47BA00E91301 /* cane.mp3 in Resources */,
+				201B8C651F3A5C6E00E91301 /* ItemGet.wav in Resources */,
+				201B8C4F1F3A307B00E91301 /* swordSound.wav in Resources */,
 				208A710A1F38ED440044D543 /* Credits.sks in Resources */,
 				204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */,
+				201B8C711F3AE08400E91301 /* playerTurn.wav in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
 				200829E21F32CA860038AEC0 /* TimeBombSmoke.sks in Resources */,
+				201B8C5F1F3A533900E91301 /* gameOver.wav in Resources */,
+				201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */,
+				201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */,
 				201DA3171F38E99E00CE07A5 /* ItemList.sks in Resources */,
+				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
+				201B8C6D1F3AD7EE00E91301 /* itemScreen.wav in Resources */,
+				201B8C571F3A365700E91301 /* hitWall.wav in Resources */,
+				201B8C531F3A326000E91301 /* enemyKilled.mp3 in Resources */,
+				201B8C751F3AE7E900E91301 /* flash.wav in Resources */,
+				201B8C511F3A325A00E91301 /* catapultBomb.mp3 in Resources */,
 				204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */,
+				201B8C5B1F3A439800E91301 /* magicSword.wav in Resources */,
+				201B8C7B1F3AEB1B00E91301 /* selectNewGame.wav in Resources */,
 				200829DE1F32CA860038AEC0 /* CatapultFire2.sks in Resources */,
+				203AEA991F3AFFF300C5CD4E /* mainMenu.mp3 in Resources */,
 				20232AFB1F3252CD00898ACE /* Assets.xcassets in Resources */,
 				200829DF1F32CA860038AEC0 /* DestroyEnemy.sks in Resources */,
 				2019C37D1F0B5335003C7609 /* MainMenu.sks in Resources */,
+				201B8C551F3A326600E91301 /* battleShipShoot.wav in Resources */,
+				201B8C731F3AE1F400E91301 /* enemyTurn.mp3 in Resources */,
 				2019C37F1F0B5933003C7609 /* AnimationActions.sks in Resources */,
+				201B8C631F3A589D00E91301 /* castleWallHit.mp3 in Resources */,
 				200829DD1F32CA860038AEC0 /* CatapultFire.sks in Resources */,
 				20B113ED1F19CB8E00CD5B4E /* GameScene.sks in Resources */,
 				200829E41F330C940038AEC0 /* Tutorial.sks in Resources */,
@@ -384,6 +479,7 @@
 				201CF02E1F134157001346C7 /* Hero.swift in Sources */,
 				203777B41F37F0B300A91B52 /* GridForTutorial2.swift in Sources */,
 				2019C3831F0B5A91003C7609 /* Grid.swift in Sources */,
+				201B8C671F3A67F200E91301 /* BGM.swift in Sources */,
 				201CD4161F2CD28D009CE633 /* MagicSword.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				203777B01F37F08700A91B52 /* Tutorial2.swift in Sources */,

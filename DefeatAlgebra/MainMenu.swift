@@ -29,6 +29,10 @@ class MainMenu: SKScene {
     
     var confirmingNewGameFlag = false
     
+    /* Sound */
+    static var soundOnFlag = true
+    var sound = BGM(bgm: 1)
+    
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
@@ -40,6 +44,7 @@ class MainMenu: SKScene {
         MainMenu.tutorialPracticeDone = ud.bool(forKey: "tutorialPracticeDone")
         MainMenu.tutorialTimeBombDone = ud.bool(forKey: "tutorialTimeBombDone")
         MainMenu.tutorialAllDone = ud.bool(forKey: "tutorialAllDone")
+        MainMenu.soundOnFlag = ud.bool(forKey: "soundOn")
         
         /* Set UI connections */
         buttonNewGame = self.childNode(withName: "buttonNewGame") as! MSButtonNode
@@ -49,18 +54,37 @@ class MainMenu: SKScene {
             buttonNewGame.position.y = 365
         }
         
-        buttonNewGame.selectedHandler = {
+        /* Sound */
+        if MainMenu.soundOnFlag {
+            sound.play()
+            sound.numberOfLoops = -1
+        }
+        
+        buttonNewGame.selectedHandler = { [weak self] in
             if MainMenu.tutorialAllDone {
-                self.confirmScreen.isHidden = false
-                self.confirmingNewGameFlag = true
+                self?.confirmScreen.isHidden = false
+                self?.confirmingNewGameFlag = true
+                
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("selectNewGame.wav", waitForCompletion: true)
+                    self!.run(sound)
+                }
             /* First Play */
             } else {
+                
                 /* Grab reference to the SpriteKit view */
-                let skView = self.view as SKView!
+                let skView = self?.view as SKView!
                 
                 /* Load Game scene */
                 guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
                     return
+                }
+                
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
+                    scene.run(sound)
                 }
                 
                 /* Ensure correct aspect mode */
@@ -71,9 +95,10 @@ class MainMenu: SKScene {
             }
         }
         
-        buttonContinue.selectedHandler = {
+        buttonContinue.selectedHandler = { [weak self] in
+            
             /* Grab reference to the SpriteKit view */
-            let skView = self.view as SKView!
+            let skView = self?.view as SKView!
             
             /* Load Game scene */
             guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
@@ -83,26 +108,16 @@ class MainMenu: SKScene {
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFill
             
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: false)
+                scene.run(sound)
+            }
+            
             /* Restart GameScene */
             skView?.presentScene(scene)
         }
-        
-//        buttonTutorial.selectedHandler = {
-//            /* Grab reference to the SpriteKit view */
-//            let skView = self.view as SKView!
-//            
-//            /* Load Game scene */
-//            guard let scene = Tutorial(fileNamed:"Tutorial") as GameScene! else {
-//                return
-//            }
-//            
-//            /* Ensure correct aspect mode */
-//            scene.scaleMode = .aspectFill
-//            
-//            /* Restart GameScene */
-//            skView?.presentScene(scene)
-//        }       
-        
+                
         /* Set Algebra Robot */
 //        setEnemy()
         
@@ -126,6 +141,16 @@ class MainMenu: SKScene {
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
         if nodeAtPoint.name == "buttonSetting" {
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                if settingScreen.isActive {
+                    let sound = SKAction.playSoundFileNamed("buttonBack.wav", waitForCompletion: true)
+                    self.run(sound)
+                } else {
+                    let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
+                    self.run(sound)
+                }
+            }
             settingScreen.isActive = !settingScreen.isActive
         }
     }
