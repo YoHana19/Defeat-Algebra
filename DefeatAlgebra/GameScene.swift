@@ -84,6 +84,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var stageLevel: Int = 0
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 0
+    var dispClearLabelDone = false
     
     /*== Game Sounds ==*/
 //    var playerTurn = BGM(bgm: 4)
@@ -152,7 +153,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         [5, 2, 3, 3],
         [4, 1, 3, 3],
         [4, 1, 3, 3],
-        [4, 1, 3, 3]
+        [0, 0, 0, 1]
     ]
     var numOfAddEnemy: Int = 0
     var countTurnForAddEnemy: Int = 0
@@ -395,7 +396,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
-//        stageLevel = 10
+        stageLevel = 11
         levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
@@ -420,7 +421,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        GameScene.firstGetItemFlagArray = [true, true, false, false, false, false, false, false, false, false, false, false, false]
         
         /* For Analytics */
-        Answers.logLevelStart("Level \(stageLevel)")
+        Answers.logLevelStart("Level \(stageLevel+1)")
         
         /* Set input boards */
         setInputBoard()
@@ -1035,7 +1036,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
             clearLabel.isHidden = false
-            buttonNextLevel.state = .msButtonNodeStateActive
+            if stageLevel < 11 {
+                buttonNextLevel.state = .msButtonNodeStateActive
+            } else {
+                if dispClearLabelDone == false {
+                    dispClearLabelDone = true
+                    createTutorialLabel(text: "Congulatulations!!", posY: 1120, size: 50)
+                    createTutorialLabel(text: "You defeat all Algrbra Robots!", posY: 1040, size: 35)
+                    createTutorialLabel(text: "But keep it mind!", posY: 700, size: 35)
+                    createTutorialLabel(text: "Algebra is your friend in real world!", posY: 640, size: 35)
+                }
+            }
             break;
             
         case .GameOver:
@@ -2785,6 +2796,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
 //        
 //    }
     
+    /* Create label for tutorial */
+    func createTutorialLabel(text: String, posY: CGFloat, size: CGFloat) {
+        /* Set label with font */
+        let label = SKLabelNode(fontNamed: "GillSans-Bold")
+        /* Set text */
+        label.text = text
+        /* Set font size */
+        label.fontSize = size
+        /* Set zPosition */
+        label.zPosition = 200
+        /* Set position */
+        label.position = CGPoint(x: self.size.width/2, y: posY)
+        /* Add to Scene */
+        self.addChild(label)
+    }
+    
     /* Auto Set item */
     func autoSetItems() {
         /* Determine position to set */
@@ -3315,7 +3342,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 12 */
         case 11:
             /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
+//            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
+            initialEnemyPosArray = [[4, 4]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]

@@ -34,8 +34,6 @@
 		201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C681F3A682700E91301 /* mainBGM.mp3 */; };
 		201B8C6D1F3AD7EE00E91301 /* itemScreen.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */; };
 		201B8C6F1F3ADB9B00E91301 /* stageClear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */; };
-		201B8C711F3AE08400E91301 /* playerTurn.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C701F3AE08400E91301 /* playerTurn.wav */; };
-		201B8C731F3AE1F400E91301 /* enemyTurn.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C721F3AE1F400E91301 /* enemyTurn.mp3 */; };
 		201B8C751F3AE7E900E91301 /* flash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C741F3AE7E900E91301 /* flash.wav */; };
 		201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C761F3AEA4F00E91301 /* buttonMove.wav */; };
 		201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C781F3AEA7E00E91301 /* buttonBack.wav */; };
@@ -118,8 +116,6 @@
 		201B8C681F3A682700E91301 /* mainBGM.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainBGM.mp3; sourceTree = "<group>"; };
 		201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = itemScreen.wav; sourceTree = "<group>"; };
 		201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = stageClear.mp3; sourceTree = "<group>"; };
-		201B8C701F3AE08400E91301 /* playerTurn.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = playerTurn.wav; sourceTree = "<group>"; };
-		201B8C721F3AE1F400E91301 /* enemyTurn.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = enemyTurn.mp3; sourceTree = "<group>"; };
 		201B8C741F3AE7E900E91301 /* flash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = flash.wav; sourceTree = "<group>"; };
 		201B8C761F3AEA4F00E91301 /* buttonMove.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buttonMove.wav; sourceTree = "<group>"; };
 		201B8C781F3AEA7E00E91301 /* buttonBack.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buttonBack.wav; sourceTree = "<group>"; };
@@ -207,8 +203,6 @@
 			children = (
 				201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */,
 				201B8C681F3A682700E91301 /* mainBGM.mp3 */,
-				201B8C701F3AE08400E91301 /* playerTurn.wav */,
-				201B8C721F3AE1F400E91301 /* enemyTurn.mp3 */,
 				203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */,
 				201B8C641F3A5C6E00E91301 /* ItemGet.wav */,
 				201B8C621F3A589C00E91301 /* castleWallHit.mp3 */,
@@ -398,7 +392,6 @@
 				201B8C4F1F3A307B00E91301 /* swordSound.wav in Resources */,
 				208A710A1F38ED440044D543 /* Credits.sks in Resources */,
 				204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */,
-				201B8C711F3AE08400E91301 /* playerTurn.wav in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
 				200829E21F32CA860038AEC0 /* TimeBombSmoke.sks in Resources */,
 				201B8C5F1F3A533900E91301 /* gameOver.wav in Resources */,
@@ -420,7 +413,6 @@
 				200829DF1F32CA860038AEC0 /* DestroyEnemy.sks in Resources */,
 				2019C37D1F0B5335003C7609 /* MainMenu.sks in Resources */,
 				201B8C551F3A326600E91301 /* battleShipShoot.wav in Resources */,
-				201B8C731F3AE1F400E91301 /* enemyTurn.mp3 in Resources */,
 				2019C37F1F0B5933003C7609 /* AnimationActions.sks in Resources */,
 				201B8C631F3A589D00E91301 /* castleWallHit.mp3 in Resources */,
 				200829DD1F32CA860038AEC0 /* CatapultFire.sks in Resources */,
