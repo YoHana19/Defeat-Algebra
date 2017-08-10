@@ -29,6 +29,8 @@ class MainMenu: SKScene {
     
     var confirmingNewGameFlag = false
     
+    var notInitialFlag = true
+    
     /* Sound */
     static var soundOnFlag = true
     var sound = BGM(bgm: 1)
@@ -38,6 +40,7 @@ class MainMenu: SKScene {
         
         /* Check user has played */
         let ud = UserDefaults.standard
+        notInitialFlag = ud.bool(forKey: "notInitialFlag")
         MainMenu.tutorialHeroDone = ud.bool(forKey: "tutorialHeroDone")
         MainMenu.tutorialEnemyDone = ud.bool(forKey: "tutorialEnemyDone")
         MainMenu.tutorialAttackDone = ud.bool(forKey: "tutorialAttackDone")
@@ -45,6 +48,10 @@ class MainMenu: SKScene {
         MainMenu.tutorialTimeBombDone = ud.bool(forKey: "tutorialTimeBombDone")
         MainMenu.tutorialAllDone = ud.bool(forKey: "tutorialAllDone")
         MainMenu.soundOnFlag = ud.bool(forKey: "soundOn")
+        if notInitialFlag == false {
+            MainMenu.soundOnFlag = true
+            ud.set(true, forKey: "notInitialFlag")
+        }
         
         /* Set UI connections */
         buttonNewGame = self.childNode(withName: "buttonNewGame") as! MSButtonNode
@@ -88,7 +95,7 @@ class MainMenu: SKScene {
                 }
                 
                 /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
@@ -106,7 +113,7 @@ class MainMenu: SKScene {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Play Sound */
             if MainMenu.soundOnFlag {

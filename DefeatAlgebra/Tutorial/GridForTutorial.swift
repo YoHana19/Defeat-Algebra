@@ -87,7 +87,7 @@ class GridForTutorial: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("grid touchBegan")
+        
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial
         
@@ -529,6 +529,11 @@ class GridForTutorial: SKSpriteNode {
                         
                         /* Touch red square for active area */
                         if nodeAtPoint.name == "activeArea" {
+                            /* Play Sound */
+                            if MainMenu.soundOnFlag {
+                                let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
+                                self.run(attack)
+                            }
                             
                             /* Set direction of hero */
                             gameScene.activeHero.setHeroDirection(posX: gridX, posY: gridY)
@@ -536,6 +541,11 @@ class GridForTutorial: SKSpriteNode {
                             /* Sword attack */
                             if gameScene.activeHero.attackType == 0 {
                                 gameScene.activeHero.setSwordAnimation()
+                                /* Play Sound */
+                                if MainMenu.soundOnFlag {
+                                    let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
+                                    self.run(attack)
+                                }
                                 
                                 /* If hitting enemy! */
                                 if self.positionEnemyAtGrid[gridX][gridY] {
@@ -606,7 +616,6 @@ class GridForTutorial: SKSpriteNode {
                             /* Back to MoveState */
                             gameScene.playerTurnState = .MoveState
                             
-                            //                    print("Used item index is \(gameScene.usingItemIndex)")
                             /* Remove used itemIcon from item array and Scene */
                             gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                         }
@@ -620,7 +629,6 @@ class GridForTutorial: SKSpriteNode {
                 /* Get touch point */
                 let touch = touches.first!              // Get the first touch
                 let location = touch.location(in: self) // Find the location of that touch in this view
-                let nodeAtPoint = atPoint(location)     // Find the node at that location
                 
                 /* Caclulate grid array position */
                 let gridX = Int(Double(location.x) / cellWidth)
@@ -635,6 +643,12 @@ class GridForTutorial: SKSpriteNode {
                     
                     /* Sword attack */
                     gameScene.activeHero.setSwordAnimation()
+                    
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
+                        self.run(attack)
+                    }
                     
                     /* If hitting enemy! */
                     if self.positionEnemyAtGrid[gridX][gridY] {
@@ -743,13 +757,28 @@ class GridForTutorial: SKSpriteNode {
     func flashGrid(labelNode: SKLabelNode) -> Int {
         let numOfFlash = Int(arc4random_uniform(2)+1)
         
-        /* Set flash animation */
-        let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-        let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-        let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-        let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-        let flash = SKAction.repeat(seqFlash, count: numOfFlash)
-        self.run(flash)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let sound = SKAction.playSoundFileNamed("flash.wav", waitForCompletion: true)
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let group = SKAction.group([sound, seqFlash])
+            let flash = SKAction.repeat(group, count: numOfFlash)
+            self.run(flash)
+            
+        } else {
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let flash = SKAction.repeat(seqFlash, count: numOfFlash)
+            self.run(flash)
+            
+        }
         
         /* Display the number of flash */
         let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))
@@ -965,6 +994,11 @@ class GridForTutorial: SKSpriteNode {
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
         particles.run(seqEffect)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
+            self.run(dead)
+        }
     }
     
     /* Show timeBomb setting area */

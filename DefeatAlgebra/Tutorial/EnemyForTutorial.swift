@@ -582,6 +582,8 @@ class EnemyForTutorial: SKSpriteNode {
             let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
             let moveNextEnemy = SKAction.run({
                 self.myTurnFlag = false
+                /* For sound */
+                gameScene.hitCastleWallSoundDone = false
                 if gridNode.turnIndex < gridNode.enemyArray.count-1 {
                     gridNode.turnIndex += 1
                     gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
@@ -700,36 +702,72 @@ class EnemyForTutorial: SKSpriteNode {
     
     /* Do punch */
     func punch() -> (arm: [EnemyArm], fist: [EnemyFist]) {
+        let gridNode = self.parent as! GridForTutorial
         
-        /* Make sure enemy punch front direction */
-        self.direction = .front
-        
-        /* Stop animation of enemy */
-        self.removeAllActions()
-        
-        /* Set texture according to direction of enemy */
-        self.setTextureInPunch()
-        
-        /* Set arm */
-        let arm1 = EnemyArm(direction: self.direction)
-        let arm2 = EnemyArm(direction: self.direction)
-        setArm(arm: [arm1, arm2], direction: self.direction)
-        
-        /* Set fist */
-        let fist1 = EnemyFist(direction: self.direction)
-        let fist2 = EnemyFist(direction: self.direction)
-        setFist(fist: [fist1, fist2], direction: self.direction)
-        
-        /* Move Fist */
-        fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
-        fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
-        
-        /* Extend arm */
-        arm1.extendArm(length: punchLength, speed: self.punchSpeed)
-        arm2.extendArm(length: punchLength, speed: self.punchSpeed)
-        
-        /* Store reference for func drawPunch */
-        return ([arm1, arm2], [fist1, fist2])
+        if self.positionY < self.valueOfEnemy {
+            /* Adjust punch length */
+            self.punchLength  = CGFloat(Double(self.positionY)*gridNode.cellHeight+100.0)
+            
+            /* Make sure enemy punch front direction */
+            self.direction = .front
+            
+            /* Stop animation of enemy */
+            self.removeAllActions()
+            
+            /* Set texture according to direction of enemy */
+            self.setTextureInPunch()
+            
+            /* Set arm */
+            let arm1 = EnemyArm(direction: self.direction)
+            let arm2 = EnemyArm(direction: self.direction)
+            setArm(arm: [arm1, arm2], direction: self.direction)
+            
+            /* Set fist */
+            let fist1 = EnemyFist(direction: self.direction)
+            let fist2 = EnemyFist(direction: self.direction)
+            setFist(fist: [fist1, fist2], direction: self.direction)
+            
+            /* Move Fist */
+            fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            
+            /* Extend arm */
+            arm1.extendArm(length: punchLength, speed: self.punchSpeed)
+            arm2.extendArm(length: punchLength, speed: self.punchSpeed)
+            
+            /* Store reference for func drawPunch */
+            return ([arm1, arm2], [fist1, fist2])
+        } else {
+            /* Make sure enemy punch front direction */
+            self.direction = .front
+            
+            /* Stop animation of enemy */
+            self.removeAllActions()
+            
+            /* Set texture according to direction of enemy */
+            self.setTextureInPunch()
+            
+            /* Set arm */
+            let arm1 = EnemyArm(direction: self.direction)
+            let arm2 = EnemyArm(direction: self.direction)
+            setArm(arm: [arm1, arm2], direction: self.direction)
+            
+            /* Set fist */
+            let fist1 = EnemyFist(direction: self.direction)
+            let fist2 = EnemyFist(direction: self.direction)
+            setFist(fist: [fist1, fist2], direction: self.direction)
+            
+            /* Move Fist */
+            fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            
+            /* Extend arm */
+            arm1.extendArm(length: punchLength, speed: self.punchSpeed)
+            arm2.extendArm(length: punchLength, speed: self.punchSpeed)
+            
+            /* Store reference for func drawPunch */
+            return ([arm1, arm2], [fist1, fist2])
+        }
     }
     
     /* Punch when enemy reach to castle */
@@ -754,7 +792,6 @@ class EnemyForTutorial: SKSpriteNode {
         
         /* Set punchLength */
         self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
-        print(punchLength)
         
         /* Do punch */
         let armAndFist = self.punch()
@@ -788,7 +825,8 @@ class EnemyForTutorial: SKSpriteNode {
             
             /* Reset enemy animation */
             self.setMovingAnimation()
-            
+            /* For sound */
+            gameScene.hitCastleWallSoundDone = false
             if gridNode.turnIndex < gridNode.enemyArray.count-1 {
                 gridNode.turnIndex += 1
                 gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true

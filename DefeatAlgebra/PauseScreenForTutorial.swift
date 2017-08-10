@@ -11,6 +11,9 @@ import SpriteKit
 
 class PauseScreenForTutorial: SKSpriteNode {
     
+    var buttonMute: SKSpriteNode!
+    var buttonSoundOn: SKSpriteNode!
+    
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "settingScreen")
@@ -32,6 +35,9 @@ class PauseScreenForTutorial: SKSpriteNode {
         /* Set buttons */
         setButtons()
         
+        if MainMenu.soundOnFlag {
+            buttonMute.isHidden = true
+        }
         
     }
     
@@ -53,6 +59,9 @@ class PauseScreenForTutorial: SKSpriteNode {
             self.isHidden = true
             
         } else if nodeAtPoint.name == "pauseRetry" {
+            /* Stop Sound */
+            gameScene.main.stop()
+            
             /* Grab reference to the SpriteKit view */
             let skView = gameScene.view as SKView!
             
@@ -62,11 +71,14 @@ class PauseScreenForTutorial: SKSpriteNode {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
         } else if nodeAtPoint.name == "pauseMainMenu" {
+            /* Stop Sound */
+            gameScene.main.stop()
+            
             /* Grab reference to the SpriteKit view */
             let skView = gameScene.view as SKView!
             
@@ -76,38 +88,66 @@ class PauseScreenForTutorial: SKSpriteNode {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+        
+        } else if nodeAtPoint.name == "buttonMute" {
+            buttonMute.isHidden = true
+            MainMenu.soundOnFlag = true
+            gameScene.main.play()
+            gameScene.stageClear.stop()
+            let ud = UserDefaults.standard
+            ud.set(true, forKey: "soundOn")
+        } else if nodeAtPoint.name == "buttonSoundOn" {
+            buttonMute.isHidden = false
+            MainMenu.soundOnFlag = false
+            gameScene.main.stop()
+            gameScene.stageClear.stop()
+            let ud = UserDefaults.standard
+            ud.set(false, forKey: "soundOn")
         }
         
     }
     
     func setButtons() {
-        /* Set button size */
-//        let buttonSize = CGSize(width: 120, height: 120)
         
         /* button Resume */
         let buttonResume = SKSpriteNode(imageNamed: "pauseResume")
-        buttonResume.position = CGPoint(x: 0, y: self.size.height/4)
+        buttonResume.position = CGPoint(x: 0, y: self.size.height/4+30)
         buttonResume.name = "pauseResume"
         buttonResume.zPosition = 3
         addChild(buttonResume)
         
         /* button Retry */
         let buttonRetry = SKSpriteNode(imageNamed: "pauseRetry")
-        buttonRetry.position = CGPoint(x: 0, y: 0)
+        buttonRetry.position = CGPoint(x: 0, y: 30)
         buttonRetry.name = "pauseRetry"
         buttonRetry.zPosition = 3
         addChild(buttonRetry)
         
         /* button Main Menu */
         let buttonMainMenu = SKSpriteNode(imageNamed: "pauseMainMenu")
-        buttonMainMenu.position = CGPoint(x: 0, y: -self.size.height/4)
+        buttonMainMenu.position = CGPoint(x: 0, y: -self.size.height/4+30)
         buttonMainMenu.name = "pauseMainMenu"
         buttonMainMenu.zPosition = 3
         addChild(buttonMainMenu)
         
+        /* Sound button mute */
+        buttonMute = SKSpriteNode(imageNamed: "mute")
+        buttonMute.position = CGPoint(x: 195, y: -345)
+        buttonMute.size = CGSize(width: 80, height: 80)
+        buttonMute.name = "buttonMute"
+        buttonMute.zPosition = 4
+        addChild(buttonMute)
+        
+        /* Sound button on */
+        buttonSoundOn = SKSpriteNode(imageNamed: "soundOn")
+        buttonSoundOn.position = CGPoint(x: 195, y: -345)
+        buttonSoundOn.size = CGSize(width: 80, height: 80)
+        buttonSoundOn.name = "buttonSoundOn"
+        buttonSoundOn.zPosition = 3
+        addChild(buttonSoundOn)
     }
 }

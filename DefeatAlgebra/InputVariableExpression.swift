@@ -91,7 +91,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button x */
         if nodeAtPoint.name == "buttonX" {
-            print("x")
+            
             /* Display variable expression */
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
@@ -137,7 +137,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button 1 */
         if nodeAtPoint.name == "button1" {
-            //            print("1")
+            
             /* Display variable expression */
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
@@ -167,7 +167,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button 2 */
         if nodeAtPoint.name == "button2" {
-            //            print("2")
+            
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -196,7 +196,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button 3 */
         if nodeAtPoint.name == "button3" {
-            //            print("3")
+            
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -225,7 +225,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button + */
         if nodeAtPoint.name == "button+" {
-            //            print("+")
+            
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -265,7 +265,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button - */
         if nodeAtPoint.name == "button-" {
-            //            print("-")
+            
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
@@ -305,7 +305,6 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button clear */
         if nodeAtPoint.name == "buttonClear" {
-            //            print("clear")
             
             guard errorFlag == false else { return }
             
@@ -334,7 +333,7 @@ class InputVariableExpression: SKSpriteNode {
         
         /* Touch button Fire */
         if nodeAtPoint.name == "buttonFire" {
-            //            print("fire")
+            
             if variableExpression.characters.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false

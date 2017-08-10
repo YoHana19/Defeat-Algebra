@@ -76,7 +76,7 @@ class Credits: SKScene {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)

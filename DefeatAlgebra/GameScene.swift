@@ -87,10 +87,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var dispClearLabelDone = false
     
     /*== Game Sounds ==*/
-//    var playerTurn = BGM(bgm: 4)
-    var playerSoundCalled = false
-//    var enemyTurn = BGM(bgm: 1)
-    var enemySoundCalled = false
     var main = BGM(bgm: 0)
     var stageClear = BGM(bgm: 2)
     var gameOverSoundDone = false
@@ -284,7 +280,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -344,7 +340,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -377,7 +373,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -396,17 +392,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
-        stageLevel = 11
         levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
-//        moveLevelArray = [4]
         /* Set hero */
         setHero()
         /* Items */
-        var handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-//        handedItemNameArray = ["catapult"]
-//        print(handedItemNameArray)
+        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
@@ -418,10 +411,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
         /* Item flag */
         GameScene.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [true, true, false, false, false, false, false, false, false, false, false, false, false]
-//        GameScene.firstGetItemFlagArray = [true, true, false, false, false, false, false, false, false, false, false, false, false]
         
         /* For Analytics */
         Answers.logLevelStart("Level \(stageLevel+1)")
+        Answers.logLevelEnd("Level \(stageLevel+1)",
+                            score: nil,
+                            success: false
+                            )
         
         /* Set input boards */
         setInputBoard()
@@ -430,20 +426,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set Pause screen */
         pauseScreen = PauseScreen()
         addChild(pauseScreen)
-        
-        
-        /* For testing: initialize userDefaults */
-        /* Store game property */
-        //        let ud = UserDefaults.standard
-        //        /* Stage level */
-        //        ud.set(0, forKey: "stageLevel")
-        //        /* Hero */
-        //        ud.set([1], forKey: "moveLevelArray")
-        //        /* item */
-        //        ud.set([], forKey: "itemNameArray")
-        //        /* life */
-        //        ud.set(5, forKey: "life")
-        
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
@@ -482,25 +464,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set life */
         setLife(numOflife: maxLife)
         
-        /* Check available fonts */
-        //        for family in UIFont.familyNames {
-        //            print("Font family name: \(family)")
-        //            for fontName in UIFont.fontNames(forFamilyName: family) {
-        //                print("    > Font name: \(fontName)")
-        //            }
-        //        }
-        
     }
     
     override func update(_ currentTime: TimeInterval) {
-//        print(gameState)
+
         if cardArray.count > 0 {
             gameState = .PlayerTurn
             playerTurnState = .ShowingCard
         }
+        
         switch gameState {
         case .AddEnemy:
-            //                        print("AddEnemy")
             /* Make sure to call till complete adding enemy */
             if CompAddEnemyFlag == false {
                 /* Make sure to call addEnemy once */
@@ -555,7 +529,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             /* Update enemy position */
                             self.gridNode.resetEnemyPositon()
                             self.gridNode.updateEnemyPositon()
-                            //                            print(self.gridNode.positionEnemyAtGrid)
                             
                             /* Count up to complete adding enemy */
                             self.countTurnForCompAddEnemy += 1
@@ -587,24 +560,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .PlayerTurn:
-            //            print(itemArray)
-            //            print(playerTurnState)
-            //            print("\(heroArray.count), \(numOfTurnDoneHero)")
-            //            print(totalNumOfEnemy)
             /* Check if all enemies are defeated or not */
             if totalNumOfEnemy <= 0 {
                 gameState = .StageClear
-            }
-            
-            /* Sounds */
-            if MainMenu.soundOnFlag {
-                /* Make sure to call once */
-                if playerSoundCalled == false {
-                    playerSoundCalled = true
-                    enemySoundCalled = false
-//                    playerTurn.play()
-//                    enemyTurn.stop()
-                }
             }
             
             switch playerTurnState {
@@ -639,20 +597,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-//                print(callingHero)
-//                print(callHeroCountDone)
-//                print(callHeroCount)
-//                print(heroArray.count)
-                
                 /* callHero */
                 if callingHero {
                     /* Make sure to call once */
                     if callHeroCountDone == false {
                         callHeroCountDone = true
                         if callHeroCount < 1 {
-                            print(callHeroCount)
+                            
                             if heroArray.count > 1 {
-                                print("hero Get out")
                                 let calledHero = heroArray.last!
                                 calledHero.direction = .front
                                 calledHero.setMovingAnimation()
@@ -872,10 +824,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Remove dead hero from heroArray */
                 self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
                 
-                //                print(heroArray)
-                
-//                print(GameScene.firstGetItemFlagArray)
-                
                 /* Reset Flags */
                 addEnemyDoneFlag = false
                 enemyTurnDoneFlag = false
@@ -923,17 +871,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break;
         case .EnemyTurn:
             
-            /* Sounds */
-            if MainMenu.soundOnFlag {
-                /* Make sure to call once */
-                if enemySoundCalled == false {
-                    playerSoundCalled = false
-                    enemySoundCalled = true
-//                    playerTurn.stop()
-//                    enemyTurn.play()
-                }
-            }
-            
             /* Reset Flags */
             addEnemyDoneFlag = false
             playerTurnDoneFlag = false
@@ -942,7 +879,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enemyPhaseLabel.isHidden = true
             
             if enemyTurnDoneFlag == false {
-                //                print("\(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
                 
                 /* Reset enemy position */
                 gridNode.resetEnemyPositon()
@@ -1019,10 +955,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     enemy.calculatePunchLength(value: xValue)
                 }
                 
-                let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
-                let moveState = SKAction.run({ self.gameState = .PlayerTurn })
-                let seq = SKAction.sequence([wait, moveState])
-                self.run(seq)
+                if xValue == 3 {
+                    let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)+0.7))
+                    let moveState = SKAction.run({ self.gameState = .PlayerTurn })
+                    let seq = SKAction.sequence([wait, moveState])
+                    self.run(seq)
+                } else {
+                    let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
+                    let moveState = SKAction.run({ self.gameState = .PlayerTurn })
+                    let seq = SKAction.sequence([wait, moveState])
+                    self.run(seq)
+                }
             }
             break;
         case .StageClear:
@@ -1069,7 +1012,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("scene touchBegan")
         
         guard pauseFlag == false else { return }
         
@@ -1191,8 +1133,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                //                print("Now item index is \(usingItemIndex)")
-                /* Use callHero */
+            
+            /* Use callHero */
             } else if nodeAtPoint.name == "callHero" {
                 /* Remove active area if any */
                 self.gridNode.resetSquareArray(color: "purple")
@@ -1636,12 +1578,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
         
-        //        /* just for debug */
-        //        if nodeAtPoint.name == "hero" {
-        //            let hero = nodeAtPoint as! Hero
-        //            print("(\(hero.positionX), \(hero.positionY))")
-        //        }
-        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -1909,7 +1845,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Enemy's arm or fist hits castle wall */
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
-            //            print("cate 4 hit")
             
             /* Make sure to call once at each enemy */
             if hitCastleWallSoundDone == false {
@@ -2035,7 +1970,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     /* bullet hit enemy */
                 } else if contactA.node?.name == "bullet" {
-                    print("bullet hit")
+                    
                     let enemy = contactB.node as! Enemy
                     /* Effect */
                     self.gridNode.enemyDestroyEffect(enemy: enemy)
@@ -2126,7 +2061,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     /* Bullet hit enemy */
                 } else if contactB.node?.name == "bullet" {
-                    print("bullet hit")
+                    
                     let enemy = contactA.node as! Enemy
                     /* Effect */
                     self.gridNode.enemyDestroyEffect(enemy: enemy)
@@ -2744,13 +2679,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Hero come from castle to grid(4,0) */
         let startPosition = CGPoint(x: gridNode.position.x+gridNode.size.width/2, y: castleNode.position.y)
-        print(startPosition)
+        
         hero.position = startPosition
         
         /* Move hero */
         let move = SKAction.moveBy(x: 0, y: CGFloat(gridNode.cellHeight)/2+bottomGap+castleNode.size.height/2, duration: 1.0)
         hero.run(move)
-        print("hero position is \(hero.position)")
         
         /* Set hero position at grid */
         hero.positionX = 4

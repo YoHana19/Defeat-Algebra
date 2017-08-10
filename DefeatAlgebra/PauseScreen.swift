@@ -61,6 +61,7 @@ class PauseScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "pauseRetry" {
             /* Sound */
             gameScene.main.stop()
+            gameScene.stageClear.stop()
             
             /* Grab reference to the SpriteKit view */
             let skView = gameScene.view as SKView!
@@ -71,13 +72,14 @@ class PauseScreen: SKSpriteNode {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
         } else if nodeAtPoint.name == "pauseMainMenu" {
             /* Sound */
             gameScene.main.stop()
+            gameScene.stageClear.stop()
             
             /* Grab reference to the SpriteKit view */
             let skView = gameScene.view as SKView!
@@ -88,7 +90,7 @@ class PauseScreen: SKSpriteNode {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -97,12 +99,14 @@ class PauseScreen: SKSpriteNode {
             buttonMute.isHidden = true
             MainMenu.soundOnFlag = true
             gameScene.main.play()
+            gameScene.stageClear.stop()
             let ud = UserDefaults.standard
             ud.set(true, forKey: "soundOn")
         } else if nodeAtPoint.name == "buttonSoundOn" {
             buttonMute.isHidden = false
             MainMenu.soundOnFlag = false
             gameScene.main.stop()
+            gameScene.stageClear.stop()
             let ud = UserDefaults.standard
             ud.set(false, forKey: "soundOn")
         }
@@ -110,8 +114,6 @@ class PauseScreen: SKSpriteNode {
     }
     
     func setButtons() {
-        /* Set button size */
-//        let buttonSize = CGSize(width: 120, height: 120)
         
         /* button Resume */
         let buttonResume = SKSpriteNode(imageNamed: "pauseResume")

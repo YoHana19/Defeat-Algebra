@@ -92,7 +92,7 @@ class Grid: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("grid touchBegan")
+        
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
@@ -146,7 +146,7 @@ class Grid: SKSpriteNode {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("grid touchMoved")
+        
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
@@ -222,7 +222,7 @@ class Grid: SKSpriteNode {
     
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("grid touchEnded")
+        
         /* Get gameScene */
         let gameScene = self.parent as! GameScene
         
@@ -294,7 +294,6 @@ class Grid: SKSpriteNode {
             
             /* Touch point to attack to */
         } else if gameScene.playerTurnState == .AttackState {
-            //            print("attackstate")
             
             /* Touch ends on active area */
             if nodeAtPoint.name == "activeArea" {
@@ -388,7 +387,7 @@ class Grid: SKSpriteNode {
                 
                 /* If touch anywhere but activeArea, back to MoveState  */
             } else {
-                //                print("touch not activearea")
+                
                 /* Make sure to be invalid when using catpult */
                 guard gameScene.setCatapultDoneFlag == false else { return }
                 
@@ -450,7 +449,6 @@ class Grid: SKSpriteNode {
                     /* Back to MoveState */
                     gameScene.playerTurnState = .MoveState
                     
-                    //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
@@ -477,7 +475,6 @@ class Grid: SKSpriteNode {
                     /* Back to MoveState */
                     gameScene.playerTurnState = .MoveState
                     
-                    //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
@@ -583,7 +580,6 @@ class Grid: SKSpriteNode {
                     /* Back to MoveState */
                     gameScene.playerTurnState = .MoveState
                     
-                    //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
@@ -618,7 +614,6 @@ class Grid: SKSpriteNode {
                 /* Touch ends enemy for magic sword */
             } else if nodeAtPoint.name == "enemy" {
                 let enemy = nodeAtPoint as! Enemy
-                //                print("(\(enemy.positionX), \(enemy.positionY))")
                 
                 guard gameScene.magicSwordAttackDone else { return }
                 
@@ -662,7 +657,7 @@ class Grid: SKSpriteNode {
                 
             /* Touch ends on anywhere but active area or enemy */
             } else {
-                print("touch not activearea")
+                
                 /* Make sure to be invalid when using catpult */
                 guard gameScene.setCatapultDoneFlag == false else { return }
                 guard gameScene.selectCatapultDoneFlag == false else { return }
@@ -1380,28 +1375,24 @@ class Grid: SKSpriteNode {
         let gameScene = self.parent as! GameScene
         switch gameScene.activeHero.direction {
         case .front:
-            print("front")
             if gameScene.activeHero.positionY < 2 {
                 return ([gameScene.activeHero.positionX, 0], [gameScene.activeHero.positionX, 0])
             } else {
                 return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY-1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY-2])
             }
         case .back:
-            print("back")
             if gameScene.activeHero.positionY > 9 {
                 return ([gameScene.activeHero.positionX, 11], [gameScene.activeHero.positionX, 11])
             } else {
                 return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY+1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY+2])
             }
         case .left:
-            print("left")
             if gameScene.activeHero.positionX < 2 {
                 return ([0, gameScene.activeHero.positionY], [0, gameScene.activeHero.positionY])
             } else {
                 return ([gameScene.activeHero.positionX-1, gameScene.activeHero.positionY], [gameScene.activeHero.positionX-2, gameScene.activeHero.positionY])
             }
         case .right:
-            print("right")
             if gameScene.activeHero.positionX > 6 {
                 return ([8, gameScene.activeHero.positionY], [8, gameScene.activeHero.positionY])
             } else {

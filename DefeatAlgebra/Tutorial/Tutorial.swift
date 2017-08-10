@@ -71,6 +71,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var tutorialDone = false
     var gameOverDoneFlag = false
     
+    /*== Game Sounds ==*/
+    var main = BGM(bgm: 0)
+    var stageClear = BGM(bgm: 2)
+    var gameOver = BGM(bgm: 4)
+    var gameOverSoundDone = false
+    var stageClearSoundDone = false
+    var hitCastleWallSoundDone = false
+
     /* Game flags */
     var addEnemyDoneFlag = false
     var playerTurnDoneFlag = false
@@ -104,9 +112,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     var heroArray = [HeroForTutorial]()
     var numOfTurnDoneHero = 0
     
-    /* Keep track turn */
-    var countTurn = 0
-    
     var tutorialLabelArray = [SKNode]()
     
     
@@ -136,6 +141,12 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         buttonItem = childNode(withName: "buttonItem")
         buttonAttack.isHidden = true
         buttonItem.isHidden = true
+        
+        /* Sound */
+        if MainMenu.soundOnFlag {
+            main.play()
+            main.numberOfLoops = -1
+        }
         
         /* Labels */
         gameOverLabel = childNode(withName: "gameOverLabel")
@@ -191,7 +202,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -199,6 +210,9 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         
         /* Skip button */
         buttonSkip.selectedHandler = { [weak self] in
+            
+            /* Stop sound */
+            self?.main.stop()
             
             if Tutorial.tutorialPhase == 2 {
                 /* Grab reference to the SpriteKit view */
@@ -212,7 +226,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
@@ -229,7 +243,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
@@ -238,6 +252,9 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         
         /* Next button */
         buttonNext.selectedHandler = { [weak self] in
+            
+            /* Stop sound */
+            self?.stageClear.stop()
             
             /* Store flag of this tutorial done */
             let ud = UserDefaults.standard
@@ -261,7 +278,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
@@ -277,7 +294,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
@@ -286,6 +303,9 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         
         /* Again button */
         buttonAgain.selectedHandler = { [weak self] in
+            
+            /* Stop sound */
+            self?.stageClear.stop()
             
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView!
@@ -296,7 +316,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -343,7 +363,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
-//        print(tutorialState)
+
         switch Tutorial.tutorialPhase {
         case 0:
             /* Make sure to call once at each tutorial state */
@@ -360,7 +380,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             if tutorialState == .T12 {
                 switch gameState {
                 case .EnemyTurn:
-                    //                        print("EnemyTurn")
                     flashGridDoneFlag = false
                     
                     if enemyTurnDoneFlag == false {
@@ -383,7 +402,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         
                         /* If life is 0, GameOver */
                         if self.life < 1 {
-                            gameState = .GameOver
+                            
                         }
                     }
                     
@@ -417,7 +436,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         gameState = .GridFlashing
                     }
                 case .GridFlashing:
-                    //                        print("GridFlashing")
                     
                     /* Make sure to call once */
                     if flashGridDoneFlag == false {
@@ -431,25 +449,28 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                             enemy.calculatePunchLength(value: xValue)
                         }
                         
-                        let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
-                        let moveState = SKAction.run({
-                            self.removeTutorial()
-                            self.enemyTurnDoneFlag = false
-                            self.gridNode.enemyArray[0].myTurnFlag = true
-                            self.gameState = .EnemyTurn
-                        })
-                        let seq = SKAction.sequence([wait, moveState])
-                        self.run(seq)
+                        if xValue == 3 {
+                            let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)+0.7))
+                            let moveState = SKAction.run({
+                                self.removeTutorial()
+                                self.enemyTurnDoneFlag = false
+                                self.gridNode.enemyArray[0].myTurnFlag = true
+                                self.gameState = .EnemyTurn
+                            })
+                            let seq = SKAction.sequence([wait, moveState])
+                            self.run(seq)
+                        } else {
+                            let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
+                            let moveState = SKAction.run({
+                                self.removeTutorial()
+                                self.enemyTurnDoneFlag = false
+                                self.gridNode.enemyArray[0].myTurnFlag = true
+                                self.gameState = .EnemyTurn
+                            })
+                            let seq = SKAction.sequence([wait, moveState])
+                            self.run(seq)
+                        }
                     }
-                    break;
-                case .StageClear:
-                    gridNode.resetSquareArray(color: "blue")
-                    break;
-                    
-                case .GameOver:
-                    removeTutorial()
-                    gameOverLabel.isHidden = false
-                    buttonRetry.state = .msButtonNodeStateActive
                     break;
                 default:
                     break;
@@ -457,16 +478,16 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case 2:
-//            print(tutorialState)
+
             if tutorialDone == false {
                 tutorialDone = true
                 tutorialFlow()
             }
             if tutorialState == .T5 {
-//                print(gameState)
+
                 switch gameState {
                 case .PlayerTurn:
-                    //            print("player turn")
+                    
                     /* Check if all enemies are defeated or not */
                     if totalNumOfEnemy <= 0 {
                         gameState = .StageClear
@@ -474,7 +495,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     
                     switch playerTurnState {
                     case .DisplayPhase:
-                        //                print("DisplayPhase")
+                        
                         playerPhaseLabel.isHidden = false
                         let wait = SKAction.wait(forDuration: 1.0)
                         let moveState = SKAction.run({ self.playerTurnState = .ItemOn })
@@ -482,7 +503,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         self.run(seq)
                         break;
                     case .ItemOn:
-                        //                print("itemOn")
+                        
                         
                         playerPhaseLabel.isHidden = true
                         
@@ -497,7 +518,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         }
                         
                     case .MoveState:
-                        //                print("MoveState")
+                        
                         
                         timeBombDoneFlag = false
                         bombExplodeDoneFlag = false
@@ -532,8 +553,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     case .TurnEnd:
                         /* Remove dead hero from heroArray */
                         self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
-                        
-                        //                print(heroArray)
                         
                         /* Reset Flags */
                         addEnemyDoneFlag = false
@@ -575,7 +594,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                     }
                     break;
                 case .EnemyTurn:
-                    //                        print("EnemyTurn")
+                    
                     /* Reset Flags */
                     addEnemyDoneFlag = false
                     playerTurnDoneFlag = false
@@ -635,7 +654,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         playerTurnState = .DisplayPhase
                     }
                 case .GridFlashing:
-                    //                        print("GridFlashing")
                     
                     /* Make sure to call once */
                     if flashGridDoneFlag == false {
@@ -649,20 +667,39 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                             enemy.calculatePunchLength(value: xValue)
                         }
                         
-                        let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
-                        let moveState = SKAction.run({
-                            self.removeTutorial()
-                            self.gameState = .PlayerTurn
-                            self.countTurn += 1
-                        })
-                        let seq = SKAction.sequence([wait, moveState])
-                        self.run(seq)
+                        if xValue == 3 {
+                            let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)+0.7))
+                            let moveState = SKAction.run({
+                                self.removeTutorial()
+                                self.gameState = .PlayerTurn
+                            })
+                            let seq = SKAction.sequence([wait, moveState])
+                            self.run(seq)
+                        } else {
+                            let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
+                            let moveState = SKAction.run({
+                                self.removeTutorial()
+                                self.gameState = .PlayerTurn
+                            })
+                            let seq = SKAction.sequence([wait, moveState])
+                            self.run(seq)
+                        }
+                        
                     }
                     break;
                 case .GameOver:
                     gameOverLabel.isHidden = false
                     if gameOverDoneFlag == false {
                         gameOverDoneFlag = true
+                        /* Play Sound */
+                        if MainMenu.soundOnFlag {
+                            if gameOverSoundDone == false {
+                                gameOverSoundDone = true
+                                main.stop()
+                                let sound = SKAction.playSoundFileNamed("gameOver.wav", waitForCompletion: true)
+                                self.run(sound)
+                            }
+                        }
                         if hitByEnemyFlag {
                             self.createTutorialLabel(text: "If a hero hits enemy, he'll die!", posY: 720)
                             buttonRetry.state = .msButtonNodeStateActive
@@ -876,7 +913,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         
                         /* Get index of game using */
                         usingItemIndex = Int((Double(nodeAtPoint.position.x)-56.5)/91)
-                        //                print("Now item index is \(usingItemIndex)")
                         
                         
                         /* If player touch other place than item icons, back to MoveState */
@@ -923,12 +959,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             break;
         }
         
-        //        /* just for debug */
-        //        if nodeAtPoint.name == "hero" {
-        //            let hero = nodeAtPoint as! Hero
-        //            print("(\(hero.positionX), \(hero.positionY))")
-        //        }
-        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -952,6 +982,11 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         if contactA.categoryBitMask == 1 || contactB.categoryBitMask == 1 {
             /* Get item */
             if contactA.categoryBitMask == 64 || contactB.categoryBitMask == 64 {
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
+                    self.run(get)
+                }
                 /* A is hero */
                 if contactA.categoryBitMask == 1 {
                     let item = contactB.node as! SKSpriteNode
@@ -1019,6 +1054,16 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         /* Enemy's arm or fist hits castle wall */
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
             
+            /* Make sure to call once at each enemy */
+            if hitCastleWallSoundDone == false {
+                hitCastleWallSoundDone = true
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
+                    self.run(sound)
+                }
+            }
+            
             if contactA.categoryBitMask == 4 {
                 /* Get enemy body or arm or fist */
                 let nodeB = contactB.node as! SKSpriteNode
@@ -1027,7 +1072,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 nodeB.removeAllActions()
                 
                 if Tutorial.tutorialPhase == 1 {
-                    if life <= 0 {
+                    if life <= 1 {
                         self.removeAllActions()
                         tutorialDone = false
                         tutorialState = .T15
@@ -1354,6 +1399,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
                 break;
             case .T9:
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    if stageClearSoundDone == false {
+                        stageClearSoundDone = true
+                        stageClear.play()
+                        main.stop()
+                    }
+                }
                 removeTutorial()
                 self.createTutorialLabel(text: "Now,", posY: 1100)
                 self.createTutorialLabel(text: "You master how to move a hero!!", posY: 1040)
@@ -1580,6 +1633,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 enemyActionForTutorial1(nextState: .T12)
                 break;
             case .T15:
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    if gameOverSoundDone == false {
+                        gameOverSoundDone = true
+                        main.stop()
+                        gameOver.play()
+                    }
+                }
                 resetDiscription()
                 self.createTutorialLabel(text: "If the town wall life comes to 0", posY: 1100)
                 self.createTutorialLabel(text: "Game over", posY: 1040)
@@ -1650,6 +1711,14 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 setPointingIcon(position: CGPoint(x: self.gridNode.position.x+self.gridNode.enemyArray[0].position.x+55, y: self.gridNode.position.y+self.gridNode.enemyArray[0].position.y+80), size: CGSize(width: 60, height: 52))
                 break;
             case .T8:
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    if stageClearSoundDone == false {
+                        stageClearSoundDone = true
+                        stageClear.play()
+                        main.stop()
+                    }
+                }
                 resetDiscription()
                 createTutorialLabel(text: "Great!", posY: 1100)
                 createTutorialLabel(text: "Now, you are ready to", posY: 1000)
@@ -1736,7 +1805,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     /* Enemy action for tutorial1 */
     func enemyActionForTutorial1(nextState: TutorialState) {
         if enemyTurnDoneFlag == false {
-            //                print("\(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
+            
             enemyTurnEndFlag = false
             tutorialDone = false
             /* Reset enemy position */

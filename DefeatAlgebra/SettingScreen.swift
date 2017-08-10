@@ -82,7 +82,7 @@ class SettingScreen: SKSpriteNode {
             Tutorial.tutorialPhase = 0
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -104,7 +104,7 @@ class SettingScreen: SKSpriteNode {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -125,7 +125,7 @@ class SettingScreen: SKSpriteNode {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)

@@ -16,7 +16,7 @@ class BGM: AVAudioPlayer {
         1: "mainMenu",
         2: "stageClear",
         3: "itemScreen",
-        4: "playerTurn"
+        4: "gameOver"
     ]
     init (bgm:Int){
         if bgm < 3 {

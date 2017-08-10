@@ -77,6 +77,14 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 0
     
+    /*== Game Sounds ==*/
+    var main = BGM(bgm: 0)
+    var stageClear = BGM(bgm: 2)
+    var gameOverSoundDone = false
+    var stageClearSoundDone = false
+    var hitCastleWallSoundDone = false
+
+    
     /*===========*/
     /*== Hero ==*/
     /*===========*/
@@ -164,8 +172,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     /*== Grid Flash ==*/
     /*================*/
     
-    var countTurnForFlashGrid: Int = 0
-    var flashInterval: Int = 8
     var xValue: Int = 0
     var flashGridDoneFlag = false
     
@@ -185,6 +191,12 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         buttonItem = childNode(withName: "buttonItem")
         buttonAttack.isHidden = true
         buttonItem.isHidden = true
+        
+        /* Sound */
+        if MainMenu.soundOnFlag {
+            main.play()
+            main.numberOfLoops = -1
+        }
         
         /* Labels */
         gameOverLabel = childNode(withName: "gameOverLabel")
@@ -228,6 +240,9 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             
         /* Skip button */
         buttonSkip.selectedHandler = { [weak self] in
+            /* Stop sound */
+            self?.main.stop()
+            
             if Tutorial.tutorialPhase < 4 {
                 /* Grab reference to the SpriteKit view */
                 let skView = self?.view as SKView!
@@ -240,7 +255,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
@@ -256,7 +271,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFill
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
@@ -275,7 +290,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -283,6 +298,9 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         
         /* Next button */
         buttonNext.selectedHandler = { [weak self] in
+            
+            /* Stop sound */
+            self?.stageClear.stop()
             
             /* Store flag of this tutorial done */
             let ud = UserDefaults.standard
@@ -299,7 +317,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
                 
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
                 
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -307,6 +325,9 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         
         /* Again button */
         buttonAgain.selectedHandler = { [weak self] in
+            
+            /* Stop sound */
+            self?.stageClear.stop()
             
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView!
@@ -317,7 +338,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -325,6 +346,9 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         
         /* Play button */
         buttonPlay.selectedHandler = { [weak self] in
+            
+            /* Stop sound */
+            self?.stageClear.stop()
             
             /* Store flag of this tutorial done */
             let ud = UserDefaults.standard
@@ -342,7 +366,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
             
             /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFill
+            scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
@@ -393,9 +417,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         
         /* Set each value of adding enemy management */
         SetAddEnemyMng()
-                
-        /* Set active area for catapult */
-        setActiveAreaForCatapult()
         
         /* Set castleWall physics property */
         castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
@@ -405,9 +426,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         
         /* Set life */
         setLife(numOflife: maxLife)
-        
-        print(stageLevel)
-        print(Tutorial.tutorialPhase)
         
     }
     
@@ -420,16 +438,12 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         switch Tutorial.tutorialPhase {
         case 3:
             if tutorialDone == false {
-                print(tutorialState)
-                print("hey11")
                 tutorialDone = true
                 tutorialFlow()
             }
             break;
         case 4:
             if tutorialDone == false {
-                print(tutorialState)
-                print("hey15")
                 tutorialDone = true
                 tutorialFlow()
             }
@@ -437,7 +451,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         default:
             break;
         }
-//        print(gameState)
+
         switch gameState {
         case .AddEnemy:
             if Tutorial.tutorialPhase == 3 {
@@ -448,7 +462,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     /* Initial add or add on the way */
                     if initialAddEnemyFlag {
                         initialAddEnemyFlag = false
-                        print("call2")
                         /* Add enemy */
                         let addEnemy = SKAction.run({
                             self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, variableExpressionSource: self.variableExpressionSource)
@@ -481,7 +494,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     /* Initial add or add on the way */
                     if initialAddEnemyFlag {
                         initialAddEnemyFlag = false
-                        print("call2")
+                        
                         /* Add enemy */
                         let addEnemy = SKAction.run({
                             self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, variableExpressionSource: self.variableExpressionSource)
@@ -509,10 +522,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .PlayerTurn:
-            //            print(itemArray)
-            //            print(playerTurnState)
-            //            print("\(heroArray.count), \(numOfTurnDoneHero)")
-            //            print(totalNumOfEnemy)
             /* Check if all enemies are defeated or not */
             if totalNumOfEnemy <= 0 {
                 gameState = .StageClear
@@ -542,6 +551,12 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     if bombExplodeDoneFlag == false {
                         bombExplodeDoneFlag = true
                         for (i, timeBombPos) in self.gridNode.timeBombSetPosArray.enumerated() {
+                            /* Play Sound */
+                            if MainMenu.soundOnFlag {
+                                let explode = SKAction.playSoundFileNamed("timeBombExplosion.mp3", waitForCompletion: true)
+                                self.run(explode)
+                            }
+                            
                             /* Look for the enemy to destroy  if any */
                             for enemy in self.gridNode.enemyArray {
                                 /* Hit enemy! */
@@ -614,57 +629,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 case .timeBomb:
                     self.gridNode.showtimeBombSettingArea()
                     break;
-                case .Catapult:
-                    if setCatapultDoneFlag == false {
-                        self.showActiveAreaForCatapult()
-                    } else if catapultFireReady {
-                        /* Make sure to call this once */
-                        if catapultDoneFlag == false {
-                            catapultDoneFlag = true
-                            /* Set animation of catapult */
-                            let catapultAni = SKAction(named: "catapult")
-                            activeCatapult.run(catapultAni!)
-                            
-                            /* Set Catapult variable expression label */
-                            activeCatapult.setCatapultVELabel(vE: activeCatapult.variableExpression)
-                            /* Throw stone */
-                            throwBomb(value: inputBoard.outputValue, setCatapult: activeCatapult)
-                            
-                        }
-                        break;
-                    }
-                    break;
-                case .Wall:
-                    self.gridNode.showWallSettingArea()
-                    break;
-                case .MagicSword:
-                    if magicSwordAttackDone == false {
-                        self.gridNode.showAttackArea(posX: activeHero.positionX, posY: activeHero.positionY, attackType: activeHero.attackType)
-                    }
-                    break;
-                case .BattleShip:
-                    self.gridNode.showBttleShipSettingArea()
-                    break;
-                case .Teleport:
-                    self.gridNode.showTeleportSettingArea()
-                    break;
-                case .ResetCatapult:
-                    /* Make sure to call once */
-                    if usingResetCatapultFlag {
-                        usingResetCatapultFlag = false
-                        /* Make red tiriangle pointing catapult */
-                        for catapult in setCatapultArray {
-                            catapult.makeTriangle()
-                        }
-                        /* On flag selecttingCatapult */
-                        selecttingCatapultFlag = true
-                    }
-                    if selectCatapultDoneFlag {
-                        self.showActiveAreaForCatapult()
-                    }
-                    break;
-                case .Cane:
-                    inputBoardForCane.isHidden = false
+                default:
                     break;
                 }
                 
@@ -673,8 +638,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             case .TurnEnd:
                 /* Remove dead hero from heroArray */
                 self.heroArray = self.heroArray.filter({ $0.aliveFlag == true })
-                
-                //                print(heroArray)
                 
                 /* Reset Flags */
                 addEnemyDoneFlag = false
@@ -720,7 +683,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .EnemyTurn:
-            //                        print("EnemyTurn")
+            
             /* Reset Flags */
             addEnemyDoneFlag = false
             playerTurnDoneFlag = false
@@ -729,7 +692,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             enemyPhaseLabel.isHidden = true
             
             if enemyTurnDoneFlag == false {
-                //                print("\(self.gridNode.enemyArray.count), \(gridNode.numOfTurnEndEnemy)")
                 
                 /* Reset enemy position */
                 gridNode.resetEnemyPositon()
@@ -788,7 +750,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .GridFlashing:
-            //                        print("GridFlashing")
+            
             /* Make sure to call once */
             if flashGridDoneFlag == false {
                 flashGridDoneFlag = true
@@ -803,15 +765,30 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     enemy.calculatePunchLength(value: xValue)
                 }
                 
-                let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
-                let moveState = SKAction.run({ self.gameState = .PlayerTurn })
-                let seq = SKAction.sequence([wait, moveState])
-                self.run(seq)
+                if xValue == 3 {
+                    let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)+0.7))
+                    let moveState = SKAction.run({ self.gameState = .PlayerTurn })
+                    let seq = SKAction.sequence([wait, moveState])
+                    self.run(seq)
+                } else {
+                    let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
+                    let moveState = SKAction.run({ self.gameState = .PlayerTurn })
+                    let seq = SKAction.sequence([wait, moveState])
+                    self.run(seq)
+                }
             }
             break;
         case .StageClear:
             if stageClearDoneFlag == false {
                 stageClearDoneFlag = true
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    if stageClearSoundDone == false {
+                        stageClearSoundDone = true
+                        stageClear.play()
+                        main.stop()
+                    }
+                }
                 gridNode.resetSquareArray(color: "blue")
                 if Tutorial.tutorialPhase == 3 {
                     createTutorialLabel(text: "Great!!", posY: 1100)
@@ -830,6 +807,15 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         case .GameOver:
             if gameOverDoneFlag == false {
                 gameOverDoneFlag = true
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    if gameOverSoundDone == false {
+                        gameOverSoundDone = true
+                        main.stop()
+                        let sound = SKAction.playSoundFileNamed("gameOver.wav", waitForCompletion: true)
+                        self.run(sound)
+                    }
+                }
                 if hitByEnemyFlag {
                     self.createTutorialLabel(text: "If a hero hits enemy, he'll die!", posY: 720)
                     gameOverLabel.isHidden = false
@@ -846,7 +832,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("scene touchBegan")
         
         guard pauseFlag == false else { return }
         
@@ -1015,7 +1000,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                //                print("Now item index is \(usingItemIndex)")
                            
             /* If player touch other place than item icons, back to MoveState */
             } else {
@@ -1049,12 +1033,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
         }
         
-        //        /* just for debug */
-        //        if nodeAtPoint.name == "hero" {
-        //            let hero = nodeAtPoint as! Hero
-        //            print("(\(hero.positionX), \(hero.positionY))")
-        //        }
-        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -1078,6 +1056,11 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         if contactA.categoryBitMask == 1 || contactB.categoryBitMask == 1 {
             /* Get item */
             if contactA.categoryBitMask == 64 || contactB.categoryBitMask == 64 {
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
+                    self.run(get)
+                }
                 /* A is hero */
                 if contactA.categoryBitMask == 1 {
                     let item = contactB.node as! SKSpriteNode
@@ -1101,10 +1084,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                             displayitem(name: item.name!)
                         } else {
                             displayitem(name: item.name!)
-                        }
-                        if stageLevel >= 8 {
-//                            itemSpot.append(item.spotPos)
-                            autoSetItems()
                         }
                     }
                 }
@@ -1131,10 +1110,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                             displayitem(name: item.name!)
                         } else {
                             displayitem(name: item.name!)
-                        }
-                        if stageLevel >= 8 {
-//                            itemSpot.append(item.spotPos)
-                            autoSetItems()
                         }
                     }
                 }
@@ -1194,7 +1169,16 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         
         /* Enemy's arm or fist hits castle wall */
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
-            //            print("cate 4 hit")
+            
+            /* Make sure to call once at each enemy */
+            if hitCastleWallSoundDone == false {
+                hitCastleWallSoundDone = true
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
+                    self.run(sound)
+                }
+            }
             
             if contactA.categoryBitMask == 4 {
                 /* Get enemy body or arm or fist */
@@ -1380,342 +1364,30 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         particles2.run(seqEffect2)
     }
     
-    /*== Catapult ==*/
-    /* Display active area for catapult */
-    func setSingleActiveAreaForCatapult() -> SKShapeNode {
-        let square = SKShapeNode(rectOf: CGSize(width: gridNode.cellWidth, height: 88))
-        square.strokeColor = UIColor.white
-        square.fillColor = UIColor.purple
-        square.alpha = 0.4
-        square.lineWidth = 2.0
-        square.zPosition = 100
-        square.name = "activeArea"
-        square.isHidden = true
-        return square
-    }
-    
-    func setActiveAreaForCatapult() {
-        for i in 0...8 {
-            let activeArea = setSingleActiveAreaForCatapult()
-            activeArea.position = CGPoint(x: gridNode.position.x+CGFloat(gridNode.cellWidth)/2+CGFloat(Double(i)*gridNode.cellWidth), y: 236)
-            addChild(activeArea)
-            activeAreaForCatapult.append(activeArea)
-        }
-    }
-    
-    func showActiveAreaForCatapult() {
-        for activeArea in activeAreaForCatapult {
-            activeArea.isHidden = false
-        }
-    }
-    
-    func resetActiveAreaForCatapult() {
-        for activeArea in activeAreaForCatapult {
-            activeArea.isHidden = true
-        }
-    }
-    
-    /* Set input board for setiing variable expression */
-    func setInputBoard() {
-        inputBoard = InputVariableExpression()
-        addChild(inputBoard)
-    }
-    
-    /* Throw catapult stone animation */
-    func throwBomb(value: Int, setCatapult: Catapult) {
-        /* Create bomb */
-        let catapultBomb = SKSpriteNode(imageNamed: "catapultBomb")
-        catapultBomb.size = CGSize(width: 10, height: 10)
-        catapultBomb.position = setCatapult.position
-        catapultBomb.zPosition = 10
-        
-        let waitAni = SKAction.wait(forDuration: 0.5)
-        let addBomb = SKAction.run({ self.addChild(catapultBomb) })
-
-        let throwBomb = SKAction.run({
-            /* Throw beyond grid */
-            if value > self.gridNode.rows {
-                let duration = 4.5
-                let throwStone = SKAction.moveBy(x: 0, y: CGFloat(Double(value)*self.gridNode.cellHeight)+self.bottomGap, duration: duration)
-                let scale1 = SKAction.scale(by: 7.0, duration: duration/2)
-                let scale2 = SKAction.scale(by: 0.5, duration: duration/2)
-                let seq = SKAction.sequence([scale1, scale2])
-                let group = SKAction.group([throwStone, seq])
-                catapultBomb.run(group)
-                
-                /* Make sure to kill enemy after finishing throw animation */
-                let wait = SKAction.wait(forDuration: duration+0.2)
-                
-                /* Remove catapult and stone */
-                let removeCatapult = SKAction.run({
-                    setCatapult.numOfTurn -= 1
-                    catapultBomb.removeFromParent()
-                    self.inputBoard.outputValue = 0
-                })
-                /* Move state */
-                let moveState = SKAction.run({
-                    self.playerTurnState = .MoveState
-                    self.itemType = .None
-                    self.inputBoard.isActive = false
-                })
-                let seq2 = SKAction.sequence([wait, removeCatapult, moveState])
-                self.run(seq2)
-                
-                /* Miss throw */
-            } else if value < 1 {
-                let throwStone = SKAction.moveBy(x: 0, y: self.bottomGap+30.0, duration: 0.5)
-                catapultBomb.run(throwStone)
-                /* Make sure to kill enemy after finishing throw animation */
-                let wait = SKAction.wait(forDuration: 0.5+0.2)
-                
-                /* Remove catapult and stone */
-                let removeCatapult = SKAction.run({
-                    setCatapult.numOfTurn -= 1
-                    catapultBomb.removeFromParent()
-                    self.inputBoard.outputValue = 0
-                })
-                /* Move state */
-                let moveState = SKAction.run({
-                    self.playerTurnState = .MoveState
-                    self.itemType = .None
-                    self.inputBoard.isActive = false
-                })
-                let seq2 = SKAction.sequence([wait, removeCatapult, moveState])
-                self.run(seq2)
-                
-                /* within grid */
-            } else {
-                let duration = TimeInterval(value)*0.3
-                let throwStone = SKAction.moveBy(x: 0, y: CGFloat(Double(value)*self.gridNode.cellHeight)+self.bottomGap, duration: duration)
-                let scale1 = SKAction.scale(by: 7.0, duration: duration/2)
-                let scale2 = SKAction.scale(by: 0.5, duration: duration/2)
-                let seq = SKAction.sequence([scale1, scale2])
-                let group = SKAction.group([throwStone, seq])
-                catapultBomb.run(group)
-                
-                /* Make sure to kill enemy after finishing throw animation */
-                let wait = SKAction.wait(forDuration: duration+0.2)
-                /* Kill enemy */
-                let killEnemy = SKAction.run({
-                    for enemy in self.gridNode.enemyArray {
-                        /* Hit enemy! */
-                        if enemy.positionX == setCatapult.xPos && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos-1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos+1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos && enemy.positionY == value || enemy.positionX == setCatapult.xPos && enemy.positionY == value-2 {
-                            /* Effect */
-                            self.gridNode.enemyDestroyEffect(enemy: enemy)
-                            
-                            /* Enemy */
-                            let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                            let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                            self.run(seqEnemy)
-                            enemy.aliveFlag = false
-                            /* Count defeated enemy */
-                            self.totalNumOfEnemy -= 1
-                        }
-                    }
-                })
-                
-                /* Effect */
-                let runEffect = SKAction.run({
-                    /* Load our particle effect */
-                    let particles = SKEmitterNode(fileNamed: "CatapultFire")!
-                    let particles2 = SKEmitterNode(fileNamed: "CatapultFire2")!
-                    particles.position = CGPoint(x: catapultBomb.position.x, y: catapultBomb.position.y-20)
-                    particles2.position = CGPoint(x: catapultBomb.position.x, y: catapultBomb.position.y-20)
-                    /* Add particles to scene */
-                    self.addChild(particles)
-                    self.addChild(particles2)
-                    let waitRemoveExplode = SKAction.wait(forDuration: 2.0)
-                    let removeParticles = SKAction.removeFromParent()
-                    let seqEffect = SKAction.sequence([waitRemoveExplode, removeParticles])
-                    let seqEffect2 = SKAction.sequence([waitRemoveExplode, removeParticles])
-                    particles.run(seqEffect)
-                    particles2.run(seqEffect2)
-                })
-                
-                let waitRemoveEffect = SKAction.wait(forDuration: 2.0)
-                
-                /* Remove bomb */
-                let removeBombs = SKAction.run({
-                    setCatapult.numOfTurn -= 1
-                    catapultBomb.removeFromParent()
-                    self.inputBoard.outputValue = 0
-                })
-                /* Move state */
-                let moveState = SKAction.run({
-                    self.playerTurnState = .MoveState
-                    self.itemType = .None
-                    self.inputBoard.isActive = false
-                })
-                let seq2 = SKAction.sequence([wait, killEnemy, runEffect, waitRemoveEffect, removeBombs, moveState])
-                self.run(seq2)
-            }
-        })
-        let seqBomb = SKAction.sequence([waitAni, addBomb, throwBomb])
-        self.run(seqBomb)
-    }
-    
-    /* Fire and remove catapult */
-    func fireAndRemoveCatapult() {
-        for catapult in setCatapultArray {
-            let catapultValue = catapult.calculateCatapultValue()
-            let catapultAni = SKAction(named: "catapult")
-            catapult.run(catapultAni!)
-            self.throwBomb(value: catapultValue, setCatapult: catapult)
-            catapult.numOfTurn -= 1
-            var waitDuration = 0.0
-            /* Calculate duration to wait */
-            if catapultValue > self.gridNode.rows {
-                waitDuration = 7
-            } else if catapultValue <= 0 {
-                waitDuration = 2
-            } else {
-                waitDuration = Double(catapultValue)*0.3
-            }
-            let waitAni = SKAction.wait(forDuration: TimeInterval(waitDuration))
-            let handleCatapult = SKAction.run({
-                if catapult.numOfTurn <= 0 {
-                    catapult.removeFromParent()
-                    catapult.activeFlag = false
-                }
-                self.activateCatapultDone = true
-            })
-            let seq = SKAction.sequence([waitAni, handleCatapult])
-            self.run(seq)
-        }
-    }
-    
-    /* Check within grid for catapult */
-    func checkWithinGrid() -> (Int, Int, Int, Int) {
-        /* Calculate hit spots */
-        /* Make sure hit spots within grid */
-        if activeHero.positionX == 0 {
-            let hitSpotXLeft = 0
-            let hitSpotXRight = activeHero.positionX+1
-            if activeHero.positionY == 0 {
-                let hitSpotYDown = 0
-                let hitSpotYUp = activeHero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if activeHero.positionX == 8 {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = 11
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = activeHero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            }
-        } else if activeHero.positionX == 8 {
-            let hitSpotXLeft = activeHero.positionX-1
-            let hitSpotXRight = 8
-            if activeHero.positionY == 0 {
-                let hitSpotYDown = 0
-                let hitSpotYUp = activeHero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if activeHero.positionX == 8 {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = 11
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = activeHero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            }
-        } else {
-            let hitSpotXLeft = activeHero.positionX-1
-            let hitSpotXRight = activeHero.positionX+1
-            if activeHero.positionY == 0 {
-                let hitSpotYDown = 0
-                let hitSpotYUp = activeHero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if activeHero.positionX == 8 {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = 11
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = activeHero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            }
-        }
-    }
-    
-    /*== Magic Sword ==*/
-    /* Set effect when using magic sword */
-    func setMagicSowrdEffect() {
-        /* Load our particle effect */
-        let particles = SKEmitterNode(fileNamed: "MagicSwordEffect")!
-        particles.position = activeHero.position
-        particles.name = "magicSwordEffect"
-        /* Add particles to scene */
-        addChild(particles)
-    }
-    
-    /* Set effect to enemy when using magic sword */
-    func setMagicSowrdEffectToEnemy(enemy: Enemy) {
-        /* Load our particle effect */
-        let particles = SKEmitterNode(fileNamed: "MagicSwordEffect")!
-        particles.position = CGPoint(x: enemy.position.x+gridNode.position.x, y: enemy.position.y+gridNode.position.y)
-        particles.name = "magicSwordEffectToEnemy"
-        /* Add particles to scene */
-        addChild(particles)
-    }
-    
-    /* Remove effect when using magic sword */
-    func removeMagicSowrdEffect() {
-        if let effect = childNode(withName: "magicSwordEffect") {
-            effect.removeFromParent()
-        }
-    }
-    
-    /* Remove effect of enemy when using magic sword */
-    func removeMagicSowrdEffectToEnemy() {
-        if let effect = childNode(withName: "magicSwordEffectToEnemy") {
-            effect.removeFromParent()
-        }
-    }
-    
-    /*== Cane ==*/
-    /* Set input board for setiing variable expression */
-    func setInputBoardForCane() {
-        inputBoardForCane = InputVariable()
-        inputBoardForCane.isHidden = true
-        addChild(inputBoardForCane)
-    }
-    
-    
     /*================*/
     /*== Grid Flash ==*/
     /*================*/
     
     /* Make grid flash in fixed interval */
     func flashGrid() {
-        /* Time to flash grid */
-        if countTurnForFlashGrid > flashInterval {
             
-            /* Stop all enemy's movement */
-            for enemy in self.gridNode.enemyArray {
-                enemy.removeAllActions()
-                enemy.setStandingtexture()
-            }
-            
-            /* Make sure to stop all enemy before move to GridFlashing state */
-            let wait = SKAction.wait(forDuration: 1.0)
-            let moveState = SKAction.run({ self.gameState = .GridFlashing })
-            let seq = SKAction.sequence([wait, moveState])
-            self.run(seq)
-            
+        /* Stop all enemy's movement */
+        for enemy in self.gridNode.enemyArray {
+            enemy.removeAllActions()
+            enemy.setStandingtexture()
         }
+            
+        /* Make sure to stop all enemy before move to GridFlashing state */
+        let wait = SKAction.wait(forDuration: 1.0)
+        let moveState = SKAction.run({ self.gameState = .GridFlashing })
+        let seq = SKAction.sequence([wait, moveState])
+        self.run(seq)
+        
     }
     
     /*=====================*/
     /*== Game Management ==*/
     /*=====================*/
-    
-//    /*== Reset All Stuff ==*/
-//    func resetStuff() {
-//        
-//    }
     
     /* Tutorial flow */
     func tutorialFlow() {

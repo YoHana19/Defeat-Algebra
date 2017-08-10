@@ -758,36 +758,72 @@ class EnemyForTutorial2: SKSpriteNode {
     
     /* Do punch */
     func punch() -> (arm: [EnemyArm], fist: [EnemyFist]) {
+        let gridNode = self.parent as! GridForTutorial2
         
-        /* Make sure enemy punch front direction */
-        self.direction = .front
-        
-        /* Stop animation of enemy */
-        self.removeAllActions()
-        
-        /* Set texture according to direction of enemy */
-        self.setTextureInPunch()
-        
-        /* Set arm */
-        let arm1 = EnemyArm(direction: self.direction)
-        let arm2 = EnemyArm(direction: self.direction)
-        setArm(arm: [arm1, arm2], direction: self.direction)
-        
-        /* Set fist */
-        let fist1 = EnemyFist(direction: self.direction)
-        let fist2 = EnemyFist(direction: self.direction)
-        setFist(fist: [fist1, fist2], direction: self.direction)
-        
-        /* Move Fist */
-        fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
-        fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
-        
-        /* Extend arm */
-        arm1.extendArm(length: punchLength, speed: self.punchSpeed)
-        arm2.extendArm(length: punchLength, speed: self.punchSpeed)
-        
-        /* Store reference for func drawPunch */
-        return ([arm1, arm2], [fist1, fist2])
+        if self.positionY < self.valueOfEnemy {
+            /* Adjust punch length */
+            self.punchLength  = CGFloat(Double(self.positionY)*gridNode.cellHeight+100.0)
+            
+            /* Make sure enemy punch front direction */
+            self.direction = .front
+            
+            /* Stop animation of enemy */
+            self.removeAllActions()
+            
+            /* Set texture according to direction of enemy */
+            self.setTextureInPunch()
+            
+            /* Set arm */
+            let arm1 = EnemyArm(direction: self.direction)
+            let arm2 = EnemyArm(direction: self.direction)
+            setArm(arm: [arm1, arm2], direction: self.direction)
+            
+            /* Set fist */
+            let fist1 = EnemyFist(direction: self.direction)
+            let fist2 = EnemyFist(direction: self.direction)
+            setFist(fist: [fist1, fist2], direction: self.direction)
+            
+            /* Move Fist */
+            fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            
+            /* Extend arm */
+            arm1.extendArm(length: punchLength, speed: self.punchSpeed)
+            arm2.extendArm(length: punchLength, speed: self.punchSpeed)
+            
+            /* Store reference for func drawPunch */
+            return ([arm1, arm2], [fist1, fist2])
+        } else {
+            /* Make sure enemy punch front direction */
+            self.direction = .front
+            
+            /* Stop animation of enemy */
+            self.removeAllActions()
+            
+            /* Set texture according to direction of enemy */
+            self.setTextureInPunch()
+            
+            /* Set arm */
+            let arm1 = EnemyArm(direction: self.direction)
+            let arm2 = EnemyArm(direction: self.direction)
+            setArm(arm: [arm1, arm2], direction: self.direction)
+            
+            /* Set fist */
+            let fist1 = EnemyFist(direction: self.direction)
+            let fist2 = EnemyFist(direction: self.direction)
+            setFist(fist: [fist1, fist2], direction: self.direction)
+            
+            /* Move Fist */
+            fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            fist2.moveFistForward(length: punchLength, speed: self.punchSpeed)
+            
+            /* Extend arm */
+            arm1.extendArm(length: punchLength, speed: self.punchSpeed)
+            arm2.extendArm(length: punchLength, speed: self.punchSpeed)
+            
+            /* Store reference for func drawPunch */
+            return ([arm1, arm2], [fist1, fist2])
+        }
     }
     
     func moveBodyForward(length: CGFloat, speed: CGFloat) {
@@ -840,8 +876,6 @@ class EnemyForTutorial2: SKSpriteNode {
         
         /* Enemy punch beyond edge of grid */
         if self.positionY < self.valueOfEnemy {
-            print("beyond edge")
-            print(self.wallHitFlag)
             
             /* Decrese life */
             let decreseLife = SKAction.run({
@@ -855,8 +889,7 @@ class EnemyForTutorial2: SKSpriteNode {
             
             /* Calculate punchlength */
             let originPosY = self.positionY
-            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+gameScene.bottomGap+150 /* 150 is a buffer */
-            
+            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+95 /* 95 is an adjustment */            
             /* Wait till punch streach out fully */
             let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
             

@@ -25,12 +25,12 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </imageView>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" fixedFrame="YES" image="burningX" translatesAutoresizingMaskIntoConstraints="NO" id="a74-gy-Ow7">
-                                <rect key="frame" x="87" y="237" width="200" height="172"/>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" fixedFrame="YES" image="burningX" translatesAutoresizingMaskIntoConstraints="NO" id="ZhY-MV-KKX">
+                                <rect key="frame" x="112" y="249" width="150" height="129"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </imageView>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" fixedFrame="YES" image="front1" translatesAutoresizingMaskIntoConstraints="NO" id="EM8-tz-caw">
-                                <rect key="frame" x="147" y="310" width="80" height="80"/>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" fixedFrame="YES" image="front1" translatesAutoresizingMaskIntoConstraints="NO" id="biT-Hx-hAr">
+                                <rect key="frame" x="147" y="298" width="80" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </imageView>
                         </subviews>
@@ -43,7 +43,7 @@
     </scenes>
     <resources>
         <image name="Grid2" width="375" height="667"/>
-        <image name="burningX" width="200" height="172"/>
+        <image name="burningX" width="150" height="129"/>
         <image name="front1" width="80" height="80"/>
     </resources>
 </document>

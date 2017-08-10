@@ -92,7 +92,7 @@ class GridForTutorial2: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("grid touchBegan")
+        
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial2
         guard gameScene.pauseFlag == false else { return }
@@ -193,7 +193,7 @@ class GridForTutorial2: SKSpriteNode {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("grid touchMoved")
+        
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial2
         
@@ -269,7 +269,7 @@ class GridForTutorial2: SKSpriteNode {
     
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //        print("grid touchEnded")
+        
         /* Get gameScene */
         let gameScene = self.parent as! Tutorial2
         
@@ -393,7 +393,6 @@ class GridForTutorial2: SKSpriteNode {
             
             /* Touch point to attack to */
         } else if gameScene.playerTurnState == .AttackState {
-            //            print("attackstate")
             
             /* Touch ends on active area */
             if nodeAtPoint.name == "activeArea" {
@@ -413,6 +412,11 @@ class GridForTutorial2: SKSpriteNode {
                 /* Sword attack */
                 if gameScene.activeHero.attackType == 0 {
                     gameScene.activeHero.setSwordAnimation()
+                    /* Play Sound */
+                    if MainMenu.soundOnFlag {
+                        let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
+                        self.run(attack)
+                    }
                     
                     /* If hitting enemy! */
                     if self.positionEnemyAtGrid[gridX][gridY] {
@@ -438,36 +442,7 @@ class GridForTutorial2: SKSpriteNode {
                         let seq = SKAction.sequence([waitAni, destroyEnemy])
                         self.run(seq)
                     }
-                    
-                    /* Spear attack */
-                } else if gameScene.activeHero.attackType == 1 {
-                    gameScene.activeHero.setSpearAnimation()
-                    
-                    let hitSpots = self.hitSpotsForSpear()
-                    /* If hitting enemy! */
-                    if self.positionEnemyAtGrid[hitSpots.0[0]][hitSpots.0[1]] || self.positionEnemyAtGrid[hitSpots.1[0]][hitSpots.1[1]] {
-                        let waitAni = SKAction.wait(forDuration: 0.5)
-                        let removeEnemy = SKAction.run({
-                            /* Look for the enemy to destroy */
-                            for enemy in self.enemyArray {
-                                if enemy.positionX == hitSpots.0[0] && enemy.positionY == hitSpots.0[1] || enemy.positionX == hitSpots.1[0] && enemy.positionY == hitSpots.1[1] {
-                                    /* Effect */
-                                    self.enemyDestroyEffect(enemy: enemy)
-                                    
-                                    /* Enemy */
-                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                    self.run(seqEnemy)
-                                    enemy.aliveFlag = false
-                                    /* Count defeated enemy */
-                                    gameScene.totalNumOfEnemy -= 1
-                                }
-                            }
-                        })
-                        let seq = SKAction.sequence([waitAni, removeEnemy])
-                        self.run(seq)
-                    }
+
                 }
                 
                 /* Back to MoveState */
@@ -483,7 +458,7 @@ class GridForTutorial2: SKSpriteNode {
                 
                 /* If touch anywhere but activeArea, back to MoveState  */
             } else {
-                //                print("touch not activearea")
+                
                 /* Make sure to be invalid when using catpult */
                 guard gameScene.setCatapultDoneFlag == false else { return }
                 
@@ -506,7 +481,6 @@ class GridForTutorial2: SKSpriteNode {
                 /* Remove active area */
                 gameScene.gridNode.resetSquareArray(color: "purple")
                 gameScene.gridNode.resetSquareArray(color: "red")
-                gameScene.resetActiveAreaForCatapult()
             }
             
             /* Touch position to use item at */
@@ -545,13 +519,11 @@ class GridForTutorial2: SKSpriteNode {
                     /* Back to MoveState */
                     gameScene.playerTurnState = .MoveState
                     
-                    //                    print("Used item index is \(gameScene.usingItemIndex)")
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                 }
             /* Touch ends on anywhere but active area or enemy */
             } else {
-                print("touch not activearea")
                 /* Make sure to be invalid when using catpult */
                 guard gameScene.setCatapultDoneFlag == false else { return }
                 guard gameScene.selectCatapultDoneFlag == false else { return }
@@ -559,7 +531,6 @@ class GridForTutorial2: SKSpriteNode {
                 /* Reset hero */
                 gameScene.activeHero.resetHero()
                 /* Remove effect */
-                gameScene.removeMagicSowrdEffect()
                 
                 gameScene.playerTurnState = .MoveState
                 /* Set item area cover */
@@ -580,7 +551,6 @@ class GridForTutorial2: SKSpriteNode {
                 /* Remove active area */
                 gameScene.gridNode.resetSquareArray(color: "purple")
                 gameScene.gridNode.resetSquareArray(color: "red")
-                gameScene.resetActiveAreaForCatapult()
                 
                 /* Remove triangle except the one of selected catapult */
                 for catapult in gameScene.setCatapultArray {
@@ -639,6 +609,11 @@ class GridForTutorial2: SKSpriteNode {
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
         particles.run(seqEffect)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
+            self.run(dead)
+        }
     }
     
     /*== Adding Enemy ==*/
@@ -721,37 +696,42 @@ class GridForTutorial2: SKSpriteNode {
             numOfFlash = 3
         }
         
-        /* Set flash animation */
-        let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-        let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-        let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-        let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-        let flash = SKAction.repeat(seqFlash, count: numOfFlash)
-        self.run(flash)
-        
-        /* Display the number of flash */
-        let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))
-        let display = SKAction.run({ labelNode.text = String(numOfFlash) })
-        let seq = SKAction.sequence([wholeWait, display])
-        self.run(seq)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let sound = SKAction.playSoundFileNamed("flash.wav", waitForCompletion: true)
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let group = SKAction.group([sound, seqFlash])
+            let flash = SKAction.repeat(group, count: numOfFlash)
+            self.run(flash)
+            
+            /* Display the number of flash */
+            let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)+0.7))
+            let display = SKAction.run({ labelNode.text = String(numOfFlash) })
+            let seq = SKAction.sequence([wholeWait, display])
+            self.run(seq)
+            
+        } else {
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let flash = SKAction.repeat(seqFlash, count: numOfFlash)
+            self.run(flash)
+            
+            /* Display the number of flash */
+            let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))
+            let display = SKAction.run({ labelNode.text = String(numOfFlash) })
+            let seq = SKAction.sequence([wholeWait, display])
+            self.run(seq)
+            
+        }
         
         return numOfFlash
-    }
-    
-    func flashGridForCane(labelNode: SKLabelNode, numOfFlash: Int) {
-        /* Set flash animation */
-        let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-        let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-        let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-        let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-        let flash = SKAction.repeat(seqFlash, count: numOfFlash)
-        self.run(flash)
-        
-        /* Display the number of flash */
-        let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))
-        let display = SKAction.run({ labelNode.text = String(numOfFlash) })
-        let seq = SKAction.sequence([wholeWait, display])
-        self.run(seq)
     }
     
     /*== Items ==*/
@@ -1209,28 +1189,24 @@ class GridForTutorial2: SKSpriteNode {
         let gameScene = self.parent as! Tutorial2
         switch gameScene.activeHero.direction {
         case .front:
-            print("front")
             if gameScene.activeHero.positionY < 2 {
                 return ([gameScene.activeHero.positionX, 0], [gameScene.activeHero.positionX, 0])
             } else {
                 return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY-1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY-2])
             }
         case .back:
-            print("back")
             if gameScene.activeHero.positionY > 9 {
                 return ([gameScene.activeHero.positionX, 11], [gameScene.activeHero.positionX, 11])
             } else {
                 return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY+1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY+2])
             }
         case .left:
-            print("left")
             if gameScene.activeHero.positionX < 2 {
                 return ([0, gameScene.activeHero.positionY], [0, gameScene.activeHero.positionY])
             } else {
                 return ([gameScene.activeHero.positionX-1, gameScene.activeHero.positionY], [gameScene.activeHero.positionX-2, gameScene.activeHero.positionY])
             }
         case .right:
-            print("right")
             if gameScene.activeHero.positionX > 6 {
                 return ([8, gameScene.activeHero.positionY], [8, gameScene.activeHero.positionY])
             } else {
