@@ -398,8 +398,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set hero */
         setHero()
         /* Items */
-//        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-        let handedItemNameArray = ["catapult", "cane"]
+        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
@@ -3266,39 +3265,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 12 */
         case 11:
             /* Set enemy */
-//            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
-            initialEnemyPosArray = [[4, 4]]
+            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
             
-            /* Set battle ship */
-            let battleShipsArray = [[4,0]]
-            for battleShipPos in battleShipsArray {
-                let battleShip = BattleShip()
-                self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
-            }
-            
-            /* Set catapult */
-            let catapultArray = [[6,2],[6,4]]
-            for catapultPos in catapultArray {
-                let catapult = Catapult()
-                self.gridNode.addObjectAtGrid(object: catapult, x: catapultPos[0], y: catapultPos[1])
-            }
-            
-            /* Set magicSword */
-            let magicSwordArray = [[2,2],[2,4],[4,5]]
-            for magicSwordPos in magicSwordArray {
-                let magicSword = MagicSword()
-                self.gridNode.addObjectAtGrid(object: magicSword, x: magicSwordPos[0], y: magicSwordPos[1])
-            }
-            
-            /* Set teleport */
-            let teleportArray = [[4,1]]
-            for teleportPos in teleportArray {
-                let teleport = Teleport()
-                self.gridNode.addObjectAtGrid(object: teleport, x: teleportPos[0], y: teleportPos[1])
-            }
+            /* Set initial items */
+            autoSetInitialItems(posArray: [[2, 1], [2, 5], [6, 1], [6, 5]])
             
         default:
             break;

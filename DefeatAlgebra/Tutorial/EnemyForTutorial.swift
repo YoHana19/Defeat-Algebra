@@ -503,7 +503,7 @@ class EnemyForTutorial: SKSpriteNode {
             
             /* Calculate punchlength */
             let originPosY = self.positionY
-            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+gameScene.bottomGap+30 /* 30 is a buffer */
+            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+95 /* 95 is an adjustment */
             
             /* Wait till punch streach out fully */
             let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
@@ -791,7 +791,7 @@ class EnemyForTutorial: SKSpriteNode {
         })
         
         /* Set punchLength */
-        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
+        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+10
         
         /* Do punch */
         let armAndFist = self.punch()

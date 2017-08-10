@@ -469,7 +469,7 @@ class InputVariableExpression: SKSpriteNode {
         /* button clear */
         let buttonClear = SKSpriteNode(imageNamed: "inputClear")
         buttonClear.size = buttonSize
-        buttonClear.position = CGPoint(x: -200, y: -260)
+        buttonClear.position = CGPoint(x: -50, y: -260)
         buttonClear.name = "buttonClear"
         buttonClear.zPosition = 3
         addChild(buttonClear)
@@ -477,7 +477,7 @@ class InputVariableExpression: SKSpriteNode {
         /* button fire */
         let buttonFire = SKSpriteNode(imageNamed: "inputFire")
         buttonFire.size = buttonSize
-        buttonFire.position = CGPoint(x: -50, y: -260)
+        buttonFire.position = CGPoint(x: -200, y: -260)
         buttonFire.name = "buttonFire"
         buttonFire.zPosition = 3
         addChild(buttonFire)

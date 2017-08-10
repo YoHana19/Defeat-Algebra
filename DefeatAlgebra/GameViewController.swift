@@ -20,8 +20,8 @@ class GameViewController: UIViewController {
             if let scene = MainMenu(fileNamed: "MainMenu") {
                 // Set the scale mode to scale to fit the window
                 scene.scaleMode = .aspectFit
-                view.showsPhysics = true
-                view.showsDrawCount = true
+                view.showsPhysics = false
+                view.showsDrawCount = false
                 
                 // Present the scene
                 view.presentScene(scene)

@@ -904,8 +904,6 @@ class EnemyForTutorial2: SKSpriteNode {
                     newArm.position = CGPoint(x: posX, y: posY)
                     newArm.anchorPoint = CGPoint(x: 0.5, y: 1)
                     newArm.physicsBody = nil
-//                    newArm.physicsBody?.categoryBitMask = 0
-//                    newArm.physicsBody?.contactTestBitMask = 0
                     self.addChild(newArm)
                     self.armArrayForSubSet.append(newArm)
                 }
@@ -956,7 +954,6 @@ class EnemyForTutorial2: SKSpriteNode {
             
             /* Set variable expression */
             let setVariableExpression = SKAction.run({
-//                self.makeTriangle()
                 /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
@@ -1059,7 +1056,6 @@ class EnemyForTutorial2: SKSpriteNode {
                 /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
                 /* Create variable expression */
-//                self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
                 /* Reset enemy animation */
                 self.setMovingAnimation()
@@ -1110,7 +1106,7 @@ class EnemyForTutorial2: SKSpriteNode {
         })
         
         /* Set punchLength */
-        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
+        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+10
         
         /* Do punch */
         let armAndFist = self.punch()

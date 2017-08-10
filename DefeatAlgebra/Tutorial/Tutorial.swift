@@ -402,7 +402,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                         
                         /* If life is 0, GameOver */
                         if self.life < 1 {
-                            
+                            tutorialDone = false
+                            tutorialState = .T15
                         }
                     }
                     
@@ -1054,14 +1055,10 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
         /* Enemy's arm or fist hits castle wall */
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
             
-            /* Make sure to call once at each enemy */
-            if hitCastleWallSoundDone == false {
-                hitCastleWallSoundDone = true
-                /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
-                    self.run(sound)
-                }
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
+                self.run(sound)
             }
             
             if contactA.categoryBitMask == 4 {
@@ -1074,8 +1071,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 if Tutorial.tutorialPhase == 1 {
                     if life <= 1 {
                         self.removeAllActions()
-                        tutorialDone = false
-                        tutorialState = .T15
                     } else {
                         let enemy = nodeB.parent as! EnemyForTutorial
                         self.removeAllActions()
@@ -1097,8 +1092,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                 if Tutorial.tutorialPhase == 1 {
                     if life <= 1 {
                         self.removeAllActions()
-                        tutorialDone = false
-                        tutorialState = .T15
                     } else {
                         let enemy = nodeA.parent as! EnemyForTutorial
                         self.removeAllActions()
