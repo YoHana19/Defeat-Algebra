@@ -398,8 +398,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set hero */
         setHero()
         /* Items */
-        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-
+//        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+        let handedItemNameArray = ["catapult", "cane"]
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
@@ -2799,15 +2799,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let teleport = Teleport()
             teleport.spotPos = position
             self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
-        } else if rand < 97 {
+        } else if rand < 100 {
             let spear = Spear()
             spear.spotPos = position
             self.gridNode.addObjectAtGrid(object: spear, x: position[0], y: position[1])
-        } else if rand < 100 {
-            let callHero = CallHero()
-            callHero.spotPos = position
-            self.gridNode.addObjectAtGrid(object: callHero, x: position[0], y: position[1])
-            
         }
     }
     
@@ -2861,15 +2856,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let teleport = Teleport()
                 teleport.spotPos = position
                 self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
-            } else if rand < 97 {
+            } else if rand < 100 {
                 let spear = Spear()
                 spear.spotPos = position
                 self.gridNode.addObjectAtGrid(object: spear, x: position[0], y: position[1])
-            } else if rand < 100 {
-                let callHero = CallHero()
-                callHero.spotPos = position
-                self.gridNode.addObjectAtGrid(object: callHero, x: position[0], y: position[1])
-                
             }
         }
     }

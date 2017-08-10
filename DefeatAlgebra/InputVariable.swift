@@ -135,7 +135,7 @@ class InputVariable: SKSpriteNode {
         /* button 1 */
         let button1 = SKSpriteNode(imageNamed: "input1")
         button1.size = buttonSize
-        button1.position = CGPoint(x: -170, y: 0)
+        button1.position = CGPoint(x: -140, y: -50)
         button1.name = "button1"
         button1.zPosition = 3
         addChild(button1)
@@ -143,7 +143,7 @@ class InputVariable: SKSpriteNode {
         /* button 2 */
         let button2 = SKSpriteNode(imageNamed: "input2")
         button2.size = buttonSize
-        button2.position = CGPoint(x: 0, y: 0)
+        button2.position = CGPoint(x: 0, y: -50)
         button2.name = "button2"
         button2.zPosition = 3
         addChild(button2)
@@ -151,7 +151,7 @@ class InputVariable: SKSpriteNode {
         /* button 3 */
         let button3 = SKSpriteNode(imageNamed: "input3")
         button3.size = buttonSize
-        button3.position = CGPoint(x: 170, y: 0)
+        button3.position = CGPoint(x: 140, y: -50)
         button3.name = "button3"
         button3.zPosition = 3
         addChild(button3)

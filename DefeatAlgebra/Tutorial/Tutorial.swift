@@ -363,7 +363,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
-
+        
         switch Tutorial.tutorialPhase {
         case 0:
             /* Make sure to call once at each tutorial state */

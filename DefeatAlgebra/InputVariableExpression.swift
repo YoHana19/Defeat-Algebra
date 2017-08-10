@@ -404,95 +404,96 @@ class InputVariableExpression: SKSpriteNode {
     func setButtons() {
         /* Set button size */
         let buttonSize = CGSize(width: 120, height: 120)
+        let radius: CGFloat = 60.0
         
         /* button x */
-        let buttonX = SKSpriteNode(imageNamed: "inputx")
+        let buttonX = SKSpriteNode(imageNamed: "inputX")
         buttonX.size = buttonSize
-        buttonX.position = CGPoint(x: -200, y: 100)
+        buttonX.position = CGPoint(x: -200, y: 60)
         buttonX.name = "buttonX"
         buttonX.zPosition = 3
         addChild(buttonX)
-        let coverX = setCoverButtons(buttonSize: buttonSize, buttonPosition: CGPoint(x: -200, y: 100))
+        let coverX = setCoverButtons(buttonSize: radius, buttonPosition: CGPoint(x: -200, y: 60))
         coverX.isHidden = true
         
         /* button 1 */
         let button1 = SKSpriteNode(imageNamed: "input1")
         button1.size = buttonSize
-        button1.position = CGPoint(x: -200, y: -80)
+        button1.position = CGPoint(x: -200, y: -100)
         button1.name = "button1"
         button1.zPosition = 3
         addChild(button1)
-        let cover1 = setCoverButtons(buttonSize: buttonSize, buttonPosition: CGPoint(x: -200, y: -80))
+        let cover1 = setCoverButtons(buttonSize: radius, buttonPosition: CGPoint(x: -200, y: -100))
         cover1.isHidden = true
         
         /* button 2 */
         let button2 = SKSpriteNode(imageNamed: "input2")
         button2.size = buttonSize
-        button2.position = CGPoint(x: -50, y: -80)
+        button2.position = CGPoint(x: -50, y: -100)
         button2.name = "button2"
         button2.zPosition = 3
         addChild(button2)
-        let cover2 = setCoverButtons(buttonSize: buttonSize, buttonPosition: CGPoint(x: -50, y: -80))
+        let cover2 = setCoverButtons(buttonSize: radius, buttonPosition: CGPoint(x: -50, y: -100))
         cover2.isHidden = true
         
         /* button 3 */
         let button3 = SKSpriteNode(imageNamed: "input3")
         button3.size = buttonSize
-        button3.position = CGPoint(x: 100, y: -80)
+        button3.position = CGPoint(x: 100, y: -100)
         button3.name = "button3"
         button3.zPosition = 3
         addChild(button3)
-        let cover3 = setCoverButtons(buttonSize: buttonSize, buttonPosition: CGPoint(x: 100, y: -80))
+        let cover3 = setCoverButtons(buttonSize: radius, buttonPosition: CGPoint(x: 100, y: -100))
         cover3.isHidden = true
         
         /* button + */
         let buttonPlus = SKSpriteNode(imageNamed: "input+")
         buttonPlus.size = buttonSize
-        buttonPlus.position = CGPoint(x: -200, y: -260)
+        buttonPlus.position = CGPoint(x: -50, y: 60)
         buttonPlus.name = "button+"
         buttonPlus.zPosition = 3
         addChild(buttonPlus)
-        let coverPlus = setCoverButtons(buttonSize: buttonSize, buttonPosition: CGPoint(x: -200, y: -260))
+        let coverPlus = setCoverButtons(buttonSize: radius, buttonPosition: CGPoint(x: -50, y: 60))
         coverPlus.isHidden = false
         
         /* button - */
         let buttonMinus = SKSpriteNode(imageNamed: "input-")
         buttonMinus.size = buttonSize
-        buttonMinus.position = CGPoint(x: -50, y: -260)
+        buttonMinus.position = CGPoint(x: 100, y: 60)
         buttonMinus.name = "button-"
         buttonMinus.zPosition = 3
         addChild(buttonMinus)
-        let coverMinus = setCoverButtons(buttonSize: buttonSize, buttonPosition: CGPoint(x: -50, y: -260))
+        let coverMinus = setCoverButtons(buttonSize: radius, buttonPosition: CGPoint(x: 100, y: 60))
         coverMinus.isHidden = false
         
         /* button clear */
         let buttonClear = SKSpriteNode(imageNamed: "inputClear")
-        buttonClear.size = CGSize(width: 180, height: 60)
-        buttonClear.position = CGPoint(x: 170, y: -300)
+        buttonClear.size = buttonSize
+        buttonClear.position = CGPoint(x: -200, y: -260)
         buttonClear.name = "buttonClear"
         buttonClear.zPosition = 3
         addChild(buttonClear)
         
         /* button fire */
         let buttonFire = SKSpriteNode(imageNamed: "inputFire")
-        buttonFire.size = CGSize(width:180, height: 60)
-        buttonFire.position = CGPoint(x: 170, y: -200)
+        buttonFire.size = buttonSize
+        buttonFire.position = CGPoint(x: -50, y: -260)
         buttonFire.name = "buttonFire"
         buttonFire.zPosition = 3
         addChild(buttonFire)
-        let coverFire = setCoverButtons(buttonSize: CGSize(width:180, height: 60), buttonPosition: CGPoint(x: 170, y: -200))
+        let coverFire = setCoverButtons(buttonSize: radius, buttonPosition: CGPoint(x: -50, y: -260))
         coverFire.isHidden = false
         
         /* Invalid note */
-        invalidNote = SKSpriteNode(imageNamed: "warningNote")
+        invalidNote = SKSpriteNode(imageNamed: "invalidNote")
         invalidNote.zPosition = 100
         invalidNote.isHidden = true
         addChild(invalidNote)
         
         /* button dismiss */
         dismissButton = SKSpriteNode(imageNamed: "dismissButton")
-        dismissButton.size = CGSize(width:20, height: 20)
-        dismissButton.position = CGPoint(x: invalidNote.size.width/2-20, y: invalidNote.size.height/2-20)
+        dismissButton.size = CGSize(width:40, height: 40)
+        dismissButton.position = CGPoint(x: invalidNote.size.width/2-30, y: invalidNote.size.height/2-30)
         dismissButton.name  = "dismissButton"
         dismissButton.zPosition = 101
         dismissButton.isHidden = true
@@ -502,21 +503,21 @@ class InputVariableExpression: SKSpriteNode {
         variableExpressionLabel = SKLabelNode(fontNamed: "GillSans-Bold")
         variableExpressionLabel.text = "0"
         variableExpressionLabel.fontSize = 96
-        variableExpressionLabel.position = CGPoint(x: 0, y: 225)
+        variableExpressionLabel.position = CGPoint(x: 0, y: 175)
         variableExpressionLabel.zPosition = 3
         addChild(variableExpressionLabel)
     }
     
     /* Create button cover so that you can't press buttons in pecific case */
-    func setCoverButtons(buttonSize: CGSize, buttonPosition: CGPoint) -> SKShapeNode {
-        let square = SKShapeNode(rectOf: buttonSize)
-        square.fillColor = UIColor.black
-        square.position = buttonPosition
-        square.alpha = 0.4
-        square.zPosition = 5
-        addChild(square)
-        coverArray.append(square)
-        return square
+    func setCoverButtons(buttonSize: CGFloat, buttonPosition: CGPoint) -> SKShapeNode {
+        let circle = SKShapeNode(circleOfRadius: buttonSize)
+        circle.fillColor = UIColor.black
+        circle.position = buttonPosition
+        circle.alpha = 0.4
+        circle.zPosition = 5
+        addChild(circle)
+        coverArray.append(circle)
+        return circle
         
     }
     

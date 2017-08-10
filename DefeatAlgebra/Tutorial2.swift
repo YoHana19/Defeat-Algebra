@@ -430,6 +430,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        
         if showinCardFlag {
             gameState = .PlayerTurn
             playerTurnState = .ShowingCard
