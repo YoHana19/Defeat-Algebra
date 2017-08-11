@@ -434,6 +434,7 @@ class Grid: SKSpriteNode {
                     /* Set timeBomb at the location you touch */
                     let timeBomb = TimeBomb()
                     timeBomb.texture = SKTexture(imageNamed: "timeBombToSet")
+                    timeBomb.zPosition = 3
                     /* Make sure not to collide to hero */
                     timeBomb.physicsBody = nil
                     self.timeBombSetArray.append(timeBomb)
@@ -460,6 +461,7 @@ class Grid: SKSpriteNode {
                     wall.size = CGSize(width:50, height: 75)
                     wall.posX = gridX
                     wall.posY = gridY
+                    wall.zPosition = 3
                     wall.physicsBody?.categoryBitMask = 32
                     wall.physicsBody?.contactTestBitMask = 26
                     self.wallSetArray.append(wall)

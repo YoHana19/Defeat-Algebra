@@ -149,7 +149,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         [5, 2, 3, 3],
         [4, 1, 3, 3],
         [4, 1, 3, 3],
-        [0, 0, 0, 1]
+        [4, 1, 3, 3]
     ]
     var numOfAddEnemy: Int = 0
     var countTurnForAddEnemy: Int = 0
@@ -185,9 +185,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var activeAreaForCatapult = [SKShapeNode]()
     var setCatapultDoneFlag = false
     var catapultFireReady = false
+    var catapultFirstFireFlag = false
     var catapultDoneFlag = false
     var activateCatapultDone = false
     var catapultOnceFlag = false
+    var highestCatapultValue = 0
     /* Reset catapult */
     var usingResetCatapultFlag = false
     var selecttingCatapultFlag = false
@@ -398,7 +400,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set hero */
         setHero()
         /* Items */
-        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+//        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+        let handedItemNameArray = ["catapult", "catapult", "catapult"]
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
@@ -719,6 +722,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Make sure to call once */
                     if catapultOnceFlag == false {
                         catapultOnceFlag = true
+                        detectHighestCatapultValue()
                         fireAndRemoveCatapult()
                     }
                 } else {
@@ -735,6 +739,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     bombExplodeDoneFlag = false
                     catapultOnceFlag = false
                     activateCatapultDone = false
+                    highestCatapultValue = 0
                 }
             case .MoveState:
                 if activeHero.moveDoneFlag == false {
@@ -778,7 +783,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             activeCatapult.setCatapultVELabel(vE: activeCatapult.variableExpression)
                             /* Throw stone */
                             throwBomb(value: inputBoard.outputValue, setCatapult: activeCatapult)
-                            
+                            /* On First fire flag */
+                            catapultFirstFireFlag = true
                         }
                         break;
                     }
@@ -2419,7 +2425,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 })
                 /* Move state */
                 let moveState = SKAction.run({
-                    self.playerTurnState = .MoveState
+                    if self.catapultFirstFireFlag {
+                        self.playerTurnState = .MoveState
+                        self.catapultFirstFireFlag = false
+                    }
                     self.itemType = .None
                     self.inputBoard.isActive = false
                 })
@@ -2441,7 +2450,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 })
                 /* Move state */
                 let moveState = SKAction.run({
-                    self.playerTurnState = .MoveState
+                    if self.catapultFirstFireFlag {
+                        self.playerTurnState = .MoveState
+                        self.catapultFirstFireFlag = false
+                    }
                     self.itemType = .None
                     self.inputBoard.isActive = false
                 })
@@ -2487,6 +2499,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let particles2 = SKEmitterNode(fileNamed: "CatapultFire2")!
                     particles.position = CGPoint(x: catapultBomb.position.x, y: catapultBomb.position.y-20)
                     particles2.position = CGPoint(x: catapultBomb.position.x, y: catapultBomb.position.y-20)
+                    particles.zPosition = 3
+                    particles2.zPosition = 3
                     /* Add particles to scene */
                     self.addChild(particles)
                     self.addChild(particles2)
@@ -2514,7 +2528,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 })
                 /* Move state */
                 let moveState = SKAction.run({
-                    self.playerTurnState = .MoveState
+                    if self.catapultFirstFireFlag {
+                        self.playerTurnState = .MoveState
+                        self.catapultFirstFireFlag = false
+                    }
                     self.itemType = .None
                     self.inputBoard.isActive = false
                 })
@@ -2528,31 +2545,67 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Fire and remove catapult */
     func fireAndRemoveCatapult() {
+        print(highestCatapultValue)
         for catapult in setCatapultArray {
             let catapultValue = catapult.calculateCatapultValue()
             let catapultAni = SKAction(named: "catapult")
             catapult.run(catapultAni!)
             self.throwBomb(value: catapultValue, setCatapult: catapult)
             catapult.numOfTurn -= 1
-            var waitDuration = 0.0
             /* Calculate duration to wait */
             if catapultValue > self.gridNode.rows {
-                waitDuration = 7
+                let waitDuration = 5.0
+                let waitAni = SKAction.wait(forDuration: TimeInterval(waitDuration))
+                let handleCatapult = SKAction.run({
+                    if catapult.numOfTurn <= 0 {
+                        catapult.removeFromParent()
+                        catapult.activeFlag = false
+                    }
+                    if self.highestCatapultValue == catapultValue {
+                        self.activateCatapultDone = true
+                    }
+                })
+                let seq = SKAction.sequence([waitAni, handleCatapult])
+                self.run(seq)
             } else if catapultValue <= 0 {
-                waitDuration = 2
+                let waitDuration = 1.0
+                let waitAni = SKAction.wait(forDuration: TimeInterval(waitDuration))
+                let handleCatapult = SKAction.run({
+                    if catapult.numOfTurn <= 0 {
+                        catapult.removeFromParent()
+                        catapult.activeFlag = false
+                    }
+                    if self.highestCatapultValue == catapultValue {
+                        self.activateCatapultDone = true
+                    }
+                })
+                let seq = SKAction.sequence([waitAni, handleCatapult])
+                self.run(seq)
             } else {
-                waitDuration = Double(catapultValue)*0.3
+                let waitDuration = Double(catapultValue)*0.3+2.7
+                let waitAni = SKAction.wait(forDuration: TimeInterval(waitDuration))
+                let handleCatapult = SKAction.run({
+                    if catapult.numOfTurn <= 0 {
+                        catapult.removeFromParent()
+                        catapult.activeFlag = false
+                        
+                    }
+                    if self.highestCatapultValue == catapultValue {
+                        self.activateCatapultDone = true
+                    }
+                })
+                let seq = SKAction.sequence([waitAni, handleCatapult])
+                self.run(seq)
             }
-            let waitAni = SKAction.wait(forDuration: TimeInterval(waitDuration))
-            let handleCatapult = SKAction.run({
-                if catapult.numOfTurn <= 0 {
-                    catapult.removeFromParent()
-                    catapult.activeFlag = false
-                }
-                self.activateCatapultDone = true
-            })
-            let seq = SKAction.sequence([waitAni, handleCatapult])
-            self.run(seq)
+        }
+    }
+    
+    func detectHighestCatapultValue() {
+        for catapult in setCatapultArray {
+            let catapultValue = catapult.calculateCatapultValue()
+            if highestCatapultValue < catapultValue {
+                highestCatapultValue = catapultValue
+            }
         }
     }
     
@@ -3254,7 +3307,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 11 */
         case 10:
             /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
+            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [7, 10]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
@@ -3265,7 +3318,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 12 */
         case 11:
             /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [6, 10]]
+            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [7, 10]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
