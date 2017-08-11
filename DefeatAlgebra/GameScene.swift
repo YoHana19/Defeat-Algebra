@@ -273,6 +273,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Retry button */
         buttonRetry.selectedHandler = { [weak self] in
             
+            /* Analytics */
+            Answers.logLevelEnd("Level \((self?.stageLevel)!+1)",
+                score: nil,
+                success: false,
+                customAttributes: ["Custom String": "Retry"]
+            )
+            
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView!
             
@@ -290,6 +297,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Next Level button */
         buttonNextLevel.selectedHandler = { [weak self] in
+            
+            /* Analytics */
+            Answers.logLevelEnd("Level \((self?.stageLevel)!+1)",
+                score: nil,
+                success: true
+            )
+            
             if (self?.stageLevel)! >= 1 {
                 /* Store previous game property */
                 let ud = UserDefaults.standard
@@ -351,6 +365,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Restart from last level button */
         buttonRestartLastLevel.selectedHandler = { [weak self] in
             
+            /* Analytics */
+            Answers.logLevelEnd("Level \((self?.stageLevel)!+1)",
+                score: nil,
+                success: false,
+                customAttributes: ["Custom String": "retry last stage"]
+            )
+            
             /* Set previous level property */
             let ud = UserDefaults.standard
             /* stageLevel */
@@ -394,6 +415,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
+        stageLevel = 2
         levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
@@ -401,7 +423,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setHero()
         /* Items */
 //        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-        let handedItemNameArray = ["catapult", "catapult", "catapult", "cane"]
+        let handedItemNameArray = ["catapult", "catapult", "magicSword", "cane"]
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
@@ -416,10 +438,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* For Analytics */
         Answers.logLevelStart("Level \(stageLevel+1)")
-        Answers.logLevelEnd("Level \(stageLevel+1)",
-                            score: nil,
-                            success: false
-                            )
         
         /* Set input boards */
         setInputBoard()
