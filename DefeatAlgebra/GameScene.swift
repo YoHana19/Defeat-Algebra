@@ -401,7 +401,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setHero()
         /* Items */
 //        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-        let handedItemNameArray = ["catapult", "catapult", "catapult"]
+        let handedItemNameArray = ["catapult", "catapult", "catapult", "cane"]
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }

@@ -898,7 +898,7 @@ class Grid: SKSpriteNode {
         }
         
         /* Display the number of flash */
-        let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))
+        let wholeWait = SKAction.wait(forDuration: TimeInterval((self.flashSpeed+0.2)*Double(numOfFlash)))
         let display = SKAction.run({ labelNode.text = String(numOfFlash) })
         let seq = SKAction.sequence([wholeWait, display])
         self.run(seq)
@@ -907,16 +907,30 @@ class Grid: SKSpriteNode {
     }
     
     func flashGridForCane(labelNode: SKLabelNode, numOfFlash: Int) {
-        /* Set flash animation */
-        let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-        let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-        let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-        let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-        let flash = SKAction.repeat(seqFlash, count: numOfFlash)
-        self.run(flash)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let sound = SKAction.playSoundFileNamed("flash.wav", waitForCompletion: true)
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let group = SKAction.group([sound, seqFlash])
+            let flash = SKAction.repeat(group, count: numOfFlash)
+            self.run(flash)
+            
+        } else {
+            /* Set flash animation */
+            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
+            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
+            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
+            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+            let flash = SKAction.repeat(seqFlash, count: numOfFlash)
+            self.run(flash)
+        }
         
         /* Display the number of flash */
-        let wholeWait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed*Double(numOfFlash)))
+        let wholeWait = SKAction.wait(forDuration: TimeInterval((self.flashSpeed+0.2)*Double(numOfFlash)))
         let display = SKAction.run({ labelNode.text = String(numOfFlash) })
         let seq = SKAction.sequence([wholeWait, display])
         self.run(seq)
