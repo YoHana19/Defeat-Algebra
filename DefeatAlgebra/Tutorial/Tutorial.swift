@@ -363,6 +363,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        print(tutorialState)
+        print(life)
         
         switch Tutorial.tutorialPhase {
         case 0:
@@ -1820,7 +1822,8 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
             
             /* If life is 0, GameOver */
             if self.life < 1 {
-                gameState = .GameOver
+                tutorialDone = false
+                tutorialState = .T15
             }
         }
         

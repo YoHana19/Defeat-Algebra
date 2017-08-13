@@ -148,8 +148,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         [6, 3, 3, 3],
         [5, 2, 3, 3],
         [4, 1, 3, 3],
-        [4, 1, 3, 3],
-        [4, 1, 3, 3]
+        [5, 1, 5, 3],
+        [5, 1, 5, 3]
     ]
     var numOfAddEnemy: Int = 0
     var countTurnForAddEnemy: Int = 0
@@ -415,15 +415,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevel")
-        stageLevel = 2
+//        stageLevel = 2
         levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArray") as? [Int] ?? [1]
+//        moveLevelArray = [4]
         /* Set hero */
         setHero()
         /* Items */
-//        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-        let handedItemNameArray = ["catapult", "catapult", "magicSword", "cane"]
+        let handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
+//        let handedItemNameArray = ["catapult", "magicSword", "cane", "timeBomb"]
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
@@ -1008,7 +1009,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if dispClearLabelDone == false {
                     dispClearLabelDone = true
                     createTutorialLabel(text: "Congulatulations!!", posY: 1120, size: 50)
-                    createTutorialLabel(text: "You defeat all Algrbra Robots!", posY: 1040, size: 35)
+                    createTutorialLabel(text: "You beat all stages!", posY: 1040, size: 35)
                     createTutorialLabel(text: "But keep it mind!", posY: 700, size: 35)
                     createTutorialLabel(text: "Algebra is your friend in real world!", posY: 640, size: 35)
                 }
@@ -2563,7 +2564,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /* Fire and remove catapult */
     func fireAndRemoveCatapult() {
-        print(highestCatapultValue)
         for catapult in setCatapultArray {
             let catapultValue = catapult.calculateCatapultValue()
             let catapultAni = SKAction(named: "catapult")
@@ -3325,7 +3325,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 11 */
         case 10:
             /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [7, 10]]
+            initialEnemyPosArray = [[1, 10], [3, 8], [4, 10], [5, 8], [7, 10]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
@@ -3336,7 +3336,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Level 12 */
         case 11:
             /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [2, 8], [4, 10], [5, 8], [7, 10]]
+            initialEnemyPosArray = [[1, 10], [3, 8], [4, 10], [5, 8], [7, 10]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]

@@ -53,6 +53,7 @@ class Grid: SKSpriteNode {
     var wallSetArray = [Wall]()
     /* Magic sword */
     var vEindex = -1
+    var castEnemyDone = false
     /* Battle ship */
     var battleShipSetArray = [BattleShip]()
     
@@ -413,7 +414,7 @@ class Grid: SKSpriteNode {
                 gameScene.resetActiveAreaForCatapult()
             }
             
-            /* Touch position to use item at */
+        /* Touch position to use item at */
         } else if gameScene.playerTurnState == .UsingItem {
             
             /* Touch ends on active area */
@@ -453,7 +454,7 @@ class Grid: SKSpriteNode {
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
-                    /* Use wall */
+                /* Use wall */
                 } else if gameScene.itemType == .Wall {
                     /* Set wall */
                     let wall = Wall()
@@ -480,7 +481,7 @@ class Grid: SKSpriteNode {
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
-                    /* Use magic sword */
+                /* Use magic sword */
                 } else if gameScene.itemType == .MagicSword {
                     /* On magicSwordAttackDone flag */
                     gameScene.magicSwordAttackDone = true
@@ -502,8 +503,27 @@ class Grid: SKSpriteNode {
                             for enemy in self.enemyArray {
                                 enemy.colorizeEnemy()
                                 if enemy.positionX == gridX && enemy.positionY == gridY {
-                                    self.vEindex = enemy.vECategory
-                                    /* Effect */
+                                    /* Make sure to call only once in case attacking more than two enemies */
+                                    if self.castEnemyDone == false {
+                                        self.castEnemyDone = true
+                                        self.vEindex = enemy.vECategory
+                                        /* Set hero texture */
+                                        let setTexture = SKAction.run({
+                                            /* Set texture */
+                                            gameScene.activeHero.removeAllActions()
+                                            gameScene.activeHero.texture = SKTexture(imageNamed: "heroMagicSword")
+                                            gameScene.activeHero.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+                                            gameScene.activeHero.size = CGSize(width: 54, height: 85)
+                                            /* Display variale expression you attacked */
+                                            gameScene.activeHero.setMagicSwordVE(vE: enemy.variableExpressionForLabel)
+                                            /* Set effect */
+                                            gameScene.setMagicSowrdEffect()
+                                        })
+                                        let seqHero = SKAction.sequence([waitAni, setTexture])
+                                        self.run(seqHero)
+                                    }
+                                    
+                                    /* Effect to enemy */
                                     gameScene.setMagicSowrdEffectToEnemy(enemy: enemy)
                                     
                                     /* Enemy */
@@ -518,28 +538,13 @@ class Grid: SKSpriteNode {
                                     /* Count defeated enemy */
                                     gameScene.totalNumOfEnemy -= 1
                                     enemy.aliveFlag = false
-                                    
-                                    /* Set hero texture */
-                                    let setTexture = SKAction.run({
-                                        /* Set texture */
-                                        gameScene.activeHero.removeAllActions()
-                                        gameScene.activeHero.texture = SKTexture(imageNamed: "heroMagicSword")
-                                        gameScene.activeHero.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-                                        gameScene.activeHero.size = CGSize(width: 54, height: 85)
-                                        /* Display variale expression you attacked */
-                                        gameScene.activeHero.setMagicSwordVE(vE: enemy.variableExpressionForLabel)
-                                        /* Set effect */
-                                        gameScene.setMagicSowrdEffect()
-                                    })
-                                    let seqHero = SKAction.sequence([waitEffectRemove, setTexture])
-                                    self.run(seqHero)
                                 }
                             }
                         })
                         let seq = SKAction.sequence([waitAni, removeEnemy])
                         self.run(seq)
                         gameScene.activeHero.attackDoneFlag = true
-                        /* If not hit, back to moveState */
+                    /* If not hit, back to moveState */
                     } else {
                         /* Reset item type */
                         gameScene.itemType = .None
@@ -560,7 +565,7 @@ class Grid: SKSpriteNode {
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
-                    /* Use battle ship */
+                /* Use battle ship */
                 } else if gameScene.itemType == .BattleShip {
                     
                     /* Set timeBomb at the location you touch */
@@ -585,7 +590,7 @@ class Grid: SKSpriteNode {
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
-                    /* Use teleport */
+                /* Use teleport */
                 } else if gameScene.itemType == .Teleport {
                     /* Remove item active areas */
                     self.resetSquareArray(color: "purple")
@@ -613,7 +618,7 @@ class Grid: SKSpriteNode {
                     
                 }
                 
-                /* Touch ends enemy for magic sword */
+            /* Touch ends enemy for magic sword */
             } else if nodeAtPoint.name == "enemy" {
                 let enemy = nodeAtPoint as! Enemy
                 
@@ -655,6 +660,8 @@ class Grid: SKSpriteNode {
                     }
                     /* Remove variable expression display */
                     gameScene.activeHero.removeMagicSwordVE()
+                    /* Reset flag */
+                    castEnemyDone = false
                 }
                 
             /* Touch ends on anywhere but active area or enemy */
@@ -684,6 +691,8 @@ class Grid: SKSpriteNode {
                 
                 /* Remove variable expression display */
                 gameScene.activeHero.removeMagicSwordVE()
+                /* Reset flag */
+                castEnemyDone = false
                 
                 /* Remove active area */
                 gameScene.gridNode.resetSquareArray(color: "purple")
