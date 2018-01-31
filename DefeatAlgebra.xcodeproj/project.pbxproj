@@ -26,7 +26,6 @@
 		201B8C651F3A5C6E00E91301 /* ItemGet.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C641F3A5C6E00E91301 /* ItemGet.wav */; };
 		201B8C671F3A67F200E91301 /* BGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B8C661F3A67F100E91301 /* BGM.swift */; };
 		201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C681F3A682700E91301 /* mainBGM.mp3 */; };
-		201B8C6D1F3AD7EE00E91301 /* itemScreen.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */; };
 		201B8C6F1F3ADB9B00E91301 /* stageClear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */; };
 		201B8C751F3AE7E900E91301 /* flash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C741F3AE7E900E91301 /* flash.wav */; };
 		201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C761F3AEA4F00E91301 /* buttonMove.wav */; };
@@ -119,7 +118,6 @@
 		201B8C641F3A5C6E00E91301 /* ItemGet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ItemGet.wav; sourceTree = "<group>"; };
 		201B8C661F3A67F100E91301 /* BGM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BGM.swift; sourceTree = "<group>"; };
 		201B8C681F3A682700E91301 /* mainBGM.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainBGM.mp3; sourceTree = "<group>"; };
-		201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = itemScreen.wav; sourceTree = "<group>"; };
 		201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = stageClear.mp3; sourceTree = "<group>"; };
 		201B8C741F3AE7E900E91301 /* flash.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = flash.wav; sourceTree = "<group>"; };
 		201B8C761F3AEA4F00E91301 /* buttonMove.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = buttonMove.wav; sourceTree = "<group>"; };
@@ -223,7 +221,6 @@
 		201B8C461F3A2C2E00E91301 /* SFX */ = {
 			isa = PBXGroup;
 			children = (
-				201B8C6C1F3AD7EE00E91301 /* itemScreen.wav */,
 				201B8C681F3A682700E91301 /* mainBGM.mp3 */,
 				203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */,
 				201B8C641F3A5C6E00E91301 /* ItemGet.wav */,
@@ -481,7 +478,6 @@
 				201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */,
 				201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */,
 				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
-				201B8C6D1F3AD7EE00E91301 /* itemScreen.wav in Resources */,
 				203B2A761F67BBD100DDCC03 /* ItemList.sks in Resources */,
 				201B8C571F3A365700E91301 /* hitWall.wav in Resources */,
 				201B8C531F3A326000E91301 /* enemyKilled.mp3 in Resources */,
