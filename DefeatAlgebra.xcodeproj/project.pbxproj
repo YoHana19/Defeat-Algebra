@@ -47,7 +47,6 @@
 		201ECBAC1F351AED00FB833A /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAA1F351AED00FB833A /* Fabric.framework */; };
 		201ECBAD1F351AEE00FB833A /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAB1F351AED00FB833A /* Crashlytics.framework */; };
 		202049DD1F2EFA0F00FAD661 /* Teleport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202049DC1F2EFA0F00FAD661 /* Teleport.swift */; };
-		20232AFB1F3252CD00898ACE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20232AF91F3252CD00898ACE /* Assets.xcassets */; };
 		203AEA991F3AFFF300C5CD4E /* mainMenu.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */; };
 		203B2A011F67B21A00DDCC03 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29F71F67B21A00DDCC03 /* Enemy.swift */; };
 		203B2A021F67B21A00DDCC03 /* EnemyArm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29F81F67B21A00DDCC03 /* EnemyArm.swift */; };
@@ -96,6 +95,100 @@
 		204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
 		204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
 		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
+		20E9E88820223B1400D31410 /* Boots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4081F2CD28D009CE633 /* Boots.swift */; };
+		20E9E88920223B1400D31410 /* Catapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40A1F2CD28D009CE633 /* Catapult.swift */; };
+		20E9E88A20223B1400D31410 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
+		20E9E88B20223B1400D31410 /* MSButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0291F11BE1D001346C7 /* MSButtonNode.swift */; };
+		20E9E88C20223B1400D31410 /* EnemyForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A421F67B97100DDCC03 /* EnemyForTutorial2.swift */; };
+		20E9E88D20223B1400D31410 /* Tutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A4C1F67B97100DDCC03 /* Tutorial2.swift */; };
+		20E9E88E20223B1400D31410 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FC1F67B21A00DDCC03 /* Grid.swift */; };
+		20E9E88F20223B1400D31410 /* BGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B8C661F3A67F100E91301 /* BGM.swift */; };
+		20E9E89020223B1400D31410 /* InputVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FE1F67B21A00DDCC03 /* InputVariable.swift */; };
+		20E9E89120223B1400D31410 /* EnemyArm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29F81F67B21A00DDCC03 /* EnemyArm.swift */; };
+		20E9E89220223B1400D31410 /* GridForTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A431F67B97100DDCC03 /* GridForTutorial.swift */; };
+		20E9E89320223B1400D31410 /* SimplificationBoardEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A861F67BDAB00DDCC03 /* SimplificationBoardEasy.swift */; };
+		20E9E89420223B1400D31410 /* GridEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A811F67BDAB00DDCC03 /* GridEasy.swift */; };
+		20E9E89520223B1400D31410 /* EnemyForTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A411F67B97100DDCC03 /* EnemyForTutorial.swift */; };
+		20E9E89620223B1400D31410 /* SettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A721F67BBD100DDCC03 /* SettingScreen.swift */; };
+		20E9E89720223B1400D31410 /* MagicSword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40C1F2CD28D009CE633 /* MagicSword.swift */; };
+		20E9E89820223B1400D31410 /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29F71F67B21A00DDCC03 /* Enemy.swift */; };
+		20E9E89920223B1400D31410 /* InputVariableEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A831F67BDAB00DDCC03 /* InputVariableEasy.swift */; };
+		20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
+		20E9E89B20223B1400D31410 /* EnemyEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A7C1F67BDAB00DDCC03 /* EnemyEasy.swift */; };
+		20E9E89C20223B1400D31410 /* Spear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40F1F2CD28D009CE633 /* Spear.swift */; };
+		20E9E89D20223B1400D31410 /* MultiAttack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40E1F2CD28D009CE633 /* MultiAttack.swift */; };
+		20E9E89E20223B1400D31410 /* BattleShip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4071F2CD28D009CE633 /* BattleShip.swift */; };
+		20E9E89F20223B1400D31410 /* TimeBomb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40D1F2CD28D009CE633 /* TimeBomb.swift */; };
+		20E9E8A020223B1400D31410 /* PauseScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A591F67B9AD00DDCC03 /* PauseScreen.swift */; };
+		20E9E8A120223B1400D31410 /* HeroForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A461F67B97100DDCC03 /* HeroForTutorial2.swift */; };
+		20E9E8A220223B1400D31410 /* Teleport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202049DC1F2EFA0F00FAD661 /* Teleport.swift */; };
+		20E9E8A320223B1400D31410 /* PauseScreenForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A481F67B97100DDCC03 /* PauseScreenForTutorial2.swift */; };
+		20E9E8A420223B1400D31410 /* InputVariableExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FF1F67B21A00DDCC03 /* InputVariableExpression.swift */; };
+		20E9E8A520223B1400D31410 /* CallHero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4091F2CD28D009CE633 /* CallHero.swift */; };
+		20E9E8A620223B1400D31410 /* GridForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A441F67B97100DDCC03 /* GridForTutorial2.swift */; };
+		20E9E8A720223B1400D31410 /* SimplificationBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A001F67B21A00DDCC03 /* SimplificationBoard.swift */; };
+		20E9E8A820223B1400D31410 /* InputVariableExpressionEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A841F67BDAB00DDCC03 /* InputVariableExpressionEasy.swift */; };
+		20E9E8A920223B1400D31410 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FD1F67B21A00DDCC03 /* Hero.swift */; };
+		20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6F1F67BBD100DDCC03 /* ItemList.swift */; };
+		20E9E8AB20223B1400D31410 /* Tutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A4A1F67B97100DDCC03 /* Tutorial.swift */; };
+		20E9E8AC20223B1400D31410 /* ResetCatapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA31F34B64300FB833A /* ResetCatapult.swift */; };
+		20E9E8AD20223B1400D31410 /* HeroEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A821F67BDAB00DDCC03 /* HeroEasy.swift */; };
+		20E9E8AE20223B1400D31410 /* EnemyFist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29F91F67B21A00DDCC03 /* EnemyFist.swift */; };
+		20E9E8AF20223B1400D31410 /* PauseScreenForTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A471F67B97100DDCC03 /* PauseScreenForTutorial.swift */; };
+		20E9E8B020223B1400D31410 /* HeroForTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A451F67B97100DDCC03 /* HeroForTutorial.swift */; };
+		20E9E8B120223B1400D31410 /* Cane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA51F34B64F00FB833A /* Cane.swift */; };
+		20E9E8B220223B1400D31410 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FB1F67B21A00DDCC03 /* GameScene.swift */; };
+		20E9E8B320223B1400D31410 /* GameSceneEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A801F67BDAB00DDCC03 /* GameSceneEasy.swift */; };
+		20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A711F67BBD100DDCC03 /* MainMenu.swift */; };
+		20E9E8B520223B1400D31410 /* PauseScreenEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A851F67BDAB00DDCC03 /* PauseScreenEasy.swift */; };
+		20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6B1F67BBD100DDCC03 /* ConfirmScreen.swift */; };
+		20E9E8B720223B1400D31410 /* Heart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40B1F2CD28D009CE633 /* Heart.swift */; };
+		20E9E8B820223B1400D31410 /* Credits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6D1F67BBD100DDCC03 /* Credits.swift */; };
+		20E9E8B920223B1400D31410 /* Wall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4101F2CD28D009CE633 /* Wall.swift */; };
+		20E9E8BB20223B1400D31410 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAB1F351AED00FB833A /* Crashlytics.framework */; };
+		20E9E8BC20223B1400D31410 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAA1F351AED00FB833A /* Fabric.framework */; };
+		20E9E8BD20223B1400D31410 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */; };
+		20E9E8BF20223B1400D31410 /* MagicSwordEffect.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829DA1F32CA860038AEC0 /* MagicSwordEffect.sks */; };
+		20E9E8C020223B1400D31410 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A701F67BBD100DDCC03 /* MainMenu.sks */; };
+		20E9E8C120223B1400D31410 /* timeBombExplosion.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C4C1F3A2D2800E91301 /* timeBombExplosion.mp3 */; };
+		20E9E8C220223B1400D31410 /* TimeBombExplode.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829DB1F32CA860038AEC0 /* TimeBombExplode.sks */; };
+		20E9E8C320223B1400D31410 /* stageClear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */; };
+		20E9E8C420223B1400D31410 /* cane.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5C1F3A47BA00E91301 /* cane.mp3 */; };
+		20E9E8C520223B1400D31410 /* ItemGet.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C641F3A5C6E00E91301 /* ItemGet.wav */; };
+		20E9E8C620223B1400D31410 /* GameSceneEasy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A7F1F67BDAB00DDCC03 /* GameSceneEasy.sks */; };
+		20E9E8C720223B1400D31410 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B29FA1F67B21A00DDCC03 /* GameScene.sks */; };
+		20E9E8C820223B1400D31410 /* swordSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C4E1F3A307B00E91301 /* swordSound.wav */; };
+		20E9E8C920223B1400D31410 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
+		20E9E8CA20223B1400D31410 /* Tutorial2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A4B1F67B97100DDCC03 /* Tutorial2.sks */; };
+		20E9E8CB20223B1400D31410 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
+		20E9E8CC20223B1400D31410 /* TimeBombSmoke.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829DC1F32CA860038AEC0 /* TimeBombSmoke.sks */; };
+		20E9E8CD20223B1400D31410 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
+		20E9E8CE20223B1400D31410 /* buttonMove.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C761F3AEA4F00E91301 /* buttonMove.wav */; };
+		20E9E8CF20223B1400D31410 /* mainBGM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C681F3A682700E91301 /* mainBGM.mp3 */; };
+		20E9E8D020223B1400D31410 /* buttonBack.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C781F3AEA7E00E91301 /* buttonBack.wav */; };
+		20E9E8D120223B1400D31410 /* ItemList.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6E1F67BBD100DDCC03 /* ItemList.sks */; };
+		20E9E8D220223B1400D31410 /* hitWall.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C561F3A365700E91301 /* hitWall.wav */; };
+		20E9E8D320223B1400D31410 /* enemyKilled.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C521F3A326000E91301 /* enemyKilled.mp3 */; };
+		20E9E8D420223B1400D31410 /* Tutorial.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A491F67B97100DDCC03 /* Tutorial.sks */; };
+		20E9E8D520223B1400D31410 /* Credits.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6C1F67BBD100DDCC03 /* Credits.sks */; };
+		20E9E8D620223B1400D31410 /* flash.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C741F3AE7E900E91301 /* flash.wav */; };
+		20E9E8D720223B1400D31410 /* catapultBomb.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C501F3A325A00E91301 /* catapultBomb.mp3 */; };
+		20E9E8D820223B1400D31410 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
+		20E9E8D920223B1400D31410 /* magicSword.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5A1F3A439800E91301 /* magicSword.wav */; };
+		20E9E8DA20223B1400D31410 /* selectNewGame.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C7A1F3AEB1B00E91301 /* selectNewGame.wav */; };
+		20E9E8DB20223B1400D31410 /* CatapultFire2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D81F32CA860038AEC0 /* CatapultFire2.sks */; };
+		20E9E8DC20223B1400D31410 /* mainMenu.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */; };
+		20E9E8DD20223B1400D31410 /* DestroyEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D91F32CA860038AEC0 /* DestroyEnemy.sks */; };
+		20E9E8DE20223B1400D31410 /* mainMenuHard.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */; };
+		20E9E8DF20223B1400D31410 /* battleShipShoot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C541F3A326600E91301 /* battleShipShoot.wav */; };
+		20E9E8E020223B1400D31410 /* AnimationActions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2019C37E1F0B5933003C7609 /* AnimationActions.sks */; };
+		20E9E8E120223B1400D31410 /* castleWallHit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C621F3A589C00E91301 /* castleWallHit.mp3 */; };
+		20E9E8E220223B1400D31410 /* CatapultFire.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D71F32CA860038AEC0 /* CatapultFire.sks */; };
+		20E9E8EE20223C0E00D31410 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D951F074FE800F4DD11 /* Info.plist */; };
+		20E9E8EF20223C1100D31410 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20E9E8EB20223B1900D31410 /* Info.plist */; };
+		20E9E8FB2022404E00D31410 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */; };
+		20E9E8FD2022439C00D31410 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */; };
+		E7EC6569AC1C8F9D3984BF67 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -139,7 +232,6 @@
 		201ECBAA1F351AED00FB833A /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		201ECBAB1F351AED00FB833A /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		202049DC1F2EFA0F00FAD661 /* Teleport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Teleport.swift; sourceTree = "<group>"; };
-		20232AF91F3252CD00898ACE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainMenu.mp3; sourceTree = "<group>"; };
 		203B29F71F67B21A00DDCC03 /* Enemy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		203B29F81F67B21A00DDCC03 /* EnemyArm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyArm.swift; sourceTree = "<group>"; };
@@ -190,6 +282,13 @@
 		204C7D931F074FE800F4DD11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
+		20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebraJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		20E9E8EB20223B1900D31410 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/yohanashima/Desktop/Make School Project/Defeat-Algebra/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist"; sourceTree = "<absolute>"; };
+		20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DefeatAlgebra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebra.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra.debug.xcconfig"; sourceTree = "<group>"; };
+		DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebra.release.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -199,6 +298,17 @@
 			files = (
 				201ECBAD1F351AEE00FB833A /* Crashlytics.framework in Frameworks */,
 				201ECBAC1F351AED00FB833A /* Fabric.framework in Frameworks */,
+				E7EC6569AC1C8F9D3984BF67 /* Pods_DefeatAlgebra.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		20E9E8BA20223B1400D31410 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20E9E8BB20223B1400D31410 /* Crashlytics.framework in Frameworks */,
+				20E9E8BC20223B1400D31410 /* Fabric.framework in Frameworks */,
+				20E9E8BD20223B1400D31410 /* Pods_DefeatAlgebra.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +372,24 @@
 				201CD4091F2CD28D009CE633 /* CallHero.swift */,
 			);
 			path = Items;
+			sourceTree = "<group>";
+		};
+		2037E8E9202246B000FDF4F6 /* DefeatAlgebra */ = {
+			isa = PBXGroup;
+			children = (
+				204C7D951F074FE800F4DD11 /* Info.plist */,
+				20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */,
+			);
+			path = DefeatAlgebra;
+			sourceTree = "<group>";
+		};
+		2037E8EA202246C300FDF4F6 /* DefeatAlgebraJ */ = {
+			isa = PBXGroup;
+			children = (
+				20E9E8EB20223B1900D31410 /* Info.plist */,
+				20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */,
+			);
+			path = DefeatAlgebraJ;
 			sourceTree = "<group>";
 		};
 		203B29F61F67B21A00DDCC03 /* Hard */ = {
@@ -335,9 +463,10 @@
 		204C7D771F074FE800F4DD11 = {
 			isa = PBXGroup;
 			children = (
-				20232AF91F3252CD00898ACE /* Assets.xcassets */,
 				204C7D821F074FE800F4DD11 /* DefeatAlgebra */,
 				204C7D811F074FE800F4DD11 /* Products */,
+				F9F35559E4FDEA5BA3773AF3 /* Pods */,
+				42287C806EF7025DB4649D05 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -345,6 +474,7 @@
 			isa = PBXGroup;
 			children = (
 				204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */,
+				20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -363,12 +493,11 @@
 				20DF7CE62021B910006BFBB0 /* Sound */,
 				20DF7CE52021B8FF006BFBB0 /* Animation */,
 				20DF7CE72021B93A006BFBB0 /* Helper */,
-				204C7D8D1F074FE800F4DD11 /* Main.storyboard */,
-				204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */,
+				20E9E8EC20223B8300D31410 /* SupportingFIles */,
+				20E9E8ED20223BD500D31410 /* Storyboards */,
 				204C7D901F074FE800F4DD11 /* Assets.xcassets */,
 				201ECBAA1F351AED00FB833A /* Fabric.framework */,
 				201ECBAB1F351AED00FB833A /* Crashlytics.framework */,
-				204C7D951F074FE800F4DD11 /* Info.plist */,
 			);
 			path = DefeatAlgebra;
 			sourceTree = "<group>";
@@ -398,6 +527,41 @@
 			path = Helper;
 			sourceTree = "<group>";
 		};
+		20E9E8EC20223B8300D31410 /* SupportingFIles */ = {
+			isa = PBXGroup;
+			children = (
+				2037E8E9202246B000FDF4F6 /* DefeatAlgebra */,
+				2037E8EA202246C300FDF4F6 /* DefeatAlgebraJ */,
+			);
+			path = SupportingFIles;
+			sourceTree = "<group>";
+		};
+		20E9E8ED20223BD500D31410 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */,
+				204C7D8D1F074FE800F4DD11 /* Main.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		42287C806EF7025DB4649D05 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F9F35559E4FDEA5BA3773AF3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */,
+				DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -405,11 +569,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 204C7D981F074FE800F4DD11 /* Build configuration list for PBXNativeTarget "DefeatAlgebra" */;
 			buildPhases = (
+				B28D276B965711B89B39C064 /* [CP] Check Pods Manifest.lock */,
 				204C7D7C1F074FE800F4DD11 /* Sources */,
 				204C7D7D1F074FE800F4DD11 /* Frameworks */,
 				204C7D7E1F074FE800F4DD11 /* Resources */,
 				201ECBA91F351AA000FB833A /* ShellScript */,
 				2055D4EF1F3520970071F6C5 /* ShellScript */,
+				1F78737BE39E7BAD45FFF832 /* [CP] Embed Pods Frameworks */,
+				BC4EA60B5B8B8E04FA3415C6 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -418,6 +585,28 @@
 			name = DefeatAlgebra;
 			productName = DefeatAlgebra;
 			productReference = 204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */;
+			productType = "com.apple.product-type.application";
+		};
+		20E9E88520223B1400D31410 /* DefeatAlgebraJ */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20E9E8E720223B1400D31410 /* Build configuration list for PBXNativeTarget "DefeatAlgebraJ" */;
+			buildPhases = (
+				20E9E88620223B1400D31410 /* [CP] Check Pods Manifest.lock */,
+				20E9E88720223B1400D31410 /* Sources */,
+				20E9E8BA20223B1400D31410 /* Frameworks */,
+				20E9E8BE20223B1400D31410 /* Resources */,
+				20E9E8E320223B1400D31410 /* ShellScript */,
+				20E9E8E420223B1400D31410 /* ShellScript */,
+				20E9E8E520223B1400D31410 /* [CP] Embed Pods Frameworks */,
+				20E9E8E620223B1400D31410 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DefeatAlgebraJ;
+			productName = DefeatAlgebra;
+			productReference = 20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -435,6 +624,9 @@
 						DevelopmentTeam = T2HM3LUVY9;
 						ProvisioningStyle = Automatic;
 					};
+					20E9E88520223B1400D31410 = {
+						DevelopmentTeam = T2HM3LUVY9;
+					};
 				};
 			};
 			buildConfigurationList = 204C7D7B1F074FE800F4DD11 /* Build configuration list for PBXProject "DefeatAlgebra" */;
@@ -451,6 +643,7 @@
 			projectRoot = "";
 			targets = (
 				204C7D7F1F074FE800F4DD11 /* DefeatAlgebra */,
+				20E9E88520223B1400D31410 /* DefeatAlgebraJ */,
 			);
 		};
 /* End PBXProject section */
@@ -474,12 +667,14 @@
 				203B2A571F67B97100DDCC03 /* Tutorial2.sks in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
 				200829E21F32CA860038AEC0 /* TimeBombSmoke.sks in Resources */,
+				20E9E8FB2022404E00D31410 /* GoogleService-Info.plist in Resources */,
 				20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */,
 				201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */,
 				201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */,
 				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
 				203B2A761F67BBD100DDCC03 /* ItemList.sks in Resources */,
 				201B8C571F3A365700E91301 /* hitWall.wav in Resources */,
+				20E9E8EE20223C0E00D31410 /* Info.plist in Resources */,
 				201B8C531F3A326000E91301 /* enemyKilled.mp3 in Resources */,
 				203B2A551F67B97100DDCC03 /* Tutorial.sks in Resources */,
 				203B2A741F67BBD100DDCC03 /* Credits.sks in Resources */,
@@ -490,7 +685,6 @@
 				201B8C7B1F3AEB1B00E91301 /* selectNewGame.wav in Resources */,
 				200829DE1F32CA860038AEC0 /* CatapultFire2.sks in Resources */,
 				203AEA991F3AFFF300C5CD4E /* mainMenu.mp3 in Resources */,
-				20232AFB1F3252CD00898ACE /* Assets.xcassets in Resources */,
 				200829DF1F32CA860038AEC0 /* DestroyEnemy.sks in Resources */,
 				203B2A931F6917A400DDCC03 /* mainMenuHard.mp3 in Resources */,
 				201B8C551F3A326600E91301 /* battleShipShoot.wav in Resources */,
@@ -500,9 +694,90 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		20E9E8BE20223B1400D31410 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20E9E8BF20223B1400D31410 /* MagicSwordEffect.sks in Resources */,
+				20E9E8C020223B1400D31410 /* MainMenu.sks in Resources */,
+				20E9E8C120223B1400D31410 /* timeBombExplosion.mp3 in Resources */,
+				20E9E8C220223B1400D31410 /* TimeBombExplode.sks in Resources */,
+				20E9E8C320223B1400D31410 /* stageClear.mp3 in Resources */,
+				20E9E8C420223B1400D31410 /* cane.mp3 in Resources */,
+				20E9E8C520223B1400D31410 /* ItemGet.wav in Resources */,
+				20E9E8C620223B1400D31410 /* GameSceneEasy.sks in Resources */,
+				20E9E8C720223B1400D31410 /* GameScene.sks in Resources */,
+				20E9E8C820223B1400D31410 /* swordSound.wav in Resources */,
+				20E9E8C920223B1400D31410 /* Main.storyboard in Resources */,
+				20E9E8CA20223B1400D31410 /* Tutorial2.sks in Resources */,
+				20E9E8CB20223B1400D31410 /* Assets.xcassets in Resources */,
+				20E9E8EF20223C1100D31410 /* Info.plist in Resources */,
+				20E9E8CC20223B1400D31410 /* TimeBombSmoke.sks in Resources */,
+				20E9E8CD20223B1400D31410 /* gameOver.wav in Resources */,
+				20E9E8CE20223B1400D31410 /* buttonMove.wav in Resources */,
+				20E9E8FD2022439C00D31410 /* GoogleService-Info.plist in Resources */,
+				20E9E8CF20223B1400D31410 /* mainBGM.mp3 in Resources */,
+				20E9E8D020223B1400D31410 /* buttonBack.wav in Resources */,
+				20E9E8D120223B1400D31410 /* ItemList.sks in Resources */,
+				20E9E8D220223B1400D31410 /* hitWall.wav in Resources */,
+				20E9E8D320223B1400D31410 /* enemyKilled.mp3 in Resources */,
+				20E9E8D420223B1400D31410 /* Tutorial.sks in Resources */,
+				20E9E8D520223B1400D31410 /* Credits.sks in Resources */,
+				20E9E8D620223B1400D31410 /* flash.wav in Resources */,
+				20E9E8D720223B1400D31410 /* catapultBomb.mp3 in Resources */,
+				20E9E8D820223B1400D31410 /* LaunchScreen.storyboard in Resources */,
+				20E9E8D920223B1400D31410 /* magicSword.wav in Resources */,
+				20E9E8DA20223B1400D31410 /* selectNewGame.wav in Resources */,
+				20E9E8DB20223B1400D31410 /* CatapultFire2.sks in Resources */,
+				20E9E8DC20223B1400D31410 /* mainMenu.mp3 in Resources */,
+				20E9E8DD20223B1400D31410 /* DestroyEnemy.sks in Resources */,
+				20E9E8DE20223B1400D31410 /* mainMenuHard.mp3 in Resources */,
+				20E9E8DF20223B1400D31410 /* battleShipShoot.wav in Resources */,
+				20E9E8E020223B1400D31410 /* AnimationActions.sks in Resources */,
+				20E9E8E120223B1400D31410 /* castleWallHit.mp3 in Resources */,
+				20E9E8E220223B1400D31410 /* CatapultFire.sks in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1F78737BE39E7BAD45FFF832 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		201ECBA91F351AA000FB833A /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -528,6 +803,140 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./Fabric.framework/run e91a320e059ab6724f7cc1de8059c13860d62491 c06df219d83af7afd55f8952bad38243f1028f461fecd046e7ba00137737e5ba";
+		};
+		20E9E88620223B1400D31410 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DefeatAlgebra-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		20E9E8E320223B1400D31410 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run e91a320e059ab6724f7cc1de8059c13860d62491 c06df219d83af7afd55f8952bad38243f1028f461fecd046e7ba00137737e5ba";
+		};
+		20E9E8E420223B1400D31410 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run e91a320e059ab6724f7cc1de8059c13860d62491 c06df219d83af7afd55f8952bad38243f1028f461fecd046e7ba00137737e5ba";
+		};
+		20E9E8E520223B1400D31410 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		20E9E8E620223B1400D31410 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh",
+				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle,
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B28D276B965711B89B39C064 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DefeatAlgebra-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BC4EA60B5B8B8E04FA3415C6 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh",
+				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle,
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -586,6 +995,63 @@
 				201CD4151F2CD28D009CE633 /* Heart.swift in Sources */,
 				203B2A751F67BBD100DDCC03 /* Credits.swift in Sources */,
 				201CD41A1F2CD28D009CE633 /* Wall.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		20E9E88720223B1400D31410 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				20E9E88820223B1400D31410 /* Boots.swift in Sources */,
+				20E9E88920223B1400D31410 /* Catapult.swift in Sources */,
+				20E9E88A20223B1400D31410 /* GameViewController.swift in Sources */,
+				20E9E88B20223B1400D31410 /* MSButtonNode.swift in Sources */,
+				20E9E88C20223B1400D31410 /* EnemyForTutorial2.swift in Sources */,
+				20E9E88D20223B1400D31410 /* Tutorial2.swift in Sources */,
+				20E9E88E20223B1400D31410 /* Grid.swift in Sources */,
+				20E9E88F20223B1400D31410 /* BGM.swift in Sources */,
+				20E9E89020223B1400D31410 /* InputVariable.swift in Sources */,
+				20E9E89120223B1400D31410 /* EnemyArm.swift in Sources */,
+				20E9E89220223B1400D31410 /* GridForTutorial.swift in Sources */,
+				20E9E89320223B1400D31410 /* SimplificationBoardEasy.swift in Sources */,
+				20E9E89420223B1400D31410 /* GridEasy.swift in Sources */,
+				20E9E89520223B1400D31410 /* EnemyForTutorial.swift in Sources */,
+				20E9E89620223B1400D31410 /* SettingScreen.swift in Sources */,
+				20E9E89720223B1400D31410 /* MagicSword.swift in Sources */,
+				20E9E89820223B1400D31410 /* Enemy.swift in Sources */,
+				20E9E89920223B1400D31410 /* InputVariableEasy.swift in Sources */,
+				20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */,
+				20E9E89B20223B1400D31410 /* EnemyEasy.swift in Sources */,
+				20E9E89C20223B1400D31410 /* Spear.swift in Sources */,
+				20E9E89D20223B1400D31410 /* MultiAttack.swift in Sources */,
+				20E9E89E20223B1400D31410 /* BattleShip.swift in Sources */,
+				20E9E89F20223B1400D31410 /* TimeBomb.swift in Sources */,
+				20E9E8A020223B1400D31410 /* PauseScreen.swift in Sources */,
+				20E9E8A120223B1400D31410 /* HeroForTutorial2.swift in Sources */,
+				20E9E8A220223B1400D31410 /* Teleport.swift in Sources */,
+				20E9E8A320223B1400D31410 /* PauseScreenForTutorial2.swift in Sources */,
+				20E9E8A420223B1400D31410 /* InputVariableExpression.swift in Sources */,
+				20E9E8A520223B1400D31410 /* CallHero.swift in Sources */,
+				20E9E8A620223B1400D31410 /* GridForTutorial2.swift in Sources */,
+				20E9E8A720223B1400D31410 /* SimplificationBoard.swift in Sources */,
+				20E9E8A820223B1400D31410 /* InputVariableExpressionEasy.swift in Sources */,
+				20E9E8A920223B1400D31410 /* Hero.swift in Sources */,
+				20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */,
+				20E9E8AB20223B1400D31410 /* Tutorial.swift in Sources */,
+				20E9E8AC20223B1400D31410 /* ResetCatapult.swift in Sources */,
+				20E9E8AD20223B1400D31410 /* HeroEasy.swift in Sources */,
+				20E9E8AE20223B1400D31410 /* EnemyFist.swift in Sources */,
+				20E9E8AF20223B1400D31410 /* PauseScreenForTutorial.swift in Sources */,
+				20E9E8B020223B1400D31410 /* HeroForTutorial.swift in Sources */,
+				20E9E8B120223B1400D31410 /* Cane.swift in Sources */,
+				20E9E8B220223B1400D31410 /* GameScene.swift in Sources */,
+				20E9E8B320223B1400D31410 /* GameSceneEasy.swift in Sources */,
+				20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */,
+				20E9E8B520223B1400D31410 /* PauseScreenEasy.swift in Sources */,
+				20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */,
+				20E9E8B720223B1400D31410 /* Heart.swift in Sources */,
+				20E9E8B820223B1400D31410 /* Credits.swift in Sources */,
+				20E9E8B920223B1400D31410 /* Wall.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,6 +1172,7 @@
 		};
 		204C7D991F074FE800F4DD11 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -714,7 +1181,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/DefeatAlgebra",
 				);
-				INFOPLIST_FILE = DefeatAlgebra/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/DefeatAlgebra/SupportingFIles/DefeatAlgebra/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yohanashima.DefeatAlgebra;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -725,6 +1192,7 @@
 		};
 		204C7D9A1F074FE800F4DD11 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = T2HM3LUVY9;
@@ -732,9 +1200,48 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/DefeatAlgebra",
 				);
-				INFOPLIST_FILE = DefeatAlgebra/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/DefeatAlgebra/SupportingFIles/DefeatAlgebra/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yohanashima.DefeatAlgebra;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		20E9E8E820223B1400D31410 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = T2HM3LUVY9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DefeatAlgebra",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yohanashima.DefeatAlgebraJ;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		20E9E8E920223B1400D31410 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = T2HM3LUVY9;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DefeatAlgebra",
+				);
+				INFOPLIST_FILE = "$(SRCROOT)/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yohanashima.DefeatAlgebraJ;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -758,6 +1265,15 @@
 			buildConfigurations = (
 				204C7D991F074FE800F4DD11 /* Debug */,
 				204C7D9A1F074FE800F4DD11 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		20E9E8E720223B1400D31410 /* Build configuration list for PBXNativeTarget "DefeatAlgebraJ" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				20E9E8E820223B1400D31410 /* Debug */,
+				20E9E8E920223B1400D31410 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
