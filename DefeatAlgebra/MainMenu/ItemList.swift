@@ -16,7 +16,7 @@ class ItemList: SKScene {
     var showingCardFlag = false
     
     /* Sound */
-    var sound = BGM(bgm: 4)
+    var sound = BGM(bgm: 3)
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */

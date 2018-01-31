@@ -15,8 +15,7 @@ class BGM: AVAudioPlayer {
         0: "mainBGM",
         1: "mainMenu",
         2: "stageClear",
-        3: "mainMenuHard",
-        4: "itemScreen"
+        3: "mainMenuHard"
     ]
     init (bgm:Int){
         if bgm < 4 {
