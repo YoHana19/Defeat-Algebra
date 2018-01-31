@@ -15,11 +15,11 @@ class BGM: AVAudioPlayer {
         0: "mainBGM",
         1: "mainMenu",
         2: "stageClear",
-        3: "itemScreen",
-        4: "gameOver"
+        3: "mainMenuHard",
+        4: "itemScreen"
     ]
     init (bgm:Int){
-        if bgm < 3 {
+        if bgm < 4 {
             let bgm_url = NSURL(fileURLWithPath: Bundle.main.path(forResource: bgm_list[bgm], ofType:"mp3")!)
             try! super.init(contentsOf: bgm_url as URL, fileTypeHint: "mp3")
         } else {

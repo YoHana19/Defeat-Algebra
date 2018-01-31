@@ -133,6 +133,7 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     
     
     override func didMove(to view: SKView) {
+        
         /* Connect scene objects */
         gridNode = childNode(withName: "gridNode") as! GridForTutorial
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
@@ -363,8 +364,6 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
-        print(tutorialState)
-        print(life)
         
         switch Tutorial.tutorialPhase {
         case 0:
