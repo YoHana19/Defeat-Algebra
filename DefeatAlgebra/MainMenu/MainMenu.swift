@@ -78,6 +78,8 @@ class MainMenu: SKScene {
         /* After tutorial done */
         } else {
             buttonTutorial.state = .msButtonNodeStateHidden
+            buttonEasy.isHidden = true
+            buttonHard.isHidden = true
         }
         
         /* Back ground picture */

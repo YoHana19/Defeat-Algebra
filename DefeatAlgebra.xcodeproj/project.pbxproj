@@ -22,7 +22,6 @@
 		201B8C571F3A365700E91301 /* hitWall.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C561F3A365700E91301 /* hitWall.wav */; };
 		201B8C5B1F3A439800E91301 /* magicSword.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5A1F3A439800E91301 /* magicSword.wav */; };
 		201B8C5D1F3A47BA00E91301 /* cane.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5C1F3A47BA00E91301 /* cane.mp3 */; };
-		201B8C5F1F3A533900E91301 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C5E1F3A533900E91301 /* gameOver.wav */; };
 		201B8C631F3A589D00E91301 /* castleWallHit.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C621F3A589C00E91301 /* castleWallHit.mp3 */; };
 		201B8C651F3A5C6E00E91301 /* ItemGet.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C641F3A5C6E00E91301 /* ItemGet.wav */; };
 		201B8C671F3A67F200E91301 /* BGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B8C661F3A67F100E91301 /* BGM.swift */; };
@@ -97,6 +96,7 @@
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
 		204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
 		204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
+		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,7 +106,7 @@
 		200829DA1F32CA860038AEC0 /* MagicSwordEffect.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MagicSwordEffect.sks; sourceTree = "<group>"; };
 		200829DB1F32CA860038AEC0 /* TimeBombExplode.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TimeBombExplode.sks; sourceTree = "<group>"; };
 		200829DC1F32CA860038AEC0 /* TimeBombSmoke.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TimeBombSmoke.sks; sourceTree = "<group>"; };
-		2019C37E1F0B5933003C7609 /* AnimationActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = AnimationActions.sks; path = ../AnimationActions.sks; sourceTree = "<group>"; };
+		2019C37E1F0B5933003C7609 /* AnimationActions.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = AnimationActions.sks; sourceTree = "<group>"; };
 		201B8C4C1F3A2D2800E91301 /* timeBombExplosion.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = timeBombExplosion.mp3; sourceTree = "<group>"; };
 		201B8C4E1F3A307B00E91301 /* swordSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = swordSound.wav; sourceTree = "<group>"; };
 		201B8C501F3A325A00E91301 /* catapultBomb.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = catapultBomb.mp3; sourceTree = "<group>"; };
@@ -115,7 +115,6 @@
 		201B8C561F3A365700E91301 /* hitWall.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hitWall.wav; sourceTree = "<group>"; };
 		201B8C5A1F3A439800E91301 /* magicSword.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = magicSword.wav; sourceTree = "<group>"; };
 		201B8C5C1F3A47BA00E91301 /* cane.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = cane.mp3; sourceTree = "<group>"; };
-		201B8C5E1F3A533900E91301 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = gameOver.wav; path = ../Items/gameOver.wav; sourceTree = "<group>"; };
 		201B8C621F3A589C00E91301 /* castleWallHit.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = castleWallHit.mp3; sourceTree = "<group>"; };
 		201B8C641F3A5C6E00E91301 /* ItemGet.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ItemGet.wav; sourceTree = "<group>"; };
 		201B8C661F3A67F100E91301 /* BGM.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BGM.swift; sourceTree = "<group>"; };
@@ -192,6 +191,7 @@
 		204C7D901F074FE800F4DD11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204C7D931F074FE800F4DD11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -229,7 +229,7 @@
 				201B8C641F3A5C6E00E91301 /* ItemGet.wav */,
 				201B8C621F3A589C00E91301 /* castleWallHit.mp3 */,
 				201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */,
-				201B8C5E1F3A533900E91301 /* gameOver.wav */,
+				20DF7CE82021C096006BFBB0 /* gameOver.wav */,
 				201B8C5C1F3A47BA00E91301 /* cane.mp3 */,
 				201B8C5A1F3A439800E91301 /* magicSword.wav */,
 				201B8C561F3A365700E91301 /* hitWall.wav */,
@@ -355,26 +355,50 @@
 		204C7D821F074FE800F4DD11 /* DefeatAlgebra */ = {
 			isa = PBXGroup;
 			children = (
-				201ECBAA1F351AED00FB833A /* Fabric.framework */,
-				201ECBAB1F351AED00FB833A /* Crashlytics.framework */,
+				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
+				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
 				203B2A6A1F67BBD100DDCC03 /* MainMenu */,
 				203B2A401F67B97100DDCC03 /* Tutorial */,
 				203B29F61F67B21A00DDCC03 /* Hard */,
 				203B2A7B1F67BDAB00DDCC03 /* Easy */,
 				201CD4061F2CD28D009CE633 /* Items */,
 				200829D61F32CA860038AEC0 /* Effects */,
-				201B8C461F3A2C2E00E91301 /* SFX */,
-				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
-				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
-				201CF0291F11BE1D001346C7 /* MSButtonNode.swift */,
-				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
-				201B8C661F3A67F100E91301 /* BGM.swift */,
+				20DF7CE62021B910006BFBB0 /* Sound */,
+				20DF7CE52021B8FF006BFBB0 /* Animation */,
+				20DF7CE72021B93A006BFBB0 /* Helper */,
 				204C7D8D1F074FE800F4DD11 /* Main.storyboard */,
-				204C7D901F074FE800F4DD11 /* Assets.xcassets */,
 				204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */,
+				204C7D901F074FE800F4DD11 /* Assets.xcassets */,
+				201ECBAA1F351AED00FB833A /* Fabric.framework */,
+				201ECBAB1F351AED00FB833A /* Crashlytics.framework */,
 				204C7D951F074FE800F4DD11 /* Info.plist */,
 			);
 			path = DefeatAlgebra;
+			sourceTree = "<group>";
+		};
+		20DF7CE52021B8FF006BFBB0 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				2019C37E1F0B5933003C7609 /* AnimationActions.sks */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
+		20DF7CE62021B910006BFBB0 /* Sound */ = {
+			isa = PBXGroup;
+			children = (
+				201B8C461F3A2C2E00E91301 /* SFX */,
+				201B8C661F3A67F100E91301 /* BGM.swift */,
+			);
+			path = Sound;
+			sourceTree = "<group>";
+		};
+		20DF7CE72021B93A006BFBB0 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				201CF0291F11BE1D001346C7 /* MSButtonNode.swift */,
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -453,7 +477,7 @@
 				203B2A571F67B97100DDCC03 /* Tutorial2.sks in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
 				200829E21F32CA860038AEC0 /* TimeBombSmoke.sks in Resources */,
-				201B8C5F1F3A533900E91301 /* gameOver.wav in Resources */,
+				20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */,
 				201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */,
 				201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */,
 				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
