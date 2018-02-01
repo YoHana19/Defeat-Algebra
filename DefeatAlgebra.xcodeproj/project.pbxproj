@@ -94,6 +94,8 @@
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
 		204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
 		204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
+		208C5D53202348290006ADE4 /* EnemyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D52202348290006ADE4 /* EnemyProperty.swift */; };
+		208C5D54202348290006ADE4 /* EnemyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D52202348290006ADE4 /* EnemyProperty.swift */; };
 		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
 		20E9E88820223B1400D31410 /* Boots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4081F2CD28D009CE633 /* Boots.swift */; };
 		20E9E88920223B1400D31410 /* Catapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40A1F2CD28D009CE633 /* Catapult.swift */; };
@@ -281,6 +283,7 @@
 		204C7D901F074FE800F4DD11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204C7D931F074FE800F4DD11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		208C5D52202348290006ADE4 /* EnemyProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyProperty.swift; sourceTree = "<group>"; };
 		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
 		20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebraJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E9E8EB20223B1900D31410 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/yohanashima/Desktop/Make School Project/Defeat-Algebra/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist"; sourceTree = "<absolute>"; };
@@ -486,8 +489,8 @@
 				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
 				203B2A6A1F67BBD100DDCC03 /* MainMenu */,
 				203B2A401F67B97100DDCC03 /* Tutorial */,
-				203B29F61F67B21A00DDCC03 /* Hard */,
 				203B2A7B1F67BDAB00DDCC03 /* Easy */,
+				203B29F61F67B21A00DDCC03 /* Hard */,
 				201CD4061F2CD28D009CE633 /* Items */,
 				200829D61F32CA860038AEC0 /* Effects */,
 				20DF7CE62021B910006BFBB0 /* Sound */,
@@ -498,6 +501,7 @@
 				204C7D901F074FE800F4DD11 /* Assets.xcassets */,
 				201ECBAA1F351AED00FB833A /* Fabric.framework */,
 				201ECBAB1F351AED00FB833A /* Crashlytics.framework */,
+				208C5D52202348290006ADE4 /* EnemyProperty.swift */,
 			);
 			path = DefeatAlgebra;
 			sourceTree = "<group>";
@@ -626,6 +630,7 @@
 					};
 					20E9E88520223B1400D31410 = {
 						DevelopmentTeam = T2HM3LUVY9;
+						LastSwiftMigration = 0920;
 					};
 				};
 			};
@@ -945,6 +950,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				208C5D53202348290006ADE4 /* EnemyProperty.swift in Sources */,
 				201CD4121F2CD28D009CE633 /* Boots.swift in Sources */,
 				201CD4141F2CD28D009CE633 /* Catapult.swift in Sources */,
 				204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */,
@@ -1002,6 +1008,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				208C5D54202348290006ADE4 /* EnemyProperty.swift in Sources */,
 				20E9E88820223B1400D31410 /* Boots.swift in Sources */,
 				20E9E88920223B1400D31410 /* Catapult.swift in Sources */,
 				20E9E88A20223B1400D31410 /* GameViewController.swift in Sources */,
@@ -1224,7 +1231,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yohanashima.DefeatAlgebraJ;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -1243,7 +1251,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.yohanashima.DefeatAlgebraJ;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

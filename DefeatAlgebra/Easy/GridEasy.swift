@@ -816,28 +816,16 @@ class GridEasy: SKSpriteNode {
     /*== Adding Enemy ==*/
     
     /* Add initial enemy */
-    func addInitialEnemyAtGrid(enemyPosArray: [[Int]], enemyPosArray2: [[Int]], variableExpressionSource: [[Int]]) {
+    func addInitialEnemyAtGrid(enemyPosArray: [[Int]], enemyPosArrayForUnS: [[Int]], sVariableExpressionSource: [[Int]], uVariableExpressionSource: [[Int]]) {
         /* Add a new enemy at grid position*/
         
         /* Get gameSceneEasy */
         let gameSceneEasy = self.parent as! GameSceneEasy
         
-        /* Seperate variableExpressionSource into standard and unsimplified group */
-        for vES in variableExpressionSource {
-            /* Standard group */
-            if vES[0] < 2 || vES[0] == 4 || vES[0] == 5 {
-                standardGroup.append(vES)
-            /* Unsimplified group */
-            } else {
-                unsimplifiedGroup.append(vES)
-            }
-        }
-        
-        /* Standard Group */
-        if standardGroup.count > 0 {
+        if uVariableExpressionSource.count > 0 {
             for posArray in enemyPosArray {
                 /* New enemy object */
-                let enemy = EnemyEasy(variableExpressionSource: standardGroup, forEdu: false)
+                let enemy = EnemyEasy(variableExpressionSource: sVariableExpressionSource, forEdu: false)
                 
                 /* Set enemy speed according to stage level */
                 if gameSceneEasy.stageLevel < 1 {
@@ -849,13 +837,10 @@ class GridEasy: SKSpriteNode {
                 /* set adding enemy movement */
                 setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
             }
-        }
-        
-        /* unsimplifiedGroup Group */
-        if unsimplifiedGroup.count > 0 {
-            for posArray in enemyPosArray2 {
+            
+            for posArray in enemyPosArrayForUnS {
                 /* New enemy object */
-                let enemy = EnemyEasy(variableExpressionSource: unsimplifiedGroup, forEdu: false)
+                let enemy = EnemyEasy(variableExpressionSource: sVariableExpressionSource, forEdu: false)
                 
                 /* Set enemy speed according to stage level */
                 if gameSceneEasy.stageLevel < 1 {
@@ -868,7 +853,6 @@ class GridEasy: SKSpriteNode {
                 setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
             }
         }
-        
     }
     
     /* Add enemy in the middle of game */

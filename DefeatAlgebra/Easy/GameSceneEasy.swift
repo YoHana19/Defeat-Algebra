@@ -119,7 +119,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     
     /*== Add enemy management ==*/
     var initialEnemyPosArray = [[Int]]()
-    var initialEnemyPosArray2 = [[Int]]()
+    var initialEnemyPosArrayForUnS = [[Int]]()
     var initialAddEnemyFlag = true
     /* [0: number of adding enemy, 1: inteval of adding enemy, 2: number of times of adding enemy, 3: range of start yPos] */
     var addEnemyManagement = [
@@ -145,7 +145,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     var addYRange: Int = 0
     var countTurnForCompAddEnemy: Int = 0
     var numOfTimeAddEnemy: Int = 0
-//    var numOfTimeAddEnemyForEdu: Int = 0
+    //    var numOfTimeAddEnemyForEdu: Int = 0
     var CompAddEnemyFlag = false
     var addEnemyDoneFlag = false
     
@@ -345,11 +345,11 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         let ud = UserDefaults.standard
         /* stageLevel */
         stageLevel = ud.integer(forKey: "stageLevelEasy")
-        stageLevel = 6
+        stageLevel = 4
         levelLabel.text = String(stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArrayEasy") as? [Int] ?? [1]
-        moveLevelArray = [4]
+        //moveLevelArray = [4]
         /* Set hero */
         setHero()
         /* Items */
@@ -420,7 +420,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         /* For debug */
-//        print("\(gameState), \(playerTurnState), \(itemType)")
+        //        print("\(gameState), \(playerTurnState), \(itemType)")
         
         if cardArray.count > 0 {
             gameState = .PlayerTurn
@@ -443,9 +443,9 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         
                         let addEnemy = SKAction.run({
                             if self.stageLevel < 8 {
-                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArray2: self.initialEnemyPosArray2, variableExpressionSource: self.variableExpressionSource[self.stageLevel])
+                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[self.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[self.stageLevel])
                             } else {
-                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArray2: self.initialEnemyPosArray2, variableExpressionSource: self.variableExpressionSourceRandom)
+//                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, variableExpressionSource: self.variableExpressionSourceRandom)
                             }
                         })
                         let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*4+1.0) /* 4 is distance, 1.0 is buffer */
@@ -465,14 +465,14 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         self.run(seq)
                         
                         
-                    /* Add enemies in the middle of game */
+                        /* Add enemies in the middle of game */
                     } else {
                         /* Add enemy for Education */
                         if countTurnForAddEnemyForEdu == addIntervalForEdu {
                             let addEnemy = SKAction.run({
                                 if self.stageLevel < 8 {
                                     self.gridNode.addEnemyForEdu(variableExpressionSource: self.variableExpressionSource[self.stageLevel], index: self.numOfPassedTurnForEdu)
-                                /* haven't increment yet */
+                                    /* haven't increment yet */
                                 } else {
                                     self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSourceRandom, yRange: self.addYRange)
                                 }
@@ -495,8 +495,8 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                             
                             /* Reset countTurnForAddEnemy */
                             countTurnForAddEnemyForEdu = 0
-                        
-                        /* Add enemy normaly */
+                            
+                            /* Add enemy normaly */
                         } else if countTurnForAddEnemy == addInterval {
                             let addEnemy = SKAction.run({
                                 if self.stageLevel < 8 {
@@ -504,25 +504,25 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                                 } else {
                                     self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSourceRandom, yRange: self.addYRange)
                                 }
-                            
+                                
                             })
                             let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
                             let moveState = SKAction.run({
                                 /* Reset start enemy position array */
                                 self.gridNode.startPosArray = [0,1,2,3,4,5,6,7,8]
-                            
+                                
                                 /* Update enemy position */
                                 self.gridNode.resetEnemyPositon()
                                 self.gridNode.updateEnemyPositon()
-                            
+                                
                                 /* Count up to complete adding enemy */
                                 self.countTurnForCompAddEnemy += 1
-                            
+                                
                                 /* On flag if complete adding enemy */
                                 if self.countTurnForCompAddEnemy == self.numOfTimeAddEnemy {
                                     self.CompAddEnemyFlag = true
                                 }
-                            
+                                
                                 /* Count up to adding educational enemy time */
                                 self.countTurnForAddEnemyForEdu += 1
                                 
@@ -531,7 +531,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                             })
                             let seq = SKAction.sequence([addEnemy, wait, moveState])
                             self.run(seq)
-                        
+                            
                             /* Reset countTurnForAddEnemy */
                             countTurnForAddEnemy = 0
                             
@@ -886,7 +886,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     /* Enemy reach to castle */
                     if enemy.reachCastleFlag {
                         enemy.punchToCastle()
-                    /* Enemy move */
+                        /* Enemy move */
                     } else if enemy.punchIntervalForCount > 0 {
                         if enemy.forEduBranchFlag {
                             if enemy.originDeadFlag == false {
@@ -897,7 +897,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         } else {
                             enemy.enemyMove()
                         }
-                    /* Enemy punch */
+                        /* Enemy punch */
                     } else {
                         enemy.punchAndMove()
                     }
@@ -1972,7 +1972,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         /* Stop arm and fist */
                         nodeB.removeAllActions()
                     }
-                /* bullet hit enemy */
+                    /* bullet hit enemy */
                 } else if contactA.node?.name == "bullet" {
                     
                     let enemy = contactB.node as! EnemyEasy
@@ -2184,11 +2184,11 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         /* x+1+1 */
         if stageLevel == 8 {
             pickVariableExpression(origin: variableExpressionSource[8], modified: variableExpressionSource[10], num: 6)
-        /* 1+2-x, 2x+2-1, x+x+1 */
+            /* 1+2-x, 2x+2-1, x+x+1 */
         } else if stageLevel == 9 {
             pickVariableExpression(origin: variableExpressionSource[9], modified: variableExpressionSource[11], num: 3)
             pickVariableExpression(origin: variableExpressionSource[8], modified: variableExpressionSource[12], num: 3)
-        /* x+x+1, x+x+1+1, 2x+x-2, 2x+x-2+1, 2-2x+x, 1+2-3x+x */
+            /* x+x+1, x+x+1+1, 2x+x-2, 2x+x-2+1, 2-2x+x, 1+2-3x+x */
         } else if stageLevel == 10 {
             pickVariableExpression3(origin: variableExpressionSource[8], modified1: variableExpressionSource[12], modified2: variableExpressionSource[14], num: 3)
             pickVariableExpression3(origin: variableExpressionSource[9], modified1: variableExpressionSource[13], modified2: variableExpressionSource[15], num: 3)
@@ -3078,11 +3078,11 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             /* Level 5 */
         case 4:
             /* Set enemy */
-//            initialEnemyPosArray = [[1, 11], [5, 11], [1, 9], [5, 9]]
-//            initialEnemyPosArray2 = [[3, 11], [7, 11], [3, 9], [7, 9]]
-
+            //            initialEnemyPosArray = [[1, 11], [5, 11], [1, 9], [5, 9]]
+            //            initialEnemyPosArrayForUnS = [[3, 11], [7, 11], [3, 9], [7, 9]]
+            
             initialEnemyPosArray = [[1, 11]]
-            initialEnemyPosArray2 = [[3, 11]]
+            initialEnemyPosArrayForUnS = [[3, 11]]
             
             /* Set total number of enemy */
             totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
@@ -3359,3 +3359,4 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     }
     
 }
+
