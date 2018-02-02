@@ -408,7 +408,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self?.pauseFlag = true
             self?.pauseScreen.isHidden = false
         }
-
+        
         /*====================================================*/
         /*== Pick game property from user data and set them ==*/
         /*====================================================*/
@@ -491,8 +491,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         /* For debug */
-//        print("\(gameState), \(playerTurnState), \(itemType)")
-
+        //        print("\(gameState), \(playerTurnState), \(itemType)")
+        
         if cardArray.count > 0 {
             gameState = .PlayerTurn
             playerTurnState = .ShowingCard
@@ -719,7 +719,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                     let shoot = SKAction.playSoundFileNamed("battleShipShoot.wav", waitForCompletion: true)
                                     self.run(shoot)
                                 }
-
+                                
                             }
                         })
                         let wait = SKAction.wait(forDuration: 4.0)
@@ -1161,8 +1161,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-            
-            /* Use callHero */
+                
+                /* Use callHero */
             } else if nodeAtPoint.name == "callHero" {
                 /* Remove active area if any */
                 self.gridNode.resetSquareArray(color: "purple")
@@ -1374,7 +1374,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-            /* resetCatapult */
+                /* resetCatapult */
             } else if nodeAtPoint.name == "resetCatapult" {
                 /* Remove activeArea */
                 self.gridNode.resetSquareArray(color: "red")
@@ -1396,7 +1396,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-            /* cane */
+                /* cane */
             } else if nodeAtPoint.name == "cane" {
                 /* Remove activeArea */
                 self.gridNode.resetSquareArray(color: "red")
@@ -1415,7 +1415,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-            /* spear */
+                /* spear */
             } else if nodeAtPoint.name == "spear" {
                 /* Remove activeArea */
                 self.gridNode.resetSquareArray(color: "red")
@@ -1452,7 +1452,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let seq = SKAction.sequence([wait, moveState])
                 self.run(seq)
                 
-            /* Touch active area  */
+                /* Touch active area  */
             } else if nodeAtPoint.name == "activeArea" {
                 /* Using catapult */
                 if itemType == .Catapult {
@@ -1496,7 +1496,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Remove used itemIcon from item array and Scene */
                     resetDisplayItem(index: usingItemIndex)
                     
-                /* Using resetCatapult */
+                    /* Using resetCatapult */
                 } else if itemType == .ResetCatapult {
                     selectCatapultDoneFlag = false
                     /* Remove active area */
@@ -1518,9 +1518,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     
                     itemType = .None
                     playerTurnState = .MoveState
-
+                    
                 }
-            /* Reset position of catapult or Toggle input board visibility */
+                /* Reset position of catapult or Toggle input board visibility */
             } else if nodeAtPoint.name == "catapultToSet" {
                 /* using resetCatapult */
                 if selecttingCatapultFlag {
@@ -1545,13 +1545,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     selectedCatapult = nodeAtPoint as! Catapult
                     selectedCatapult.makeTriangle()
-                /* using catapult */
+                    /* using catapult */
                 } else if catapultFireReady == false {
                     guard itemType == .Catapult else { return }
                     self.inputBoard.isActive = !self.inputBoard.isActive
                 }
                 
-            /* If player touch other place than item icons, back to MoveState */
+                /* If player touch other place than item icons, back to MoveState */
             } else {
                 guard setCatapultDoneFlag == false else { return }
                 guard selectCatapultDoneFlag == false else { return }
@@ -1649,7 +1649,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             autoSetItems()
                             itemSpot.append(boots.spotPos)
                         }
-                    /* Get heart */
+                        /* Get heart */
                     } else if item.name == "heart" {
                         checkFirstItem(itemName: item.name!)
                         item.removeFromParent()
@@ -1661,7 +1661,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             autoSetItems()
                             itemSpot.append(heart.spotPos)
                         }
-                    /* Other items */
+                        /* Other items */
                     } else {
                         item.removeFromParent()
                         checkFirstItem(itemName: item.name!)
@@ -1748,7 +1748,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         life += 1
                         setLife(numOflife: life)
                         if stageLevel >= 10 {
-//                            itemSpot.append(item.spotPos)
+                            //                            itemSpot.append(item.spotPos)
                             autoSetItems()
                         }
                         if stageLevel >= 10 {
@@ -1756,7 +1756,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             autoSetItems()
                             itemSpot.append(heart.spotPos)
                         }
-                    /* Other items */
+                        /* Other items */
                     } else {
                         item.removeFromParent()
                         checkFirstItem(itemName: item.name!)
@@ -1817,7 +1817,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-            /* Hit enemy */
+                /* Hit enemy */
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! Hero
@@ -1853,7 +1853,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Move to next hero turn */
                         activeHero = heroArray[numOfTurnDoneHero+1]
-                    /* The last turn hero is killed */
+                        /* The last turn hero is killed */
                     } else {
                         /* Remove dead hero */
                         heroArray = heroArray.filter({ $0.aliveFlag == true })
@@ -2026,7 +2026,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         let hitWall = SKAction.playSoundFileNamed("hitWall.wav", waitForCompletion: true)
                         self.run(hitWall)
                     }
-
+                    
                     
                     /* Enemy hits wall */
                     if contactA.categoryBitMask == 2 {
@@ -2100,7 +2100,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
                     self.run(seqEnemy)
                     enemy.aliveFlag = false
-
+                    
                     /* Count defeated enemy */
                     totalNumOfEnemy -= 1
                 }
@@ -2431,7 +2431,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         let waitAni = SKAction.wait(forDuration: 0.5)
         let addBomb = SKAction.run({ self.addChild(catapultBomb) })
-
+        
         let throwBomb = SKAction.run({
             /* Throw beyond grid */
             if value > self.gridNode.rows {
@@ -2544,7 +2544,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         let explode = SKAction.playSoundFileNamed("catapultBomb.mp3", waitForCompletion: true)
                         self.run(explode)
                     }
-
+                    
                 })
                 
                 let waitRemoveEffect = SKAction.wait(forDuration: 2.0)
@@ -2805,10 +2805,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*== Game Management ==*/
     /*=====================*/
     
-//    /*== Reset All Stuff ==*/
-//    func resetStuff() {
-//        
-//    }
+    //    /*== Reset All Stuff ==*/
+    //    func resetStuff() {
+    //
+    //    }
     
     /* Create label for tutorial */
     func createTutorialLabel(text: String, posY: CGFloat, size: CGFloat) {
@@ -2962,7 +2962,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-
+    
     
     /*== Set initial objects ==*/
     func setInitialObj(level: Int) {
@@ -2970,13 +2970,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         life = maxLife
         
         switch level {
-        /* Level 1 */
+            /* Level 1 */
         case 0:
             /* Set enemy */
             initialEnemyPosArray = [[1, 9], [4, 9], [7, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set boots */
             let bootsArray = [[3,3]]
@@ -2991,13 +2991,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let timeBomb = TimeBomb()
                 self.gridNode.addObjectAtGrid(object: timeBomb, x: timeBombPos[0], y: timeBombPos[1])
             }
-        /* Level 2 */
+            /* Level 2 */
         case 1:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set boots */
             let bootsArray = [[4,6]]
@@ -3020,13 +3020,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: heart, x: heartPos[0], y: heartPos[1])
             }
             
-        /* Level 3 */
+            /* Level 3 */
         case 2:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 9], [4, 9], [6, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set boots */
             let bootsArray = [[1,6],[7,6]]
@@ -3047,13 +3047,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.gridNode.addObjectAtGrid(object: heart, x: 4, y: 6)
             
             
-        /* Level 4 */
+            /* Level 4 */
         case 3:
             /* Set enemy */
             initialEnemyPosArray = [[0, 10], [2, 10], [4, 10], [6, 10], [8, 10], [3, 8], [5, 8]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set timeBomb */
             let timeBombsArray = [[2,0],[6,0],[7,3]]
@@ -3080,13 +3080,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: multiAttack, x: multiAttackPos[0], y: multiAttackPos[1])
             }
             
-        /* Level 5 */
+            /* Level 5 */
         case 4:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [1, 9], [3, 9], [5, 9], [7, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set timeBomb */
             let timeBombsArray = [[4,0],[4,6],[1,3],[7,3]]
@@ -3109,13 +3109,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: wall, x: wallPos[0], y: wallPos[1])
             }
             
-        /* Level 6 */
+            /* Level 6 */
         case 5:
             /* Set enemy */
             initialEnemyPosArray = [[2, 10], [6, 10], [2, 8], [6, 8], [4, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set timeBomb */
             let timeBombsArray = [[4,6],[4,0]]
@@ -3145,13 +3145,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: battleShip, x: battleShipPos[0], y: battleShipPos[1])
             }
             
-        /* Level 7 */
+            /* Level 7 */
         case 6:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [2, 10], [3, 9], [7, 11], [6, 10], [5, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set multiAttack */
             let multiAttackArray = [[1,3],[7,3]]
@@ -3187,13 +3187,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let heart = Heart()
                 self.gridNode.addObjectAtGrid(object: heart, x: heartPos[0], y: heartPos[1])
             }
-        /* Level 8 */
+            /* Level 8 */
         case 7:
             /* Set enemy */
             initialEnemyPosArray = [[0, 9], [1, 11], [2, 9], [3, 11], [4, 9], [5, 11], [6, 9], [7, 11], [8, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set cane */
             let caneArray = [[4,4], [4,2]]
@@ -3214,7 +3214,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             for resetCatapultPos in resetCatapultArray {
                 let resetCatapult = ResetCatapult()
                 self.gridNode.addObjectAtGrid(object: resetCatapult, x: resetCatapultPos[0], y: resetCatapultPos[1])
-            }            
+            }
             
             
             /* Set magicSword */
@@ -3223,13 +3223,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let magicSword = MagicSword()
                 self.gridNode.addObjectAtGrid(object: magicSword, x: magicSwordPos[0], y: magicSwordPos[1])
             }
-        /* Level 9 */
+            /* Level 9 */
         case 8:
             /* Set enemy */
             initialEnemyPosArray = [[1, 11], [2, 9], [1, 7], [4, 9], [6, 9], [7, 11], [7, 7]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set catapult */
             let catapultArray = [[3,1]]
@@ -3281,13 +3281,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             
-        /* Level 10 */
+            /* Level 10 */
         case 9:
             /* Set enemy */
             initialEnemyPosArray = [[0, 11], [0, 7], [2, 10], [2, 8], [6, 10], [6, 8], [8, 7], [8, 11]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             
             /* Set cane */
@@ -3332,24 +3332,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.gridNode.addObjectAtGrid(object: callHero, x: callHeroPos[0], y: callHeroPos[1])
             }
             
-        /* Level 11 */
+            /* Level 11 */
         case 10:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [3, 8], [4, 10], [5, 8], [7, 10]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set initial items */
             autoSetInitialItems(posArray: [[2, 1], [2, 5], [6, 1], [6, 5]])
             
-        /* Level 12 */
+            /* Level 12 */
         case 11:
             /* Set enemy */
             initialEnemyPosArray = [[1, 10], [3, 8], [4, 10], [5, 8], [7, 10]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 20
             
             /* Set initial items */
             autoSetInitialItems(posArray: [[2, 1], [2, 5], [6, 1], [6, 5]])
@@ -3360,3 +3360,4 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
 }
+

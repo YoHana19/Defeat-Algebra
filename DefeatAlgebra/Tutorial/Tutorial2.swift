@@ -1692,7 +1692,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             initialEnemyPosArray = [[2, 9], [6, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 2
             
             /* Set boots */
             let bootsArray = [[4,5]]
@@ -1705,7 +1705,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             initialEnemyPosArray = [[1, 9], [4, 9], [7, 9]]
             
             /* Set total number of enemy */
-            totalNumOfEnemy = initialEnemyPosArray.count+addEnemyManagement[stageLevel][0]*addEnemyManagement[stageLevel][2]
+            totalNumOfEnemy = 3
             
             /* Set timeBomb */
             let timeBombsArray = [[2,3],[6,3]]
