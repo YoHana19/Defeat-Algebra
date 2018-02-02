@@ -29,8 +29,7 @@ class GridEasy: SKSpriteNode {
     
     /* Enemy Management */
     var enemyArray = [EnemyEasy]()
-    var enemyArrayForEdu = [String: EnemyEasy] ()
-    var moveDirectionForEdu = 0
+    var enemySUPairDict = [EnemyEasy: EnemyEasy]()
     var positionEnemyAtGrid = [[Bool]]()
     var numOfTurnEndEnemy = 0
     var turnIndex = 0
@@ -38,11 +37,6 @@ class GridEasy: SKSpriteNode {
     var touchingEnemyFlag = false
     var touchedEnemy = EnemyEasy(variableExpressionSource: [[0,1,0,0]], forEdu: false) /* temporally */
     var editedEnemy  = EnemyEasy(variableExpressionSource: [[0,1,0,0]], forEdu: false) /* temporally */
-    
-    /* Adding enemy groups */
-    var standardGroup = [[Int]]()
-    var unsimplifiedGroup = [[Int]]()
-    var branchGroup = [[Int]]()
     
     /* Flash */
     var flashSpeed: Double = 0.5
@@ -360,8 +354,10 @@ class GridEasy: SKSpriteNode {
                                     
                                     /* If you killed origin enemy */
                                     if enemy.forEduOriginFlag {
-                                        let branchEnemy = self.enemyArrayForEdu[enemy.originIndex]
-                                        branchEnemy?.originDeadFlag = true
+                                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self)
+                                    /* If you killed branch enemy */
+                                    } else if enemy.forEduBranchFlag {
+                                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self)
                                     }
                                 }
                             }
@@ -394,10 +390,12 @@ class GridEasy: SKSpriteNode {
                                     /* Count defeated enemy */
                                     gameSceneEasy.totalNumOfEnemy -= 1
                                     
-                                    /* If original enemy is killed */
+                                    /* If you killed origin enemy */
                                     if enemy.forEduOriginFlag {
-                                        let branchEnemy = self.enemyArrayForEdu[enemy.originIndex]
-                                        branchEnemy?.originDeadFlag = true
+                                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self)
+                                        /* If you killed branch enemy */
+                                    } else if enemy.forEduBranchFlag {
+                                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self)
                                     }
                                 }
                             }
@@ -554,10 +552,12 @@ class GridEasy: SKSpriteNode {
                                         let seqHero = SKAction.sequence([waitAni, setTexture])
                                         self.run(seqHero)
                                         
-                                        /* If original enemy is killed */
+                                        /* If you killed origin enemy */
                                         if enemy.forEduOriginFlag {
-                                            let branchEnemy = self.enemyArrayForEdu[enemy.originIndex]
-                                            branchEnemy?.originDeadFlag = true
+                                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self)
+                                            /* If you killed branch enemy */
+                                        } else if enemy.forEduBranchFlag {
+                                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self)
                                         }
                                         
                                     }
@@ -680,10 +680,12 @@ class GridEasy: SKSpriteNode {
                     /* Count defeated enemy */
                     gameSceneEasy.totalNumOfEnemy -= 1
                     
-                    /* If original enemy is killed */
+                    /* If you killed origin enemy */
                     if enemy.forEduOriginFlag {
-                        let branchEnemy = self.enemyArrayForEdu[enemy.originIndex]
-                        branchEnemy?.originDeadFlag = true
+                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self)
+                        /* If you killed branch enemy */
+                    } else if enemy.forEduBranchFlag {
+                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self)
                     }
                     
                 /* Touch wrong enemy */
@@ -822,36 +824,34 @@ class GridEasy: SKSpriteNode {
         /* Get gameSceneEasy */
         let gameSceneEasy = self.parent as! GameSceneEasy
         
-        if uVariableExpressionSource.count > 0 {
-            for posArray in enemyPosArray {
-                /* New enemy object */
-                let enemy = EnemyEasy(variableExpressionSource: sVariableExpressionSource, forEdu: false)
+        for posArray in enemyPosArray {
+            /* New enemy object */
+            let enemy = EnemyEasy(variableExpressionSource: sVariableExpressionSource, forEdu: false)
                 
-                /* Set enemy speed according to stage level */
-                if gameSceneEasy.stageLevel < 1 {
-                    enemy.moveSpeed = 0.2
-                    enemy.punchSpeed = 0.0025
-                    enemy.singleTurnDuration = 1.0
-                }
-                
-                /* set adding enemy movement */
-                setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
+            /* Set enemy speed according to stage level */
+            if gameSceneEasy.stageLevel < 1 {
+                enemy.moveSpeed = 0.2
+                enemy.punchSpeed = 0.0025
+                enemy.singleTurnDuration = 1.0
             }
+                
+            /* set adding enemy movement */
+            setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
+        }
             
-            for posArray in enemyPosArrayForUnS {
-                /* New enemy object */
-                let enemy = EnemyEasy(variableExpressionSource: sVariableExpressionSource, forEdu: false)
+        for posArray in enemyPosArrayForUnS {
+            /* New enemy object */
+            let enemy = EnemyEasy(variableExpressionSource: uVariableExpressionSource, forEdu: false)
                 
-                /* Set enemy speed according to stage level */
-                if gameSceneEasy.stageLevel < 1 {
-                    enemy.moveSpeed = 0.2
-                    enemy.punchSpeed = 0.0025
-                    enemy.singleTurnDuration = 1.0
-                }
-                
-                /* set adding enemy movement */
-                setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
+            /* Set enemy speed according to stage level */
+            if gameSceneEasy.stageLevel < 1 {
+                enemy.moveSpeed = 0.2
+                enemy.punchSpeed = 0.0025
+                enemy.singleTurnDuration = 1.0
             }
+                
+            /* set adding enemy movement */
+            setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
         }
     }
     
@@ -878,96 +878,68 @@ class GridEasy: SKSpriteNode {
     }
     
     /* Add enemy for education */
-    func addEnemyForEdu(variableExpressionSource: [[Int]], index: Int) {
+    func addEnemyForEdu(sVariableExpressionSource: [[Int]], uVariableExpressionSource: [[Int]], index: Int) {
         
-        /* Reset groups */
-        standardGroup.removeAll()
-        unsimplifiedGroup.removeAll()
-        
-        /* Seperate variableExpressionSource into standard and unsimplified group */
-        for vES in variableExpressionSource {
-            /* Standard group */
-            if vES[0] < 2 || vES[0] == 4 || vES[0] == 5 {
-                standardGroup.append(vES)
-            /* Unsimplified group */
-            } else {
-                unsimplifiedGroup.append(vES)
-            }
-        }
-        
-        for i in 0...1 {
-//            print("standardGroup: \(standardGroup)")
-//            print("unsimplifiedGroup: \(unsimplifiedGroup)")
-            
-            /* Select origin Enemy */
-            let rand = Int(arc4random_uniform(UInt32(standardGroup.count)))
-            let variableExpression = standardGroup[rand]
-//            print(variableExpression)
-            /* Remove variableExpression used */
-            standardGroup.remove(at: rand)
-            
-            /* Extract branch Enemy */
-            branchGroup = unsimplifiedGroup.filter({ $0.last! == variableExpression.last! })
-//            print("branchGroup: \(branchGroup)")
-            
-            /* New enemy object */
-            let enemyOrigin = EnemyEasy(variableExpressionSource: [variableExpression], forEdu: true)
-            let enemyBranch = EnemyEasy(variableExpressionSource: branchGroup, forEdu: true)
-            
-            /* On flag */
-            enemyOrigin.forEduOriginFlag = true
-            enemyBranch.forEduBranchFlag = true
-            
-            /* Set dictionary to get later */
-            enemyOrigin.originIndex = String(index) + String(variableExpression.last!)
-            enemyArrayForEdu[enemyOrigin.originIndex] = enemyBranch
-            
-            /* Set punch inteval */
-            let randPI = Int(arc4random_uniform(100))
-            
-            /* punchInterval is 1 with 40% */
-            if randPI < 45 {
-                enemyOrigin.punchInterval = 1
-                enemyOrigin.punchIntervalForCount = 1
-                enemyOrigin.setPunchIntervalLabel()
-                enemyBranch.punchInterval = 1
-                enemyBranch.punchIntervalForCount = 1
-                enemyBranch.setPunchIntervalLabel()
+        DAUtility.getTwoRandomNumber(total: sVariableExpressionSource.count) { (nums) in
+            for i in nums {
+                /* Select origin Enemy */
+                let variableExpression = sVariableExpressionSource[i]
+                /* Select branch Enemy */
+                let branchGroup = uVariableExpressionSource.filter({ $0.last! == variableExpression.last! })
                 
-                /* punchInterval is 2 with 40% */
-            } else if randPI < 90 {
-                enemyOrigin.punchInterval = 2
-                enemyOrigin.punchIntervalForCount = 2
-                enemyOrigin.setPunchIntervalLabel()
-                enemyBranch.punchInterval = 2
-                enemyBranch.punchIntervalForCount = 2
-                enemyBranch.setPunchIntervalLabel()
+                /* New enemy object */
+                let enemyOrigin = EnemyEasy(variableExpressionSource: [variableExpression], forEdu: true)
+                let enemyBranch = EnemyEasy(variableExpressionSource: branchGroup, forEdu: true)
                 
-                /* punchInterval is 0 with 20% */
-            } else {
-                enemyOrigin.punchInterval = 0
-                enemyOrigin.punchIntervalForCount = 0
-                enemyOrigin.setPunchIntervalLabel()
-                enemyBranch.punchInterval = 0
-                enemyBranch.punchIntervalForCount = 0
-                enemyBranch.setPunchIntervalLabel()
-            }
-            
-            /* x position */
-            /* First enemy set will be placed left half part */
-            if i == 0 {
-                let randX = Int(arc4random_uniform(3))
-                let startPositionX = startPosArray[randX]
-                /* set adding enemy movement */
-                setAddEnemyMovement(enemy: enemyOrigin, posX: startPositionX, posY: 11)
-                setAddEnemyMovement(enemy: enemyBranch, posX: startPositionX+1, posY: 11)
-            /* First enemy set will be placed right half part */
-            } else {
-                let randX = Int(arc4random_uniform(3))
-                let startPositionX = startPosArray[randX+4]
-                /* set adding enemy movement */
-                setAddEnemyMovement(enemy: enemyOrigin, posX: startPositionX, posY: 11)
-                setAddEnemyMovement(enemy: enemyBranch, posX: startPositionX+1, posY: 11)
+                EnemyAddController.setSUEnemyPair(origin: enemyOrigin, branch: enemyBranch, gridNode: self)
+                
+                /* Set punch inteval */
+                let randPI = Int(arc4random_uniform(100))
+                
+                /* punchInterval is 1 with 40% */
+                if randPI < 45 {
+                    enemyOrigin.punchInterval = 1
+                    enemyOrigin.punchIntervalForCount = 1
+                    enemyOrigin.setPunchIntervalLabel()
+                    enemyBranch.punchInterval = 1
+                    enemyBranch.punchIntervalForCount = 1
+                    enemyBranch.setPunchIntervalLabel()
+                    
+                    /* punchInterval is 2 with 40% */
+                } else if randPI < 90 {
+                    enemyOrigin.punchInterval = 2
+                    enemyOrigin.punchIntervalForCount = 2
+                    enemyOrigin.setPunchIntervalLabel()
+                    enemyBranch.punchInterval = 2
+                    enemyBranch.punchIntervalForCount = 2
+                    enemyBranch.setPunchIntervalLabel()
+                    
+                    /* punchInterval is 0 with 20% */
+                } else {
+                    enemyOrigin.punchInterval = 0
+                    enemyOrigin.punchIntervalForCount = 0
+                    enemyOrigin.setPunchIntervalLabel()
+                    enemyBranch.punchInterval = 0
+                    enemyBranch.punchIntervalForCount = 0
+                    enemyBranch.setPunchIntervalLabel()
+                }
+                
+                /* x position */
+                /* First enemy set will be placed left half part */
+                if i == 0 {
+                    let randX = Int(arc4random_uniform(3))
+                    let startPositionX = self.startPosArray[randX]
+                    /* set adding enemy movement */
+                    self.setAddEnemyMovement(enemy: enemyOrigin, posX: startPositionX, posY: 11)
+                    self.setAddEnemyMovement(enemy: enemyBranch, posX: startPositionX+1, posY: 11)
+                    /* First enemy set will be placed right half part */
+                } else {
+                    let randX = Int(arc4random_uniform(3))
+                    let startPositionX = self.startPosArray[randX+4]
+                    /* set adding enemy movement */
+                    self.setAddEnemyMovement(enemy: enemyOrigin, posX: startPositionX, posY: 11)
+                    self.setAddEnemyMovement(enemy: enemyBranch, posX: startPositionX+1, posY: 11)
+                }
             }
         }
     }

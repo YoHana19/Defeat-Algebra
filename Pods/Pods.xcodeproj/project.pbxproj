@@ -7590,7 +7590,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0920;
 				TargetAttributes = {
 					107A9565F9DF88517DFD3E28C05B2B96 = {
 						LastSwiftMigration = 0920;
@@ -8815,6 +8815,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseAuthUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 				PRODUCT_NAME = FirebaseAuthUI;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -9090,6 +9091,7 @@
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/FirebaseUI";
 				INFOPLIST_FILE = "Target Support Files/FirebaseUI/ResourceBundle-FirebaseAuthUI-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "${PRODUCT_BUNDLE_IDENTIFIER}";
 				PRODUCT_NAME = FirebaseAuthUI;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

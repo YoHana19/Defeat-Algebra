@@ -23,6 +23,7 @@ class EnemyEasy: SKSpriteNode {
     var moveSpeed = 0.1
     var punchSpeed: CGFloat = 0.0020
     var direction: Direction = .front
+    var moveDirection: Direction = .front
     var punchInterval: Int!
     var punchIntervalForCount: Int = 0
     var singleTurnDuration: TimeInterval = 0.2
@@ -562,124 +563,7 @@ class EnemyEasy: SKSpriteNode {
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
         
-        /* Determine direction to move */
-        let directionRand = arc4random_uniform(100)
-        
-        /* Left edge */
-        if self.positionX <= 0 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
-                /* Store move direction for edu */
-                if forEduOriginFlag {
-                    gridNode.moveDirectionForEdu = 0
-                }
-                
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-            /* Go right with 30% */
-            } else if directionRand < 100 {
-                /* Store move direction for edu */
-                if forEduOriginFlag {
-                    gridNode.moveDirectionForEdu = 2
-                }
-                
-                self.direction = .right
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX += 1
-                
-            }
-            
-        /* Right edge */
-        } else if self.positionX >= gridNode.columns-1 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
-                /* Store move direction for edu */
-                if forEduOriginFlag {
-                    gridNode.moveDirectionForEdu = 0
-                }
-                
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-            /* Go left with 30% */
-            } else if directionRand < 100 {
-                /* Store move direction for edu */
-                if forEduOriginFlag {
-                    gridNode.moveDirectionForEdu = 1
-                }
-                
-                self.direction = .left
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX -= 1
-            }
-            
-        /* Middle */
-        } else {
-            /* Go forward with 60% */
-            if directionRand < 60 {
-                /* Store move direction for edu */
-                if forEduOriginFlag {
-                    gridNode.moveDirectionForEdu = 0
-                }
-                
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-            /* Go left with 20% */
-            } else if directionRand < 80 {
-                /* Store move direction for edu */
-                if forEduOriginFlag {
-                    gridNode.moveDirectionForEdu = 1
-                }
-                
-                self.direction = .left
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX -= 1
-                
-            /* Go right with 20% */
-            } else if directionRand < 100 {
-                /* Store move direction for edu */
-                if forEduOriginFlag {
-                    gridNode.moveDirectionForEdu = 2
-                }
-                
-                self.direction = .right
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX += 1
-            }
-        }
+        EnemyMoveController.move(enemy: self, gridNode: gridNode)
         
         /* Move next enemy's turn */
         let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
@@ -688,6 +572,9 @@ class EnemyEasy: SKSpriteNode {
             if gridNode.turnIndex < gridNode.enemyArray.count-1 {
                 gridNode.turnIndex += 1
                 gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
+                print("turnIndex: \(gridNode.turnIndex)")
+                print("enemyArray: \(gridNode.enemyArray.count)")
+                print("myTurn: \(gridNode.enemyArray[gridNode.turnIndex].myTurnFlag)")
             }
             
             /* Remove punchInterval label */
@@ -710,76 +597,76 @@ class EnemyEasy: SKSpriteNode {
         self.run(seq)
     }
     
-    /* Move enemy for edu */
-    func enemyMoveForEdu() {
-        
-        /* Get grid node */
-        let gridNode = self.parent as! GridEasy
-        
-        /* Make sure not to call if it's not my turn */
-        guard myTurnFlag else { return }
-        
-        /* Make sure to call once */
-        guard turnDoneFlag == false else { return }
-        turnDoneFlag = true
-        
-        /* Move forward */
-        if gridNode.moveDirectionForEdu == 0 {
-            self.direction = .front
-            self.setMovingAnimation()
-            let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-            self.run(move)
-            
-            /* Keep track enemy position */
-            self.positionY -= 1
-        /* Move left */
-        } else if gridNode.moveDirectionForEdu == 1 {
-            self.direction = .left
-            self.setMovingAnimation()
-            let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-            self.run(move)
-            
-            /* Keep track enemy position */
-            self.positionX -= 1
-        /* Move right */
-        } else if gridNode.moveDirectionForEdu == 2 {
-            self.direction = .right
-            self.setMovingAnimation()
-            let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-            self.run(move)
-            
-            /* Keep track enemy position */
-            self.positionX += 1
-        }
-        
-        /* Move next enemy's turn */
-        let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
-        let moveNextEnemy = SKAction.run({
-            self.myTurnFlag = false
-            if gridNode.turnIndex < gridNode.enemyArray.count-1 {
-                gridNode.turnIndex += 1
-                gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
-            }
-            
-            /* Remove punchInterval label */
-            if let theNode = self.childNode(withName: "punchInterval") {
-                theNode.removeFromParent()
-            }
-            
-            /* To check all enemy turn done */
-            gridNode.numOfTurnEndEnemy += 1
-            
-            /* Count down till do punch */
-            self.punchIntervalForCount -= 1
-            
-            /* Display left turn till punch */
-            self.setPunchIntervalLabel()
-        })
-        
-        /* excute drawPunch */
-        let seq = SKAction.sequence([moveTurnWait, moveNextEnemy])
-        self.run(seq)
-    }
+//    /* Move enemy for edu */
+//    func enemyMoveForEdu() {
+//
+//        /* Get grid node */
+//        let gridNode = self.parent as! GridEasy
+//
+//        /* Make sure not to call if it's not my turn */
+//        guard myTurnFlag else { return }
+//
+//        /* Make sure to call once */
+//        guard turnDoneFlag == false else { return }
+//        turnDoneFlag = true
+//
+//        /* Move forward */
+//        if gridNode.moveDirectionForEdu == 0 {
+//            self.direction = .front
+//            self.setMovingAnimation()
+//            let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
+//            self.run(move)
+//
+//            /* Keep track enemy position */
+//            self.positionY -= 1
+//        /* Move left */
+//        } else if gridNode.moveDirectionForEdu == 1 {
+//            self.direction = .left
+//            self.setMovingAnimation()
+//            let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
+//            self.run(move)
+//
+//            /* Keep track enemy position */
+//            self.positionX -= 1
+//        /* Move right */
+//        } else if gridNode.moveDirectionForEdu == 2 {
+//            self.direction = .right
+//            self.setMovingAnimation()
+//            let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
+//            self.run(move)
+//
+//            /* Keep track enemy position */
+//            self.positionX += 1
+//        }
+//
+//        /* Move next enemy's turn */
+//        let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
+//        let moveNextEnemy = SKAction.run({
+//            self.myTurnFlag = false
+//            if gridNode.turnIndex < gridNode.enemyArray.count-1 {
+//                gridNode.turnIndex += 1
+//                gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
+//            }
+//
+//            /* Remove punchInterval label */
+//            if let theNode = self.childNode(withName: "punchInterval") {
+//                theNode.removeFromParent()
+//            }
+//
+//            /* To check all enemy turn done */
+//            gridNode.numOfTurnEndEnemy += 1
+//
+//            /* Count down till do punch */
+//            self.punchIntervalForCount -= 1
+//
+//            /* Display left turn till punch */
+//            self.setPunchIntervalLabel()
+//        })
+//
+//        /* excute drawPunch */
+//        let seq = SKAction.sequence([moveTurnWait, moveNextEnemy])
+//        self.run(seq)
+//    }
     
     /*== Attack ==*/
     /* Calculate punch length */
