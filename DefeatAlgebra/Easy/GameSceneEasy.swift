@@ -65,7 +65,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     var playerTurnState: PlayerTurnState = .DisplayPhase
     var itemType: ItemType = .None
     /* Game level */
-    var stageLevel: Int = 0
+    static var stageLevel: Int = 0
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 0
     var dispClearLabelDone = false
@@ -262,7 +262,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         buttonRetry.selectedHandler = { [weak self] in
             
             /* Analytics */
-            Answers.logLevelEnd("Easy Level \((self?.stageLevel)!+1)",
+            Answers.logLevelEnd("Easy Level \(GameSceneEasy.stageLevel+1)",
                 score: nil,
                 success: false,
                 customAttributes: ["Custom String": "Retry"]
@@ -287,18 +287,18 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         buttonNextLevel.selectedHandler = { [weak self] in
             
             /* Analytics */
-            Answers.logLevelEnd("Easy Level \((self?.stageLevel)!+1)",
+            Answers.logLevelEnd("Easy Level \(GameSceneEasy.stageLevel+1)",
                 score: nil,
                 success: true
             )
             
             /* To next stage level */
-            self?.stageLevel += 1
+            GameSceneEasy.stageLevel += 1
             
             /* Store game property */
             let ud = UserDefaults.standard
             /* Stage level */
-            ud.set(self?.stageLevel, forKey: "stageLevelEasy")
+            ud.set(GameSceneEasy.stageLevel, forKey: "stageLevelEasy")
             /* Hero */
             self?.moveLevelArray = []
             for (i, hero) in (self?.heroArray.enumerated())! {
@@ -345,9 +345,9 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         
         let ud = UserDefaults.standard
         /* stageLevel */
-        stageLevel = ud.integer(forKey: "stageLevelEasy")
-        stageLevel = 4
-        levelLabel.text = String(stageLevel+1)
+        GameSceneEasy.stageLevel = ud.integer(forKey: "stageLevelEasy")
+        GameSceneEasy.stageLevel = 4
+        levelLabel.text = String(GameSceneEasy.stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArrayEasy") as? [Int] ?? [1]
         //moveLevelArray = [4]
@@ -369,7 +369,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         GameSceneEasy.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [true, true, false, false, false, false, false, false, false, false, false, false, false]
         
         /* For Analytics */
-        Answers.logLevelStart("Easy Level \(stageLevel+1)")
+        Answers.logLevelStart("Easy Level \(GameSceneEasy.stageLevel+1)")
         
         /* Set input boards */
         setInputBoard()
@@ -394,14 +394,14 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
         /* Set initial objects */
-        setInitialObj(level: self.stageLevel)
+        setInitialObj(level: GameSceneEasy.stageLevel)
         
         /* Set item area */
         setItemAreaCover()
         
         /* Set each value of adding enemy management */
         SetAddEnemyMng()
-        addEnemyManager = EnemyProperty.addEnemyManager[stageLevel]
+        addEnemyManager = EnemyProperty.addEnemyManager[GameSceneEasy.stageLevel]
         
         /* Set variable expression source form level 9 */
         setVariableExpressionFrom8()
@@ -447,11 +447,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         initialAddEnemyFlag = false
                         
                         let addEnemy = SKAction.run({
-                            if self.stageLevel < 8 {
-                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[self.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[self.stageLevel])
-                            } else {
-//                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, variableExpressionSource: self.variableExpressionSourceRandom)
-                            }
+                            self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameSceneEasy.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameSceneEasy.stageLevel])
                         })
                         let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*4+1.0) /* 4 is distance, 1.0 is buffer */
                         let moveState = SKAction.run({
@@ -471,12 +467,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         /* Add enemy for Education */
                         if addEnemyManager[countTurnForAddEnemy][1] == 1 {
                             let addEnemy = SKAction.run({
-                                if self.stageLevel < 8 {
-                                    self.gridNode.addEnemyForEdu(sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[self.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[self.stageLevel], index: self.numOfPassedTurnForEdu)
-                                    /* haven't increment yet */
-                                } else {
-                                    self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSourceRandom, yRange: self.addYRange)
-                                }
+                                self.gridNode.addEnemyForEdu(sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameSceneEasy.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameSceneEasy.stageLevel], index: self.numOfPassedTurnForEdu)
                             })
                             let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
                             let moveState = SKAction.run({
@@ -496,12 +487,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         /* Add enemy normaly */
                         } else if addEnemyManager[countTurnForAddEnemy][0] == 0 {
                             let addEnemy = SKAction.run({
-                                if self.stageLevel < 8 {
-                                    self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSource[self.stageLevel] , yRange: self.addYRange)
-                                } else {
-                                    self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSourceRandom, yRange: self.addYRange)
-                                }
-                                
+                                self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSource[GameSceneEasy.stageLevel] , yRange: self.addYRange)
                             })
                             let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
                             let moveState = SKAction.run({
@@ -960,7 +946,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 }
             }
             clearLabel.isHidden = false
-            if stageLevel < 11 {
+            if GameSceneEasy.stageLevel < 11 {
                 buttonNextLevel.state = .msButtonNodeStateActive
             } else {
                 if dispClearLabelDone == false {
@@ -1594,7 +1580,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let boots = item as! Boots
                             autoSetItems()
                             itemSpot.append(boots.spotPos)
@@ -1606,7 +1592,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let heart = item as! Heart
                             autoSetItems()
                             itemSpot.append(heart.spotPos)
@@ -1622,7 +1608,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         } else {
                             displayitem(name: item.name!)
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             if item.name == "timeBomb" {
                                 let temp = item as! TimeBomb
                                 autoSetItems()
@@ -1685,7 +1671,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let boots = item as! Boots
                             autoSetItems()
                             itemSpot.append(boots.spotPos)
@@ -1697,11 +1683,11 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             //                            itemSpot.append(item.spotPos)
                             autoSetItems()
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let heart = item as! Heart
                             autoSetItems()
                             itemSpot.append(heart.spotPos)
@@ -1717,7 +1703,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         } else {
                             displayitem(name: item.name!)
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             if item.name == "timeBomb" {
                                 let temp = item as! TimeBomb
                                 autoSetItems()
@@ -2159,27 +2145,27 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     /* Set variable expression source form level 9 */
     func setVariableExpressionFrom8() {
         /* x+1+1 */
-        if stageLevel == 8 {
+        if GameSceneEasy.stageLevel == 8 {
             pickVariableExpression(origin: variableExpressionSource[8], modified: variableExpressionSource[10], num: 6)
             /* 1+2-x, 2x+2-1, x+x+1 */
-        } else if stageLevel == 9 {
+        } else if GameSceneEasy.stageLevel == 9 {
             pickVariableExpression(origin: variableExpressionSource[9], modified: variableExpressionSource[11], num: 3)
             pickVariableExpression(origin: variableExpressionSource[8], modified: variableExpressionSource[12], num: 3)
             /* x+x+1, x+x+1+1, 2x+x-2, 2x+x-2+1, 2-2x+x, 1+2-3x+x */
-        } else if stageLevel == 10 {
+        } else if GameSceneEasy.stageLevel == 10 {
             pickVariableExpression3(origin: variableExpressionSource[8], modified1: variableExpressionSource[12], modified2: variableExpressionSource[14], num: 3)
             pickVariableExpression3(origin: variableExpressionSource[9], modified1: variableExpressionSource[13], modified2: variableExpressionSource[15], num: 3)
-        } else if stageLevel == 11 {
+        } else if GameSceneEasy.stageLevel == 11 {
             variableExpressionSourceRandom = [[0, 2, 2, 9], [0, 2, 4, 17], [4, 4, 2, 18], [10, 2, 2, 9], [10, 2, 4, 17], [11, 2, 2, 9], [11, 2, 4, 17], [12, 4, -2, 18]]
         }
     }
     
     /*== Set each value of adding enemy management ==*/
     func SetAddEnemyMng() {
-        numOfAddEnemy = addEnemyManagement[stageLevel][0]
-        addInterval = addEnemyManagement[stageLevel][1]
-        numOfTimeAddEnemy = addEnemyManagement[stageLevel][2]
-        addYRange = addEnemyManagement[stageLevel][3]
+        numOfAddEnemy = addEnemyManagement[GameSceneEasy.stageLevel][0]
+        addInterval = addEnemyManagement[GameSceneEasy.stageLevel][1]
+        numOfTimeAddEnemy = addEnemyManagement[GameSceneEasy.stageLevel][2]
+        addYRange = addEnemyManagement[GameSceneEasy.stageLevel][3]
     }
     
     /*===========*/

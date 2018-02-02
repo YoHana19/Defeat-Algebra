@@ -104,6 +104,8 @@
 		208C5D5E2024273D0006ADE4 /* EnemyAddController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D5C2024273D0006ADE4 /* EnemyAddController.swift */; };
 		208C5D602024319C0006ADE4 /* EnemyDeadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D5F2024319C0006ADE4 /* EnemyDeadController.swift */; };
 		208C5D612024319C0006ADE4 /* EnemyDeadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D5F2024319C0006ADE4 /* EnemyDeadController.swift */; };
+		208C5D63202447DD0006ADE4 /* EnemyVEController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D62202447DD0006ADE4 /* EnemyVEController.swift */; };
+		208C5D64202447DD0006ADE4 /* EnemyVEController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D62202447DD0006ADE4 /* EnemyVEController.swift */; };
 		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
 		20E9E88820223B1400D31410 /* Boots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4081F2CD28D009CE633 /* Boots.swift */; };
 		20E9E88920223B1400D31410 /* Catapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40A1F2CD28D009CE633 /* Catapult.swift */; };
@@ -294,6 +296,7 @@
 		208C5D59202420690006ADE4 /* EnemyMoveController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyMoveController.swift; sourceTree = "<group>"; };
 		208C5D5C2024273D0006ADE4 /* EnemyAddController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyAddController.swift; sourceTree = "<group>"; };
 		208C5D5F2024319C0006ADE4 /* EnemyDeadController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyDeadController.swift; sourceTree = "<group>"; };
+		208C5D62202447DD0006ADE4 /* EnemyVEController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyVEController.swift; sourceTree = "<group>"; };
 		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
 		20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebraJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E9E8EB20223B1900D31410 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/yohanashima/Desktop/Make School Project/Defeat-Algebra/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist"; sourceTree = "<absolute>"; };
@@ -515,6 +518,7 @@
 				208C5D59202420690006ADE4 /* EnemyMoveController.swift */,
 				208C5D5C2024273D0006ADE4 /* EnemyAddController.swift */,
 				208C5D5F2024319C0006ADE4 /* EnemyDeadController.swift */,
+				208C5D62202447DD0006ADE4 /* EnemyVEController.swift */,
 			);
 			path = DefeatAlgebra;
 			sourceTree = "<group>";
@@ -993,6 +997,7 @@
 				203B2A5A1F67B9AD00DDCC03 /* PauseScreen.swift in Sources */,
 				203B2A521F67B97100DDCC03 /* HeroForTutorial2.swift in Sources */,
 				202049DD1F2EFA0F00FAD661 /* Teleport.swift in Sources */,
+				208C5D63202447DD0006ADE4 /* EnemyVEController.swift in Sources */,
 				203B2A541F67B97100DDCC03 /* PauseScreenForTutorial2.swift in Sources */,
 				203B2A091F67B21A00DDCC03 /* InputVariableExpression.swift in Sources */,
 				201CD4131F2CD28D009CE633 /* CallHero.swift in Sources */,
@@ -1055,6 +1060,7 @@
 				20E9E8A020223B1400D31410 /* PauseScreen.swift in Sources */,
 				20E9E8A120223B1400D31410 /* HeroForTutorial2.swift in Sources */,
 				20E9E8A220223B1400D31410 /* Teleport.swift in Sources */,
+				208C5D64202447DD0006ADE4 /* EnemyVEController.swift in Sources */,
 				20E9E8A320223B1400D31410 /* PauseScreenForTutorial2.swift in Sources */,
 				20E9E8A420223B1400D31410 /* InputVariableExpression.swift in Sources */,
 				20E9E8A520223B1400D31410 /* CallHero.swift in Sources */,

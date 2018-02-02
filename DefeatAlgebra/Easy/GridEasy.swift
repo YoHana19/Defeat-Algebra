@@ -821,15 +821,12 @@ class GridEasy: SKSpriteNode {
     func addInitialEnemyAtGrid(enemyPosArray: [[Int]], enemyPosArrayForUnS: [[Int]], sVariableExpressionSource: [[Int]], uVariableExpressionSource: [[Int]]) {
         /* Add a new enemy at grid position*/
         
-        /* Get gameSceneEasy */
-        let gameSceneEasy = self.parent as! GameSceneEasy
-        
         for posArray in enemyPosArray {
             /* New enemy object */
             let enemy = EnemyEasy(variableExpressionSource: sVariableExpressionSource, forEdu: false)
                 
             /* Set enemy speed according to stage level */
-            if gameSceneEasy.stageLevel < 1 {
+            if GameSceneEasy.stageLevel < 1 {
                 enemy.moveSpeed = 0.2
                 enemy.punchSpeed = 0.0025
                 enemy.singleTurnDuration = 1.0
@@ -844,7 +841,7 @@ class GridEasy: SKSpriteNode {
             let enemy = EnemyEasy(variableExpressionSource: uVariableExpressionSource, forEdu: false)
                 
             /* Set enemy speed according to stage level */
-            if gameSceneEasy.stageLevel < 1 {
+            if GameSceneEasy.stageLevel < 1 {
                 enemy.moveSpeed = 0.2
                 enemy.punchSpeed = 0.0025
                 enemy.singleTurnDuration = 1.0

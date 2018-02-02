@@ -23,15 +23,12 @@ class EnemyEasy: SKSpriteNode {
     var moveSpeed = 0.1
     var punchSpeed: CGFloat = 0.0020
     var direction: Direction = .front
-    var moveDirection: Direction = .front
     var punchInterval: Int!
     var punchIntervalForCount: Int = 0
     var singleTurnDuration: TimeInterval = 0.2
     var vECategory = 0
     var forEduOriginFlag = false
     var forEduBranchFlag = false
-    var originDeadFlag = false
-    var originIndex = ""
     
     /* Enemy variable for punch */
     var valueOfEnemy: Int = 0
@@ -80,8 +77,7 @@ class EnemyEasy: SKSpriteNode {
         physicsBody?.contactTestBitMask = 1
         
         /* Set variable expression */
-        pickVariableExpression(variableExpressionSource: variableExpressionSource)
-        setVariableExpression()
+        EnemyVEController.setVariableExpression(enemy: self, variableExpressionSource: variableExpressionSource)
     }
     
     /* You are required to implement this for your subclass to work */
@@ -135,296 +131,296 @@ class EnemyEasy: SKSpriteNode {
         self.name = "enemy"
     }
     
-    /* Pick variableExpression from variableExpressionSource */
-    func pickVariableExpression(variableExpressionSource: [[Int]]) {
-        let rand = arc4random_uniform(UInt32(variableExpressionSource.count))
-        variableExpression = variableExpressionSource[Int(rand)]
-    }
-    
-    /* Set variable expression */
-    func setVariableExpression() {
-        
-        /* Set equivalence ve */
-        vECategory = variableExpression.last!
-        
-        if variableExpression[0] == 0 {
-            if variableExpression[1] == 1 {
-                if variableExpression[2] == 0 {
-                    variableExpressionForLabel = "x"
-                } else {
-                    variableExpressionForLabel = "x+\(variableExpression[2])"
-                }
-            } else {
-                if variableExpression[2] == 0 {
-                    variableExpressionForLabel = "\(variableExpression[1])x"
-                } else {
-                    variableExpressionForLabel = "\(variableExpression[1])x+\(variableExpression[2])"
-                }
-            }
-        } else if variableExpression[0] == 1 {
-            if variableExpression[1] == 1 {
-                variableExpressionForLabel = "\(variableExpression[2])+x"
-            } else {
-                variableExpressionForLabel = "\(variableExpression[2])+\(variableExpression[1])x"
-            }
-        } else if variableExpression[0] == 2 {
-            variableExpressionForLabel = "\(variableExpression[1])×x"
-        } else if variableExpression[0] == 3 {
-            variableExpressionForLabel = "x×\(variableExpression[1])"
-        } else if variableExpression[0] == 4 {
-            variableExpressionForLabel = "\(variableExpression[1])x-\(variableExpression[2])"
-        } else if variableExpression[0] == 5 {
-            if variableExpression[1] == 1 {
-                variableExpressionForLabel = "\(variableExpression[2])-x"
-            } else {
-                variableExpressionForLabel = "\(variableExpression[2])-\(variableExpression[1])x"
-            }
-        } else if variableExpression[0] == 6 {
-            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    variableExpressionForLabel += String(describing: element)
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else {
-                        variableExpressionForLabel += "+\(element)"
-                    }
-                }
-            }
-        } else if variableExpression[0] == 7 {
-            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    if let num = element as? Int {
-                        variableExpressionForLabel += String(num)
-                    } else {
-                        variableExpressionForLabel += "-\(element)"
-                    }
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else {
-                        variableExpressionForLabel += "-\(element)"
-                    }
-                }
-            }
-        } else if variableExpression[0] == 8 {
-            let source = createVariableExpressionX(origin: [variableExpression[1], variableExpression[2]])
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    variableExpressionForLabel += String(describing: element)
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else if num > 0 {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else if let string = element as? String {
-                        if string[string.startIndex] == "-" {
-                            variableExpressionForLabel += string
-                        } else {
-                            variableExpressionForLabel += "+\(element)"
-                        }
-                    }
-                }
-            }
-        } else if variableExpression[0] == 9 {
-            let source = createVariableExpressionXC(origin: [variableExpression[1], variableExpression[2]])
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    variableExpressionForLabel += String(describing: element)
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else if let string = element as? String {
-                        if string[string.startIndex] == "-" {
-                            variableExpressionForLabel += string
-                        } else {
-                            variableExpressionForLabel += "+\(element)"
-                        }
-                    }
-                }
-            }
-        } else if variableExpression[0] == 10 {
-            if variableExpression[2] == 2 {
-                variableExpressionForLabel = "2(x+1)"
-            } else if variableExpression[2] == 4 {
-                variableExpressionForLabel = "2(x+2)"
-            }
-        } else if variableExpression[0] == 11 {
-            if variableExpression[2] == 2 {
-                variableExpressionForLabel = "2(1+x)"
-            } else if variableExpression[2] == 4 {
-                variableExpressionForLabel = "2(2+x)"
-            }
-        } else if variableExpression[0] == 12 {
-            if variableExpression[2] == -2 {
-                variableExpressionForLabel = "2(2x-1)"
-            }
-        }
-    }
-    
-    
-    /* Create several equivalent variable expression randomly */
-    func createVariableExpressionC(origin: [Int], type: Int) -> [Any] {
-        var variableExpressionElements = [Any]()
-        variableExpressionElements = decomposeConstant(constant: origin[1], type: type)
-        /* Coefficient is 1 */
-        if origin[0] == 1 {
-            variableExpressionElements.append("x")
-            let result = variableExpressionElements.shuffled()
-            return result
-            /* Coefficient is any number but 1 */
-        } else {
-            variableExpressionElements.append("\(origin[0])x")
-            let result = variableExpressionElements.shuffled()
-            return result
-        }
-    }
-    
-    /* Create several equivalent variable expression randomly for x */
-    func createVariableExpressionX(origin: [Int]) -> [Any] {
-        var variableExpressionElements = [Any]()
-        /* Constant */
-        variableExpressionElements.append(origin[1])
-        /* Decompose coefficent of x */
-        let xElements = decomposeConstant(constant: origin[0], type: 1)
-        for xElement in xElements {
-            if xElement == 1 {
-                variableExpressionElements.append("x")
-            } else if xElement == -1 {
-                variableExpressionElements.append("-x")
-            } else {
-                variableExpressionElements.append("\(xElement)x")
-            }
-        }
-        let result = variableExpressionElements.shuffled()
-        return result
-    }
-    
-    /* Create several equivalent variable expression randomly for x */
-    func createVariableExpressionXC(origin: [Int]) -> [Any] {
-        var variableExpressionElements = [Any]()
-        /* Decompose constant */
-        variableExpressionElements = decomposeConstant(constant: origin[1], type: 1)
-        /* Decompose coefficent of x */
-        let xElements = decomposeConstant(constant: origin[0], type: 1)
-        for xElement in xElements {
-            if xElement == 1 {
-                variableExpressionElements.append("x")
-            } else if xElement == -1 {
-                variableExpressionElements.append("-x")
-            } else {
-                variableExpressionElements.append("\(xElement)x")
-            }
-        }
-        let result = variableExpressionElements.shuffled()
-        return result
-    }
-    
-    /* Decompose constant randomly */
-    func decomposeConstant(constant: Int, type: Int) -> [Int] {
-        switch constant {
-        case -2:
-            var temp = decomposeZero(type: type)
-            temp[temp.count-1] -= 2
-            return temp
-        case -1:
-            var temp = decomposeZero(type: type)
-            temp[temp.count-1] -= 1
-            return temp
-        case 0:
-            let result = decomposeZero(type: type)
-            return result
-        case 1:
-            var temp = decomposeZero(type: type)
-            temp[0] += 1
-            return temp
-        case 2:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                var temp = decomposeZero(type: type)
-                temp[0] += 2
-                return temp
-            } else {
-                return [1, 1]
-            }
-        case 3:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                var temp = decomposeZero(type: type)
-                temp[0] += 3
-                return temp
-            } else {
-                return [1, 2]
-            }
-        case 4:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                return [2,2]
-            } else {
-                return [1,3]
-            }
-        case 7:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                return [2,5]
-            } else {
-                return [3,4]
-            }
-        case 8:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                return [2,6]
-            } else {
-                return [3,5]
-            }
-        default:
-            return [0]
-        }
-    }
-    
-    /* Decompose 0 to 2 or 3 elements from -2 to 2*/
-    func decomposeZero(type: Int) -> [Int] {
-        let rand = arc4random_uniform(100)
-        if type == 0 {
-            if rand < 25 {
-                let result = [1, -1]
-                return result
-            } else if rand < 50 {
-                let result = [2, -2]
-                return result
-            } else if rand < 75 {
-                let result = [1, 1, -2]
-                return result
-            } else {
-                let result = [2, -1, -1]
-                return result
-            }
-        } else {
-            if rand < 50 {
-                let result = [1, -1]
-                return result
-            } else {
-                let result = [2, -2]
-                return result
-            }
-        }
-    }
+//    /* Pick variableExpression from variableExpressionSource */
+//    func pickVariableExpression(variableExpressionSource: [[Int]]) {
+//        let rand = arc4random_uniform(UInt32(variableExpressionSource.count))
+//        variableExpression = variableExpressionSource[Int(rand)]
+//    }
+//
+//    /* Set variable expression */
+//    func setVariableExpression() {
+//
+//        /* Set equivalence ve */
+//        vECategory = variableExpression.last!
+//
+//        if variableExpression[0] == 0 {
+//            if variableExpression[1] == 1 {
+//                if variableExpression[2] == 0 {
+//                    variableExpressionForLabel = "x"
+//                } else {
+//                    variableExpressionForLabel = "x+\(variableExpression[2])"
+//                }
+//            } else {
+//                if variableExpression[2] == 0 {
+//                    variableExpressionForLabel = "\(variableExpression[1])x"
+//                } else {
+//                    variableExpressionForLabel = "\(variableExpression[1])x+\(variableExpression[2])"
+//                }
+//            }
+//        } else if variableExpression[0] == 1 {
+//            if variableExpression[1] == 1 {
+//                variableExpressionForLabel = "\(variableExpression[2])+x"
+//            } else {
+//                variableExpressionForLabel = "\(variableExpression[2])+\(variableExpression[1])x"
+//            }
+//        } else if variableExpression[0] == 2 {
+//            variableExpressionForLabel = "\(variableExpression[1])×x"
+//        } else if variableExpression[0] == 3 {
+//            variableExpressionForLabel = "x×\(variableExpression[1])"
+//        } else if variableExpression[0] == 4 {
+//            variableExpressionForLabel = "\(variableExpression[1])x-\(variableExpression[2])"
+//        } else if variableExpression[0] == 5 {
+//            if variableExpression[1] == 1 {
+//                variableExpressionForLabel = "\(variableExpression[2])-x"
+//            } else {
+//                variableExpressionForLabel = "\(variableExpression[2])-\(variableExpression[1])x"
+//            }
+//        } else if variableExpression[0] == 6 {
+//            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
+//            for (i, element) in source.enumerated() {
+//                if i == 0 {
+//                    variableExpressionForLabel += String(describing: element)
+//                } else {
+//                    if let num = element as? Int {
+//                        if num < 0 {
+//                            variableExpressionForLabel += String(num)
+//                        } else {
+//                            variableExpressionForLabel += "+\(num)"
+//                        }
+//                    } else {
+//                        variableExpressionForLabel += "+\(element)"
+//                    }
+//                }
+//            }
+//        } else if variableExpression[0] == 7 {
+//            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
+//            for (i, element) in source.enumerated() {
+//                if i == 0 {
+//                    if let num = element as? Int {
+//                        variableExpressionForLabel += String(num)
+//                    } else {
+//                        variableExpressionForLabel += "-\(element)"
+//                    }
+//                } else {
+//                    if let num = element as? Int {
+//                        if num < 0 {
+//                            variableExpressionForLabel += String(num)
+//                        } else {
+//                            variableExpressionForLabel += "+\(num)"
+//                        }
+//                    } else {
+//                        variableExpressionForLabel += "-\(element)"
+//                    }
+//                }
+//            }
+//        } else if variableExpression[0] == 8 {
+//            let source = createVariableExpressionX(origin: [variableExpression[1], variableExpression[2]])
+//            for (i, element) in source.enumerated() {
+//                if i == 0 {
+//                    variableExpressionForLabel += String(describing: element)
+//                } else {
+//                    if let num = element as? Int {
+//                        if num < 0 {
+//                            variableExpressionForLabel += String(num)
+//                        } else if num > 0 {
+//                            variableExpressionForLabel += "+\(num)"
+//                        }
+//                    } else if let string = element as? String {
+//                        if string[string.startIndex] == "-" {
+//                            variableExpressionForLabel += string
+//                        } else {
+//                            variableExpressionForLabel += "+\(element)"
+//                        }
+//                    }
+//                }
+//            }
+//        } else if variableExpression[0] == 9 {
+//            let source = createVariableExpressionXC(origin: [variableExpression[1], variableExpression[2]])
+//            for (i, element) in source.enumerated() {
+//                if i == 0 {
+//                    variableExpressionForLabel += String(describing: element)
+//                } else {
+//                    if let num = element as? Int {
+//                        if num < 0 {
+//                            variableExpressionForLabel += String(num)
+//                        } else {
+//                            variableExpressionForLabel += "+\(num)"
+//                        }
+//                    } else if let string = element as? String {
+//                        if string[string.startIndex] == "-" {
+//                            variableExpressionForLabel += string
+//                        } else {
+//                            variableExpressionForLabel += "+\(element)"
+//                        }
+//                    }
+//                }
+//            }
+//        } else if variableExpression[0] == 10 {
+//            if variableExpression[2] == 2 {
+//                variableExpressionForLabel = "2(x+1)"
+//            } else if variableExpression[2] == 4 {
+//                variableExpressionForLabel = "2(x+2)"
+//            }
+//        } else if variableExpression[0] == 11 {
+//            if variableExpression[2] == 2 {
+//                variableExpressionForLabel = "2(1+x)"
+//            } else if variableExpression[2] == 4 {
+//                variableExpressionForLabel = "2(2+x)"
+//            }
+//        } else if variableExpression[0] == 12 {
+//            if variableExpression[2] == -2 {
+//                variableExpressionForLabel = "2(2x-1)"
+//            }
+//        }
+//    }
+//
+//
+//    /* Create several equivalent variable expression randomly */
+//    func createVariableExpressionC(origin: [Int], type: Int) -> [Any] {
+//        var variableExpressionElements = [Any]()
+//        variableExpressionElements = decomposeConstant(constant: origin[1], type: type)
+//        /* Coefficient is 1 */
+//        if origin[0] == 1 {
+//            variableExpressionElements.append("x")
+//            let result = variableExpressionElements.shuffled()
+//            return result
+//            /* Coefficient is any number but 1 */
+//        } else {
+//            variableExpressionElements.append("\(origin[0])x")
+//            let result = variableExpressionElements.shuffled()
+//            return result
+//        }
+//    }
+//
+//    /* Create several equivalent variable expression randomly for x */
+//    func createVariableExpressionX(origin: [Int]) -> [Any] {
+//        var variableExpressionElements = [Any]()
+//        /* Constant */
+//        variableExpressionElements.append(origin[1])
+//        /* Decompose coefficent of x */
+//        let xElements = decomposeConstant(constant: origin[0], type: 1)
+//        for xElement in xElements {
+//            if xElement == 1 {
+//                variableExpressionElements.append("x")
+//            } else if xElement == -1 {
+//                variableExpressionElements.append("-x")
+//            } else {
+//                variableExpressionElements.append("\(xElement)x")
+//            }
+//        }
+//        let result = variableExpressionElements.shuffled()
+//        return result
+//    }
+//
+//    /* Create several equivalent variable expression randomly for x */
+//    func createVariableExpressionXC(origin: [Int]) -> [Any] {
+//        var variableExpressionElements = [Any]()
+//        /* Decompose constant */
+//        variableExpressionElements = decomposeConstant(constant: origin[1], type: 1)
+//        /* Decompose coefficent of x */
+//        let xElements = decomposeConstant(constant: origin[0], type: 1)
+//        for xElement in xElements {
+//            if xElement == 1 {
+//                variableExpressionElements.append("x")
+//            } else if xElement == -1 {
+//                variableExpressionElements.append("-x")
+//            } else {
+//                variableExpressionElements.append("\(xElement)x")
+//            }
+//        }
+//        let result = variableExpressionElements.shuffled()
+//        return result
+//    }
+//
+//    /* Decompose constant randomly */
+//    func decomposeConstant(constant: Int, type: Int) -> [Int] {
+//        switch constant {
+//        case -2:
+//            var temp = decomposeZero(type: type)
+//            temp[temp.count-1] -= 2
+//            return temp
+//        case -1:
+//            var temp = decomposeZero(type: type)
+//            temp[temp.count-1] -= 1
+//            return temp
+//        case 0:
+//            let result = decomposeZero(type: type)
+//            return result
+//        case 1:
+//            var temp = decomposeZero(type: type)
+//            temp[0] += 1
+//            return temp
+//        case 2:
+//            let rand = arc4random_uniform(100)
+//            if rand < 50 {
+//                var temp = decomposeZero(type: type)
+//                temp[0] += 2
+//                return temp
+//            } else {
+//                return [1, 1]
+//            }
+//        case 3:
+//            let rand = arc4random_uniform(100)
+//            if rand < 50 {
+//                var temp = decomposeZero(type: type)
+//                temp[0] += 3
+//                return temp
+//            } else {
+//                return [1, 2]
+//            }
+//        case 4:
+//            let rand = arc4random_uniform(100)
+//            if rand < 50 {
+//                return [2,2]
+//            } else {
+//                return [1,3]
+//            }
+//        case 7:
+//            let rand = arc4random_uniform(100)
+//            if rand < 50 {
+//                return [2,5]
+//            } else {
+//                return [3,4]
+//            }
+//        case 8:
+//            let rand = arc4random_uniform(100)
+//            if rand < 50 {
+//                return [2,6]
+//            } else {
+//                return [3,5]
+//            }
+//        default:
+//            return [0]
+//        }
+//    }
+//
+//    /* Decompose 0 to 2 or 3 elements from -2 to 2*/
+//    func decomposeZero(type: Int) -> [Int] {
+//        let rand = arc4random_uniform(100)
+//        if type == 0 {
+//            if rand < 25 {
+//                let result = [1, -1]
+//                return result
+//            } else if rand < 50 {
+//                let result = [2, -2]
+//                return result
+//            } else if rand < 75 {
+//                let result = [1, 1, -2]
+//                return result
+//            } else {
+//                let result = [2, -1, -1]
+//                return result
+//            }
+//        } else {
+//            if rand < 50 {
+//                let result = [1, -1]
+//                return result
+//            } else {
+//                let result = [2, -2]
+//                return result
+//            }
+//        }
+//    }
     
     func setVariableExpressionLabel(text: String) {
         /* Set label with font */
@@ -572,9 +568,6 @@ class EnemyEasy: SKSpriteNode {
             if gridNode.turnIndex < gridNode.enemyArray.count-1 {
                 gridNode.turnIndex += 1
                 gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
-                print("turnIndex: \(gridNode.turnIndex)")
-                print("enemyArray: \(gridNode.enemyArray.count)")
-                print("myTurn: \(gridNode.enemyArray[gridNode.turnIndex].myTurnFlag)")
             }
             
             /* Remove punchInterval label */
@@ -596,77 +589,6 @@ class EnemyEasy: SKSpriteNode {
         let seq = SKAction.sequence([moveTurnWait, moveNextEnemy])
         self.run(seq)
     }
-    
-//    /* Move enemy for edu */
-//    func enemyMoveForEdu() {
-//
-//        /* Get grid node */
-//        let gridNode = self.parent as! GridEasy
-//
-//        /* Make sure not to call if it's not my turn */
-//        guard myTurnFlag else { return }
-//
-//        /* Make sure to call once */
-//        guard turnDoneFlag == false else { return }
-//        turnDoneFlag = true
-//
-//        /* Move forward */
-//        if gridNode.moveDirectionForEdu == 0 {
-//            self.direction = .front
-//            self.setMovingAnimation()
-//            let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-//            self.run(move)
-//
-//            /* Keep track enemy position */
-//            self.positionY -= 1
-//        /* Move left */
-//        } else if gridNode.moveDirectionForEdu == 1 {
-//            self.direction = .left
-//            self.setMovingAnimation()
-//            let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-//            self.run(move)
-//
-//            /* Keep track enemy position */
-//            self.positionX -= 1
-//        /* Move right */
-//        } else if gridNode.moveDirectionForEdu == 2 {
-//            self.direction = .right
-//            self.setMovingAnimation()
-//            let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-//            self.run(move)
-//
-//            /* Keep track enemy position */
-//            self.positionX += 1
-//        }
-//
-//        /* Move next enemy's turn */
-//        let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
-//        let moveNextEnemy = SKAction.run({
-//            self.myTurnFlag = false
-//            if gridNode.turnIndex < gridNode.enemyArray.count-1 {
-//                gridNode.turnIndex += 1
-//                gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
-//            }
-//
-//            /* Remove punchInterval label */
-//            if let theNode = self.childNode(withName: "punchInterval") {
-//                theNode.removeFromParent()
-//            }
-//
-//            /* To check all enemy turn done */
-//            gridNode.numOfTurnEndEnemy += 1
-//
-//            /* Count down till do punch */
-//            self.punchIntervalForCount -= 1
-//
-//            /* Display left turn till punch */
-//            self.setPunchIntervalLabel()
-//        })
-//
-//        /* excute drawPunch */
-//        let seq = SKAction.sequence([moveTurnWait, moveNextEnemy])
-//        self.run(seq)
-//    }
     
     /*== Attack ==*/
     /* Calculate punch length */

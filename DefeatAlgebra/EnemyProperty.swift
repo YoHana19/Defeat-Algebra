@@ -31,7 +31,7 @@ class EnemyProperty {
         [[9, 2, -1, 11], [9, 3, -1, 12], [9, 3, -2, 13], [9, -1, 4, 14], [9, -2, 7, 15], [9, -2, 8, 16]]
     ]
     
-    static let simplifiedVariableExpressionSource = [
+    static let simplifiedVariableExpressionSource: [[[Int]]] = [
         [[0, 1, 0, 0]],
         [[0, 1, 0, 0]],
         [[0 ,1, 0, 0], [0, 1, 1, 1], [0, 1, 2, 2]],
@@ -40,16 +40,16 @@ class EnemyProperty {
         [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [0, 1, 1, 1], [0, 2, 1, 7], [0, 3, 1, 8], [0, 1, 2, 2], [0, 2, 2, 9], [0, 3, 2, 10], [1, 1, 1, 1], [1, 2, 1, 7], [1, 3, 1, 8], [1, 1, 2, 2], [1, 2, 2, 9], [1, 3, 2, 10]]
     ]
     
-    static let simplifiedVariableExpressionLabelSource = [
-        [["x"]],
-        [["x"]],
-        [["x"], ["x+1"], ["x+2"]],
-        [["x"], ["x+1"], ["x+2"], ["x+3"], ["1+x"], ["2+x"], ["3+x"]],
-        [["x"], ["2x"], ["3x"], ["1×x"], ["2×x"], ["3×x"], ["x×1"], ["x×2"], ["x×3"]],
-        [["x"], ["2x"], ["3x"], ["x+1"], ["2x+1"], ["3x+1"], ["x+2"], ["2x+2"], ["3x+2"], ["1+x"], ["2+x"], ["3+x"], ["1+2x"], ["2+2x"], ["3+2x"]]
+    static let simplifiedVariableExpressionLabelSource: [[String]] = [
+        ["x"],
+        ["x"],
+        ["x", "x+1", "x+2"],
+        ["x", "x+1", "x+2", "x+3", "1+x", "2+x", "3+x"],
+        ["x", "2x", "3x", "1×x", "2×x", "3×x", "x×1", "x×2", "x×3"],
+        ["x", "2x", "3x", "x+1", "2x+1", "3x+1", "x+2", "2x+2", "3x+2", "1+x", "2+x", "3+x", "1+2x", "2+2x", "3+2x"]
     ]
     
-    static let unSimplifiedVariableExpressionSource = [
+    static let unSimplifiedVariableExpressionSource: [[[Int]]] = [
         [],
         [],
         [],
@@ -58,12 +58,12 @@ class EnemyProperty {
         []
     ]
     
-    static let unSimplifiedVariableExpressionLabelSource = [
+    static let unSimplifiedVariableExpressionLabelSource: [[String]] = [
         [],
         [],
         [],
         [],
-        [["1×x"], ["2×x"], ["3×x"], ["x×1"], ["x×2"], ["x×3"]],
+        ["1×x", "2×x", "3×x", "x×1", "x×2", "x×3"],
         []
     ]
     
