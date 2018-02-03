@@ -9,11 +9,20 @@
 import Foundation
 
 class DAUtility {
-    static func getTwoRandomNumber(total: Int, completion: @escaping ([Int]) -> Void) {
-        let num1 = Int(arc4random_uniform(UInt32(total)))
-        var array:[Int] = ([Int])(0...total-1).filter{ $0 != num1 }
-        let ran = arc4random_uniform(UInt32(total-1))
-        let num2 = array[Int(ran)]
-        return completion([num1, num2])
+    static func getRandomNumbers(total: Int, times: Int, completion: @escaping ([Int]) -> Void) {
+        let dispatchGroup = DispatchGroup()
+        var nums = [Int]()
+        var array: [Int] = ([Int])(0...total)
+        for i in 0..<times {
+            dispatchGroup.enter()
+            let random = Int(arc4random_uniform(UInt32(total-i)))
+            let num = array[random]
+            nums.append(num)
+            array = array.filter{ $0 != num }
+            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            completion(nums)
+        })
     }
 }

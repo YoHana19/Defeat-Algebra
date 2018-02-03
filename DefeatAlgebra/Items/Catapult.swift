@@ -53,15 +53,27 @@ class Catapult: SKSpriteNode {
     /* Calculate the distance to throw bomb */
     func calculateCatapultValue() -> Int {
         /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-        var outPut = 0
-        for constant in constantsArray {
-            outPut += constant
+        if let gameScene = self.parent as? GameScene {
+            var outPut = 0
+            for constant in constantsArray {
+                outPut += constant
+            }
+            for coeffcient in coefficientArray {
+                outPut += coeffcient*gameScene.xValue
+            }
+            return outPut
+        } else if let gameScene = self.parent as? GameSceneEasy {
+            var outPut = 0
+            for constant in constantsArray {
+                outPut += constant
+            }
+            for coeffcient in coefficientArray {
+                outPut += coeffcient*gameScene.xValue
+            }
+            return outPut
+        } else {
+            return 0
         }
-        for coeffcient in coefficientArray {
-            outPut += coeffcient*gameScene.xValue
-        }
-        return outPut
     }
     
     func resetVEElementArray() {

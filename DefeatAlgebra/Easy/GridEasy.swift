@@ -875,9 +875,9 @@ class GridEasy: SKSpriteNode {
     }
     
     /* Add enemy for education */
-    func addEnemyForEdu(sVariableExpressionSource: [[Int]], uVariableExpressionSource: [[Int]], index: Int) {
+    func addEnemyForEdu(sVariableExpressionSource: [[Int]], uVariableExpressionSource: [[Int]], numOfOrigin: Int) {
         
-        DAUtility.getTwoRandomNumber(total: sVariableExpressionSource.count) { (nums) in
+        DAUtility.getRandomNumbers(total: sVariableExpressionSource.count, times: numOfOrigin) { (nums) in
             for i in nums {
                 /* Select origin Enemy */
                 let variableExpression = sVariableExpressionSource[i]
