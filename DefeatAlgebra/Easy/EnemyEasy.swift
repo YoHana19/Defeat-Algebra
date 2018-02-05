@@ -27,8 +27,7 @@ class EnemyEasy: SKSpriteNode {
     var punchIntervalForCount: Int = 0
     var singleTurnDuration: TimeInterval = 0.2
     var vECategory = 0
-    var forEduOriginFlag = false
-    var forEduBranchFlag = false
+    var enemyLife = 0
     
     /* Enemy variable for punch */
     var valueOfEnemy: Int = 0
@@ -49,6 +48,8 @@ class EnemyEasy: SKSpriteNode {
     var wallHitFlag = false
     var aliveFlag = true
     var editedVEFlag = false
+    var forEduOriginFlag = false
+    var forEduBranchFlag = false
     
     init(variableExpressionSource: [[Int]], forEdu: Bool) {
         /* Initialize with enemy asset */

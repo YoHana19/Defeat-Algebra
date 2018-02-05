@@ -547,24 +547,28 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                             for enemy in self.gridNode.enemyArray {
                                 /* Hit enemy! */
                                 if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                                    /* Effect */
-                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                    
-                                    /* Enemy */
-                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                    self.run(seqEnemy)
-                                    enemy.aliveFlag = false
-                                    /* Count defeated enemy */
-                                    totalNumOfEnemy -= 1
-                                    
-                                    /* If you killed origin enemy */
-                                    if enemy.forEduOriginFlag {
-                                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                                        /* If you killed branch enemy */
-                                    } else if enemy.forEduBranchFlag {
-                                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                                    if enemy.enemyLife > 0 {
+                                        enemy.enemyLife -= 1
+                                    } else {
+                                        /* Effect */
+                                        self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                        
+                                        /* Enemy */
+                                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                        self.run(seqEnemy)
+                                        enemy.aliveFlag = false
+                                        /* Count defeated enemy */
+                                        totalNumOfEnemy -= 1
+                                        
+                                        /* If you killed origin enemy */
+                                        if enemy.forEduOriginFlag {
+                                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                                            /* If you killed branch enemy */
+                                        } else if enemy.forEduBranchFlag {
+                                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                                        }
                                     }
                                 }
                             }
@@ -1141,17 +1145,21 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         /* Look for the enemy to destroy */
                         for enemy in self.gridNode.enemyArray {
                             if enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.2 || enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.3 || enemy.positionX == hitSpotArray.0 && enemy.positionY == self.activeHero.positionY || enemy.positionX == hitSpotArray.1 && enemy.positionY == self.activeHero.positionY {
-                                /* Effect */
-                                self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                
-                                /* Enemy */
-                                let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                self.run(seqEnemy)
-                                enemy.aliveFlag = false
-                                /* Count defeated enemy */
-                                self.totalNumOfEnemy -= 1
+                                if enemy.enemyLife > 0 {
+                                    enemy.enemyLife -= 1
+                                } else {
+                                    /* Effect */
+                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                    
+                                    /* Enemy */
+                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                    self.run(seqEnemy)
+                                    enemy.aliveFlag = false
+                                    /* Count defeated enemy */
+                                    self.totalNumOfEnemy -= 1
+                                }
                             }
                         }
                     })
@@ -1886,26 +1894,29 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     }
                     /* bullet hit enemy */
                 } else if contactA.node?.name == "bullet" {
-                    
                     let enemy = contactB.node as! EnemyEasy
-                    /* Effect */
-                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                    
-                    /* Enemy */
-                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                    self.run(seqEnemy)
-                    enemy.aliveFlag = false
-                    /* Count defeated enemy */
-                    totalNumOfEnemy -= 1
-                    
-                    /* If you killed origin enemy */
-                    if enemy.forEduOriginFlag {
-                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                        /* If you killed branch enemy */
-                    } else if enemy.forEduBranchFlag {
-                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                    if enemy.enemyLife > 0 {
+                        enemy.enemyLife -= 1
+                    } else {
+                        /* Effect */
+                        self.gridNode.enemyDestroyEffect(enemy: enemy)
+                        
+                        /* Enemy */
+                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                        self.run(seqEnemy)
+                        enemy.aliveFlag = false
+                        /* Count defeated enemy */
+                        totalNumOfEnemy -= 1
+                        
+                        /* If you killed origin enemy */
+                        if enemy.forEduOriginFlag {
+                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                            /* If you killed branch enemy */
+                        } else if enemy.forEduBranchFlag {
+                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                        }
                     }
                 }
                 
@@ -1985,27 +1996,30 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     }
                     /* Bullet hit enemy */
                 } else if contactB.node?.name == "bullet" {
-                    
                     let enemy = contactA.node as! EnemyEasy
-                    /* Effect */
-                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                    
-                    /* Enemy */
-                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                    self.run(seqEnemy)
-                    enemy.aliveFlag = false
-                    
-                    /* Count defeated enemy */
-                    totalNumOfEnemy -= 1
-                    
-                    /* If you killed origin enemy */
-                    if enemy.forEduOriginFlag {
-                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                        /* If you killed branch enemy */
-                    } else if enemy.forEduBranchFlag {
-                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                    if enemy.enemyLife > 0 {
+                        enemy.enemyLife -= 1
+                    } else {
+                        /* Effect */
+                        self.gridNode.enemyDestroyEffect(enemy: enemy)
+                        
+                        /* Enemy */
+                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                        self.run(seqEnemy)
+                        enemy.aliveFlag = false
+                        
+                        /* Count defeated enemy */
+                        totalNumOfEnemy -= 1
+                        
+                        /* If you killed origin enemy */
+                        if enemy.forEduOriginFlag {
+                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                            /* If you killed branch enemy */
+                        } else if enemy.forEduBranchFlag {
+                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                        }
                     }
                 }
             }
@@ -2332,24 +2346,28 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     for enemy in self.gridNode.enemyArray {
                         /* Hit enemy! */
                         if enemy.positionX == setCatapult.xPos && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos-1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos+1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos && enemy.positionY == value || enemy.positionX == setCatapult.xPos && enemy.positionY == value-2 {
-                            /* Effect */
-                            self.gridNode.enemyDestroyEffect(enemy: enemy)
-                            
-                            /* Enemy */
-                            let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                            let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                            self.run(seqEnemy)
-                            enemy.aliveFlag = false
-                            /* Count defeated enemy */
-                            self.totalNumOfEnemy -= 1
-                            
-                            /* If you killed origin enemy */
-                            if enemy.forEduOriginFlag {
-                                EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                                /* If you killed branch enemy */
-                            } else if enemy.forEduBranchFlag {
-                                EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                            if enemy.enemyLife > 0 {
+                                enemy.enemyLife -= 1
+                            } else {
+                                /* Effect */
+                                self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                
+                                /* Enemy */
+                                let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                self.run(seqEnemy)
+                                enemy.aliveFlag = false
+                                /* Count defeated enemy */
+                                self.totalNumOfEnemy -= 1
+                                
+                                /* If you killed origin enemy */
+                                if enemy.forEduOriginFlag {
+                                    EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                                    /* If you killed branch enemy */
+                                } else if enemy.forEduBranchFlag {
+                                    EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                                }
                             }
                         }
                     }

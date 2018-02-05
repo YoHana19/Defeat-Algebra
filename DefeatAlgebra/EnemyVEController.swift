@@ -12,6 +12,8 @@ class EnemyVEController {
     static func setVariableExpression(enemy: EnemyEasy, variableExpressionSource: [[Int]]) {
         let rand = arc4random_uniform(UInt32(variableExpressionSource.count))
         enemy.variableExpression = variableExpressionSource[Int(rand)]
+        /* Set equivalence ve */
+        enemy.vECategory = enemy.variableExpression.last!
         getVELabel(vE: enemy.variableExpression) { label in
             enemy.variableExpressionForLabel = label
         }

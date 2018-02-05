@@ -106,13 +106,14 @@
 		208C5D612024319C0006ADE4 /* EnemyDeadController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D5F2024319C0006ADE4 /* EnemyDeadController.swift */; };
 		208C5D63202447DD0006ADE4 /* EnemyVEController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D62202447DD0006ADE4 /* EnemyVEController.swift */; };
 		208C5D64202447DD0006ADE4 /* EnemyVEController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D62202447DD0006ADE4 /* EnemyVEController.swift */; };
+		208C5D6620280E2E0006ADE4 /* TutorialJ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D6520280E2E0006ADE4 /* TutorialJ.swift */; };
+		208C5D68202816BB0006ADE4 /* Tutorial2J.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D67202816BB0006ADE4 /* Tutorial2J.swift */; };
 		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
 		20E9E88820223B1400D31410 /* Boots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4081F2CD28D009CE633 /* Boots.swift */; };
 		20E9E88920223B1400D31410 /* Catapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40A1F2CD28D009CE633 /* Catapult.swift */; };
 		20E9E88A20223B1400D31410 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
 		20E9E88B20223B1400D31410 /* MSButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0291F11BE1D001346C7 /* MSButtonNode.swift */; };
 		20E9E88C20223B1400D31410 /* EnemyForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A421F67B97100DDCC03 /* EnemyForTutorial2.swift */; };
-		20E9E88D20223B1400D31410 /* Tutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A4C1F67B97100DDCC03 /* Tutorial2.swift */; };
 		20E9E88E20223B1400D31410 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FC1F67B21A00DDCC03 /* Grid.swift */; };
 		20E9E88F20223B1400D31410 /* BGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B8C661F3A67F100E91301 /* BGM.swift */; };
 		20E9E89020223B1400D31410 /* InputVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FE1F67B21A00DDCC03 /* InputVariable.swift */; };
@@ -142,7 +143,6 @@
 		20E9E8A820223B1400D31410 /* InputVariableExpressionEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A841F67BDAB00DDCC03 /* InputVariableExpressionEasy.swift */; };
 		20E9E8A920223B1400D31410 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29FD1F67B21A00DDCC03 /* Hero.swift */; };
 		20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6F1F67BBD100DDCC03 /* ItemList.swift */; };
-		20E9E8AB20223B1400D31410 /* Tutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A4A1F67B97100DDCC03 /* Tutorial.swift */; };
 		20E9E8AC20223B1400D31410 /* ResetCatapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201ECBA31F34B64300FB833A /* ResetCatapult.swift */; };
 		20E9E8AD20223B1400D31410 /* HeroEasy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A821F67BDAB00DDCC03 /* HeroEasy.swift */; };
 		20E9E8AE20223B1400D31410 /* EnemyFist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B29F91F67B21A00DDCC03 /* EnemyFist.swift */; };
@@ -297,6 +297,8 @@
 		208C5D5C2024273D0006ADE4 /* EnemyAddController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyAddController.swift; sourceTree = "<group>"; };
 		208C5D5F2024319C0006ADE4 /* EnemyDeadController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyDeadController.swift; sourceTree = "<group>"; };
 		208C5D62202447DD0006ADE4 /* EnemyVEController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyVEController.swift; sourceTree = "<group>"; };
+		208C5D6520280E2E0006ADE4 /* TutorialJ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialJ.swift; sourceTree = "<group>"; };
+		208C5D67202816BB0006ADE4 /* Tutorial2J.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tutorial2J.swift; sourceTree = "<group>"; };
 		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
 		20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebraJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E9E8EB20223B1900D31410 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/yohanashima/Desktop/Make School Project/Defeat-Algebra/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist"; sourceTree = "<absolute>"; };
@@ -431,8 +433,10 @@
 			children = (
 				203B2A491F67B97100DDCC03 /* Tutorial.sks */,
 				203B2A4A1F67B97100DDCC03 /* Tutorial.swift */,
+				208C5D6520280E2E0006ADE4 /* TutorialJ.swift */,
 				203B2A4B1F67B97100DDCC03 /* Tutorial2.sks */,
 				203B2A4C1F67B97100DDCC03 /* Tutorial2.swift */,
+				208C5D67202816BB0006ADE4 /* Tutorial2J.swift */,
 				203B2A431F67B97100DDCC03 /* GridForTutorial.swift */,
 				203B2A441F67B97100DDCC03 /* GridForTutorial2.swift */,
 				203B2A451F67B97100DDCC03 /* HeroForTutorial.swift */,
@@ -1036,7 +1040,6 @@
 				20E9E88A20223B1400D31410 /* GameViewController.swift in Sources */,
 				20E9E88B20223B1400D31410 /* MSButtonNode.swift in Sources */,
 				20E9E88C20223B1400D31410 /* EnemyForTutorial2.swift in Sources */,
-				20E9E88D20223B1400D31410 /* Tutorial2.swift in Sources */,
 				20E9E88E20223B1400D31410 /* Grid.swift in Sources */,
 				208C5D5B202420690006ADE4 /* EnemyMoveController.swift in Sources */,
 				20E9E88F20223B1400D31410 /* BGM.swift in Sources */,
@@ -1053,6 +1056,7 @@
 				20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				20E9E89B20223B1400D31410 /* EnemyEasy.swift in Sources */,
+				208C5D6620280E2E0006ADE4 /* TutorialJ.swift in Sources */,
 				20E9E89C20223B1400D31410 /* Spear.swift in Sources */,
 				20E9E89D20223B1400D31410 /* MultiAttack.swift in Sources */,
 				20E9E89E20223B1400D31410 /* BattleShip.swift in Sources */,
@@ -1069,7 +1073,6 @@
 				20E9E8A820223B1400D31410 /* InputVariableExpressionEasy.swift in Sources */,
 				20E9E8A920223B1400D31410 /* Hero.swift in Sources */,
 				20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */,
-				20E9E8AB20223B1400D31410 /* Tutorial.swift in Sources */,
 				20E9E8AC20223B1400D31410 /* ResetCatapult.swift in Sources */,
 				20E9E8AD20223B1400D31410 /* HeroEasy.swift in Sources */,
 				208C5D612024319C0006ADE4 /* EnemyDeadController.swift in Sources */,
@@ -1079,6 +1082,7 @@
 				20E9E8B120223B1400D31410 /* Cane.swift in Sources */,
 				20E9E8B220223B1400D31410 /* GameScene.swift in Sources */,
 				20E9E8B320223B1400D31410 /* GameSceneEasy.swift in Sources */,
+				208C5D68202816BB0006ADE4 /* Tutorial2J.swift in Sources */,
 				20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */,
 				20E9E8B520223B1400D31410 /* PauseScreenEasy.swift in Sources */,
 				20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */,
