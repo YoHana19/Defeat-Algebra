@@ -65,7 +65,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     var playerTurnState: PlayerTurnState = .DisplayPhase
     var itemType: ItemType = .None
     /* Game level */
-    var stageLevel: Int = 0
+    static var stageLevel: Int = 0
     var moveLevelArray: [Int] = [1]
     var totalNumOfEnemy: Int = 0
     var dispClearLabelDone = false
@@ -93,59 +93,12 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     /*== Enemy ==*/
     /*===========*/
     
-    /*== Resource of variable expression ==*/
-    /* 1st element decides which is coefficiet or constant term, last elment indicates equivarence of variable expression */
-    /* 1st element 0:x+1, 1:1+x, 2:1×x, 3:x×1, 4:2x-1, 5:3-x, 6:X+1+2;2x-3+1, 7:2+1-x, 8:x+x+1;2x-x;x+x-1, 9:x+x+2+1 */
-    /* 8th: 01origin, 9th: 45origin, 10th: 01to6, 11th: 45to67, 12th: 01to8, 13th: 45to8, 14th: 01to9, 15th: 45to9 */
-    let variableExpressionSource = [
-        [[0, 1, 0, 0]],
-        [[0, 1, 0, 0]],
-        [[0 ,1, 0, 0], [0, 1, 1, 1], [0, 1, 2, 2]],
-        [[0, 1, 0, 0], [0, 1, 1, 1], [0, 1, 2, 2], [0, 1, 3, 3], [1, 1, 1, 1], [1, 1, 2, 2], [1, 1, 3, 3]],
-        [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [2, 1, 0, 0], [2, 2, 0, 4], [2, 3, 0, 5], [3, 1, 0, 0], [3, 2, 0, 4], [3, 3, 0, 5]],
-        [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [0, 1, 1, 1], [0, 2, 1, 7], [0, 3, 1, 8], [0, 1, 2, 2], [0, 2, 2, 9], [0, 3, 2, 10], [1, 1, 1, 1], [1, 2, 1, 7], [1, 3, 1, 8], [1, 1, 2, 2], [1, 2, 2, 9], [1, 3, 2, 10]],
-        [[0, 1, 1, 1], [0, 2, 1, 7], [0, 3, 1, 8], [0, 1, 2, 2], [0, 2, 2, 9], [0, 3, 2, 10], [4, 2, 1, 11], [4, 3, 1, 12], [4, 3, 2, 13], [5, 1, 4, 14], [5, 2, 7, 15], [5, 2, 8, 16]],
-        [[0, 1, 0, 0], [0, 2, 0, 4], [0, 1, 1, 1], [0, 2, 1, 7], [0, 2, 2, 9], [0, 3, 1, 8], [2, 1, 0, 0], [2, 2, 0, 4], [3, 1, 0, 0], [3, 2, 0, 4], [1, 1, 1, 1], [1, 2, 1, 7], [1, 2, 2, 9], [1, 3, 1, 8]],
-        [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [0, 1, 1, 1], [0, 2, 1, 7], [0, 3, 1, 8], [0, 1, 2, 2], [0, 2, 2, 9], [0, 3, 2, 10]],
-        [[4, 2, 1, 11], [4, 3, 1, 12], [4, 3, 2, 13], [5, 1, 4, 14], [5, 2, 7, 15], [5, 2, 8, 16]],
-        [[6, 1, 0, 0], [6, 2, 0, 4], [6, 3, 0, 5], [6, 1, 1, 1], [6, 2, 1, 7], [6, 3, 1, 8], [6, 1, 2, 2], [6, 2, 2, 9], [6, 3, 2, 10]],
-        [[6, 2, -1, 11], [6, 3, -1, 12], [6, 3, -2, 13], [7, 1, 4, 14], [7, 2, 7, 15], [7, 2, 8, 16]],
-        [[8, 1, 0, 0], [8, 2, 0, 4], [8, 3, 0, 5], [8, 1, 1, 1], [8, 2, 1, 7], [8, 3, 1, 8], [8, 1, 2, 2], [8, 2, 2, 9], [8, 3, 2, 10]],
-        [[8, 2, -1, 11], [8, 3, -1, 12], [8, 3, -2, 13], [8, -1, 4, 14], [8, -2, 7, 15], [8, -2, 8, 16]],
-        [[9, 1, 0, 0], [9, 2, 0, 4], [9, 3, 0, 5], [9, 1, 1, 1], [9, 2, 1, 7], [9, 3, 1, 8], [9, 1, 2, 2], [9, 2, 2, 9], [9, 3, 2, 10]],
-        [[9, 2, -1, 11], [9, 3, -1, 12], [9, 3, -2, 13], [9, -1, 4, 14], [9, -2, 7, 15], [9, -2, 8, 16]]
-    ]
-    var variableExpressionSourceRandom = [[Int]]()
-    
     /*== Add enemy management ==*/
     var initialEnemyPosArray = [[Int]]()
     var initialEnemyPosArrayForUnS = [[Int]]()
     var initialAddEnemyFlag = true
-    /* [0: number of adding enemy, 1: inteval of adding enemy, 2: number of times of adding enemy, 3: range of start yPos] */
-    var addEnemyManagement = [
-        [0, 0, 0, 1],
-        [0, 0, 0, 1],
-        [4, 4, 1, 1],
-        [4, 2, 3, 1],
-        [4, 6, 2, 1],
-        [3, 1, 5, 2],
-        [4, 2, 4, 3],
-        [6, 3, 3, 3],
-        [5, 2, 3, 3],
-        [4, 1, 3, 3],
-        [5, 1, 5, 3],
-        [5, 1, 5, 3]
-    ]
-    var numOfAddEnemy: Int = 0
+    
     var countTurnForAddEnemy: Int = -1
-    var countTurnForAddEnemyForEdu: Int = 0
-    var numOfPassedTurnForEdu: Int = 0
-    var addInterval: Int = 0
-    var addIntervalForEdu: Int = 1
-    var addYRange: Int = 0
-    var countTurnForCompAddEnemy: Int = 0
-    var numOfTimeAddEnemy: Int = 0
-    //    var numOfTimeAddEnemyForEdu: Int = 0
     var CompAddEnemyFlag = false
     var addEnemyDoneFlag = false
     
@@ -171,7 +124,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     /* Catapult */
     var activeCatapult = Catapult()
     var setCatapultArray = [Catapult]()
-    var inputBoard: InputVariableExpression!
+    var inputBoard: InputVariableExpressionEasy!
     var activeAreaForCatapult = [SKShapeNode]()
     var setCatapultDoneFlag = false
     var catapultFireReady = false
@@ -262,7 +215,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         buttonRetry.selectedHandler = { [weak self] in
             
             /* Analytics */
-            Answers.logLevelEnd("Easy Level \((self?.stageLevel)!+1)",
+            Answers.logLevelEnd("Easy Level \(GameSceneEasy.stageLevel+1)",
                 score: nil,
                 success: false,
                 customAttributes: ["Custom String": "Retry"]
@@ -287,18 +240,18 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         buttonNextLevel.selectedHandler = { [weak self] in
             
             /* Analytics */
-            Answers.logLevelEnd("Easy Level \((self?.stageLevel)!+1)",
+            Answers.logLevelEnd("Easy Level \(GameSceneEasy.stageLevel+1)",
                 score: nil,
                 success: true
             )
             
             /* To next stage level */
-            self?.stageLevel += 1
+            GameSceneEasy.stageLevel += 1
             
             /* Store game property */
             let ud = UserDefaults.standard
             /* Stage level */
-            ud.set(self?.stageLevel, forKey: "stageLevelEasy")
+            ud.set(GameSceneEasy.stageLevel, forKey: "stageLevelEasy")
             /* Hero */
             self?.moveLevelArray = []
             for (i, hero) in (self?.heroArray.enumerated())! {
@@ -345,9 +298,9 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         
         let ud = UserDefaults.standard
         /* stageLevel */
-        stageLevel = ud.integer(forKey: "stageLevelEasy")
-        stageLevel = 4
-        levelLabel.text = String(stageLevel+1)
+        GameSceneEasy.stageLevel = ud.integer(forKey: "stageLevelEasy")
+        GameSceneEasy.stageLevel = 7
+        levelLabel.text = String(GameSceneEasy.stageLevel+1)
         /* Hero */
         moveLevelArray = ud.array(forKey: "moveLevelArrayEasy") as? [Int] ?? [1]
         //moveLevelArray = [4]
@@ -369,7 +322,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         GameSceneEasy.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [true, true, false, false, false, false, false, false, false, false, false, false, false]
         
         /* For Analytics */
-        Answers.logLevelStart("Easy Level \(stageLevel+1)")
+        Answers.logLevelStart("Easy Level \(GameSceneEasy.stageLevel+1)")
         
         /* Set input boards */
         setInputBoard()
@@ -394,17 +347,16 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
         /* Set initial objects */
-        setInitialObj(level: self.stageLevel)
+        setInitialObj(level: GameSceneEasy.stageLevel)
         
         /* Set item area */
         setItemAreaCover()
         
         /* Set each value of adding enemy management */
-        SetAddEnemyMng()
-        addEnemyManager = EnemyProperty.addEnemyManager[stageLevel]
-        
-        /* Set variable expression source form level 9 */
-        setVariableExpressionFrom8()
+        addEnemyManager = EnemyProperty.addEnemyManager[GameSceneEasy.stageLevel]
+        initialEnemyPosArray = EnemyProperty.initialEnemyPosArray[GameSceneEasy.stageLevel]
+        initialEnemyPosArrayForUnS = EnemyProperty.initialEnemyPosArrayForUnS[GameSceneEasy.stageLevel]
+        totalNumOfEnemy = EnemyProperty.numOfEnemy[GameSceneEasy.stageLevel]
         
         /* Set active area for catapult */
         setActiveAreaForCatapult()
@@ -447,11 +399,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         initialAddEnemyFlag = false
                         
                         let addEnemy = SKAction.run({
-                            if self.stageLevel < 8 {
-                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[self.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[self.stageLevel])
-                            } else {
-//                                self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, variableExpressionSource: self.variableExpressionSourceRandom)
-                            }
+                            self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameSceneEasy.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameSceneEasy.stageLevel])
                         })
                         let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*4+1.0) /* 4 is distance, 1.0 is buffer */
                         let moveState = SKAction.run({
@@ -471,12 +419,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         /* Add enemy for Education */
                         if addEnemyManager[countTurnForAddEnemy][1] == 1 {
                             let addEnemy = SKAction.run({
-                                if self.stageLevel < 8 {
-                                    self.gridNode.addEnemyForEdu(sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[self.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[self.stageLevel], index: self.numOfPassedTurnForEdu)
-                                    /* haven't increment yet */
-                                } else {
-                                    self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSourceRandom, yRange: self.addYRange)
-                                }
+                                self.gridNode.addEnemyForEdu(sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameSceneEasy.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameSceneEasy.stageLevel], numOfOrigin: self.addEnemyManager[self.countTurnForAddEnemy][2])
                             })
                             let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
                             let moveState = SKAction.run({
@@ -494,14 +437,9 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                             self.run(seq)
                             
                         /* Add enemy normaly */
-                        } else if addEnemyManager[countTurnForAddEnemy][0] == 0 {
+                        } else if addEnemyManager[countTurnForAddEnemy][1] == 0 {
                             let addEnemy = SKAction.run({
-                                if self.stageLevel < 8 {
-                                    self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSource[self.stageLevel] , yRange: self.addYRange)
-                                } else {
-                                    self.gridNode.addEnemyAtGrid(self.numOfAddEnemy, variableExpressionSource: self.variableExpressionSourceRandom, yRange: self.addYRange)
-                                }
-                                
+                                self.gridNode.addEnemyAtGrid(self.addEnemyManager[self.countTurnForAddEnemy][2], variableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameSceneEasy.stageLevel]+EnemyProperty.unSimplifiedVariableExpressionSource[GameSceneEasy.stageLevel] , yRange: self.addEnemyManager[self.countTurnForAddEnemy][3])
                             })
                             let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
                             let moveState = SKAction.run({
@@ -609,24 +547,28 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                             for enemy in self.gridNode.enemyArray {
                                 /* Hit enemy! */
                                 if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                                    /* Effect */
-                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                    
-                                    /* Enemy */
-                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                    self.run(seqEnemy)
-                                    enemy.aliveFlag = false
-                                    /* Count defeated enemy */
-                                    totalNumOfEnemy -= 1
-                                    
-                                    /* If you killed origin enemy */
-                                    if enemy.forEduOriginFlag {
-                                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                                        /* If you killed branch enemy */
-                                    } else if enemy.forEduBranchFlag {
-                                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                                    if enemy.enemyLife > 0 {
+                                        enemy.enemyLife -= 1
+                                    } else {
+                                        /* Effect */
+                                        self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                        
+                                        /* Enemy */
+                                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                        self.run(seqEnemy)
+                                        enemy.aliveFlag = false
+                                        /* Count defeated enemy */
+                                        totalNumOfEnemy -= 1
+                                        
+                                        /* If you killed origin enemy */
+                                        if enemy.forEduOriginFlag {
+                                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                                            /* If you killed branch enemy */
+                                        } else if enemy.forEduBranchFlag {
+                                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                                        }
                                     }
                                 }
                             }
@@ -960,7 +902,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 }
             }
             clearLabel.isHidden = false
-            if stageLevel < 11 {
+            if GameSceneEasy.stageLevel < 11 {
                 buttonNextLevel.state = .msButtonNodeStateActive
             } else {
                 if dispClearLabelDone == false {
@@ -1203,17 +1145,21 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         /* Look for the enemy to destroy */
                         for enemy in self.gridNode.enemyArray {
                             if enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.2 || enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.3 || enemy.positionX == hitSpotArray.0 && enemy.positionY == self.activeHero.positionY || enemy.positionX == hitSpotArray.1 && enemy.positionY == self.activeHero.positionY {
-                                /* Effect */
-                                self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                
-                                /* Enemy */
-                                let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                self.run(seqEnemy)
-                                enemy.aliveFlag = false
-                                /* Count defeated enemy */
-                                self.totalNumOfEnemy -= 1
+                                if enemy.enemyLife > 0 {
+                                    enemy.enemyLife -= 1
+                                } else {
+                                    /* Effect */
+                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                    
+                                    /* Enemy */
+                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                    self.run(seqEnemy)
+                                    enemy.aliveFlag = false
+                                    /* Count defeated enemy */
+                                    self.totalNumOfEnemy -= 1
+                                }
                             }
                         }
                     })
@@ -1594,7 +1540,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let boots = item as! Boots
                             autoSetItems()
                             itemSpot.append(boots.spotPos)
@@ -1606,7 +1552,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let heart = item as! Heart
                             autoSetItems()
                             itemSpot.append(heart.spotPos)
@@ -1622,7 +1568,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         } else {
                             displayitem(name: item.name!)
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             if item.name == "timeBomb" {
                                 let temp = item as! TimeBomb
                                 autoSetItems()
@@ -1685,7 +1631,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let boots = item as! Boots
                             autoSetItems()
                             itemSpot.append(boots.spotPos)
@@ -1697,11 +1643,11 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             //                            itemSpot.append(item.spotPos)
                             autoSetItems()
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             let heart = item as! Heart
                             autoSetItems()
                             itemSpot.append(heart.spotPos)
@@ -1717,7 +1663,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         } else {
                             displayitem(name: item.name!)
                         }
-                        if stageLevel >= 10 {
+                        if GameSceneEasy.stageLevel >= 10 {
                             if item.name == "timeBomb" {
                                 let temp = item as! TimeBomb
                                 autoSetItems()
@@ -1948,26 +1894,29 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     }
                     /* bullet hit enemy */
                 } else if contactA.node?.name == "bullet" {
-                    
                     let enemy = contactB.node as! EnemyEasy
-                    /* Effect */
-                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                    
-                    /* Enemy */
-                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                    self.run(seqEnemy)
-                    enemy.aliveFlag = false
-                    /* Count defeated enemy */
-                    totalNumOfEnemy -= 1
-                    
-                    /* If you killed origin enemy */
-                    if enemy.forEduOriginFlag {
-                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                        /* If you killed branch enemy */
-                    } else if enemy.forEduBranchFlag {
-                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                    if enemy.enemyLife > 0 {
+                        enemy.enemyLife -= 1
+                    } else {
+                        /* Effect */
+                        self.gridNode.enemyDestroyEffect(enemy: enemy)
+                        
+                        /* Enemy */
+                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                        self.run(seqEnemy)
+                        enemy.aliveFlag = false
+                        /* Count defeated enemy */
+                        totalNumOfEnemy -= 1
+                        
+                        /* If you killed origin enemy */
+                        if enemy.forEduOriginFlag {
+                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                            /* If you killed branch enemy */
+                        } else if enemy.forEduBranchFlag {
+                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                        }
                     }
                 }
                 
@@ -2047,27 +1996,30 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     }
                     /* Bullet hit enemy */
                 } else if contactB.node?.name == "bullet" {
-                    
                     let enemy = contactA.node as! EnemyEasy
-                    /* Effect */
-                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                    
-                    /* Enemy */
-                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                    self.run(seqEnemy)
-                    enemy.aliveFlag = false
-                    
-                    /* Count defeated enemy */
-                    totalNumOfEnemy -= 1
-                    
-                    /* If you killed origin enemy */
-                    if enemy.forEduOriginFlag {
-                        EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                        /* If you killed branch enemy */
-                    } else if enemy.forEduBranchFlag {
-                        EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                    if enemy.enemyLife > 0 {
+                        enemy.enemyLife -= 1
+                    } else {
+                        /* Effect */
+                        self.gridNode.enemyDestroyEffect(enemy: enemy)
+                        
+                        /* Enemy */
+                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                        self.run(seqEnemy)
+                        enemy.aliveFlag = false
+                        
+                        /* Count defeated enemy */
+                        totalNumOfEnemy -= 1
+                        
+                        /* If you killed origin enemy */
+                        if enemy.forEduOriginFlag {
+                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                            /* If you killed branch enemy */
+                        } else if enemy.forEduBranchFlag {
+                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                        }
                     }
                 }
             }
@@ -2102,84 +2054,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 addChild(hero)
             }
         }
-    }
-    
-    /*===========*/
-    /*== Enemy ==*/
-    /*===========*/
-    
-    /*== Add enemy in fixed interval ==*/
-    func addEnemy() {
-        /* Time to add enemy */
-        if countTurnForAddEnemy > addInterval {
-            
-            /* Stop all enemy's movement */
-            for enemy in self.gridNode.enemyArray {
-                enemy.removeAllActions()
-                enemy.setStandingtexture()
-            }
-            
-            /* Make sure to stop all enemy before move to addEnemy state */
-            let wait = SKAction.wait(forDuration: 1.0)
-            let moveState = SKAction.run({ self.gameState = .AddEnemy })
-            let seq = SKAction.sequence([wait, moveState])
-            self.run(seq)
-            
-        }
-    }
-    
-    /*== Pick several variable expression from source ==*/
-    func pickVariableExpression(origin: [[Int]], modified: [[Int]], num: Int) {
-        var source1 = origin
-        var source2 = modified
-        for _ in 0..<num {
-            let rand = Int(arc4random_uniform(UInt32(source1.count)))
-            variableExpressionSourceRandom.append(source1[rand])
-            variableExpressionSourceRandom.append(source2[rand])
-            source1.remove(at: rand)
-            source2.remove(at: rand)
-        }
-    }
-    
-    func pickVariableExpression3(origin: [[Int]], modified1: [[Int]], modified2: [[Int]], num: Int) {
-        var source1 = origin
-        var source2 = modified1
-        var source3 = modified2
-        for _ in 0..<num {
-            let rand = Int(arc4random_uniform(UInt32(source1.count)))
-            variableExpressionSourceRandom.append(source1[rand])
-            variableExpressionSourceRandom.append(source2[rand])
-            variableExpressionSourceRandom.append(source3[rand])
-            source1.remove(at: rand)
-            source2.remove(at: rand)
-            source3.remove(at: rand)
-        }
-    }
-    
-    /* Set variable expression source form level 9 */
-    func setVariableExpressionFrom8() {
-        /* x+1+1 */
-        if stageLevel == 8 {
-            pickVariableExpression(origin: variableExpressionSource[8], modified: variableExpressionSource[10], num: 6)
-            /* 1+2-x, 2x+2-1, x+x+1 */
-        } else if stageLevel == 9 {
-            pickVariableExpression(origin: variableExpressionSource[9], modified: variableExpressionSource[11], num: 3)
-            pickVariableExpression(origin: variableExpressionSource[8], modified: variableExpressionSource[12], num: 3)
-            /* x+x+1, x+x+1+1, 2x+x-2, 2x+x-2+1, 2-2x+x, 1+2-3x+x */
-        } else if stageLevel == 10 {
-            pickVariableExpression3(origin: variableExpressionSource[8], modified1: variableExpressionSource[12], modified2: variableExpressionSource[14], num: 3)
-            pickVariableExpression3(origin: variableExpressionSource[9], modified1: variableExpressionSource[13], modified2: variableExpressionSource[15], num: 3)
-        } else if stageLevel == 11 {
-            variableExpressionSourceRandom = [[0, 2, 2, 9], [0, 2, 4, 17], [4, 4, 2, 18], [10, 2, 2, 9], [10, 2, 4, 17], [11, 2, 2, 9], [11, 2, 4, 17], [12, 4, -2, 18]]
-        }
-    }
-    
-    /*== Set each value of adding enemy management ==*/
-    func SetAddEnemyMng() {
-        numOfAddEnemy = addEnemyManagement[stageLevel][0]
-        addInterval = addEnemyManagement[stageLevel][1]
-        numOfTimeAddEnemy = addEnemyManagement[stageLevel][2]
-        addYRange = addEnemyManagement[stageLevel][3]
     }
     
     /*===========*/
@@ -2377,7 +2251,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     
     /* Set input board for setiing variable expression */
     func setInputBoard() {
-        inputBoard = InputVariableExpression()
+        inputBoard = InputVariableExpressionEasy()
         addChild(inputBoard)
     }
     
@@ -2472,24 +2346,28 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     for enemy in self.gridNode.enemyArray {
                         /* Hit enemy! */
                         if enemy.positionX == setCatapult.xPos && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos-1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos+1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos && enemy.positionY == value || enemy.positionX == setCatapult.xPos && enemy.positionY == value-2 {
-                            /* Effect */
-                            self.gridNode.enemyDestroyEffect(enemy: enemy)
-                            
-                            /* Enemy */
-                            let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                            let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                            self.run(seqEnemy)
-                            enemy.aliveFlag = false
-                            /* Count defeated enemy */
-                            self.totalNumOfEnemy -= 1
-                            
-                            /* If you killed origin enemy */
-                            if enemy.forEduOriginFlag {
-                                EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                                /* If you killed branch enemy */
-                            } else if enemy.forEduBranchFlag {
-                                EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                            if enemy.enemyLife > 0 {
+                                enemy.enemyLife -= 1
+                            } else {
+                                /* Effect */
+                                self.gridNode.enemyDestroyEffect(enemy: enemy)
+                                
+                                /* Enemy */
+                                let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+                                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                                let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+                                self.run(seqEnemy)
+                                enemy.aliveFlag = false
+                                /* Count defeated enemy */
+                                self.totalNumOfEnemy -= 1
+                                
+                                /* If you killed origin enemy */
+                                if enemy.forEduOriginFlag {
+                                    EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
+                                    /* If you killed branch enemy */
+                                } else if enemy.forEduBranchFlag {
+                                    EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
+                                }
                             }
                         }
                     }
@@ -2946,12 +2824,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         switch level {
             /* Level 1 */
         case 0:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 9], [4, 9], [7, 9]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 3
-            
             /* Set boots */
             let bootsArray = [[3,3]]
             for bootsPos in bootsArray {
@@ -2967,12 +2839,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             }
             /* Level 2 */
         case 1:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [4, 10], [7, 10], [2, 8], [6, 8]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 5
-            
             /* Set boots */
             let bootsArray = [[4,6]]
             for bootsPos in bootsArray {
@@ -2996,12 +2862,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             
             /* Level 3 */
         case 2:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 11], [3, 11], [5, 11], [7, 11], [2, 9], [4, 9], [6, 9]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
             /* Set boots */
             let bootsArray = [[1,6],[7,6]]
             for bootsPos in bootsArray {
@@ -3023,12 +2883,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             
             /* Level 4 */
         case 3:
-            /* Set enemy */
-            initialEnemyPosArray = [[0, 10], [2, 10], [4, 10], [6, 10], [8, 10], [3, 8], [5, 8]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
+          
             /* Set timeBomb */
             let timeBombsArray = [[2,0],[6,0],[7,3]]
             for timeBombPos in timeBombsArray {
@@ -3056,16 +2911,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             
             /* Level 5 */
         case 4:
-            /* Set enemy */
-            //            initialEnemyPosArray = [[1, 11], [5, 11], [1, 9], [5, 9]]
-            //            initialEnemyPosArrayForUnS = [[3, 11], [7, 11], [3, 9], [7, 9]]
-            
-            initialEnemyPosArray = [[1, 11]]
-            initialEnemyPosArrayForUnS = [[3, 11]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 15
-            
+           
             /* Set timeBomb */
             let timeBombsArray = [[4,0],[4,6],[1,3],[7,3]]
             for timeBombPos in timeBombsArray {
@@ -3089,12 +2935,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             
             /* Level 6 */
         case 5:
-            /* Set enemy */
-            initialEnemyPosArray = [[2, 10], [6, 10], [2, 8], [6, 8], [4, 9]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
             /* Set timeBomb */
             let timeBombsArray = [[4,6],[4,0]]
             for timeBombPos in timeBombsArray {
@@ -3125,12 +2965,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             
             /* Level 7 */
         case 6:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 11], [2, 10], [3, 9], [7, 11], [6, 10], [5, 9]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
             /* Set multiAttack */
             let multiAttackArray = [[1,3],[7,3]]
             for multiAttackPos in multiAttackArray {
@@ -3167,12 +3001,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             }
             /* Level 8 */
         case 7:
-            /* Set enemy */
-            initialEnemyPosArray = [[0, 9], [1, 11], [2, 9], [3, 11], [4, 9], [5, 11], [6, 9], [7, 11], [8, 9]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
             /* Set cane */
             let caneArray = [[4,4], [4,2]]
             for canePos in caneArray {
@@ -3203,12 +3031,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             }
             /* Level 9 */
         case 8:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 11], [2, 9], [1, 7], [4, 9], [6, 9], [7, 11], [7, 7]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
             /* Set catapult */
             let catapultArray = [[3,1]]
             for catapultPos in catapultArray {
@@ -3261,13 +3083,6 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             
             /* Level 10 */
         case 9:
-            /* Set enemy */
-            initialEnemyPosArray = [[0, 11], [0, 7], [2, 10], [2, 8], [6, 10], [6, 8], [8, 7], [8, 11]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
-            
             /* Set cane */
             let caneArray = [[1,5],[4,0]]
             for canePos in caneArray {
@@ -3312,23 +3127,11 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
             
             /* Level 11 */
         case 10:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [3, 8], [4, 10], [5, 8], [7, 10]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
             /* Set initial items */
             autoSetInitialItems(posArray: [[2, 1], [2, 5], [6, 1], [6, 5]])
             
             /* Level 12 */
         case 11:
-            /* Set enemy */
-            initialEnemyPosArray = [[1, 10], [3, 8], [4, 10], [5, 8], [7, 10]]
-            
-            /* Set total number of enemy */
-            totalNumOfEnemy = 20
-            
             /* Set initial items */
             autoSetInitialItems(posArray: [[2, 1], [2, 5], [6, 1], [6, 5]])
             
