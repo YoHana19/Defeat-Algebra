@@ -356,7 +356,10 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         addEnemyManager = EnemyProperty.addEnemyManager[GameSceneEasy.stageLevel]
         initialEnemyPosArray = EnemyProperty.initialEnemyPosArray[GameSceneEasy.stageLevel]
         initialEnemyPosArrayForUnS = EnemyProperty.initialEnemyPosArrayForUnS[GameSceneEasy.stageLevel]
-        totalNumOfEnemy = EnemyProperty.numOfEnemy[GameSceneEasy.stageLevel]
+        EnemyProperty.getNumOfAllEnemy(stageLevel: GameSceneEasy.stageLevel) { num in
+            self.totalNumOfEnemy = num
+            print(self.totalNumOfEnemy)
+        }
         
         /* Set active area for catapult */
         setActiveAreaForCatapult()

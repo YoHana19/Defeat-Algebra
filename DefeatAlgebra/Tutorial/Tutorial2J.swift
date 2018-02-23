@@ -31,7 +31,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     var itemAreaNode: SKSpriteNode!
     var buttonAttack: SKNode!
     var buttonItem: SKNode!
-     var pauseScreen: PauseScreenForTutorial2!
+    var pauseScreen: PauseScreenForTutorial2!
     
     /*== Game labels ==*/
     var valueOfX: SKLabelNode!

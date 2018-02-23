@@ -29,6 +29,7 @@ class EnemyProperty {
     /* 1st element decides which is coefficiet or constant term, last elment indicates equivarence of variable expression */
     /* 1st element 0:x+1, 1:1+x, 2:1×x, 3:x×1, 4:2x-1, 5:3-x, 6:X+1+2;2x-3+1, 7:2+1-x, 8:x+x+1;2x-x;x+x-1, 9:x+x+2+1 */
     /* 8th: 01origin, 9th: 45origin, 10th: 01to6, 11th: 45to67, 12th: 01to8, 13th: 45to8, 14th: 01to9, 15th: 45to9 */
+    // not using
     static let variableExpressionSource = [
         [[0, 1, 0, 0], [0, 2, 0, 4], [0, 1, 1, 1], [0, 2, 1, 7], [0, 2, 2, 9], [0, 3, 1, 8], [2, 1, 0, 0], [2, 2, 0, 4], [3, 1, 0, 0], [3, 2, 0, 4], [1, 1, 1, 1], [1, 2, 1, 7], [1, 2, 2, 9], [1, 3, 1, 8]],
         [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [0, 1, 1, 1], [0, 2, 1, 7], [0, 3, 1, 8], [0, 1, 2, 2], [0, 2, 2, 9], [0, 3, 2, 10]],
@@ -96,7 +97,29 @@ class EnemyProperty {
         [[0], [0], [0], [0], [1, 1, 2], [0], [0], [1, 1, 2], [0], [0], [1, 0, 3, 1]], //8
     ]
     
-    static let numOfEnemy = [3, 5, 11, 19, 19, 20, 14, 20, 7, 8, 5, 5]
+    static func getNumOfAllEnemy(stageLevel: Int, completion: @escaping (Int) -> Void) {
+        let start = EnemyProperty.initialEnemyPosArray[stageLevel].count
+        let startForUnS = EnemyProperty.initialEnemyPosArrayForUnS[stageLevel].count
+        let dispatchGroup = DispatchGroup()
+        var totalNum = start + startForUnS
+        for array in EnemyProperty.addEnemyManager[stageLevel] {
+            dispatchGroup.enter()
+            if array[0] == 1 {
+                if array[1] == 0 {
+                    totalNum += array[2]
+                    dispatchGroup.leave()
+                } else {
+                    totalNum += array[2]*2
+                    dispatchGroup.leave()
+                }
+            } else {
+                dispatchGroup.leave()
+            }
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            completion(totalNum)
+        })
+    }
     
     static let initialEnemyPosArray = [
         [[1, 9], [4, 9], [7, 9]], //1
