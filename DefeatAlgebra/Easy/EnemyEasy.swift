@@ -451,7 +451,7 @@ class EnemyEasy: SKSpriteNode {
         self.addChild(label)
         
         /* Edit button if needed */
-        if variableExpression[0] >= 6 {
+        if variableExpression.count >= 5 {
             let editButton = SKSpriteNode(imageNamed: "editButton")
             editButton.size = CGSize(width: 25, height: 25)
             editButton.position = CGPoint(x: 30, y: 15)
