@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DF18573C9DE88D5261F9C7C /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A202B12040100200EAA753 /* Pods_DefeatAlgebra.framework */; };
 		200829DD1F32CA860038AEC0 /* CatapultFire.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D71F32CA860038AEC0 /* CatapultFire.sks */; };
 		200829DE1F32CA860038AEC0 /* CatapultFire2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D81F32CA860038AEC0 /* CatapultFire2.sks */; };
 		200829DF1F32CA860038AEC0 /* DestroyEnemy.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D91F32CA860038AEC0 /* DestroyEnemy.sks */; };
@@ -108,6 +109,8 @@
 		208C5D64202447DD0006ADE4 /* EnemyVEController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D62202447DD0006ADE4 /* EnemyVEController.swift */; };
 		208C5D6620280E2E0006ADE4 /* TutorialJ.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D6520280E2E0006ADE4 /* TutorialJ.swift */; };
 		208C5D68202816BB0006ADE4 /* Tutorial2J.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D67202816BB0006ADE4 /* Tutorial2J.swift */; };
+		20A202B02040100200EAA753 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A202B12040100200EAA753 /* Pods_DefeatAlgebra.framework */; };
+		20A202B22040162000EAA753 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A202B12040100200EAA753 /* Pods_DefeatAlgebra.framework */; };
 		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
 		20E9E88820223B1400D31410 /* Boots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4081F2CD28D009CE633 /* Boots.swift */; };
 		20E9E88920223B1400D31410 /* Catapult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD40A1F2CD28D009CE633 /* Catapult.swift */; };
@@ -159,7 +162,6 @@
 		20E9E8B920223B1400D31410 /* Wall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CD4101F2CD28D009CE633 /* Wall.swift */; };
 		20E9E8BB20223B1400D31410 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAB1F351AED00FB833A /* Crashlytics.framework */; };
 		20E9E8BC20223B1400D31410 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 201ECBAA1F351AED00FB833A /* Fabric.framework */; };
-		20E9E8BD20223B1400D31410 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */; };
 		20E9E8BF20223B1400D31410 /* MagicSwordEffect.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829DA1F32CA860038AEC0 /* MagicSwordEffect.sks */; };
 		20E9E8C020223B1400D31410 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A701F67BBD100DDCC03 /* MainMenu.sks */; };
 		20E9E8C120223B1400D31410 /* timeBombExplosion.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C4C1F3A2D2800E91301 /* timeBombExplosion.mp3 */; };
@@ -198,6 +200,8 @@
 		20E9E8E220223B1400D31410 /* CatapultFire.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D71F32CA860038AEC0 /* CatapultFire.sks */; };
 		20E9E8FB2022404E00D31410 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */; };
 		20E9E8FD2022439C00D31410 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */; };
+		5ECA6C9D1D085C28C02C58D1 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */; };
+		B45DB506E38F768A8251D729 /* Pods_DefeatAlgebraJ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D74E2949A5C73D1B0461EA64 /* Pods_DefeatAlgebraJ.framework */; };
 		E7EC6569AC1C8F9D3984BF67 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */; };
 /* End PBXBuildFile section */
 
@@ -299,14 +303,18 @@
 		208C5D62202447DD0006ADE4 /* EnemyVEController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyVEController.swift; sourceTree = "<group>"; };
 		208C5D6520280E2E0006ADE4 /* TutorialJ.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TutorialJ.swift; sourceTree = "<group>"; };
 		208C5D67202816BB0006ADE4 /* Tutorial2J.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tutorial2J.swift; sourceTree = "<group>"; };
+		20A202B12040100200EAA753 /* Pods_DefeatAlgebra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_DefeatAlgebra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
 		20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebraJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E9E8EB20223B1900D31410 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/yohanashima/Desktop/Make School Project/Defeat-Algebra/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist"; sourceTree = "<absolute>"; };
 		20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DefeatAlgebra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebra.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra.debug.xcconfig"; sourceTree = "<group>"; };
-		DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebra.release.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra.release.xcconfig"; sourceTree = "<group>"; };
+		791C414F595433E4F872989D /* Pods-DefeatAlgebraJ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebraJ.release.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ.release.xcconfig"; sourceTree = "<group>"; };
+		917C6F6080FD2DBDC763F4BB /* Pods-DefeatAlgebraJ.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebraJ.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ.debug.xcconfig"; sourceTree = "<group>"; };
+		B9EF8F9579166D65310131B0 /* Pods-DefeatAlgebra.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebra.release.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra.release.xcconfig"; sourceTree = "<group>"; };
+		D74E2949A5C73D1B0461EA64 /* Pods_DefeatAlgebraJ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DefeatAlgebraJ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E4CB55B0B54E6FEB23BFFF30 /* Pods-DefeatAlgebra.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebra.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -317,6 +325,8 @@
 				201ECBAD1F351AEE00FB833A /* Crashlytics.framework in Frameworks */,
 				201ECBAC1F351AED00FB833A /* Fabric.framework in Frameworks */,
 				E7EC6569AC1C8F9D3984BF67 /* Pods_DefeatAlgebra.framework in Frameworks */,
+				5ECA6C9D1D085C28C02C58D1 /* Pods_DefeatAlgebra.framework in Frameworks */,
+				0DF18573C9DE88D5261F9C7C /* Pods_DefeatAlgebra.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,9 +334,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20A202B22040162000EAA753 /* Pods_DefeatAlgebra.framework in Frameworks */,
+				20A202B02040100200EAA753 /* Pods_DefeatAlgebra.framework in Frameworks */,
 				20E9E8BB20223B1400D31410 /* Crashlytics.framework in Frameworks */,
 				20E9E8BC20223B1400D31410 /* Fabric.framework in Frameworks */,
-				20E9E8BD20223B1400D31410 /* Pods_DefeatAlgebra.framework in Frameworks */,
+				B45DB506E38F768A8251D729 /* Pods_DefeatAlgebraJ.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -574,7 +586,9 @@
 		42287C806EF7025DB4649D05 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				20A202B12040100200EAA753 /* Pods_DefeatAlgebra.framework */,
 				761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */,
+				D74E2949A5C73D1B0461EA64 /* Pods_DefeatAlgebraJ.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -582,8 +596,10 @@
 		F9F35559E4FDEA5BA3773AF3 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */,
-				DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */,
+				E4CB55B0B54E6FEB23BFFF30 /* Pods-DefeatAlgebra.debug.xcconfig */,
+				B9EF8F9579166D65310131B0 /* Pods-DefeatAlgebra.release.xcconfig */,
+				917C6F6080FD2DBDC763F4BB /* Pods-DefeatAlgebraJ.debug.xcconfig */,
+				791C414F595433E4F872989D /* Pods-DefeatAlgebraJ.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -617,14 +633,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 20E9E8E720223B1400D31410 /* Build configuration list for PBXNativeTarget "DefeatAlgebraJ" */;
 			buildPhases = (
-				20E9E88620223B1400D31410 /* [CP] Check Pods Manifest.lock */,
+				1663D6C6731445540CC2689E /* [CP] Check Pods Manifest.lock */,
 				20E9E88720223B1400D31410 /* Sources */,
 				20E9E8BA20223B1400D31410 /* Frameworks */,
 				20E9E8BE20223B1400D31410 /* Resources */,
 				20E9E8E320223B1400D31410 /* ShellScript */,
 				20E9E8E420223B1400D31410 /* ShellScript */,
-				20E9E8E520223B1400D31410 /* [CP] Embed Pods Frameworks */,
-				20E9E8E620223B1400D31410 /* [CP] Copy Pods Resources */,
+				F2B990B3C0D9B7E1EE865BB2 /* [CP] Embed Pods Frameworks */,
+				8481E847BE7C074007407B05 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -767,6 +783,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1663D6C6731445540CC2689E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DefeatAlgebraJ-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		1F78737BE39E7BAD45FFF832 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -829,24 +863,6 @@
 			shellPath = /bin/sh;
 			shellScript = "./Fabric.framework/run e91a320e059ab6724f7cc1de8059c13860d62491 c06df219d83af7afd55f8952bad38243f1028f461fecd046e7ba00137737e5ba";
 		};
-		20E9E88620223B1400D31410 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-DefeatAlgebra-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		20E9E8E320223B1400D31410 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -873,58 +889,22 @@
 			shellPath = /bin/sh;
 			shellScript = "./Fabric.framework/run e91a320e059ab6724f7cc1de8059c13860d62491 c06df219d83af7afd55f8952bad38243f1028f461fecd046e7ba00137737e5ba";
 		};
-		20E9E8E520223B1400D31410 /* [CP] Embed Pods Frameworks */ = {
+		8481E847BE7C074007407B05 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
-				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
-				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
-				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		20E9E8E620223B1400D31410 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh",
-				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle,
+				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseAuthUI.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseAuthUI.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B28D276B965711B89B39C064 /* [CP] Check Pods Manifest.lock */ = {
@@ -952,15 +932,51 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh",
-				$PODS_CONFIGURATION_BUILD_DIR/FirebaseUI/FirebaseAuthUI.bundle,
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseUI/FirebaseAuthUI.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FirebaseAuthUI.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebra/Pods-DefeatAlgebra-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F2B990B3C0D9B7E1EE865BB2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-ProtoRPC/ProtoRPC.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-RxLibrary/RxLibrary.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ProtoRPC.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxLibrary.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1221,7 +1237,7 @@
 		};
 		204C7D991F074FE800F4DD11 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */;
+			baseConfigurationReference = E4CB55B0B54E6FEB23BFFF30 /* Pods-DefeatAlgebra.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1241,7 +1257,7 @@
 		};
 		204C7D9A1F074FE800F4DD11 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */;
+			baseConfigurationReference = B9EF8F9579166D65310131B0 /* Pods-DefeatAlgebra.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = T2HM3LUVY9;
@@ -1260,7 +1276,7 @@
 		};
 		20E9E8E820223B1400D31410 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CE40CE17044A6F26FC547445 /* Pods-DefeatAlgebra.debug.xcconfig */;
+			baseConfigurationReference = 917C6F6080FD2DBDC763F4BB /* Pods-DefeatAlgebraJ.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1281,7 +1297,7 @@
 		};
 		20E9E8E920223B1400D31410 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DBDB0737568311D4D4E3C5F0 /* Pods-DefeatAlgebra.release.xcconfig */;
+			baseConfigurationReference = 791C414F595433E4F872989D /* Pods-DefeatAlgebraJ.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = T2HM3LUVY9;
