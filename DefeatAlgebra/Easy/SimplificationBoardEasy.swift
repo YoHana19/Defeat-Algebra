@@ -18,6 +18,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         }
     }
     
+    var originLabel: SKLabelNode!
     var createdLabel: SKLabelNode!
     var variableExpression: String = "" {
         didSet {
@@ -68,6 +69,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Set buttons */
         setButtons()
+        setOriginalVE()
         
     }
     
@@ -88,7 +90,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         /* Touch button x */
         if nodeAtPoint.name == "inputX" {
             /* Display variable expression */
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -100,7 +102,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         /* Touch button 0 */
         if nodeAtPoint.name == "input0" {
             /* Display variable expression */
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -112,7 +114,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         /* Touch button 1 */
         if nodeAtPoint.name == "input1" {
             /* Display variable expression */
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -123,7 +125,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button 2 */
         if nodeAtPoint.name == "input2" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -134,7 +136,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button 3 */
         if nodeAtPoint.name == "input3" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -146,7 +148,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         /* Touch button 4 */
         if nodeAtPoint.name == "input4" {
             /* Display variable expression */
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -158,7 +160,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         /* Touch button 5 */
         if nodeAtPoint.name == "input5" {
             /* Display variable expression */
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -169,7 +171,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button 6 */
         if nodeAtPoint.name == "input6" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -180,7 +182,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button 7 */
         if nodeAtPoint.name == "input7" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -191,7 +193,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button 8 */
         if nodeAtPoint.name == "input8" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -202,7 +204,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button 9 */
         if nodeAtPoint.name == "input9" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -213,7 +215,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button + */
         if nodeAtPoint.name == "input+" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -224,7 +226,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button - */
         if nodeAtPoint.name == "input-" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -243,7 +245,7 @@ class SimplificationBoardEasy: SKSpriteNode {
         
         /* Touch button Fire */
         if nodeAtPoint.name == "inputOk" {
-            if variableExpression.characters.count > 6 {
+            if variableExpression.count > 6 {
                 invalidNote.isHidden = false
                 dismissButton.isHidden = false
                 errorFlag = true
@@ -274,10 +276,12 @@ class SimplificationBoardEasy: SKSpriteNode {
             variableExpression = ""
         }
         
-        /* Touch dismiss button */
+        /* Touch back button */
         if nodeAtPoint.name == "backButton" {
             variableExpression = ""
+            originLabel.text = ""
             self.isActive = false
+            gameSceneEasy.boardActiveFlag = false
         }
     }
     
@@ -384,10 +388,10 @@ class SimplificationBoardEasy: SKSpriteNode {
         addChild(buttonFire)
     }
     
-    func setOriginalVE(vE: String) {
+    func setOriginalVE() {
         /* Set original variable expression label */
-        let originLabel = SKLabelNode(fontNamed: "GillSans-Bold")
-        originLabel.text = vE
+        originLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        originLabel.text = ""
         originLabel.fontSize = 96
         originLabel.position = CGPoint(x: 0, y: 180)
         originLabel.zPosition = 3

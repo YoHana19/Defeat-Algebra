@@ -450,6 +450,7 @@ class EnemyEasy: SKSpriteNode {
         /* Add to Scene */
         self.addChild(label)
         
+        /*
         /* Edit button if needed */
         if variableExpression.count >= 5 {
             let editButton = SKSpriteNode(imageNamed: "editButton")
@@ -459,6 +460,7 @@ class EnemyEasy: SKSpriteNode {
             editButton.zPosition = 5
             addChild(editButton)
         }
+        */
     }
     
     func makeTriangle() {

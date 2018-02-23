@@ -100,7 +100,7 @@ class GridEasy: SKSpriteNode {
         let gameSceneEasy = self.parent as! GameSceneEasy
         
         guard gameSceneEasy.pauseFlag == false else { return }
-        
+        guard gameSceneEasy.boardActiveFlag == false else { return }
         guard gameSceneEasy.gameState == .PlayerTurn else { return }
         
         /* Get touch point */
@@ -134,6 +134,7 @@ class GridEasy: SKSpriteNode {
             }
         }
         
+        /*
         /* Touch enemy to check variable expression */
         if touchingEnemyFlag == false {
             if nodeAtPoint.name == "enemy" {
@@ -146,17 +147,20 @@ class GridEasy: SKSpriteNode {
                 touchedEnemy.physicsBody = nil
             }
         }
+        */
         
         /* Touch edit button to edit variable expression */
-        if nodeAtPoint.name == "editButton" {
+        if nodeAtPoint.name == "enemy" {
             /* Get enemy to edit */
-            editedEnemy = nodeAtPoint.parent as! EnemyEasy
+            editedEnemy = nodeAtPoint as! EnemyEasy
             
             /* Set enemy's original variable expression */
-            gameSceneEasy.simplificationBoard.setOriginalVE(vE: editedEnemy.originVariableExpression)
+            gameSceneEasy.simplificationBoard.originLabel.text = editedEnemy.originVariableExpression
             
             /* Make simplification board visible */
             gameSceneEasy.simplificationBoard.isActive = true
+            
+            gameSceneEasy.boardActiveFlag = true
         }
     }
     
@@ -220,11 +224,13 @@ class GridEasy: SKSpriteNode {
                 rePosEnemy(enemy: touchedEnemy)
                 touchingEnemyFlag = false
             }
-            
+         
+        /*
         } else if nodeAtPoint.name == "enemy" {
             if touchingEnemyFlag {
                 touchedEnemy.position = location
             }
+        */
         } else {
             directionJudgeDoneFlag = false
             resetMovePath()
@@ -244,11 +250,13 @@ class GridEasy: SKSpriteNode {
         guard gameSceneEasy.pauseFlag == false else { return }
         guard gameSceneEasy.gameState == .PlayerTurn else { return }
         
+        /*
         /* Reset enemy position after checking variable expression */
         if touchingEnemyFlag {
             rePosEnemy(enemy: touchedEnemy)
             touchingEnemyFlag = false
         }
+        */
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
