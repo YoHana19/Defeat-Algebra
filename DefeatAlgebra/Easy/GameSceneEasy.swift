@@ -57,6 +57,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     var bottomGap: CGFloat = 0.0  /* the length between castle and grid */
     /* Game Management */
     var pauseFlag = false
+    var boardActiveFlag = false
     /* Game Speed */
     let turnEndWait: TimeInterval = 1.0
     let phaseLabelTime: TimeInterval = 0.3
@@ -358,7 +359,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
         initialEnemyPosArrayForUnS = EnemyProperty.initialEnemyPosArrayForUnS[GameSceneEasy.stageLevel]
         EnemyProperty.getNumOfAllEnemy(stageLevel: GameSceneEasy.stageLevel) { num in
             self.totalNumOfEnemy = num
-            print(self.totalNumOfEnemy)
+            //print(self.totalNumOfEnemy)
         }
         
         /* Set active area for catapult */
@@ -937,6 +938,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         guard pauseFlag == false else { return }
+        guard boardActiveFlag == false else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
