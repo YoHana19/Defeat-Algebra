@@ -938,6 +938,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         guard pauseFlag == false else { return }
+        guard boardActiveFlag == false else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch

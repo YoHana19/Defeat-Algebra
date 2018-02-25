@@ -254,17 +254,21 @@ class SimplificationBoardEasy: SKSpriteNode {
                 let selectingEnemy = gameSceneEasy.gridNode.editedEnemy
                 
                 /* Edit selecting enemy's variable expression */
-                selectingEnemy.variableExpressionForLabel = self.variableExpression
+                selectingEnemy.variableExpressionString = self.variableExpression
                 
                 /* Rewrite enemy's variable expression */
                 selectingEnemy.removeAllChildren()
-                selectingEnemy.setVariableExpressionLabel(text: selectingEnemy.variableExpressionForLabel)
+                EnemyVEController.setVariableExpressionLabel(enemy: selectingEnemy, vEString: self.variableExpression) { label in
+                    selectingEnemy.setVariableExpressionLabel(text: label)
+                }
                 
                 /* Hide simplification board */
                 self.isActive = false
+                gameSceneEasy.boardActiveFlag = false
                 
                 /* Reset input variable expresion */
                 self.variableExpression = ""
+                
             }
         }
         

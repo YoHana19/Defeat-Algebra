@@ -966,11 +966,8 @@ class GridEasy: SKSpriteNode {
         /* Get gameSceneEasy */
         let gameSceneEasy = self.parent as! GameSceneEasy
         
-        /* Attach variable expression */
-        enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
-        
         /* Store variable expression as origin */
-        enemy.originVariableExpression = enemy.variableExpressionForLabel
+        enemy.originVariableExpression = enemy.variableExpressionString
         
         /* Set direction of enemy */
         enemy.direction = .front
