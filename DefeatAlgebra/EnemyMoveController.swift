@@ -98,4 +98,93 @@ class EnemyMoveController {
             }
         }
     }
+    
+    static func moveDuplicatedEnemies(enemiesArray: [EnemyEasy], exsist: @escaping (Bool) -> Void) {
+        getDuplicatedEnemies(enemiesArray: enemiesArray) { dupliDict in
+            if dupliDict.count > 0 {
+                for dupli in dupliDict {
+                    moveDuplicatedEnemy(enemiesArray: enemiesArray, num: dupli.value, posString: dupli.key)
+                }
+                exsist(true)
+            } else {
+                exsist(false)
+            }
+        }
+    }
+    
+    private static func moveDuplicatedEnemy(enemiesArray: [EnemyEasy], num: Int, posString: String) {
+        let pos: [String] = posString.components(separatedBy: "_")
+        let dupliEnemies = enemiesArray.filter{ $0.positionX == Int(pos[0]) && $0.positionY == Int(pos[1]) }
+        switch num {
+        case 2:
+            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].position.x+20, y: dupliEnemies[0].position.y+20)
+            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].position.x-20, y: dupliEnemies[1].position.y-20)
+            break;
+        case 3:
+            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].position.x+15, y: dupliEnemies[0].position.y+25)
+            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].position.x-20, y: dupliEnemies[1].position.y-15)
+            dupliEnemies[2].position = CGPoint(x:dupliEnemies[2].position.x+25, y: dupliEnemies[2].position.y-25)
+            break;
+        case 4:
+            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].position.x+20, y: dupliEnemies[0].position.y+20)
+            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].position.x-20, y: dupliEnemies[1].position.y-20)
+            dupliEnemies[2].position = CGPoint(x:dupliEnemies[2].position.x-20, y: dupliEnemies[2].position.y+20)
+            dupliEnemies[3].position = CGPoint(x:dupliEnemies[3].position.x+20, y: dupliEnemies[3].position.y-20)
+            break;
+        default:
+            print("so many duplicated enemy !!!")
+            break;
+        }
+    }
+    
+    private static func getDuplicatedEnemies(enemiesArray: [EnemyEasy], completion: @escaping ([String: Int]) -> Void) {
+        var result = [String: Int]()
+        var temp = [String]()
+        
+        let dispatchGroup = DispatchGroup()
+        updateEnemyPosition(enemiesArray: enemiesArray) { enemyPos in
+            for i in enemyPos {
+                dispatchGroup.enter()
+                if temp.contains(i) {
+                    if let v = result[i] {
+                        result[i] = v+1
+                        dispatchGroup.leave()
+                    } else {
+                        result[i] = 2
+                        dispatchGroup.leave()
+                    }
+                } else {
+                    temp.append(i)
+                    dispatchGroup.leave()
+                }
+            }
+            dispatchGroup.notify(queue: .main, execute: {
+                completion(result)
+            })
+        }
+    }
+    
+    private static func updateEnemyPosition(enemiesArray: [EnemyEasy], completion: @escaping ([String]) -> Void) {
+        var enemyPos = [String]()
+        let dispatchGroup = DispatchGroup()
+        for enemy in enemiesArray {
+            dispatchGroup.enter()
+            let posString = String(enemy.positionX) + "_" + String(enemy.positionY)
+            enemyPos.append(posString)
+            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            completion(enemyPos)
+        })
+    }
+    
+    static func rePosEnemies(enemiesArray: [EnemyEasy], gridNode: GridEasy) {
+        for enemy in enemiesArray {
+            rePosEnemy(enemy: enemy, gridNode: gridNode)
+        }
+    }
+    
+    private static func rePosEnemy(enemy: EnemyEasy, gridNode: GridEasy) {
+        enemy.position = CGPoint(x: CGFloat((Double(enemy.positionX)+0.5)*gridNode.cellWidth), y: CGFloat((Double(enemy.positionY)+0.5)*gridNode.cellHeight))
+    }
 }

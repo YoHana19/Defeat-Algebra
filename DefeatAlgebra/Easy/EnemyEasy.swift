@@ -820,11 +820,11 @@ class EnemyEasy: SKSpriteNode {
     
     /*== For Magic Sword ==*/
     /* Put color to enemy */
-    func colorizeEnemy() {
-        self.run(SKAction.colorize(with: UIColor.purple, colorBlendFactor: 0.6, duration: 0.50))
+    func colorizeEnemy(color: UIColor) {
+        self.run(SKAction.colorize(with: color, colorBlendFactor: 0.6, duration: 0.50))
     }
     
-    func resetColorizeEnemy() {
-        self.run(SKAction.colorize(with: UIColor.purple, colorBlendFactor: 0, duration: 0.50))
+    func resetColorizeEnemy(color: UIColor) {
+        self.run(SKAction.colorize(with: color, colorBlendFactor: 0, duration: 0.50))
     }
 }
