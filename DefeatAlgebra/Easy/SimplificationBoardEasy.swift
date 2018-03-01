@@ -243,7 +243,7 @@ class SimplificationBoardEasy: SKSpriteNode {
             variableExpression = ""
         }
         
-        /* Touch button Fire */
+        /* Touch button OK */
         if nodeAtPoint.name == "inputOk" {
             if variableExpression.count > 6 {
                 invalidNote.isHidden = false
@@ -260,6 +260,12 @@ class SimplificationBoardEasy: SKSpriteNode {
                 selectingEnemy.removeAllChildren()
                 EnemyVEController.setVariableExpressionLabel(enemy: selectingEnemy, vEString: self.variableExpression) { label in
                     selectingEnemy.setVariableExpressionLabel(text: label)
+                }
+                
+                /* Reset color if input variable expression is correct */
+                if EnemyProperty.judgeCorrectVe(origin: selectingEnemy.originVariableExpression, input: self.variableExpression) {
+                    selectingEnemy.resetColorizeEnemy()
+                    selectingEnemy.enemyLife = 0
                 }
                 
                 /* Hide simplification board */

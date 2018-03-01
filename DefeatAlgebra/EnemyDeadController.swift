@@ -7,8 +7,36 @@
 //
 
 import Foundation
+import SpriteKit
 
 class EnemyDeadController {
+    static func hitEnemy(enemy: EnemyEasy, gameScene: GameSceneEasy) {
+        if enemy.enemyLife > 0 {
+            enemy.enemyLife -= 1
+            enemy.resetColorizeEnemy()
+        } else {
+            /* Effect */
+            gameScene.gridNode.enemyDestroyEffect(enemy: enemy)
+            
+            /* Enemy */
+            let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+            let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
+            gameScene.run(seqEnemy)
+            enemy.aliveFlag = false
+            /* Count defeated enemy */
+            gameScene.totalNumOfEnemy -= 1
+            
+            /* If you killed origin enemy */
+            if enemy.forEduOriginFlag {
+                EnemyDeadController.originEnemyDead(origin: enemy, gridNode: gameScene.gridNode)
+                /* If you killed branch enemy */
+            } else if enemy.forEduBranchFlag {
+                EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: gameScene.gridNode)
+            }
+        }
+    }
+    
     static func originEnemyDead(origin: EnemyEasy, gridNode: GridEasy) {
         if let branch = gridNode.enemySUPairDict[origin] {
             branch.forEduBranchFlag = false

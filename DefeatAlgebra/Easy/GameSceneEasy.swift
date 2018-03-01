@@ -102,6 +102,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     var countTurnForAddEnemy: Int = -1
     var CompAddEnemyFlag = false
     var addEnemyDoneFlag = false
+    var dupliExsist = false
     
     /*== Enemy Turn management ==*/
     var enemyTurnDoneFlag = false
@@ -142,6 +143,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     var selectedCatapult = Catapult()
     /* Magic sword */
     var magicSwordAttackDone = false
+    var usingMagicSword = false
     /* timeBomb */
     var timeBombDoneFlag = false
     /* Wall */
@@ -551,29 +553,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                             for enemy in self.gridNode.enemyArray {
                                 /* Hit enemy! */
                                 if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                                    if enemy.enemyLife > 0 {
-                                        enemy.enemyLife -= 1
-                                    } else {
-                                        /* Effect */
-                                        self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                        
-                                        /* Enemy */
-                                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                        self.run(seqEnemy)
-                                        enemy.aliveFlag = false
-                                        /* Count defeated enemy */
-                                        totalNumOfEnemy -= 1
-                                        
-                                        /* If you killed origin enemy */
-                                        if enemy.forEduOriginFlag {
-                                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                                            /* If you killed branch enemy */
-                                        } else if enemy.forEduBranchFlag {
-                                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
-                                        }
-                                    }
+                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
                                 }
                             }
                             if i == self.gridNode.timeBombSetArray.count-1 {
@@ -778,6 +758,11 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     gridNode.enemyArray[0].myTurnFlag = true
                 }
                 
+                if dupliExsist {
+                    dupliExsist = false
+                    EnemyMoveController.rePosEnemies(enemiesArray: gridNode.enemyArray, gridNode: gridNode)
+                }
+                
                 /* Display enemy phase label */
                 if enemyPhaseLabelDoneFlag == false {
                     enemyPhaseLabelDoneFlag = true
@@ -845,6 +830,9 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 
                 /* Update enemy position */
                 gridNode.updateEnemyPositon()
+                EnemyMoveController.moveDuplicatedEnemies(enemiesArray: gridNode.enemyArray) { exsist in
+                    self.dupliExsist = exsist
+                }
                 
                 /* Check if enemy reach to castle */
                 for enemy in self.gridNode.enemyArray {
@@ -1150,21 +1138,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                         /* Look for the enemy to destroy */
                         for enemy in self.gridNode.enemyArray {
                             if enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.2 || enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.3 || enemy.positionX == hitSpotArray.0 && enemy.positionY == self.activeHero.positionY || enemy.positionX == hitSpotArray.1 && enemy.positionY == self.activeHero.positionY {
-                                if enemy.enemyLife > 0 {
-                                    enemy.enemyLife -= 1
-                                } else {
-                                    /* Effect */
-                                    self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                    
-                                    /* Enemy */
-                                    let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                    let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                    self.run(seqEnemy)
-                                    enemy.aliveFlag = false
-                                    /* Count defeated enemy */
-                                    self.totalNumOfEnemy -= 1
-                                }
+                                EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
                             }
                         }
                     })
@@ -1229,6 +1203,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 
                 /* Set timeBomb using state */
                 itemType = .MagicSword
+                usingMagicSword = true
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
@@ -1471,8 +1446,15 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 removeMagicSowrdEffect()
                 
                 /* Reset color of enemy for magic sword */
-                for enemy in self.gridNode.enemyArray {
-                    enemy.resetColorizeEnemy()
+                if usingMagicSword {
+                    usingMagicSword = false
+                    for enemy in self.gridNode.enemyArray {
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
+                    }
                 }
                 
                 /* Remove variable expression display for magic sword */
@@ -1900,29 +1882,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     /* bullet hit enemy */
                 } else if contactA.node?.name == "bullet" {
                     let enemy = contactB.node as! EnemyEasy
-                    if enemy.enemyLife > 0 {
-                        enemy.enemyLife -= 1
-                    } else {
-                        /* Effect */
-                        self.gridNode.enemyDestroyEffect(enemy: enemy)
-                        
-                        /* Enemy */
-                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                        self.run(seqEnemy)
-                        enemy.aliveFlag = false
-                        /* Count defeated enemy */
-                        totalNumOfEnemy -= 1
-                        
-                        /* If you killed origin enemy */
-                        if enemy.forEduOriginFlag {
-                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                            /* If you killed branch enemy */
-                        } else if enemy.forEduBranchFlag {
-                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
-                        }
-                    }
+                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
                 }
                 
             }
@@ -2002,30 +1962,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     /* Bullet hit enemy */
                 } else if contactB.node?.name == "bullet" {
                     let enemy = contactA.node as! EnemyEasy
-                    if enemy.enemyLife > 0 {
-                        enemy.enemyLife -= 1
-                    } else {
-                        /* Effect */
-                        self.gridNode.enemyDestroyEffect(enemy: enemy)
-                        
-                        /* Enemy */
-                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                        self.run(seqEnemy)
-                        enemy.aliveFlag = false
-                        
-                        /* Count defeated enemy */
-                        totalNumOfEnemy -= 1
-                        
-                        /* If you killed origin enemy */
-                        if enemy.forEduOriginFlag {
-                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                            /* If you killed branch enemy */
-                        } else if enemy.forEduBranchFlag {
-                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
-                        }
-                    }
+                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
                 }
             }
         }
@@ -2351,29 +2288,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                     for enemy in self.gridNode.enemyArray {
                         /* Hit enemy! */
                         if enemy.positionX == setCatapult.xPos && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos-1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos+1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos && enemy.positionY == value || enemy.positionX == setCatapult.xPos && enemy.positionY == value-2 {
-                            if enemy.enemyLife > 0 {
-                                enemy.enemyLife -= 1
-                            } else {
-                                /* Effect */
-                                self.gridNode.enemyDestroyEffect(enemy: enemy)
-                                
-                                /* Enemy */
-                                let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                self.run(seqEnemy)
-                                enemy.aliveFlag = false
-                                /* Count defeated enemy */
-                                self.totalNumOfEnemy -= 1
-                                
-                                /* If you killed origin enemy */
-                                if enemy.forEduOriginFlag {
-                                    EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self.gridNode)
-                                    /* If you killed branch enemy */
-                                } else if enemy.forEduBranchFlag {
-                                    EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self.gridNode)
-                                }
-                            }
+                            EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
                         }
                     }
                 })

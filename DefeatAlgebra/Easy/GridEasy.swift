@@ -31,6 +31,7 @@ class GridEasy: SKSpriteNode {
     var enemyArray = [EnemyEasy]()
     var enemySUPairDict = [EnemyEasy: EnemyEasy]()
     var positionEnemyAtGrid = [[Bool]]()
+    var currentPositionOfEnemies = [[Int]]()
     var numOfTurnEndEnemy = 0
     var turnIndex = 0
     var startPosArray = [0, 1, 2, 3, 4, 5, 6, 7, 8]
@@ -149,18 +150,20 @@ class GridEasy: SKSpriteNode {
         }
         */
         
-        /* Touch edit button to edit variable expression */
-        if nodeAtPoint.name == "enemy" {
-            /* Get enemy to edit */
-            editedEnemy = nodeAtPoint as! EnemyEasy
-            
-            /* Set enemy's original variable expression */
-            gameSceneEasy.simplificationBoard.originLabel.text = editedEnemy.originVariableExpression
-            
-            /* Make simplification board visible */
-            gameSceneEasy.simplificationBoard.isActive = true
-            
-            gameSceneEasy.boardActiveFlag = true
+        /* Touch enemy to edit variable expression */
+        if !gameSceneEasy.usingMagicSword {
+            if nodeAtPoint.name == "enemy" {
+                /* Get enemy to edit */
+                editedEnemy = nodeAtPoint as! EnemyEasy
+                
+                /* Set enemy's original variable expression */
+                gameSceneEasy.simplificationBoard.originLabel.text = editedEnemy.originVariableExpression
+                
+                /* Make simplification board visible */
+                gameSceneEasy.simplificationBoard.isActive = true
+                
+                gameSceneEasy.boardActiveFlag = true
+            }
         }
     }
     
@@ -348,29 +351,7 @@ class GridEasy: SKSpriteNode {
                             /* Look for the enemy to destroy */
                             for enemy in self.enemyArray {
                                 if enemy.positionX == gridX && enemy.positionY == gridY {
-                                    if enemy.enemyLife > 0 {
-                                        enemy.enemyLife -= 1
-                                    } else {
-                                        /* Effect */
-                                        self.enemyDestroyEffect(enemy: enemy)
-                                        
-                                        /* Enemy */
-                                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                        self.run(seqEnemy)
-                                        enemy.aliveFlag = false
-                                        /* Count defeated enemy */
-                                        gameSceneEasy.totalNumOfEnemy -= 1
-                                        
-                                        /* If you killed origin enemy */
-                                        if enemy.forEduOriginFlag {
-                                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self)
-                                            /* If you killed branch enemy */
-                                        } else if enemy.forEduBranchFlag {
-                                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self)
-                                        }
-                                    }
+                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameSceneEasy)
                                 }
                             }
                         })
@@ -390,29 +371,7 @@ class GridEasy: SKSpriteNode {
                             /* Look for the enemy to destroy */
                             for enemy in self.enemyArray {
                                 if enemy.positionX == hitSpots.0[0] && enemy.positionY == hitSpots.0[1] || enemy.positionX == hitSpots.1[0] && enemy.positionY == hitSpots.1[1] {
-                                    if enemy.enemyLife > 0 {
-                                        enemy.enemyLife -= 1
-                                    } else {
-                                        /* Effect */
-                                        self.enemyDestroyEffect(enemy: enemy)
-                                        
-                                        /* Enemy */
-                                        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-                                        let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                                        let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-                                        self.run(seqEnemy)
-                                        enemy.aliveFlag = false
-                                        /* Count defeated enemy */
-                                        gameSceneEasy.totalNumOfEnemy -= 1
-                                        
-                                        /* If you killed origin enemy */
-                                        if enemy.forEduOriginFlag {
-                                            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: self)
-                                            /* If you killed branch enemy */
-                                        } else if enemy.forEduBranchFlag {
-                                            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: self)
-                                        }
-                                    }
+                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameSceneEasy)
                                 }
                             }
                         })
@@ -447,8 +406,14 @@ class GridEasy: SKSpriteNode {
                 gameSceneEasy.magicSwordAttackDone = false
                 
                 /* Reset color of enemy */
-                for enemy in self.enemyArray {
-                    enemy.resetColorizeEnemy()
+                if gameSceneEasy.usingMagicSword {
+                    for enemy in self.enemyArray {
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
+                    }
                 }
                 
                 /* Remove variable expression display */
@@ -547,7 +512,7 @@ class GridEasy: SKSpriteNode {
                         let removeEnemy = SKAction.run({
                             /* Look for the enemy to destroy */
                             for enemy in self.enemyArray {
-                                enemy.colorizeEnemy()
+                                enemy.colorizeEnemy(color: UIColor.purple)
                                 if enemy.positionX == gridX && enemy.positionY == gridY {
                                     /* Make sure to call only once in case attacking more than two enemies */
                                     if self.castEnemyDone == false {
@@ -603,6 +568,7 @@ class GridEasy: SKSpriteNode {
                     } else {
                         /* Reset item type */
                         gameSceneEasy.itemType = .None
+                        gameSceneEasy.usingMagicSword = false
                         
                         let waitAni = SKAction.wait(forDuration: 1.0)
                         let backState = SKAction.run({
@@ -678,6 +644,7 @@ class GridEasy: SKSpriteNode {
                 let enemy = nodeAtPoint as! EnemyEasy
                 
                 guard gameSceneEasy.magicSwordAttackDone else { return }
+                guard gameSceneEasy.usingMagicSword else { return }
                 
                 if enemy.vECategory == vEindex {
                     /* Effect */
@@ -706,9 +673,6 @@ class GridEasy: SKSpriteNode {
                     
                 /* Touch wrong enemy */
                 } else {
-                    
-                    guard gameSceneEasy.magicSwordAttackDone else { return }
-                    
                     /* Reset hero */
                     gameSceneEasy.activeHero.resetHero()
                     /* Remove effect */
@@ -718,9 +682,14 @@ class GridEasy: SKSpriteNode {
                     /* Reset item type */
                     gameSceneEasy.itemType = .None
                     gameSceneEasy.magicSwordAttackDone = false
+                    gameSceneEasy.usingMagicSword = false
                     /* Reset color of enemy */
                     for enemy in self.enemyArray {
-                        enemy.resetColorizeEnemy()
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
                     }
                     /* Remove variable expression display */
                     gameSceneEasy.activeHero.removeMagicSwordVE()
@@ -728,7 +697,7 @@ class GridEasy: SKSpriteNode {
                     castEnemyDone = false
                 }
                 
-            /* Touch ends on anywhere but active area or enemy */
+            /* Touch ends on anywhere except active area or enemy */
             } else {
                 
                 /* Make sure to be invalid when using catpult */
@@ -749,8 +718,15 @@ class GridEasy: SKSpriteNode {
                 gameSceneEasy.magicSwordAttackDone = false
                 
                 /* Reset color of enemy */
-                for enemy in self.enemyArray {
-                    enemy.resetColorizeEnemy()
+                if gameSceneEasy.usingMagicSword {
+                    gameSceneEasy.usingMagicSword = false
+                    for enemy in self.enemyArray {
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
+                    }
                 }
                 
                 /* Remove variable expression display */
@@ -865,6 +841,7 @@ class GridEasy: SKSpriteNode {
             
             if GameSceneEasy.stageLevel > 6 {
                 enemy.enemyLife = 1
+                enemy.colorizeEnemy(color: UIColor.green)
             }
                 
             /* set adding enemy movement */

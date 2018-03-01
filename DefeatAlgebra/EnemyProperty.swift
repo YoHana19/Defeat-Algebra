@@ -29,7 +29,7 @@ class EnemyProperty {
     /* 1st element decides which is coefficiet or constant term, last elment indicates equivarence of variable expression */
     /* 1st element 0:x+1, 1:1+x, 2:1×x, 3:x×1, 4:2x-1, 5:3-x, 6:X+1+2;2x-3+1, 7:2+1-x, 8:x+x+1;2x-x;x+x-1, 9:x+x+2+1 */
     /* 8th: 01origin, 9th: 45origin, 10th: 01to6, 11th: 45to67, 12th: 01to8, 13th: 45to8, 14th: 01to9, 15th: 45to9 */
-    // not using
+    /* not using
     static let variableExpressionSource = [
         [[0, 1, 0, 0], [0, 2, 0, 4], [0, 1, 1, 1], [0, 2, 1, 7], [0, 2, 2, 9], [0, 3, 1, 8], [2, 1, 0, 0], [2, 2, 0, 4], [3, 1, 0, 0], [3, 2, 0, 4], [1, 1, 1, 1], [1, 2, 1, 7], [1, 2, 2, 9], [1, 3, 1, 8]],
         [[0, 1, 0, 0], [0, 2, 0, 4], [0, 3, 0, 5], [0, 1, 1, 1], [0, 2, 1, 7], [0, 3, 1, 8], [0, 1, 2, 2], [0, 2, 2, 9], [0, 3, 2, 10]],
@@ -41,6 +41,7 @@ class EnemyProperty {
         [[9, 1, 0, 0], [9, 2, 0, 4], [9, 3, 0, 5], [9, 1, 1, 1], [9, 2, 1, 7], [9, 3, 1, 8], [9, 1, 2, 2], [9, 2, 2, 9], [9, 3, 2, 10]],
         [[9, 2, -1, 11], [9, 3, -1, 12], [9, 3, -2, 13], [9, -1, 4, 14], [9, -2, 7, 15], [9, -2, 8, 16]]
     ]
+    */
     
     static let simplifiedVariableExpressionSource: [[[Int]]] = [
         [[0, 1, 0, 0]], //1
@@ -84,6 +85,19 @@ class EnemyProperty {
         [], //6
         [], //7
         ["x+1-1", "2+x-2", "x+2-1", "2+x-1", "2x-2+2", "1+2x-1", "2x-1+2", "3-2+2x"] //8
+    ]
+    
+    static func judgeCorrectVe(origin: String, input: String) -> Bool {
+        if let cand = vELabelPairDict[origin] {
+            let result = cand.contains(input)
+            return result
+        } else {
+            return false
+        }
+    }
+    
+    private static let vELabelPairDict: [String: [String]] = [
+        "x+1-1": ["x"], "2+x-2": ["x"], "x+2-1": ["x+1", "1+x"], "2+x-1": ["x+1", "1+x"], "2x-2+2": ["2x"], "1+2x-1": ["2x"], "2x-1+2": ["2x+1", "1+2x"], "3-2+2x": ["2x+1", "1+2x"]
     ]
     
     static let addEnemyManager = [
