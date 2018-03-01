@@ -13,7 +13,7 @@ class EnemyDeadController {
     static func hitEnemy(enemy: EnemyEasy, gameScene: GameSceneEasy) {
         if enemy.enemyLife > 0 {
             enemy.enemyLife -= 1
-            enemy.resetColorizeEnemy(color: UIColor.green)
+            enemy.resetColorizeEnemy()
         } else {
             /* Effect */
             gameScene.gridNode.enemyDestroyEffect(enemy: enemy)

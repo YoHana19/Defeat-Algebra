@@ -143,6 +143,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
     var selectedCatapult = Catapult()
     /* Magic sword */
     var magicSwordAttackDone = false
+    var usingMagicSword = false
     /* timeBomb */
     var timeBombDoneFlag = false
     /* Wall */
@@ -1202,6 +1203,7 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 
                 /* Set timeBomb using state */
                 itemType = .MagicSword
+                usingMagicSword = true
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
@@ -1444,8 +1446,15 @@ class GameSceneEasy: SKScene, SKPhysicsContactDelegate {
                 removeMagicSowrdEffect()
                 
                 /* Reset color of enemy for magic sword */
-                for enemy in self.gridNode.enemyArray {
-                    enemy.resetColorizeEnemy(color: UIColor.purple)
+                if usingMagicSword {
+                    usingMagicSword = false
+                    for enemy in self.gridNode.enemyArray {
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
+                    }
                 }
                 
                 /* Remove variable expression display for magic sword */

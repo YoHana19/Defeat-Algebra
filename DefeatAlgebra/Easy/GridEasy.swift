@@ -150,18 +150,20 @@ class GridEasy: SKSpriteNode {
         }
         */
         
-        /* Touch edit button to edit variable expression */
-        if nodeAtPoint.name == "enemy" {
-            /* Get enemy to edit */
-            editedEnemy = nodeAtPoint as! EnemyEasy
-            
-            /* Set enemy's original variable expression */
-            gameSceneEasy.simplificationBoard.originLabel.text = editedEnemy.originVariableExpression
-            
-            /* Make simplification board visible */
-            gameSceneEasy.simplificationBoard.isActive = true
-            
-            gameSceneEasy.boardActiveFlag = true
+        /* Touch enemy to edit variable expression */
+        if !gameSceneEasy.usingMagicSword {
+            if nodeAtPoint.name == "enemy" {
+                /* Get enemy to edit */
+                editedEnemy = nodeAtPoint as! EnemyEasy
+                
+                /* Set enemy's original variable expression */
+                gameSceneEasy.simplificationBoard.originLabel.text = editedEnemy.originVariableExpression
+                
+                /* Make simplification board visible */
+                gameSceneEasy.simplificationBoard.isActive = true
+                
+                gameSceneEasy.boardActiveFlag = true
+            }
         }
     }
     
@@ -404,8 +406,14 @@ class GridEasy: SKSpriteNode {
                 gameSceneEasy.magicSwordAttackDone = false
                 
                 /* Reset color of enemy */
-                for enemy in self.enemyArray {
-                    enemy.resetColorizeEnemy(color: UIColor.purple)
+                if gameSceneEasy.usingMagicSword {
+                    for enemy in self.enemyArray {
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
+                    }
                 }
                 
                 /* Remove variable expression display */
@@ -560,6 +568,7 @@ class GridEasy: SKSpriteNode {
                     } else {
                         /* Reset item type */
                         gameSceneEasy.itemType = .None
+                        gameSceneEasy.usingMagicSword = false
                         
                         let waitAni = SKAction.wait(forDuration: 1.0)
                         let backState = SKAction.run({
@@ -635,6 +644,7 @@ class GridEasy: SKSpriteNode {
                 let enemy = nodeAtPoint as! EnemyEasy
                 
                 guard gameSceneEasy.magicSwordAttackDone else { return }
+                guard gameSceneEasy.usingMagicSword else { return }
                 
                 if enemy.vECategory == vEindex {
                     /* Effect */
@@ -663,9 +673,6 @@ class GridEasy: SKSpriteNode {
                     
                 /* Touch wrong enemy */
                 } else {
-                    
-                    guard gameSceneEasy.magicSwordAttackDone else { return }
-                    
                     /* Reset hero */
                     gameSceneEasy.activeHero.resetHero()
                     /* Remove effect */
@@ -675,9 +682,14 @@ class GridEasy: SKSpriteNode {
                     /* Reset item type */
                     gameSceneEasy.itemType = .None
                     gameSceneEasy.magicSwordAttackDone = false
+                    gameSceneEasy.usingMagicSword = false
                     /* Reset color of enemy */
                     for enemy in self.enemyArray {
-                        enemy.resetColorizeEnemy(color: UIColor.purple)
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
                     }
                     /* Remove variable expression display */
                     gameSceneEasy.activeHero.removeMagicSwordVE()
@@ -685,7 +697,7 @@ class GridEasy: SKSpriteNode {
                     castEnemyDone = false
                 }
                 
-            /* Touch ends on anywhere but active area or enemy */
+            /* Touch ends on anywhere except active area or enemy */
             } else {
                 
                 /* Make sure to be invalid when using catpult */
@@ -706,8 +718,15 @@ class GridEasy: SKSpriteNode {
                 gameSceneEasy.magicSwordAttackDone = false
                 
                 /* Reset color of enemy */
-                for enemy in self.enemyArray {
-                    enemy.resetColorizeEnemy(color: UIColor.purple)
+                if gameSceneEasy.usingMagicSword {
+                    gameSceneEasy.usingMagicSword = false
+                    for enemy in self.enemyArray {
+                        if enemy.enemyLife > 0 {
+                            enemy.colorizeEnemy(color: UIColor.green)
+                        } else {
+                            enemy.resetColorizeEnemy()
+                        }
+                    }
                 }
                 
                 /* Remove variable expression display */
