@@ -95,6 +95,14 @@
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
 		204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
 		204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
+		205A0ECF2079EDBC006A44A6 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205A0ECE2079EDBC006A44A6 /* Login.storyboard */; };
+		205A0ED02079EDBC006A44A6 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205A0ECE2079EDBC006A44A6 /* Login.storyboard */; };
+		205A0ED22079EE0D006A44A6 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED12079EE0D006A44A6 /* LoginViewController.swift */; };
+		205A0ED32079EE0D006A44A6 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED12079EE0D006A44A6 /* LoginViewController.swift */; };
+		205A0ED6207A0D58006A44A6 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED5207A0D58006A44A6 /* LoginService.swift */; };
+		205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED5207A0D58006A44A6 /* LoginService.swift */; };
+		205A0EDA207A0ECB006A44A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED9207A0ECB006A44A6 /* User.swift */; };
+		205A0EDB207A0ECB006A44A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED9207A0ECB006A44A6 /* User.swift */; };
 		208C5D53202348290006ADE4 /* EnemyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D52202348290006ADE4 /* EnemyProperty.swift */; };
 		208C5D54202348290006ADE4 /* EnemyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D52202348290006ADE4 /* EnemyProperty.swift */; };
 		208C5D57202384FE0006ADE4 /* DAUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D56202384FE0006ADE4 /* DAUtility.swift */; };
@@ -295,6 +303,10 @@
 		204C7D901F074FE800F4DD11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204C7D931F074FE800F4DD11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		205A0ECE2079EDBC006A44A6 /* Login.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
+		205A0ED12079EE0D006A44A6 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		205A0ED5207A0D58006A44A6 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
+		205A0ED9207A0ECB006A44A6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		208C5D52202348290006ADE4 /* EnemyProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyProperty.swift; sourceTree = "<group>"; };
 		208C5D56202384FE0006ADE4 /* DAUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAUtility.swift; sourceTree = "<group>"; };
 		208C5D59202420690006ADE4 /* EnemyMoveController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyMoveController.swift; sourceTree = "<group>"; };
@@ -516,6 +528,7 @@
 			children = (
 				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
 				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
+				205A0ED12079EE0D006A44A6 /* LoginViewController.swift */,
 				203B2A6A1F67BBD100DDCC03 /* MainMenu */,
 				203B2A401F67B97100DDCC03 /* Tutorial */,
 				203B2A7B1F67BDAB00DDCC03 /* Easy */,
@@ -524,6 +537,8 @@
 				200829D61F32CA860038AEC0 /* Effects */,
 				20DF7CE62021B910006BFBB0 /* Sound */,
 				20DF7CE52021B8FF006BFBB0 /* Animation */,
+				205A0ED8207A0EB1006A44A6 /* Models */,
+				205A0ED4207A0D3E006A44A6 /* Services */,
 				20DF7CE72021B93A006BFBB0 /* Helper */,
 				20E9E8EC20223B8300D31410 /* SupportingFIles */,
 				20E9E8ED20223BD500D31410 /* Storyboards */,
@@ -537,6 +552,22 @@
 				208C5D62202447DD0006ADE4 /* EnemyVEController.swift */,
 			);
 			path = DefeatAlgebra;
+			sourceTree = "<group>";
+		};
+		205A0ED4207A0D3E006A44A6 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				205A0ED5207A0D58006A44A6 /* LoginService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		205A0ED8207A0EB1006A44A6 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				205A0ED9207A0ECB006A44A6 /* User.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		20DF7CE52021B8FF006BFBB0 /* Animation */ = {
@@ -579,6 +610,7 @@
 			children = (
 				204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */,
 				204C7D8D1F074FE800F4DD11 /* Main.storyboard */,
+				205A0ECE2079EDBC006A44A6 /* Login.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -716,6 +748,7 @@
 				201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */,
 				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
 				203B2A761F67BBD100DDCC03 /* ItemList.sks in Resources */,
+				205A0ECF2079EDBC006A44A6 /* Login.storyboard in Resources */,
 				201B8C571F3A365700E91301 /* hitWall.wav in Resources */,
 				201B8C531F3A326000E91301 /* enemyKilled.mp3 in Resources */,
 				203B2A551F67B97100DDCC03 /* Tutorial.sks in Resources */,
@@ -760,6 +793,7 @@
 				20E9E8CF20223B1400D31410 /* mainBGM.mp3 in Resources */,
 				20E9E8D020223B1400D31410 /* buttonBack.wav in Resources */,
 				20E9E8D120223B1400D31410 /* ItemList.sks in Resources */,
+				205A0ED02079EDBC006A44A6 /* Login.storyboard in Resources */,
 				20E9E8D220223B1400D31410 /* hitWall.wav in Resources */,
 				20E9E8D320223B1400D31410 /* enemyKilled.mp3 in Resources */,
 				20E9E8D420223B1400D31410 /* Tutorial.sks in Resources */,
@@ -1011,12 +1045,14 @@
 				208C5D57202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				203B2A871F67BDAB00DDCC03 /* EnemyEasy.swift in Sources */,
 				201CD4191F2CD28D009CE633 /* Spear.swift in Sources */,
+				205A0EDA207A0ECB006A44A6 /* User.swift in Sources */,
 				201CD4181F2CD28D009CE633 /* MultiAttack.swift in Sources */,
 				201CD4111F2CD28D009CE633 /* BattleShip.swift in Sources */,
 				201CD4171F2CD28D009CE633 /* TimeBomb.swift in Sources */,
 				203B2A5A1F67B9AD00DDCC03 /* PauseScreen.swift in Sources */,
 				203B2A521F67B97100DDCC03 /* HeroForTutorial2.swift in Sources */,
 				202049DD1F2EFA0F00FAD661 /* Teleport.swift in Sources */,
+				205A0ED6207A0D58006A44A6 /* LoginService.swift in Sources */,
 				208C5D63202447DD0006ADE4 /* EnemyVEController.swift in Sources */,
 				203B2A541F67B97100DDCC03 /* PauseScreenForTutorial2.swift in Sources */,
 				203B2A091F67B21A00DDCC03 /* InputVariableExpression.swift in Sources */,
@@ -1028,6 +1064,7 @@
 				203B2A771F67BBD200DDCC03 /* ItemList.swift in Sources */,
 				203B2A561F67B97100DDCC03 /* Tutorial.swift in Sources */,
 				201ECBA41F34B64300FB833A /* ResetCatapult.swift in Sources */,
+				205A0ED22079EE0D006A44A6 /* LoginViewController.swift in Sources */,
 				203B2A8D1F67BDAB00DDCC03 /* HeroEasy.swift in Sources */,
 				208C5D602024319C0006ADE4 /* EnemyDeadController.swift in Sources */,
 				203B2A031F67B21A00DDCC03 /* EnemyFist.swift in Sources */,
@@ -1074,12 +1111,14 @@
 				20E9E89B20223B1400D31410 /* EnemyEasy.swift in Sources */,
 				208C5D6620280E2E0006ADE4 /* TutorialJ.swift in Sources */,
 				20E9E89C20223B1400D31410 /* Spear.swift in Sources */,
+				205A0EDB207A0ECB006A44A6 /* User.swift in Sources */,
 				20E9E89D20223B1400D31410 /* MultiAttack.swift in Sources */,
 				20E9E89E20223B1400D31410 /* BattleShip.swift in Sources */,
 				20E9E89F20223B1400D31410 /* TimeBomb.swift in Sources */,
 				20E9E8A020223B1400D31410 /* PauseScreen.swift in Sources */,
 				20E9E8A120223B1400D31410 /* HeroForTutorial2.swift in Sources */,
 				20E9E8A220223B1400D31410 /* Teleport.swift in Sources */,
+				205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */,
 				208C5D64202447DD0006ADE4 /* EnemyVEController.swift in Sources */,
 				20E9E8A320223B1400D31410 /* PauseScreenForTutorial2.swift in Sources */,
 				20E9E8A420223B1400D31410 /* InputVariableExpression.swift in Sources */,
@@ -1091,6 +1130,7 @@
 				20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */,
 				20E9E8AC20223B1400D31410 /* ResetCatapult.swift in Sources */,
 				20E9E8AD20223B1400D31410 /* HeroEasy.swift in Sources */,
+				205A0ED32079EE0D006A44A6 /* LoginViewController.swift in Sources */,
 				208C5D612024319C0006ADE4 /* EnemyDeadController.swift in Sources */,
 				20E9E8AE20223B1400D31410 /* EnemyFist.swift in Sources */,
 				20E9E8AF20223B1400D31410 /* PauseScreenForTutorial.swift in Sources */,

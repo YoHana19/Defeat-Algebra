@@ -66,10 +66,10 @@ class SettingScreen: SKSpriteNode {
         if nodeAtPoint.name == "buttonTutorial" {
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView!
+            let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
+            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial? else {
                 return
             }
             
@@ -90,10 +90,10 @@ class SettingScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "buttonItemList" {
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView!
+            let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = ItemList(fileNamed:"ItemList") as ItemList! else {
+            guard let scene = ItemList(fileNamed:"ItemList") as ItemList? else {
                 return
             }
             
@@ -111,10 +111,10 @@ class SettingScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "buttonCredits" {
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView!
+            let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = Credits(fileNamed:"Credits") as Credits! else {
+            guard let scene = Credits(fileNamed:"Credits") as Credits? else {
                 return
             }
             
