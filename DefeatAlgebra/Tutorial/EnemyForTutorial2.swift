@@ -274,13 +274,13 @@ class EnemyForTutorial2: SKSpriteNode {
         /* Coefficient is 1 */
         if origin[0] == 1 {
             variableExpressionElements.append("x")
-            let result = variableExpressionElements.shuffled()
-            return result
+            //let result = variableExpressionElements.shuffled()
+            return variableExpressionElements
         /* Coefficient is any number but 1 */
         } else {
             variableExpressionElements.append("\(origin[0])x")
-            let result = variableExpressionElements.shuffled()
-            return result
+            //let result = variableExpressionElements.shuffled()
+            return variableExpressionElements
         }
     }
     
@@ -300,8 +300,8 @@ class EnemyForTutorial2: SKSpriteNode {
                 variableExpressionElements.append("\(xElement)x")
             }
         }
-        let result = variableExpressionElements.shuffled()
-        return result
+        //let result = variableExpressionElements.shuffled()
+        return variableExpressionElements
     }
     
     /* Create several equivalent variable expression randomly for x */
@@ -320,8 +320,8 @@ class EnemyForTutorial2: SKSpriteNode {
                 variableExpressionElements.append("\(xElement)x")
             }
         }
-        let result = variableExpressionElements.shuffled()
-        return result
+        //let result = variableExpressionElements.shuffled()
+        return variableExpressionElements
     }
     
     /* Decompose constant randomly */

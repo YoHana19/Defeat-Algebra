@@ -66,10 +66,10 @@ class SettingScreen: SKSpriteNode {
         if nodeAtPoint.name == "buttonTutorial" {
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView!
+            let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial! else {
+            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial? else {
                 return
             }
             
@@ -90,10 +90,10 @@ class SettingScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "buttonItemList" {
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView!
+            let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = ItemList(fileNamed:"ItemList") as ItemList! else {
+            guard let scene = ItemList(fileNamed:"ItemList") as ItemList? else {
                 return
             }
             
@@ -111,10 +111,10 @@ class SettingScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "buttonCredits" {
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView!
+            let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = Credits(fileNamed:"Credits") as Credits! else {
+            guard let scene = Credits(fileNamed:"Credits") as Credits? else {
                 return
             }
             
@@ -133,27 +133,14 @@ class SettingScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "buttonMute" {
             buttonMute.isHidden = true
             MainMenu.soundOnFlag = true
-            /* Easy mode */
-            if MainMenu.modeHard == false {
-                mainMenu.sound.play()
-                mainMenu.sound.numberOfLoops = -1
-            /* Hard mode */
-            } else {
-                mainMenu.soundHard.play()
-                mainMenu.soundHard.numberOfLoops = -1
-            }
+            mainMenu.sound.play()
+            mainMenu.sound.numberOfLoops = -1
             let ud = UserDefaults.standard
             ud.set(true, forKey: "soundOn")
         } else if nodeAtPoint.name == "buttonSoundOn" {
             buttonMute.isHidden = false
             MainMenu.soundOnFlag = false
-            /* Easy mode */
-            if MainMenu.modeHard == false {
-                mainMenu.sound.stop()
-            /* Hard mode */
-            } else {
-                mainMenu.soundHard.stop()
-            }
+            mainMenu.sound.stop()
             let ud = UserDefaults.standard
             ud.set(false, forKey: "soundOn")
         }
