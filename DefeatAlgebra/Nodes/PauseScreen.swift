@@ -9,18 +9,10 @@
 import Foundation
 import SpriteKit
 
-class SettingScreen: SKSpriteNode {
-    
-    var isActive: Bool = false {
-        didSet {
-            /* Visibility */
-            self.isHidden = !isActive
-        }
-    }
+class PauseScreen: SKSpriteNode {
     
     var buttonMute: SKSpriteNode!
     var buttonSoundOn: SKSpriteNode!
-    
     
     init() {
         /* Initialize with enemy asset */
@@ -32,7 +24,7 @@ class SettingScreen: SKSpriteNode {
         isUserInteractionEnabled = true
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 100
+        zPosition = 200
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -47,7 +39,6 @@ class SettingScreen: SKSpriteNode {
             buttonMute.isHidden = true
         }
         
-        
     }
     
     /* You are required to implement this for your subclass to work */
@@ -56,51 +47,28 @@ class SettingScreen: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let mainMenu = self.parent as! MainMenu
+        let gameScene = self.parent as! GameScene
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if nodeAtPoint.name == "buttonTutorial" {
+        if nodeAtPoint.name == "pauseResume" {
+            gameScene.pauseFlag = false
+            self.isHidden = true
+            
+        } else if nodeAtPoint.name == "pauseRetry" {
+            /* Sound */
+            gameScene.main.stop()
+            gameScene.stageClear.stop()
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView?
+            let skView = gameScene.view as SKView?
             
             /* Load Game scene */
-            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial? else {
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
                 return
-            }
-            
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                scene.run(sound)
-            }
-            
-            Tutorial.tutorialPhase = 0
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
-            
-        } else if nodeAtPoint.name == "buttonItemList" {
-            
-            /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView?
-            
-            /* Load Game scene */
-            guard let scene = ItemList(fileNamed:"ItemList") as ItemList? else {
-                return
-            }
-            
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                scene.run(sound)
             }
             
             /* Ensure correct aspect mode */
@@ -108,20 +76,17 @@ class SettingScreen: SKSpriteNode {
             
             /* Restart GameScene */
             skView?.presentScene(scene)
-        } else if nodeAtPoint.name == "buttonCredits" {
+        } else if nodeAtPoint.name == "pauseMainMenu" {
+            /* Sound */
+            gameScene.main.stop()
+            gameScene.stageClear.stop()
             
             /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView?
+            let skView = gameScene.view as SKView?
             
             /* Load Game scene */
-            guard let scene = Credits(fileNamed:"Credits") as Credits? else {
+            guard let scene = MainMenu(fileNamed:"MainMenu") as MainMenu? else {
                 return
-            }
-            
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                scene.run(sound)
             }
             
             /* Ensure correct aspect mode */
@@ -133,43 +98,43 @@ class SettingScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "buttonMute" {
             buttonMute.isHidden = true
             MainMenu.soundOnFlag = true
-            mainMenu.sound.play()
-            mainMenu.sound.numberOfLoops = -1
+            gameScene.main.play()
+            gameScene.stageClear.stop()
             let ud = UserDefaults.standard
             ud.set(true, forKey: "soundOn")
         } else if nodeAtPoint.name == "buttonSoundOn" {
             buttonMute.isHidden = false
             MainMenu.soundOnFlag = false
-            mainMenu.sound.stop()
+            gameScene.main.stop()
+            gameScene.stageClear.stop()
             let ud = UserDefaults.standard
             ud.set(false, forKey: "soundOn")
         }
+        
     }
     
     func setButtons() {
-        /* Set button size */
-//        let buttonSize = CGSize(width: 120, height: 120)
         
-        /* button Item List */
-        let buttonItemList = SKSpriteNode(imageNamed: "buttonItemList")
-        buttonItemList.position = CGPoint(x: 0, y: 30)
-        buttonItemList.name = "buttonItemList"
-        buttonItemList.zPosition = 3
-        addChild(buttonItemList)
+        /* button Resume */
+        let buttonResume = SKSpriteNode(imageNamed: "pauseResume")
+        buttonResume.position = CGPoint(x: 0, y: self.size.height/4+30)
+        buttonResume.name = "pauseResume"
+        buttonResume.zPosition = 3
+        addChild(buttonResume)
         
-        /* button Tutorial */
-        let buttonTutorial = SKSpriteNode(imageNamed: "buttonTutorial")
-        buttonTutorial.position = CGPoint(x: 0, y: self.size.height/4+30)
-        buttonTutorial.name = "buttonTutorial"
-        buttonTutorial.zPosition = 3
-        addChild(buttonTutorial)
+        /* button Retry */
+        let buttonRetry = SKSpriteNode(imageNamed: "pauseRetry")
+        buttonRetry.position = CGPoint(x: 0, y: 30)
+        buttonRetry.name = "pauseRetry"
+        buttonRetry.zPosition = 3
+        addChild(buttonRetry)
         
-        /* button Credits */
-        let buttonCredits = SKSpriteNode(imageNamed: "buttonCredits")
-        buttonCredits.position = CGPoint(x: 0, y: -self.size.height/4+30)
-        buttonCredits.name = "buttonCredits"
-        buttonCredits.zPosition = 3
-        addChild(buttonCredits)
+        /* button Main Menu */
+        let buttonMainMenu = SKSpriteNode(imageNamed: "pauseMainMenu")
+        buttonMainMenu.position = CGPoint(x: 0, y: -self.size.height/4+30)
+        buttonMainMenu.name = "pauseMainMenu"
+        buttonMainMenu.zPosition = 3
+        addChild(buttonMainMenu)
         
         /* Sound button mute */
         buttonMute = SKSpriteNode(imageNamed: "mute")
@@ -186,6 +151,5 @@ class SettingScreen: SKSpriteNode {
         buttonSoundOn.name = "buttonSoundOn"
         buttonSoundOn.zPosition = 3
         addChild(buttonSoundOn)
-        
     }
 }

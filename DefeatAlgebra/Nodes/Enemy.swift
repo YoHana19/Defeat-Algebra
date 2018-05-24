@@ -9,7 +9,11 @@
 import Foundation
 import SpriteKit
 
-class EnemyForTutorial2: SKSpriteNode {
+enum EnemyState {
+    case Move, Punch
+}
+
+class Enemy: SKSpriteNode {
     
     /* Enemy state management */
     var enemyState: EnemyState = .Move
@@ -27,6 +31,7 @@ class EnemyForTutorial2: SKSpriteNode {
     var punchIntervalForCount: Int = 0
     var singleTurnDuration: TimeInterval = 0.2
     var vECategory = 0
+    var enemyLife = 0
     
     /* Enemy variable for punch */
     var valueOfEnemy: Int = 0
@@ -35,6 +40,8 @@ class EnemyForTutorial2: SKSpriteNode {
     var punchLength: CGFloat! = 0
     var variableExpression: [Int]!
     var variableExpressionForLabel = ""
+    var variableExpressionString = ""
+    var originVariableExpression = ""
     
     /* For arms when punch hit wall */
     var armArrayForSubSet: [EnemyArm] = []
@@ -45,8 +52,11 @@ class EnemyForTutorial2: SKSpriteNode {
     var reachCastleFlag = false
     var wallHitFlag = false
     var aliveFlag = true
+    var editedVEFlag = false
+    var forEduOriginFlag = false
+    var forEduBranchFlag = false
     
-    init(variableExpressionSource: [[Int]]) {
+    init(variableExpressionSource: [[Int]], forEdu: Bool) {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "front1")
         let enemySize = CGSize(width: 61, height: 61)
@@ -56,7 +66,9 @@ class EnemyForTutorial2: SKSpriteNode {
         setName()
         
         /* Set punch interval */
-        setPunchInterval()
+        if forEdu == false {
+            setPunchInterval()
+        }
         
         /* Set Z-Position, ensure ontop of grid */
         zPosition = 7
@@ -71,8 +83,11 @@ class EnemyForTutorial2: SKSpriteNode {
         physicsBody?.contactTestBitMask = 1
         
         /* Set variable expression */
-        setVariavleExpression(variableExpressionSource: variableExpressionSource)
-        
+        EnemyVEController.setVariableExpression(enemy: self, variableExpressionSource: variableExpressionSource) { success in
+            if !success {
+                print("setVariableExpression: \(success)")
+            }
+        }
     }
     
     /* You are required to implement this for your subclass to work */
@@ -126,294 +141,6 @@ class EnemyForTutorial2: SKSpriteNode {
         self.name = "enemy"
     }
     
-    /* Set variable expression */
-    func setVariavleExpression(variableExpressionSource: [[Int]]) {
-        
-        let rand = arc4random_uniform(UInt32(variableExpressionSource.count))
-        variableExpression = variableExpressionSource[Int(rand)]
-        
-        /* Set equivalence ve */
-        vECategory = variableExpression.last!
-        
-        if variableExpression[0] == 0 {
-            if variableExpression[1] == 1 {
-                if variableExpression[2] == 0 {
-                    variableExpressionForLabel = "x"
-                } else {
-                    variableExpressionForLabel = "x+\(variableExpression[2])"
-                }
-            } else {
-                if variableExpression[2] == 0 {
-                    variableExpressionForLabel = "\(variableExpression[1])x"
-                } else {
-                    variableExpressionForLabel = "\(variableExpression[1])x+\(variableExpression[2])"
-                }
-            }
-        } else if variableExpression[0] == 1 {
-            if variableExpression[1] == 1 {
-                variableExpressionForLabel = "\(variableExpression[2])+x"
-            } else {
-                variableExpressionForLabel = "\(variableExpression[2])+\(variableExpression[1])x"
-            }
-        } else if variableExpression[0] == 2 {
-            variableExpressionForLabel = "\(variableExpression[1])×x"
-        } else if variableExpression[0] == 3 {
-            variableExpressionForLabel = "x×\(variableExpression[1])"
-        } else if variableExpression[0] == 4 {
-            variableExpressionForLabel = "\(variableExpression[1])x-\(variableExpression[2])"
-        } else if variableExpression[0] == 5 {
-            if variableExpression[1] == 1 {
-                variableExpressionForLabel = "\(variableExpression[2])-x"
-            } else {
-                variableExpressionForLabel = "\(variableExpression[2])-\(variableExpression[1])x"
-            }
-        } else if variableExpression[0] == 6 {
-            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    variableExpressionForLabel += String(describing: element)
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else {
-                        variableExpressionForLabel += "+\(element)"
-                    }
-                }
-            }
-        } else if variableExpression[0] == 7 {
-            let source = createVariableExpressionC(origin: [variableExpression[1], variableExpression[2]], type: 0)
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    if let num = element as? Int {
-                        variableExpressionForLabel += String(num)
-                    } else {
-                        variableExpressionForLabel += "-\(element)"
-                    }
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else {
-                        variableExpressionForLabel += "-\(element)"
-                    }
-                }
-            }
-        } else if variableExpression[0] == 8 {
-            let source = createVariableExpressionX(origin: [variableExpression[1], variableExpression[2]])
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    variableExpressionForLabel += String(describing: element)
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else if num > 0 {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else if let string = element as? String {
-                        if string[string.startIndex] == "-" {
-                            variableExpressionForLabel += string
-                        } else {
-                            variableExpressionForLabel += "+\(element)"
-                        }
-                    }
-                }
-            }
-        } else if variableExpression[0] == 9 {
-            let source = createVariableExpressionXC(origin: [variableExpression[1], variableExpression[2]])
-            for (i, element) in source.enumerated() {
-                if i == 0 {
-                    variableExpressionForLabel += String(describing: element)
-                } else {
-                    if let num = element as? Int {
-                        if num < 0 {
-                            variableExpressionForLabel += String(num)
-                        } else {
-                            variableExpressionForLabel += "+\(num)"
-                        }
-                    } else if let string = element as? String {
-                        if string[string.startIndex] == "-" {
-                            variableExpressionForLabel += string
-                        } else {
-                            variableExpressionForLabel += "+\(element)"
-                        }
-                    }
-                }
-            }
-        } else if variableExpression[0] == 10 {
-            if variableExpression[2] == 2 {
-                variableExpressionForLabel = "2(x+1)"
-            } else if variableExpression[2] == 4 {
-                variableExpressionForLabel = "2(x+2)"
-            }
-        } else if variableExpression[0] == 11 {
-            if variableExpression[2] == 2 {
-                variableExpressionForLabel = "2(1+x)"
-            } else if variableExpression[2] == 4 {
-                variableExpressionForLabel = "2(2+x)"
-            }
-        } else if variableExpression[0] == 12 {
-            if variableExpression[2] == -2 {
-                variableExpressionForLabel = "2(2x-1)"
-            }
-        }
-    }
-    
-    
-    /* Create several equivalent variable expression randomly */
-    func createVariableExpressionC(origin: [Int], type: Int) -> [Any] {
-        var variableExpressionElements = [Any]()
-        variableExpressionElements = decomposeConstant(constant: origin[1], type: type)
-        /* Coefficient is 1 */
-        if origin[0] == 1 {
-            variableExpressionElements.append("x")
-            //let result = variableExpressionElements.shuffled()
-            return variableExpressionElements
-        /* Coefficient is any number but 1 */
-        } else {
-            variableExpressionElements.append("\(origin[0])x")
-            //let result = variableExpressionElements.shuffled()
-            return variableExpressionElements
-        }
-    }
-    
-    /* Create several equivalent variable expression randomly for x */
-    func createVariableExpressionX(origin: [Int]) -> [Any] {
-        var variableExpressionElements = [Any]()
-        /* Constant */
-        variableExpressionElements.append(origin[1])
-        /* Decompose coefficent of x */
-        let xElements = decomposeConstant(constant: origin[0], type: 1)
-        for xElement in xElements {
-            if xElement == 1 {
-                variableExpressionElements.append("x")
-            } else if xElement == -1 {
-                variableExpressionElements.append("-x")
-            } else {
-                variableExpressionElements.append("\(xElement)x")
-            }
-        }
-        //let result = variableExpressionElements.shuffled()
-        return variableExpressionElements
-    }
-    
-    /* Create several equivalent variable expression randomly for x */
-    func createVariableExpressionXC(origin: [Int]) -> [Any] {
-        var variableExpressionElements = [Any]()
-        /* Decompose constant */
-        variableExpressionElements = decomposeConstant(constant: origin[1], type: 1)
-        /* Decompose coefficent of x */
-        let xElements = decomposeConstant(constant: origin[0], type: 1)
-        for xElement in xElements {
-            if xElement == 1 {
-                variableExpressionElements.append("x")
-            } else if xElement == -1 {
-                variableExpressionElements.append("-x")
-            } else {
-                variableExpressionElements.append("\(xElement)x")
-            }
-        }
-        //let result = variableExpressionElements.shuffled()
-        return variableExpressionElements
-    }
-    
-    /* Decompose constant randomly */
-    func decomposeConstant(constant: Int, type: Int) -> [Int] {
-        switch constant {
-        case -2:
-            var temp = decomposeZero(type: type)
-            temp[temp.count-1] -= 2
-            return temp
-        case -1:
-            var temp = decomposeZero(type: type)
-            temp[temp.count-1] -= 1
-            return temp
-        case 0:
-            let result = decomposeZero(type: type)
-            return result
-        case 1:
-            var temp = decomposeZero(type: type)
-            temp[0] += 1
-            return temp
-        case 2:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                var temp = decomposeZero(type: type)
-                temp[0] += 2
-                return temp
-            } else {
-                return [1, 1]
-            }
-        case 3:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                var temp = decomposeZero(type: type)
-                temp[0] += 3
-                return temp
-            } else {
-                return [1, 2]
-            }
-        case 4:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                return [2,2]
-            } else {
-                return [1,3]
-            }
-        case 7:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                return [2,5]
-            } else {
-                return [3,4]
-            }
-        case 8:
-            let rand = arc4random_uniform(100)
-            if rand < 50 {
-                return [2,6]
-            } else {
-                return [3,5]
-            }
-        default:
-            return [0]
-        }
-    }
-    
-    /* Decompose 0 to 2 or 3 elements from -2 to 2*/
-    func decomposeZero(type: Int) -> [Int] {
-        let rand = arc4random_uniform(100)
-        if type == 0 {
-            if rand < 25 {
-                let result = [1, -1]
-                return result
-            } else if rand < 50 {
-                let result = [2, -2]
-                return result
-            } else if rand < 75 {
-                let result = [1, 1, -2]
-                return result
-            } else {
-                let result = [2, -1, -1]
-                return result
-            }
-        } else {
-            if rand < 50 {
-                let result = [1, -1]
-                return result
-            } else {
-                let result = [2, -2]
-                return result
-            }
-        }
-    }
-    
     func setVariableExpressionLabel(text: String) {
         /* Set label with font */
         let label = SKLabelNode(fontNamed: "GillSans-Bold")
@@ -440,6 +167,18 @@ class EnemyForTutorial2: SKSpriteNode {
         
         /* Add to Scene */
         self.addChild(label)
+        
+        /*
+         /* Edit button if needed */
+         if variableExpression.count >= 5 {
+         let editButton = SKSpriteNode(imageNamed: "editButton")
+         editButton.size = CGSize(width: 25, height: 25)
+         editButton.position = CGPoint(x: 30, y: 15)
+         editButton.name  = "editButton"
+         editButton.zPosition = 5
+         addChild(editButton)
+         }
+         */
     }
     
     func makeTriangle() {
@@ -475,16 +214,19 @@ class EnemyForTutorial2: SKSpriteNode {
             punchInterval = 1
             punchIntervalForCount = punchInterval
             setPunchIntervalLabel()
+            
             /* punchInterval is 2 with 40% */
         } else if rand < 90 {
             punchInterval = 2
             punchIntervalForCount = punchInterval
             setPunchIntervalLabel()
+            
             /* punchInterval is 0 with 20% */
         } else {
             punchInterval = 0
             punchIntervalForCount = punchInterval
             setPunchIntervalLabel()
+            
         }
         
     }
@@ -529,7 +271,7 @@ class EnemyForTutorial2: SKSpriteNode {
     func enemyMove() {
         
         /* Get grid node */
-        let gridNode = self.parent as! GridForTutorial2
+        let gridNode = self.parent as! Grid
         
         /* Make sure not to call if it's not my turn */
         guard myTurnFlag else { return }
@@ -538,88 +280,7 @@ class EnemyForTutorial2: SKSpriteNode {
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
         
-        /* Determine direction to move */
-        let directionRand = arc4random_uniform(100)
-        
-        /* Left edge */
-        if self.positionX <= 0 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-                /* Go right with 30% */
-            } else if directionRand < 100 {
-                self.direction = .right
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX += 1
-            }
-            
-            /* Right edge */
-        } else if self.positionX >= gridNode.columns-1 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-                /* Go left with 30% */
-            } else if directionRand < 100 {
-                self.direction = .left
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX -= 1
-            }
-            
-            /* Middle */
-        } else {
-            /* Go forward with 60% */
-            if directionRand < 60 {
-                self.direction = .front
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionY -= 1
-                
-                /* Go left with 20% */
-            } else if directionRand < 80 {
-                self.direction = .left
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX -= 1
-                
-                /* Go right with 20% */
-            } else if directionRand < 100 {
-                self.direction = .right
-                self.setMovingAnimation()
-                let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: moveSpeed)
-                self.run(move)
-                
-                /* Keep track enemy position */
-                self.positionX += 1
-            }
-        }
+        EnemyMoveController.move(enemy: self, gridNode: gridNode)
         
         /* Move next enemy's turn */
         let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
@@ -665,7 +326,7 @@ class EnemyForTutorial2: SKSpriteNode {
         /* Calculate length of punch */
         self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
     }
-
+    
     /* Set texture in punching */
     func setTextureInPunch() {
         switch direction {
@@ -680,7 +341,7 @@ class EnemyForTutorial2: SKSpriteNode {
             self.texture = SKTexture(imageNamed: "rightPunch55")
             break;
         }
-
+        
     }
     
     /* Set position of arm */
@@ -758,7 +419,7 @@ class EnemyForTutorial2: SKSpriteNode {
     
     /* Do punch */
     func punch() -> (arm: [EnemyArm], fist: [EnemyFist]) {
-        let gridNode = self.parent as! GridForTutorial2
+        let gridNode = self.parent as! Grid
         
         if self.positionY < self.valueOfEnemy {
             /* Adjust punch length */
@@ -867,9 +528,9 @@ class EnemyForTutorial2: SKSpriteNode {
         turnDoneFlag = true
         
         /* Get grid node */
-        let gridNode = self.parent as! GridForTutorial2
+        let gridNode = self.parent as! Grid
         /* Get GameScene */
-        let gameScene = gridNode.parent as! Tutorial2
+        let gameScene = gridNode.parent as! GameScene
         
         /* Do punch */
         let armAndFist = self.punch()
@@ -889,7 +550,8 @@ class EnemyForTutorial2: SKSpriteNode {
             
             /* Calculate punchlength */
             let originPosY = self.positionY
-            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+95 /* 95 is an adjustment */            
+            self.punchLength = CGFloat(Double(originPosY)*gridNode.cellHeight)+95 /* 95 is an adjustment */
+            
             /* Wait till punch streach out fully */
             let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
             
@@ -954,6 +616,7 @@ class EnemyForTutorial2: SKSpriteNode {
             
             /* Set variable expression */
             let setVariableExpression = SKAction.run({
+                //                self.makeTriangle()
                 /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
@@ -966,6 +629,8 @@ class EnemyForTutorial2: SKSpriteNode {
             let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
             let moveNextEnemy = SKAction.run({
                 self.myTurnFlag = false
+                /* For sound */
+                gameScene.hitCastleWallSoundDone = false
                 if gridNode.turnIndex < gridNode.enemyArray.count-1 {
                     gridNode.turnIndex += 1
                     gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
@@ -984,7 +649,7 @@ class EnemyForTutorial2: SKSpriteNode {
             /* excute drawPunch */
             let seq = SKAction.sequence([wait, subSetArm, waitForSubSet, removeArm, moveForward, shrinkArm, drawWait, decreseLife, punchDone, setVariableExpression, moveTurnWait, moveNextEnemy])
             self.run(seq)
-
+            
         } else {
             
             /* Keep track enemy position */
@@ -1056,6 +721,7 @@ class EnemyForTutorial2: SKSpriteNode {
                 /* Reset count down punchInterval */
                 self.punchIntervalForCount = self.punchInterval
                 /* Create variable expression */
+                //                self.makeTriangle()
                 self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
                 /* Reset enemy animation */
                 self.setMovingAnimation()
@@ -1075,7 +741,7 @@ class EnemyForTutorial2: SKSpriteNode {
                 /* To check all enemy turn done */
                 gridNode.numOfTurnEndEnemy += 1
                 
-               
+                
             })
             
             /* excute drawPunch */
@@ -1095,9 +761,9 @@ class EnemyForTutorial2: SKSpriteNode {
         turnDoneFlag = true
         
         /* Get grid node */
-        let gridNode = self.parent as! GridForTutorial2
+        let gridNode = self.parent as! Grid
         /* Get GameScene */
-        let gameScene = gridNode.parent as! Tutorial2
+        let gameScene = gridNode.parent as! GameScene
         
         /* Decrese life */
         let decreseLife = SKAction.run({
@@ -1106,7 +772,7 @@ class EnemyForTutorial2: SKSpriteNode {
         })
         
         /* Set punchLength */
-        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+10
+        self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
         
         /* Do punch */
         let armAndFist = self.punch()
@@ -1129,7 +795,6 @@ class EnemyForTutorial2: SKSpriteNode {
         
         /* Set variable expression */
         let setVariableExpression = SKAction.run({
-//            self.makeTriangle()
             self.setVariableExpressionLabel(text: self.variableExpressionForLabel)
             self.setPunchIntervalLabel()
         })
@@ -1138,7 +803,7 @@ class EnemyForTutorial2: SKSpriteNode {
         let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
         let moveNextEnemy = SKAction.run({
             self.myTurnFlag = false
-            
+            gameScene.hitCastleWallSoundDone = false
             /* Reset enemy animation */
             self.setMovingAnimation()
             
@@ -1159,8 +824,8 @@ class EnemyForTutorial2: SKSpriteNode {
     
     /*== For Magic Sword ==*/
     /* Put color to enemy */
-    func colorizeEnemy() {
-        self.run(SKAction.colorize(with: UIColor.purple, colorBlendFactor: 0.6, duration: 0.50))
+    func colorizeEnemy(color: UIColor) {
+        self.run(SKAction.colorize(with: color, colorBlendFactor: 0.6, duration: 0.50))
     }
     
     func resetColorizeEnemy() {

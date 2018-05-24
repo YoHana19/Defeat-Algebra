@@ -31,7 +31,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     var itemAreaNode: SKSpriteNode!
     var buttonAttack: SKNode!
     var buttonItem: SKNode!
-     var pauseScreen: PauseScreenForTutorial2!
+    var pauseScreen: PauseScreenForTutorial2!
     
     /*== Game labels ==*/
     var valueOfX: SKLabelNode!
@@ -83,7 +83,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     var gameOverSoundDone = false
     var stageClearSoundDone = false
     var hitCastleWallSoundDone = false
-
+    
     
     /*===========*/
     /*== Hero ==*/
@@ -201,8 +201,8 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         /* Labels */
         gameOverLabel = childNode(withName: "gameOverLabel")
         gameOverLabel.isHidden = true
-//        clearLabel = childNode(withName: "clearLabel")
-//        clearLabel.isHidden = true
+        //        clearLabel = childNode(withName: "clearLabel")
+        //        clearLabel.isHidden = true
         levelLabel = childNode(withName: "levelLabel") as! SKLabelNode
         playerPhaseLabel = childNode(withName: "playerPhaseLabel")
         playerPhaseLabel.isHidden = true
@@ -237,7 +237,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 buttonSkip.state = .msButtonNodeStateHidden
             }
         }
-            
+        
         /* Skip button */
         buttonSkip.selectedHandler = { [weak self] in
             /* Stop sound */
@@ -266,7 +266,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     let skView = self?.view as SKView!
                     
                     /* Load Game scene */
-                    guard let scene = GameSceneEasy(fileNamed:"GameSceneEasy") as GameSceneEasy! else {
+                    guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
                         return
                     }
                     
@@ -276,7 +276,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     
                     /* Restart GameScene */
                     skView?.presentScene(scene)
-                /* Hard mode */
+                    /* Hard mode */
                 } else {
                     /* Grab reference to the SpriteKit view */
                     let skView = self?.view as SKView!
@@ -327,17 +327,17 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView!
-                
+            
             Tutorial.tutorialPhase += 1
-                
+            
             /* Load Game scene */
             guard let scene = Tutorial2(fileNamed:"Tutorial2") as Tutorial2! else {
                 return
             }
-                
+            
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
-                
+            
             /* Restart GameScene */
             skView?.presentScene(scene)
         }
@@ -380,7 +380,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 let skView = self?.view as SKView!
                 
                 /* Load Game scene */
-                guard let scene = GameSceneEasy(fileNamed:"GameSceneEasy") as GameSceneEasy! else {
+                guard let scene = GameScene(fileNamed:"GameScene") as GameScene! else {
                     return
                 }
                 
@@ -426,7 +426,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             stageLevel = 1
             self.moveLevelArray = [2]
         }
-
+        
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
@@ -490,7 +490,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         default:
             break;
         }
-
+        
         switch gameState {
         case .AddEnemy:
             if Tutorial.tutorialPhase == 3 {
@@ -509,7 +509,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                         let moveState = SKAction.run({
                             /* Update enemy position */
                             self.gridNode.updateEnemyPositon()
-                        
+                            
                             self.tutorialState = .T1
                             self.tutorialDone = false
                             
@@ -1026,7 +1026,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
                     self.playerTurnState = .AttackState
                     
-                   
+                    
                 }
                 
                 /* Use timeBomb */
@@ -1039,8 +1039,8 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                           
-            /* If player touch other place than item icons, back to MoveState */
+                
+                /* If player touch other place than item icons, back to MoveState */
             } else {
                 guard setCatapultDoneFlag == false else { return }
                 guard selectCatapultDoneFlag == false else { return }
@@ -1109,7 +1109,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                    /* Other items */
+                        /* Other items */
                     } else {
                         item.removeFromParent()
                         /* Store game property */
@@ -1135,7 +1135,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                         if activeHero.moveLevel < 4 {
                             self.activeHero.moveLevel += 1
                         }
-                    /* Other items */
+                        /* Other items */
                     } else {
                         item.removeFromParent()
                         /* Store game property */
@@ -1153,7 +1153,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-            /* Be hitten by enemy */
+                /* Be hitten by enemy */
             } else {
                 hitByEnemyFlag = true
                 if contactA.categoryBitMask == 1 {
@@ -1409,13 +1409,13 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
     
     /* Make grid flash in fixed interval */
     func flashGrid() {
-            
+        
         /* Stop all enemy's movement */
         for enemy in self.gridNode.enemyArray {
             enemy.removeAllActions()
             enemy.setStandingtexture()
         }
-            
+        
         /* Make sure to stop all enemy before move to GridFlashing state */
         let wait = SKAction.wait(forDuration: 1.0)
         let moveState = SKAction.run({ self.gameState = .GridFlashing })
@@ -1679,7 +1679,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-
+    
     
     /*== Set initial objects ==*/
     func setInitialObj(level: Int) {
