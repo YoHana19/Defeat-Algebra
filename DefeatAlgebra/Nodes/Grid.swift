@@ -125,7 +125,7 @@ class Grid: SKSpriteNode {
                 
                 
                 /* Touch hero's position */
-                if gridX == gameScene.activeHero.positionX && gridY == gameScene.activeHero.positionY {
+                if gridX == gameScene.hero.positionX && gridY == gameScene.hero.positionY {
                     /* Display move path */
                     brightCellAsPath(gridX: gridX, gridY: gridY)
                     /* Set touch began position */
@@ -187,7 +187,7 @@ class Grid: SKSpriteNode {
             let gridY = Int(Double(location.y) / cellHeight)
             
             if beganPos.count > 0 {
-                if beganPos[0] == gameScene.activeHero.positionX && beganPos[1] == gameScene.activeHero.positionY {
+                if beganPos[0] == gameScene.hero.positionX && beganPos[1] == gameScene.hero.positionY {
                     
                     let nextPos = [gridX, gridY]
                     
@@ -200,12 +200,12 @@ class Grid: SKSpriteNode {
                             
                             /* Finger move horizontally */
                             if nextPos[0] != beganPos[0] {
-                                gameScene.activeHero.moveDirection = .Horizontal
+                                gameScene.hero.moveDirection = .Horizontal
                                 dispMovePath(start: beganPos, dest: nextPos)
                                 currentPos = nextPos
                                 /* Finger move vertically */
                             } else if nextPos[1] != beganPos[1] {
-                                gameScene.activeHero.moveDirection = .Vertical
+                                gameScene.hero.moveDirection = .Vertical
                                 dispMovePath(start: beganPos, dest: nextPos)
                                 currentPos = nextPos
                             }
@@ -288,20 +288,20 @@ class Grid: SKSpriteNode {
                 gameScene.heroMovingFlag = true
                 
                 /* On moveDoneFlad */
-                gameScene.activeHero.moveDoneFlag = true
+                gameScene.hero.moveDoneFlag = true
                 
                 /* Move hero to touch location */
-                gameScene.activeHero.heroMoveToDest(posX: gridX, posY: gridY)
+                gameScene.hero.heroMoveToDest(posX: gridX, posY: gridY)
                 
                 /* Keep track hero position */
-                gameScene.activeHero.positionX = gridX
-                gameScene.activeHero.positionY = gridY
+                gameScene.hero.positionX = gridX
+                gameScene.hero.positionY = gridY
                 
                 /* Move next state */
                 let wait = SKAction.wait(forDuration: gameScene.turnEndWait)
                 let nextHero = SKAction.run({
                     /* Reset hero animation to back */
-                    gameScene.activeHero.resetHero()
+                    gameScene.hero.resetHero()
                     
                     gameScene.heroMovingFlag = false
                     
@@ -329,11 +329,11 @@ class Grid: SKSpriteNode {
                 let gridY = Int(Double(location.y) / cellHeight)
                 
                 /* Set direction of hero */
-                gameScene.activeHero.setHeroDirection(posX: gridX, posY: gridY)
+                gameScene.hero.setHeroDirection(posX: gridX, posY: gridY)
                 
                 /* Sword attack */
-                if gameScene.activeHero.attackType == 0 {
-                    gameScene.activeHero.setSwordAnimation()
+                if gameScene.hero.attackType == 0 {
+                    gameScene.hero.setSwordAnimation()
                     /* Play Sound */
                     if MainMenu.soundOnFlag {
                         let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
@@ -355,8 +355,8 @@ class Grid: SKSpriteNode {
                     }
                     
                     /* Spear attack */
-                } else if gameScene.activeHero.attackType == 1 {
-                    gameScene.activeHero.setSpearAnimation()
+                } else if gameScene.hero.attackType == 1 {
+                    gameScene.hero.setSpearAnimation()
                     
                     let hitSpots = self.hitSpotsForSpear()
                     /* If hitting enemy! */
@@ -376,11 +376,11 @@ class Grid: SKSpriteNode {
                 }
                 
                 /* Back to MoveState */
-                gameScene.activeHero.attackDoneFlag = true
+                gameScene.hero.attackDoneFlag = true
                 let wait = SKAction.wait(forDuration: gameScene.turnEndWait+1.0) /* 1.0 is wait time for animation */
                 let moveState = SKAction.run({
                     /* Reset hero animation to back */
-                    gameScene.activeHero.resetHero()
+                    gameScene.hero.resetHero()
                     gameScene.playerTurnState = .MoveState
                 })
                 let seq = SKAction.sequence([wait, moveState])
@@ -412,7 +412,7 @@ class Grid: SKSpriteNode {
                 }
                 
                 /* Remove variable expression display */
-                gameScene.activeHero.removeMagicSwordVE()
+                gameScene.hero.removeMagicSwordVE()
                 
                 /* Remove active area */
                 gameScene.gridNode.resetSquareArray(color: "purple")
@@ -496,10 +496,10 @@ class Grid: SKSpriteNode {
                     self.resetSquareArray(color: "red")
                     
                     /* Set direction of hero */
-                    gameScene.activeHero.setHeroDirection(posX: gridX, posY: gridY)
+                    gameScene.hero.setHeroDirection(posX: gridX, posY: gridY)
                     
                     /* Do attack animation */
-                    gameScene.activeHero.setSwordAnimation()
+                    gameScene.hero.setSwordAnimation()
                     
                     /* If hitting enemy! */
                     if self.positionEnemyAtGrid[gridX][gridY] {
@@ -516,12 +516,12 @@ class Grid: SKSpriteNode {
                                         /* Set hero texture */
                                         let setTexture = SKAction.run({
                                             /* Set texture */
-                                            gameScene.activeHero.removeAllActions()
-                                            gameScene.activeHero.texture = SKTexture(imageNamed: "heroMagicSword")
-                                            gameScene.activeHero.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-                                            gameScene.activeHero.size = CGSize(width: 54, height: 85)
+                                            gameScene.hero.removeAllActions()
+                                            gameScene.hero.texture = SKTexture(imageNamed: "heroMagicSword")
+                                            gameScene.hero.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+                                            gameScene.hero.size = CGSize(width: 54, height: 85)
                                             /* Display variale expression you attacked */
-                                            gameScene.activeHero.setMagicSwordVE(vE: enemy.variableExpressionForLabel)
+                                            gameScene.hero.setMagicSwordVE(vE: enemy.variableExpressionForLabel)
                                             /* Set effect */
                                             gameScene.setMagicSowrdEffect()
                                         })
@@ -558,7 +558,7 @@ class Grid: SKSpriteNode {
                         })
                         let seq = SKAction.sequence([waitAni, removeEnemy])
                         self.run(seq)
-                        gameScene.activeHero.attackDoneFlag = true
+                        gameScene.hero.attackDoneFlag = true
                         /* If not hit, back to moveState */
                     } else {
                         /* Reset item type */
@@ -569,7 +569,7 @@ class Grid: SKSpriteNode {
                         let backState = SKAction.run({
                             /* Back to MoveState */
                             gameScene.playerTurnState = .MoveState
-                            gameScene.activeHero.resetHero()
+                            gameScene.hero.resetHero()
                         })
                         let seq = SKAction.sequence([waitAni, backState])
                         self.run(seq)
@@ -617,12 +617,12 @@ class Grid: SKSpriteNode {
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
-                    gameScene.activeHero.positionX = gridX
-                    gameScene.activeHero.positionY = gridY
-                    gameScene.activeHero.position = CGPoint(x: self.position.x+CGFloat((Double(gridX)+0.5)*cellWidth), y: self.position.y+CGFloat((Double(gridY)+0.5)*cellHeight))
+                    gameScene.hero.positionX = gridX
+                    gameScene.hero.positionY = gridY
+                    gameScene.hero.position = CGPoint(x: self.position.x+CGFloat((Double(gridX)+0.5)*cellWidth), y: self.position.y+CGFloat((Double(gridY)+0.5)*cellHeight))
                     
                     /* Reset hero animation to back */
-                    gameScene.activeHero.resetHero()
+                    gameScene.hero.resetHero()
                     gameScene.playerTurnState = .TurnEnd
                 }
                 
@@ -661,7 +661,7 @@ class Grid: SKSpriteNode {
                     /* Touch wrong enemy */
                 } else {
                     /* Reset hero */
-                    gameScene.activeHero.resetHero()
+                    gameScene.hero.resetHero()
                     /* Remove effect */
                     gameScene.removeMagicSowrdEffect()
                     /* Back to MoveState */
@@ -679,7 +679,7 @@ class Grid: SKSpriteNode {
                         }
                     }
                     /* Remove variable expression display */
-                    gameScene.activeHero.removeMagicSwordVE()
+                    gameScene.hero.removeMagicSwordVE()
                     /* Reset flag */
                     castEnemyDone = false
                 }
@@ -692,7 +692,7 @@ class Grid: SKSpriteNode {
                 guard gameScene.selectCatapultDoneFlag == false else { return }
                 
                 /* Reset hero */
-                gameScene.activeHero.resetHero()
+                gameScene.hero.resetHero()
                 /* Remove effect */
                 gameScene.removeMagicSowrdEffect()
                 
@@ -717,7 +717,7 @@ class Grid: SKSpriteNode {
                 }
                 
                 /* Remove variable expression display */
-                gameScene.activeHero.removeMagicSwordVE()
+                gameScene.hero.removeMagicSwordVE()
                 /* Reset flag */
                 castEnemyDone = false
                 
@@ -1282,7 +1282,7 @@ class Grid: SKSpriteNode {
         let diffX = dest[0] - start[0]
         let diffY = dest[1] - start[1]
         
-        switch gameScene.activeHero.moveDirection {
+        switch gameScene.hero.moveDirection {
             /* Set move path horizontal → vertical */
         case .Horizontal:
             if diffY == 0 {
@@ -1480,30 +1480,30 @@ class Grid: SKSpriteNode {
     /* Find hit spots for spear attack */
     func hitSpotsForSpear() -> ([Int], [Int]) {
         let gameScene = self.parent as! GameScene
-        switch gameScene.activeHero.direction {
+        switch gameScene.hero.direction {
         case .front:
-            if gameScene.activeHero.positionY < 2 {
-                return ([gameScene.activeHero.positionX, 0], [gameScene.activeHero.positionX, 0])
+            if gameScene.hero.positionY < 2 {
+                return ([gameScene.hero.positionX, 0], [gameScene.hero.positionX, 0])
             } else {
-                return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY-1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY-2])
+                return ([gameScene.hero.positionX, gameScene.hero.positionY-1], [gameScene.hero.positionX, gameScene.hero.positionY-2])
             }
         case .back:
-            if gameScene.activeHero.positionY > 9 {
-                return ([gameScene.activeHero.positionX, 11], [gameScene.activeHero.positionX, 11])
+            if gameScene.hero.positionY > 9 {
+                return ([gameScene.hero.positionX, 11], [gameScene.hero.positionX, 11])
             } else {
-                return ([gameScene.activeHero.positionX, gameScene.activeHero.positionY+1], [gameScene.activeHero.positionX, gameScene.activeHero.positionY+2])
+                return ([gameScene.hero.positionX, gameScene.hero.positionY+1], [gameScene.hero.positionX, gameScene.hero.positionY+2])
             }
         case .left:
-            if gameScene.activeHero.positionX < 2 {
-                return ([0, gameScene.activeHero.positionY], [0, gameScene.activeHero.positionY])
+            if gameScene.hero.positionX < 2 {
+                return ([0, gameScene.hero.positionY], [0, gameScene.hero.positionY])
             } else {
-                return ([gameScene.activeHero.positionX-1, gameScene.activeHero.positionY], [gameScene.activeHero.positionX-2, gameScene.activeHero.positionY])
+                return ([gameScene.hero.positionX-1, gameScene.hero.positionY], [gameScene.hero.positionX-2, gameScene.hero.positionY])
             }
         case .right:
-            if gameScene.activeHero.positionX > 6 {
-                return ([8, gameScene.activeHero.positionY], [8, gameScene.activeHero.positionY])
+            if gameScene.hero.positionX > 6 {
+                return ([8, gameScene.hero.positionY], [8, gameScene.hero.positionY])
             } else {
-                return ([gameScene.activeHero.positionX+1, gameScene.activeHero.positionY], [gameScene.activeHero.positionX+2, gameScene.activeHero.positionY])
+                return ([gameScene.hero.positionX+1, gameScene.hero.positionY], [gameScene.hero.positionX+2, gameScene.hero.positionY])
             }
         }
     }

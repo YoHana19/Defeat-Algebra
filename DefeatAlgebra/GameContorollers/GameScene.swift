@@ -44,7 +44,6 @@ enum ItemType {
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /*== Game objects ==*/
-    var activeHero = Hero()
     var gridNode: Grid!
     var castleNode: SKSpriteNode!
     var itemAreaNode: SKSpriteNode!
@@ -270,21 +269,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             GameScene.stageLevel += 1
             
             /* Store game property */
-            let ud = UserDefaults.standard
-            /* Stage level */
-            ud.set(GameScene.stageLevel, forKey: "stageLevel")
-            /* Hero */
-            ud.set(self?.hero!.moveLevel, forKey: "moveLevel")
-            /* Items */
-            var itemNameArray = [String]()
-            for (i, item) in (self?.itemArray.enumerated())! {
-                itemNameArray.append(item.name!)
-                if i == (self?.itemArray.count)!-1 {
-                    ud.set(itemNameArray, forKey: "itemNameArray")
-                }
-            }
-            /* Life */
-            ud.set(self?.maxLife, forKey: "life")
+            DAUserDefaultUtility.SetData(gameScene: self?)
             
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView?
@@ -318,10 +303,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //moveLevel = 4
         //let handedItemNameArray = ["catapult", "magicSword", "cane", "timeBomb"]
         
-        /* stageLevel */
-        if let level = selectedLevel {
-            GameScene.stageLevel = level
-        }
+        /* Stage Level */
         levelLabel.text = String(GameScene.stageLevel+1)
         /* Set hero */
         setHero()
@@ -503,7 +485,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if checkSpearDone == false {
                     checkSpearDone = true
                     if spearTurnCount < 1 {
-                        activeHero.attackType = 0
+                        hero.attackType = 0
                     } else {
                         spearTurnCount -= 1
                     }
@@ -614,9 +596,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     highestCatapultValue = 0
                 }
             case .MoveState:
-                if activeHero.moveDoneFlag == false {
+                if hero.moveDoneFlag == false {
                     /* Display move area */
-                    self.gridNode.showMoveArea(posX: activeHero.positionX, posY: activeHero.positionY, moveLevel: activeHero.moveLevel)
+                    self.gridNode.showMoveArea(posX: hero.positionX, posY: hero.positionY, moveLevel: hero.moveLevel)
                 }
                 
                 /* Display action buttons */
@@ -666,7 +648,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     break;
                 case .MagicSword:
                     if magicSwordAttackDone == false {
-                        self.gridNode.showAttackArea(posX: activeHero.positionX, posY: activeHero.positionY, attackType: activeHero.attackType)
+                        self.gridNode.showAttackArea(posX: hero.positionX, posY: hero.positionY, attackType: hero.attackType)
                     }
                     break;
                 case .BattleShip:
@@ -703,7 +685,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 enemyTurnDoneFlag = false
                 numOfTurnDoneHero = 0
                 checkSpearDone = false
-                callHeroCountDone = false
+                hero.moveDoneFlag = false
+                hero.attackDoneFlag = false
                 
                 /* Remove action buttons */
                 buttonAttack.isHidden = true
@@ -900,7 +883,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if nodeAtPoint.name == "buttonAttack" {
                 guard self.heroMovingFlag == false else { return }
                 
-                if self.activeHero.attackDoneFlag {
+                if self.hero.attackDoneFlag {
                     return
                 } else {
                     /* Reset item type */
@@ -913,7 +896,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
+                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, attackType: self.hero.attackType)
                     self.playerTurnState = .AttackState
                 }
                 /* Touch item button */
@@ -959,7 +942,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if nodeAtPoint.name == "buttonAttack" {
                 guard self.heroMovingFlag == false else { return }
                 
-                if self.activeHero.attackDoneFlag {
+                if self.hero.attackDoneFlag {
                     return
                 } else {
                     /* Reset item type */
@@ -972,7 +955,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.gridNode.showAttackArea(posX: self.activeHero.positionX, posY: self.activeHero.positionY, attackType: self.activeHero.attackType)
+                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, attackType: self.hero.attackType)
                     self.playerTurnState = .AttackState
                     
                     /* Remove triangle except the one of selected catapult */
@@ -1007,7 +990,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-            /* Use catapult */
+                /* Use catapult */
             } else if nodeAtPoint.name == "catapult" {
                 /* Remove active area if any */
                 self.gridNode.resetSquareArray(color: "purple")
@@ -1047,17 +1030,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 inputBoardForCane.isHidden = true
                 
                 /* Do attack animation */
-                activeHero.setMultiSwordAttackAnimation()
+                hero.setMultiSwordAttackAnimation()
                 
                 let hitSpotArray = checkWithinGrid()
                 
                 /* If hitting enemy! */
-                if self.gridNode.positionEnemyAtGrid[hitSpotArray.0][activeHero.positionY] || self.gridNode.positionEnemyAtGrid[hitSpotArray.1][activeHero.positionY] || self.gridNode.positionEnemyAtGrid[activeHero.positionX][hitSpotArray.2] || self.gridNode.positionEnemyAtGrid[activeHero.positionX][hitSpotArray.3] {
+                if self.gridNode.positionEnemyAtGrid[hitSpotArray.0][hero.positionY] || self.gridNode.positionEnemyAtGrid[hitSpotArray.1][hero.positionY] || self.gridNode.positionEnemyAtGrid[hero.positionX][hitSpotArray.2] || self.gridNode.positionEnemyAtGrid[hero.positionX][hitSpotArray.3] {
                     let waitAni = SKAction.wait(forDuration: 4.0)
                     let removeEnemy = SKAction.run({
                         /* Look for the enemy to destroy */
                         for enemy in self.gridNode.enemyArray {
-                            if enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.2 || enemy.positionX == self.activeHero.positionX && enemy.positionY == hitSpotArray.3 || enemy.positionX == hitSpotArray.0 && enemy.positionY == self.activeHero.positionY || enemy.positionX == hitSpotArray.1 && enemy.positionY == self.activeHero.positionY {
+                            if enemy.positionX == self.hero.positionX && enemy.positionY == hitSpotArray.2 || enemy.positionX == self.hero.positionX && enemy.positionY == hitSpotArray.3 || enemy.positionX == hitSpotArray.0 && enemy.positionY == self.hero.positionY || enemy.positionX == hitSpotArray.1 && enemy.positionY == self.hero.positionY {
                                 EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
                             }
                         }
@@ -1079,7 +1062,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let wait = SKAction.wait(forDuration: 4.0)
                 let moveState = SKAction.run({
                     /* Reset hero animation */
-                    self.activeHero.resetHero()
+                    self.hero.resetHero()
                     self.playerTurnState = .MoveState
                 })
                 let seq = SKAction.sequence([wait, moveState])
@@ -1224,8 +1207,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-                if self.activeHero.attackType < 1 {
-                    self.activeHero.attackType += 1
+                if self.hero.attackType < 1 {
+                    self.hero.attackType += 1
                     self.spearTurnCount = 3
                 }
                 
@@ -1242,7 +1225,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let wait = SKAction.wait(forDuration: 0.1)
                 let moveState = SKAction.run({
                     /* Reset hero animation */
-                    self.activeHero.resetHero()
+                    self.hero.resetHero()
                     self.playerTurnState = .MoveState
                 })
                 let seq = SKAction.sequence([wait, moveState])
@@ -1361,7 +1344,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 itemAreaCover.isHidden = false
                 
                 /* Reset hero */
-                activeHero.resetHero()
+                hero.resetHero()
                 /* Remove effect */
                 removeMagicSowrdEffect()
                 
@@ -1378,7 +1361,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Remove variable expression display for magic sword */
-                activeHero.removeMagicSwordVE()
+                hero.removeMagicSwordVE()
                 
                 /* Reset item type */
                 self.itemType = .None
@@ -1438,8 +1421,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Get boots */
                     if item.name == "boots" {
                         item.removeFromParent()
-                        if activeHero.moveLevel < 4 {
-                            self.activeHero.moveLevel += 1
+                        if hero.moveLevel < 4 {
+                            self.hero.moveLevel += 1
                         }
                         if GameScene.stageLevel >= 10 {
                             let boots = item as! Boots
@@ -1529,8 +1512,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Get boots */
                     if item.name == "boots" {
                         item.removeFromParent()
-                        if activeHero.moveLevel < 4 {
-                            self.activeHero.moveLevel += 1
+                        if hero.moveLevel < 4 {
+                            self.hero.moveLevel += 1
                         }
                         if GameScene.stageLevel >= 10 {
                             let boots = item as! Boots
@@ -1614,7 +1597,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                 }
                 
-            /* Hit enemy */
+                /* Hit enemy */
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! Hero
@@ -2272,52 +2255,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func checkWithinGrid() -> (Int, Int, Int, Int) {
         /* Calculate hit spots */
         /* Make sure hit spots within grid */
-        if activeHero.positionX == 0 {
+        if hero.positionX == 0 {
             let hitSpotXLeft = 0
-            let hitSpotXRight = activeHero.positionX+1
-            if activeHero.positionY == 0 {
+            let hitSpotXRight = hero.positionX+1
+            if hero.positionY == 0 {
                 let hitSpotYDown = 0
-                let hitSpotYUp = activeHero.positionY+1
+                let hitSpotYUp = hero.positionY+1
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if activeHero.positionX == 8 {
-                let hitSpotYDown = activeHero.positionY-1
+            } else if hero.positionX == 8 {
+                let hitSpotYDown = hero.positionY-1
                 let hitSpotYUp = 11
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
             } else {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = activeHero.positionY+1
+                let hitSpotYDown = hero.positionY-1
+                let hitSpotYUp = hero.positionY+1
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
             }
-        } else if activeHero.positionX == 8 {
-            let hitSpotXLeft = activeHero.positionX-1
+        } else if hero.positionX == 8 {
+            let hitSpotXLeft = hero.positionX-1
             let hitSpotXRight = 8
-            if activeHero.positionY == 0 {
+            if hero.positionY == 0 {
                 let hitSpotYDown = 0
-                let hitSpotYUp = activeHero.positionY+1
+                let hitSpotYUp = hero.positionY+1
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if activeHero.positionX == 8 {
-                let hitSpotYDown = activeHero.positionY-1
+            } else if hero.positionX == 8 {
+                let hitSpotYDown = hero.positionY-1
                 let hitSpotYUp = 11
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
             } else {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = activeHero.positionY+1
+                let hitSpotYDown = hero.positionY-1
+                let hitSpotYUp = hero.positionY+1
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
             }
         } else {
-            let hitSpotXLeft = activeHero.positionX-1
-            let hitSpotXRight = activeHero.positionX+1
-            if activeHero.positionY == 0 {
+            let hitSpotXLeft = hero.positionX-1
+            let hitSpotXRight = hero.positionX+1
+            if hero.positionY == 0 {
                 let hitSpotYDown = 0
-                let hitSpotYUp = activeHero.positionY+1
+                let hitSpotYUp = hero.positionY+1
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if activeHero.positionX == 8 {
-                let hitSpotYDown = activeHero.positionY-1
+            } else if hero.positionX == 8 {
+                let hitSpotYDown = hero.positionY-1
                 let hitSpotYUp = 11
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
             } else {
-                let hitSpotYDown = activeHero.positionY-1
-                let hitSpotYUp = activeHero.positionY+1
+                let hitSpotYDown = hero.positionY-1
+                let hitSpotYUp = hero.positionY+1
                 return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
             }
         }
@@ -2328,7 +2311,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func setMagicSowrdEffect() {
         /* Load our particle effect */
         let particles = SKEmitterNode(fileNamed: "MagicSwordEffect")!
-        particles.position = activeHero.position
+        particles.position = hero.position
         particles.name = "magicSwordEffect"
         /* Add particles to scene */
         addChild(particles)
