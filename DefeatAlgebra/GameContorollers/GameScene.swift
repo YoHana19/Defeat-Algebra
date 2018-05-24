@@ -103,7 +103,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var hero: Hero!
     var heroMovingFlag = false
     /* Hero turn */
-    var numOfTurnDoneHero = 0
     var playerTurnDoneFlag = false
     
     
@@ -171,13 +170,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* cane */
     var inputBoardForCane: InputVariable!
     var caneOnFlag = false
-    /* spear */
-    var spearTurnCount = 0
-    var checkSpearDone = false
-    /* call hero */
-    var callHeroCount = 0
-    var callHeroCountDone = false
-    var callingHero = false
     
     /*================*/
     /*== Grid Flash ==*/
@@ -234,13 +226,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Retry button */
         buttonRetry.selectedHandler = { [weak self] in
             
-            /* Analytics */
-            Answers.logLevelEnd("Easy Level \(GameScene.stageLevel+1)",
-                score: nil,
-                success: false,
-                customAttributes: ["Custom String": "Retry"]
-            )
-            
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView?
             
@@ -269,7 +254,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             GameScene.stageLevel += 1
             
             /* Store game property */
-            DAUserDefaultUtility.SetData(gameScene: self?)
+            DAUserDefaultUtility.SetData(gameScene: self)
             
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView?
@@ -311,9 +296,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for itemName in handedItemNameArray {
             displayitem(name: itemName)
         }
-        
-        /* For Analytics */
-        Answers.logLevelStart("Easy Level \(GameScene.stageLevel+1)")
         
         /* Set input boards */
         setInputBoard()
@@ -479,17 +461,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 break;
             case .ItemOn:
                 playerPhaseLabel.isHidden = true
-                
-                /* spear */
-                /* Make sure to call once */
-                if checkSpearDone == false {
-                    checkSpearDone = true
-                    if spearTurnCount < 1 {
-                        hero.attackType = 0
-                    } else {
-                        spearTurnCount -= 1
-                    }
-                }
                 
                 /* timeBomb */
                 if self.gridNode.timeBombSetArray.count > 0 {
@@ -683,8 +654,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Reset Flags */
                 addEnemyDoneFlag = false
                 enemyTurnDoneFlag = false
-                numOfTurnDoneHero = 0
-                checkSpearDone = false
                 hero.moveDoneFlag = false
                 hero.attackDoneFlag = false
                 
@@ -1193,43 +1162,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                
-                /* spear */
-            } else if nodeAtPoint.name == "spear" {
-                /* Remove activeArea */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
-                resetActiveAreaForCatapult()
-                /* Remove triangle except the one of selected catapult */
-                for catapult in setCatapultArray {
-                    if let node = catapult.childNode(withName: "pointingCatapult") {
-                        node.removeFromParent()
-                    }
-                }
-                
-                if self.hero.attackType < 1 {
-                    self.hero.attackType += 1
-                    self.spearTurnCount = 3
-                }
-                
-                /* Get index of game using */
-                usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                
-                /* Remove used itemIcon from item array and Scene */
-                resetDisplayItem(index: usingItemIndex)
-                
-                /* Cover item area */
-                self.itemAreaCover.isHidden = false
-                
-                /* Change state to MoveState */
-                let wait = SKAction.wait(forDuration: 0.1)
-                let moveState = SKAction.run({
-                    /* Reset hero animation */
-                    self.hero.resetHero()
-                    self.playerTurnState = .MoveState
-                })
-                let seq = SKAction.sequence([wait, moveState])
-                self.run(seq)
                 
                 /* Touch active area  */
             } else if nodeAtPoint.name == "activeArea" {

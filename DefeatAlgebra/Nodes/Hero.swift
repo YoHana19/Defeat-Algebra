@@ -20,7 +20,6 @@ class Hero: SKSpriteNode {
     var moveDirection: MoveDirection = .Horizontal
     var moveSpeed = 0.2
     var heroMoveAnimation: SKAction!
-    var attackType: Int = 0
     var moveLevel: Int = 1
     
     /* Flags */

@@ -353,26 +353,6 @@ class Grid: SKSpriteNode {
                         let seq = SKAction.sequence([waitAni, destroyEnemy])
                         self.run(seq)
                     }
-                    
-                    /* Spear attack */
-                } else if gameScene.hero.attackType == 1 {
-                    gameScene.hero.setSpearAnimation()
-                    
-                    let hitSpots = self.hitSpotsForSpear()
-                    /* If hitting enemy! */
-                    if self.positionEnemyAtGrid[hitSpots.0[0]][hitSpots.0[1]] || self.positionEnemyAtGrid[hitSpots.1[0]][hitSpots.1[1]] {
-                        let waitAni = SKAction.wait(forDuration: 0.5)
-                        let removeEnemy = SKAction.run({
-                            /* Look for the enemy to destroy */
-                            for enemy in self.enemyArray {
-                                if enemy.positionX == hitSpots.0[0] && enemy.positionY == hitSpots.0[1] || enemy.positionX == hitSpots.1[0] && enemy.positionY == hitSpots.1[1] {
-                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene)
-                                }
-                            }
-                        })
-                        let seq = SKAction.sequence([waitAni, removeEnemy])
-                        self.run(seq)
-                    }
                 }
                 
                 /* Back to MoveState */
