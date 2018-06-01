@@ -14,18 +14,18 @@ class CharacterController {
     static let madDoctorPos = CGPoint(x: 300, y: 1000)
     static let mainHeroPos = CGPoint(x: 700, y: 300)
     
-    public static func setCharacter(scene: GameScene) {
+    public static func setCharacter(scene: SKScene) {
         setDoctor(scene: scene)
         setMadDoctor(scene: scene)
     }
     
-    private static func setDoctor(scene: GameScene) {
+    private static func setDoctor(scene: SKScene) {
         let doctor = Doctor()
         doctor.position = doctorPos
         scene.addChild(doctor)
     }
     
-    private static func setMadDoctor(scene: GameScene) {
+    private static func setMadDoctor(scene: SKScene) {
         let madDoctor = MadDoctor()
         madDoctor.position = madDoctorPos
         scene.addChild(madDoctor)

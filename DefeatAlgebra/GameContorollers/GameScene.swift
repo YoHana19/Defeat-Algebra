@@ -619,7 +619,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     break;
                 case .MagicSword:
                     if magicSwordAttackDone == false {
-                        self.gridNode.showAttackArea(posX: hero.positionX, posY: hero.positionY, attackType: hero.attackType)
+                        self.gridNode.showAttackArea(posX: hero.positionX, posY: hero.positionY)
                     }
                     break;
                 case .BattleShip:
@@ -865,7 +865,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, attackType: self.hero.attackType)
+                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY)
                     self.playerTurnState = .AttackState
                 }
                 /* Touch item button */
@@ -924,7 +924,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, attackType: self.hero.attackType)
+                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY)
                     self.playerTurnState = .AttackState
                     
                     /* Remove triangle except the one of selected catapult */

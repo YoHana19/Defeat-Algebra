@@ -331,28 +331,25 @@ class Grid: SKSpriteNode {
                 /* Set direction of hero */
                 gameScene.hero.setHeroDirection(posX: gridX, posY: gridY)
                 
-                /* Sword attack */
-                if gameScene.hero.attackType == 0 {
-                    gameScene.hero.setSwordAnimation()
-                    /* Play Sound */
-                    if MainMenu.soundOnFlag {
-                        let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
-                        self.run(attack)
-                    }
-                    /* If hitting enemy! */
-                    if self.positionEnemyAtGrid[gridX][gridY] {
-                        let waitAni = SKAction.wait(forDuration: 0.5)
-                        let destroyEnemy = SKAction.run({
-                            /* Look for the enemy to destroy */
-                            for enemy in self.enemyArray {
-                                if enemy.positionX == gridX && enemy.positionY == gridY {
-                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene)
-                                }
+                gameScene.hero.setSwordAnimation()
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
+                    self.run(attack)
+                }
+                /* If hitting enemy! */
+                if self.positionEnemyAtGrid[gridX][gridY] {
+                    let waitAni = SKAction.wait(forDuration: 0.5)
+                    let destroyEnemy = SKAction.run({
+                        /* Look for the enemy to destroy */
+                        for enemy in self.enemyArray {
+                            if enemy.positionX == gridX && enemy.positionY == gridY {
+                                EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene)
                             }
-                        })
-                        let seq = SKAction.sequence([waitAni, destroyEnemy])
-                        self.run(seq)
-                    }
+                        }
+                    })
+                    let seq = SKAction.sequence([waitAni, destroyEnemy])
+                    self.run(seq)
                 }
                 
                 /* Back to MoveState */
@@ -1410,51 +1407,26 @@ class Grid: SKSpriteNode {
     
     /*== Attack ==*/
     /* Show attack area */
-    func showAttackArea(posX: Int, posY: Int, attackType: Int) {
-        /* Show up red square according to move level */
-        switch attackType {
-        case 0:
-            for gridX in posX-1...posX+1 {
-                /* Make sure inside the grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    /* Remove hero position */
-                    if gridX != posX {
-                        squareRedArray[gridX][posY].isHidden = false
-                    }
+    func showAttackArea(posX: Int, posY: Int) {
+        /* Show up red square */
+        for gridX in posX-1...posX+1 {
+            /* Make sure inside the grid */
+            if gridX >= 0 && gridX <= self.columns-1 {
+                /* Remove hero position */
+                if gridX != posX {
+                    squareRedArray[gridX][posY].isHidden = false
                 }
             }
-            for gridY in posY-1...posY+1 {
-                /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.rows-1 {
-                    /* Remove hero position */
-                    if gridY != posY {
-                        squareRedArray[posX][gridY].isHidden = false
-                    }
-                }
-            }
-        case 1:
-            for gridX in posX-2...posX+2 {
-                /* Make sure inside the grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    /* Remove hero position */
-                    if gridX != posX {
-                        squareRedArray[gridX][posY].isHidden = false
-                    }
-                }
-            }
-            for gridY in posY-2...posY+2 {
-                /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.rows-1 {
-                    /* Remove hero position */
-                    if gridY != posY {
-                        squareRedArray[posX][gridY].isHidden = false
-                    }
-                }
-            }
-        default:
-            break;
         }
-        
+        for gridY in posY-1...posY+1 {
+            /* Make sure inside the grid */
+            if gridY >= 0 && gridY <= self.rows-1 {
+                /* Remove hero position */
+                if gridY != posY {
+                    squareRedArray[posX][gridY].isHidden = false
+                }
+            }
+        }
     }
     
     /* Find hit spots for spear attack */
