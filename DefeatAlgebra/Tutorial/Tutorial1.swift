@@ -1,10 +1,23 @@
 //
-//  Tutorial.swift
+//  GameScene.swift
 //  DefeatAlgebra
 //
 //  Created by yo hanashima on 2017/06/30.
 //  Copyright © 2017年 yo hanashima. All rights reserved.
 //
+
+/* Index of categryBitMask of game objects */
+/*
+ 1: Hero - 4294967258(MAX-4-32-1)
+ 2: Enemy - 5(1,4)
+ 4: castleNode - 24(8,16)
+ 8: EnemyArm - 4
+ 16: EnemyFist - 5(1,4)
+ 32: setItems - wall-26(2,8,16)
+ 64: getItems(Boots,timeBomb,Heart,callHero,catapult,multiAttack) - 1
+ 128:
+ 1024:
+ */
 
 import SpriteKit
 import GameplayKit
@@ -12,7 +25,7 @@ import GameplayKit
 class Tutorial1: SKScene, SKPhysicsContactDelegate {
     
     /* Game objects */
-    var gridNode: GridForTutorial!
+    var gridNode: Grid!
     var activeHero = HeroForTutorial()
     var castleNode: SKSpriteNode!
     var itemAreaNode: SKSpriteNode!
@@ -56,7 +69,7 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
     var gameOverSoundDone = false
     var stageClearSoundDone = false
     var hitCastleWallSoundDone = false
-    
+
     /* Game flags */
     var addEnemyDoneFlag = false
     var playerTurnDoneFlag = false
@@ -76,14 +89,9 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
     var enemyTurnEndFlag = false
     var pauseFlag = false
     
-    /* Tuotrial temp stuff */
-    var tutorial1T7Done = false
-    var tutorial1T9Arm = [EnemyArm]()
-    var tutorial1T9Fist = [EnemyFist]()
-    var tutorial1T9Done = false
-    var tutorial1T11Done = false
-    var tutorial1T13Index = 0
-    var hitByEnemyFlag = false
+    /* Chara showing flag */
+    var doctorShouldShow = false
+    var madDoctorShouldShow = false
     
     /* Player Control */
     var beganPos:CGPoint!
@@ -113,7 +121,8 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
     override func didMove(to view: SKView) {
         
         /* Connect scene objects */
-        gridNode = childNode(withName: "gridNode") as! GridForTutorial
+        gridNode = childNode(withName: "gridNode") as! Grid
+        gridNode.isTutorial = true
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
         itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
         buttonAttack = childNode(withName: "buttonAttack")
@@ -128,8 +137,6 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
         }
         
         /* Labels */
-        gameOverLabel = childNode(withName: "gameOverLabel")
-        gameOverLabel.isHidden = true
         playerPhaseLabel = childNode(withName: "playerPhaseLabel")
         playerPhaseLabel.isHidden = true
         enemyPhaseLabel = childNode(withName: "enemyPhaseLabel")
@@ -138,15 +145,7 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
         touchScreenLabel.isHidden = true
         
         /* Connect game buttons */
-        buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
-        buttonRetry.state = .msButtonNodeStateHidden
-        buttonNext = childNode(withName: "buttonNext") as! MSButtonNode
-        buttonNext.state = .msButtonNodeStateHidden
-        buttonAgain = childNode(withName: "buttonAgain") as! MSButtonNode
-        buttonAgain.state = .msButtonNodeStateHidden
         buttonPause = childNode(withName: "buttonPause") as! MSButtonNode
-        buttonSkip = childNode(withName: "buttonSkip") as! MSButtonNode
-        
         
         /* Pause button */
         buttonPause.selectedHandler = { [weak self] in
@@ -158,8 +157,6 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
         pauseScreen = PauseScreenForTutorial()
         addChild(pauseScreen)
         
-        /* Set initial objects */
-        setInitialObjects()
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
@@ -186,6 +183,8 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
         /* Set life */
         setLife(numOflife: maxLife)
         
+        /* Set Character */
+        CharacterController.setCharacter(scene: self)
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -193,18 +192,32 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard pauseFlag == false else { return }
         
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard pauseFlag == false else { return }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+        guard pauseFlag == false else { return }
+        doctorShouldShow = !doctorShouldShow
+        madDoctorShouldShow = !madDoctorShouldShow
+        if doctorShouldShow {
+            CharacterController.showDoctor()
+        } else {
+            CharacterController.retreatDoctor()
+        }
+        if madDoctorShouldShow {
+            CharacterController.showMadDoctor()
+        } else {
+            CharacterController.retreatMadDoctor()
+        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
-        /* Physics contact delegate implementation */
+        
     }
     
     /* Create item icons to display when you get items */
@@ -236,6 +249,60 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
         itemAreaCover.position = itemAreaNode.position
         itemAreaCover.zPosition = 100
         addChild(itemAreaCover)
+    }
+    
+    /* Create label for tutorial */
+    func createTutorialLabel(text: String, posY: Int) {
+        /* Set label with font */
+        let label = SKLabelNode(fontNamed: "GillSans-Bold")
+        
+        /* Set text */
+        label.text = text
+        
+        /* Set name */
+        label.name = "tutorialLabel"
+        
+        /* Set font size */
+        label.fontSize = 35
+        
+        /* Set zPosition */
+        label.zPosition = 50
+        
+        /* Set position */
+        label.position = CGPoint(x: self.size.width/2, y: CGFloat(posY))
+        
+        tutorialLabelArray.append(label)
+        
+        /* Add to Scene */
+        self.addChild(label)
+    }
+    
+    func createTutorialLabel2(text: String, posX: CGFloat, posY: Int, color: UIColor, size: CGFloat) {
+        /* Set label with font */
+        let label = SKLabelNode(fontNamed: "GillSans-Bold")
+        
+        /* Set text */
+        label.text = text
+        
+        /* Set name */
+        label.name = "tutorialLabel"
+        
+        /* Set font size */
+        label.fontSize = size
+        
+        /* Set font color */
+        label.fontColor = color
+        
+        /* Set zPosition */
+        label.zPosition = 50
+        
+        /* Set position */
+        label.position = CGPoint(x: posX, y: CGFloat(posY))
+        
+        tutorialLabelArray.append(label)
+        
+        /* Add to Scene */
+        self.addChild(label)
     }
     
     /* Set pointing icon */
@@ -359,5 +426,40 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+    }
+    
+    /*== Time bomb ==*/
+    /* Effect */
+    func timeBombEffect(timeBomb: TimeBomb) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "TimeBombExplode")!
+        let particles2 = SKEmitterNode(fileNamed: "TimeBombSmoke")!
+        particles.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
+        particles2.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
+        /* Add particles to scene */
+        self.addChild(particles)
+        self.addChild(particles2)
+        let waitRemoveExplode = SKAction.wait(forDuration: 0.5)
+        let waitRemoveSmoke = SKAction.wait(forDuration: 3.0)
+        let removeParticles = SKAction.removeFromParent()
+        let onFlag = SKAction.run({
+            self.timeBombDoneFlag = true
+            /* Reset itemSet arrays */
+            self.gridNode.timeBombSetArray.removeAll()
+        })
+        let seqEffect = SKAction.sequence([waitRemoveExplode, removeParticles])
+        let seqEffect2 = SKAction.sequence([waitRemoveSmoke, removeParticles, onFlag])
+        particles.run(seqEffect)
+        particles2.run(seqEffect2)
+    }
+    
+    /* Show item card when get it */
+    func showItemCard(item: String) {
+        let card = SKSpriteNode(imageNamed: item)
+        card.size = CGSize(width: 550, height: 769)
+        card.position = CGPoint(x: self.size.width/2, y: self.size.height/2+100)
+        card.name = "itemCard"
+        card.zPosition = 10
+        addChild(card)
     }
 }

@@ -10,9 +10,15 @@ import Foundation
 import SpriteKit
 
 class CharacterController {
-    static let doctorPos = CGPoint(x: -100, y: 300)
-    static let madDoctorPos = CGPoint(x: 300, y: 1000)
-    static let mainHeroPos = CGPoint(x: 700, y: 300)
+    static let doctorOnPos = CGPoint(x: 170, y: 500)
+    static let doctorOffPos = CGPoint(x: -170, y: 500)
+    static let madDoctorOnPos = CGPoint(x: 180, y: 1100)
+    static let madDoctorOffPos = CGPoint(x: 180, y: 1600)
+    static let mainHeroOnPos = CGPoint(x: 700, y: 300)
+    static let mainHeroOffPos = CGPoint(x: 700, y: 300)
+    
+    static var doctor: Doctor = Doctor()
+    static var madDoctor: MadDoctor = MadDoctor()
     
     public static func setCharacter(scene: SKScene) {
         setDoctor(scene: scene)
@@ -20,14 +26,28 @@ class CharacterController {
     }
     
     private static func setDoctor(scene: SKScene) {
-        let doctor = Doctor()
-        doctor.position = doctorPos
+        doctor.position = doctorOffPos
         scene.addChild(doctor)
     }
     
     private static func setMadDoctor(scene: SKScene) {
-        let madDoctor = MadDoctor()
-        madDoctor.position = madDoctorPos
+        madDoctor.position = madDoctorOffPos
         scene.addChild(madDoctor)
+    }
+    
+    public static func showDoctor() {
+        CharacterAniController.move(character: doctor, dest: doctorOnPos, duration: 0.5)
+    }
+    
+    public static func showMadDoctor() {
+        CharacterAniController.move(character: madDoctor, dest: madDoctorOnPos, duration: 0.5)
+    }
+    
+    public static func retreatDoctor() {
+        CharacterAniController.move(character: doctor, dest: doctorOffPos, duration: 0.5)
+    }
+    
+    public static func retreatMadDoctor() {
+        CharacterAniController.move(character: madDoctor, dest: madDoctorOffPos, duration: 0.5)
     }
 }

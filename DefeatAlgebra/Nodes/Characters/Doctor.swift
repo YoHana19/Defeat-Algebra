@@ -14,7 +14,8 @@ class Doctor: SKSpriteNode {
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "goodDoctorDefault")
-        super.init(texture: texture, color: UIColor.clear, size: texture.size())
+        let bodySize = CGSize(width: 264, height: 310.4)
+        super.init(texture: texture, color: UIColor.clear, size: bodySize)
         
         /* Set Z-Position, ensure ontop of screen */
         zPosition = 100

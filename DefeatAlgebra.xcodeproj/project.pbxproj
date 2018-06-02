@@ -61,6 +61,10 @@
 		204163A420C2653F00217F6A /* GridFlashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A220C2653F00217F6A /* GridFlashController.swift */; };
 		204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
 		204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
+		204163A920C2765E00217F6A /* Tutorial1.sks in Resources */ = {isa = PBXBuildFile; fileRef = 204163A820C2765E00217F6A /* Tutorial1.sks */; };
+		204163AA20C2765E00217F6A /* Tutorial1.sks in Resources */ = {isa = PBXBuildFile; fileRef = 204163A820C2765E00217F6A /* Tutorial1.sks */; };
+		204163AC20C2767100217F6A /* Tutorial1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163AB20C2767100217F6A /* Tutorial1.swift */; };
+		204163AD20C2767100217F6A /* Tutorial1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163AB20C2767100217F6A /* Tutorial1.swift */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
@@ -273,6 +277,8 @@
 		203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainMenuHard.mp3; sourceTree = "<group>"; };
 		204163A220C2653F00217F6A /* GridFlashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridFlashController.swift; sourceTree = "<group>"; };
 		204163A520C266AD00217F6A /* GridActiveAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridActiveAreaController.swift; sourceTree = "<group>"; };
+		204163A820C2765E00217F6A /* Tutorial1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Tutorial1.sks; sourceTree = "<group>"; };
+		204163AB20C2767100217F6A /* Tutorial1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tutorial1.swift; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D8B1F074FE800F4DD11 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -430,7 +436,9 @@
 			isa = PBXGroup;
 			children = (
 				203B2A491F67B97100DDCC03 /* Tutorial.sks */,
+				204163A820C2765E00217F6A /* Tutorial1.sks */,
 				203B2A4A1F67B97100DDCC03 /* Tutorial.swift */,
+				204163AB20C2767100217F6A /* Tutorial1.swift */,
 				208C5D6520280E2E0006ADE4 /* TutorialJ.swift */,
 				203B2A4B1F67B97100DDCC03 /* Tutorial2.sks */,
 				203B2A4C1F67B97100DDCC03 /* Tutorial2.swift */,
@@ -828,6 +836,7 @@
 				20D0FECE20B6C0B000C547A5 /* LevelSelectMenu.sks in Resources */,
 				200829DE1F32CA860038AEC0 /* CatapultFire2.sks in Resources */,
 				203AEA991F3AFFF300C5CD4E /* mainMenu.mp3 in Resources */,
+				204163A920C2765E00217F6A /* Tutorial1.sks in Resources */,
 				200829DF1F32CA860038AEC0 /* DestroyEnemy.sks in Resources */,
 				203B2A931F6917A400DDCC03 /* mainMenuHard.mp3 in Resources */,
 				201B8C551F3A326600E91301 /* battleShipShoot.wav in Resources */,
@@ -874,6 +883,7 @@
 				20D0FECF20B6C0B000C547A5 /* LevelSelectMenu.sks in Resources */,
 				20E9E8DB20223B1400D31410 /* CatapultFire2.sks in Resources */,
 				20E9E8DC20223B1400D31410 /* mainMenu.mp3 in Resources */,
+				204163AA20C2765E00217F6A /* Tutorial1.sks in Resources */,
 				20E9E8DD20223B1400D31410 /* DestroyEnemy.sks in Resources */,
 				20E9E8DE20223B1400D31410 /* mainMenuHard.mp3 in Resources */,
 				20E9E8DF20223B1400D31410 /* battleShipShoot.wav in Resources */,
@@ -1115,6 +1125,7 @@
 				20D0FEDA20B6C0E300C547A5 /* EnemyProperty.swift in Sources */,
 				20D0FF3520B6C12300C547A5 /* Catapult.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
+				204163AC20C2767100217F6A /* Tutorial1.swift in Sources */,
 				20D0FF2D20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE620B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3720B6C12300C547A5 /* Wall.swift in Sources */,
@@ -1184,6 +1195,7 @@
 				20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */,
 				20D0FF3620B6C12300C547A5 /* Catapult.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
+				204163AD20C2767100217F6A /* Tutorial1.swift in Sources */,
 				20D0FF2E20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE720B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3820B6C12300C547A5 /* Wall.swift in Sources */,

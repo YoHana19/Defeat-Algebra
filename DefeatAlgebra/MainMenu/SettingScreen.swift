@@ -69,7 +69,7 @@ class SettingScreen: SKSpriteNode {
             let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial? else {
+            guard let scene = Tutorial1(fileNamed:"Tutorial1") as Tutorial1? else {
                 return
             }
             
@@ -79,7 +79,7 @@ class SettingScreen: SKSpriteNode {
                 scene.run(sound)
             }
             
-            Tutorial.tutorialPhase = 0
+            //Tutorial.tutorialPhase = 0
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit

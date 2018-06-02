@@ -10,8 +10,8 @@ import Foundation
 import SpriteKit
 
 class CharacterAniController {
-    public static func SlideInToR(character: SKSpriteNode, distance: CGFloat, duration: TimeInterval) {
-        let move = SKAction.moveBy(x: distance, y: 0, duration: duration)
+    public static func move(character: SKSpriteNode, dest: CGPoint, duration: TimeInterval) {
+        let move = SKAction.move(to: dest, duration: duration)
         character.run(move)
     }
     

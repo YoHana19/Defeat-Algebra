@@ -13,7 +13,8 @@ class MadDoctor: SKSpriteNode {
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "madScientist2")
-        super.init(texture: texture, color: UIColor.clear, size: texture.size())
+        let bodySize = CGSize(width: 228.8, height: 422.5)
+        super.init(texture: texture, color: UIColor.clear, size: bodySize)
         
         /* Set Z-Position, ensure ontop of screen */
         zPosition = 100
