@@ -57,6 +57,10 @@
 		203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A711F67BBD100DDCC03 /* MainMenu.swift */; };
 		203B2A7A1F67BBD200DDCC03 /* SettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A721F67BBD100DDCC03 /* SettingScreen.swift */; };
 		203B2A931F6917A400DDCC03 /* mainMenuHard.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */; };
+		204163A320C2653F00217F6A /* GridFlashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A220C2653F00217F6A /* GridFlashController.swift */; };
+		204163A420C2653F00217F6A /* GridFlashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A220C2653F00217F6A /* GridFlashController.swift */; };
+		204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
+		204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
 		204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
 		204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
@@ -267,6 +271,8 @@
 		203B2A711F67BBD100DDCC03 /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		203B2A721F67BBD100DDCC03 /* SettingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingScreen.swift; sourceTree = "<group>"; };
 		203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainMenuHard.mp3; sourceTree = "<group>"; };
+		204163A220C2653F00217F6A /* GridFlashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridFlashController.swift; sourceTree = "<group>"; };
+		204163A520C266AD00217F6A /* GridActiveAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridActiveAreaController.swift; sourceTree = "<group>"; };
 		204C7D801F074FE800F4DD11 /* DefeatAlgebra.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebra.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		204C7D831F074FE800F4DD11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		204C7D8B1F074FE800F4DD11 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
@@ -456,6 +462,15 @@
 			path = MainMenu;
 			sourceTree = "<group>";
 		};
+		204163A120C2651F00217F6A /* Grid */ = {
+			isa = PBXGroup;
+			children = (
+				204163A220C2653F00217F6A /* GridFlashController.swift */,
+				204163A520C266AD00217F6A /* GridActiveAreaController.swift */,
+			);
+			path = Grid;
+			sourceTree = "<group>";
+		};
 		204C7D771F074FE800F4DD11 = {
 			isa = PBXGroup;
 			children = (
@@ -542,6 +557,7 @@
 		20D0FEDC20B6C11100C547A5 /* NodeControllers */ = {
 			isa = PBXGroup;
 			children = (
+				204163A120C2651F00217F6A /* Grid */,
 				20D0FEDD20B6C11100C547A5 /* Enemy */,
 				20D0FEE220B6C11100C547A5 /* Characters */,
 			);
@@ -1111,6 +1127,8 @@
 				20D0FF1B20B6C12300C547A5 /* Enemy.swift in Sources */,
 				20D0FF1520B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				20D0FEF220B6C11200C547A5 /* CharacterAniController.swift in Sources */,
+				204163A320C2653F00217F6A /* GridFlashController.swift in Sources */,
+				204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */,
 				20D0FF4620B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */,
 				205A0ED6207A0D58006A44A6 /* LoginService.swift in Sources */,
 				203B2A541F67B97100DDCC03 /* PauseScreenForTutorial2.swift in Sources */,
@@ -1178,6 +1196,8 @@
 				20D0FF1C20B6C12300C547A5 /* Enemy.swift in Sources */,
 				20D0FF1620B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				20D0FEF320B6C11200C547A5 /* CharacterAniController.swift in Sources */,
+				204163A420C2653F00217F6A /* GridFlashController.swift in Sources */,
+				204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */,
 				20D0FF4720B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */,
 				205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */,
 				20E9E8A320223B1400D31410 /* PauseScreenForTutorial2.swift in Sources */,

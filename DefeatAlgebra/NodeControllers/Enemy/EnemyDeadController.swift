@@ -16,7 +16,7 @@ class EnemyDeadController {
             enemy.resetColorizeEnemy()
         } else {
             /* Effect */
-            gameScene.gridNode.enemyDestroyEffect(enemy: enemy)
+            enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy)
             
             /* Enemy */
             let waitEffectRemove = SKAction.wait(forDuration: 1.0)
@@ -35,6 +35,25 @@ class EnemyDeadController {
                 EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: gameScene.gridNode)
             }
         }
+    }
+    
+    /*== Set effect when enemy destroyed ==*/
+    private static func enemyDestroyEffect(grid: Grid, enemy: Enemy) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "DestroyEnemy")!
+        particles.position = CGPoint(x: enemy.position.x, y: enemy.position.y-20)
+        /* Add particles to scene */
+        grid.addChild(particles)
+        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
+        let removeParticles = SKAction.removeFromParent()
+        let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
+        particles.run(seqEffect)
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
+            grid.run(dead)
+        }
+        
     }
     
     static func originEnemyDead(origin: Enemy, gridNode: Grid) {

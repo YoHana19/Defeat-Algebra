@@ -38,7 +38,7 @@ enum PlayerTurnState {
 }
 
 enum ItemType {
-    case None, timeBomb, Catapult, Wall, MagicSword, BattleShip, Teleport, ResetCatapult, Cane
+    case None, timeBomb, Catapult, Wall, MagicSword, Teleport, ResetCatapult, Cane
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -375,12 +375,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         initialAddEnemyFlag = false
                         
                         let addEnemy = SKAction.run({
-                            self.gridNode.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameScene.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameScene.stageLevel])
+                            EnemyAddController.addInitialEnemyAtGrid(enemyPosArray: self.initialEnemyPosArray, enemyPosArrayForUnS: self.initialEnemyPosArrayForUnS, sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameScene.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameScene.stageLevel], grid: self.gridNode)
                         })
                         let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*4+1.0) /* 4 is distance, 1.0 is buffer */
                         let moveState = SKAction.run({
                             /* Update enemy position */
-                            self.gridNode.updateEnemyPositon()
+                            EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                             
                             /* Move to next state */
                             self.gameState = .GridFlashing
@@ -395,14 +395,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         /* Add enemy for Education */
                         if addEnemyManager[countTurnForAddEnemy][1] == 1 {
                             let addEnemy = SKAction.run({
-                                self.gridNode.addEnemyForEdu(sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameScene.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameScene.stageLevel], numOfOrigin: self.addEnemyManager[self.countTurnForAddEnemy][2])
+                                EnemyAddController.addEnemyForEdu(sVariableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameScene.stageLevel], uVariableExpressionSource: EnemyProperty.unSimplifiedVariableExpressionSource[GameScene.stageLevel], numOfOrigin: self.addEnemyManager[self.countTurnForAddEnemy][2], grid: self.gridNode)
                             })
                             let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
                             let moveState = SKAction.run({
                                 
                                 /* Update enemy position */
-                                self.gridNode.resetEnemyPositon()
-                                self.gridNode.updateEnemyPositon()
+                                EnemyMoveController.resetEnemyPositon(grid: self.gridNode)
+                                EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                                 
                                 /* Count up to adding normal enemy time */
                                 /* Move to next state */
@@ -415,7 +415,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             /* Add enemy normaly */
                         } else if addEnemyManager[countTurnForAddEnemy][1] == 0 {
                             let addEnemy = SKAction.run({
-                                self.gridNode.addEnemyAtGrid(self.addEnemyManager[self.countTurnForAddEnemy][2], variableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameScene.stageLevel]+EnemyProperty.unSimplifiedVariableExpressionSource[GameScene.stageLevel] , yRange: self.addEnemyManager[self.countTurnForAddEnemy][3])
+                                EnemyAddController.addEnemyAtGrid(self.addEnemyManager[self.countTurnForAddEnemy][2], variableExpressionSource: EnemyProperty.simplifiedVariableExpressionSource[GameScene.stageLevel]+EnemyProperty.unSimplifiedVariableExpressionSource[GameScene.stageLevel] , yRange: self.addEnemyManager[self.countTurnForAddEnemy][3], grid: self.gridNode)
                             })
                             let wait = SKAction.wait(forDuration: self.gridNode.addingMoveSpeed*2+1.0) /* 2 is distance, 0.1 is buffer */
                             let moveState = SKAction.run({
@@ -423,8 +423,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                 self.gridNode.startPosArray = [0,1,2,3,4,5,6,7,8]
                                 
                                 /* Update enemy position */
-                                self.gridNode.resetEnemyPositon()
-                                self.gridNode.updateEnemyPositon()
+                                EnemyMoveController.resetEnemyPositon(grid: self.gridNode)
+                                EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                                 
                                 /* Move to next state */
                                 self.gameState = .GridFlashing
@@ -569,7 +569,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             case .MoveState:
                 if hero.moveDoneFlag == false {
                     /* Display move area */
-                    self.gridNode.showMoveArea(posX: hero.positionX, posY: hero.positionY, moveLevel: hero.moveLevel)
+                    GridActiveAreaController.showMoveArea(posX: hero.positionX, posY: hero.positionY, moveLevel: hero.moveLevel, grid: self.gridNode)
                 }
                 
                 /* Display action buttons */
@@ -591,7 +591,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     catapultDoneFlag = false
                     break;
                 case .timeBomb:
-                    self.gridNode.showtimeBombSettingArea()
+                    GridActiveAreaController.showtimeBombSettingArea(grid: self.gridNode)
                     break;
                 case .Catapult:
                     if setCatapultDoneFlag == false {
@@ -615,18 +615,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     }
                     break;
                 case .Wall:
-                    self.gridNode.showWallSettingArea()
+                    GridActiveAreaController.showWallSettingArea(grid: self.gridNode)
                     break;
                 case .MagicSword:
                     if magicSwordAttackDone == false {
-                        self.gridNode.showAttackArea(posX: hero.positionX, posY: hero.positionY)
+                        GridActiveAreaController.showAttackArea(posX: hero.positionX, posY: hero.positionY, grid: self.gridNode)
                     }
                     break;
-                case .BattleShip:
-                    self.gridNode.showBttleShipSettingArea()
-                    break;
                 case .Teleport:
-                    self.gridNode.showTeleportSettingArea()
+                    GridActiveAreaController.showTeleportSettingArea(grid: self.gridNode)
                     break;
                 case .ResetCatapult:
                     /* Make sure to call once */
@@ -662,9 +659,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 buttonItem.isHidden = true
                 
                 /* Remove move area */
-                gridNode.resetSquareArray(color: "blue")
-                gridNode.resetSquareArray(color: "red")
-                gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 
                 /* Remove dead enemy from enemyArray */
                 self.gridNode.enemyArray = self.gridNode.enemyArray.filter({ $0.aliveFlag == true })
@@ -708,7 +705,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if enemyTurnDoneFlag == false {
                 
                 /* Reset enemy position */
-                gridNode.resetEnemyPositon()
+                EnemyMoveController.resetEnemyPositon(grid: self.gridNode)
                 
                 for enemy in self.gridNode.enemyArray {
                     /* Enemy reach to castle */
@@ -741,7 +738,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 /* Update enemy position */
-                gridNode.updateEnemyPositon()
+                EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                 EnemyMoveController.moveDuplicatedEnemies(enemiesArray: gridNode.enemyArray) { exsist in
                     self.dupliExsist = exsist
                 }
@@ -775,7 +772,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 gridNode.numOfTurnEndEnemy = 0
                 
                 /* Make grid flash */
-                xValue = self.gridNode.flashGrid(labelNode: valueOfX)
+                xValue = GridFlashController.flashGrid(labelNode: valueOfX, grid: self.gridNode)
                 
                 /* Calculate each enemy's variable expression */
                 for enemy in self.gridNode.enemyArray {
@@ -783,12 +780,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 
                 if xValue == 3 {
-                    let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)+0.7))
+                    let wait = SKAction.wait(forDuration: TimeInterval(GridFlashController.flashSpeed*Double(GridFlashController.numOfFlashUp)+0.7))
                     let moveState = SKAction.run({ self.gameState = .PlayerTurn })
                     let seq = SKAction.sequence([wait, moveState])
                     self.run(seq)
                 } else {
-                    let wait = SKAction.wait(forDuration: TimeInterval(self.gridNode.flashSpeed*Double(self.gridNode.numOfFlashUp)))
+                    let wait = SKAction.wait(forDuration: TimeInterval(GridFlashController.flashSpeed*Double(GridFlashController.numOfFlashUp)))
                     let moveState = SKAction.run({ self.gameState = .PlayerTurn })
                     let seq = SKAction.sequence([wait, moveState])
                     self.run(seq)
@@ -796,7 +793,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             break;
         case .StageClear:
-            gridNode.resetSquareArray(color: "blue")
+            GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
             /* Play Sound */
             if MainMenu.soundOnFlag {
                 if stageClearSoundDone == false {
@@ -859,13 +856,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     self.itemType = .None
                     
                     /* Reset active area */
-                    self.gridNode.resetSquareArray(color: "blue")
-                    self.gridNode.resetSquareArray(color: "purple")
+                    GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
+                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                     
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY)
+                    GridActiveAreaController.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, grid: self.gridNode)
                     self.playerTurnState = .AttackState
                 }
                 /* Touch item button */
@@ -873,8 +870,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 guard self.heroMovingFlag == false else { return }
                 
                 /* Reset active area */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "blue")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
                 
                 /* Remove item area cover */
                 self.itemAreaCover.isHidden = true
@@ -890,8 +887,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 guard self.heroMovingFlag == false else { return }
                 
                 /* Reset active area */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "blue")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
                 
                 /* Remove item area cover */
                 self.itemAreaCover.isHidden = true
@@ -901,7 +898,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* If touch anywhere but activeArea, back to MoveState  */
             } else if nodeAtPoint.name != "activeArea" {
-                self.gridNode.resetSquareArray(color: "red")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
                 self.playerTurnState = .MoveState
             }
             
@@ -918,13 +915,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     self.itemType = .None
                     
                     /* Reset active area */
-                    self.gridNode.resetSquareArray(color: "blue")
-                    self.gridNode.resetSquareArray(color: "purple")
+                    GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
+                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                     
                     /* Set item area cover */
                     self.itemAreaCover.isHidden = false
                     
-                    self.gridNode.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY)
+                    GridActiveAreaController.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, grid: self.gridNode)
                     self.playerTurnState = .AttackState
                     
                     /* Remove triangle except the one of selected catapult */
@@ -941,8 +938,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Use timeBomb */
             } else if nodeAtPoint.name == "timeBomb" {
                 /* Remove activeArea for catapult */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
@@ -962,8 +959,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Use catapult */
             } else if nodeAtPoint.name == "catapult" {
                 /* Remove active area if any */
-                self.gridNode.resetSquareArray(color: "purple")
-                self.gridNode.resetSquareArray(color: "red")
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
                     if let node = catapult.childNode(withName: "pointingCatapult") {
@@ -986,8 +983,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Use multiAttack */
             } else if nodeAtPoint.name == "multiAttack" {
                 /* Remove active area if any */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
@@ -1040,8 +1037,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* wall */
             } else if nodeAtPoint.name == "wall" {
                 /* Remove activeArea */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
@@ -1061,8 +1058,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* magic sword */
             } else if nodeAtPoint.name == "magicSword" {
                 /* Remove activeArea */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
@@ -1080,32 +1077,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* battle ship */
-            } else if nodeAtPoint.name == "battleShip" {
-                /* Remove activeArea */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
-                resetActiveAreaForCatapult()
-                /* Remove triangle except the one of selected catapult */
-                for catapult in setCatapultArray {
-                    if let node = catapult.childNode(withName: "pointingCatapult") {
-                        node.removeFromParent()
-                    }
-                }
-                /* Remove input board for cane */
-                inputBoardForCane.isHidden = true
-                
-                /* Set timeBomb using state */
-                itemType = .BattleShip
-                
-                /* Get index of game using */
-                usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                
                 /* teleport */
             } else if nodeAtPoint.name == "teleport" {
                 /* Remove activeArea */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
@@ -1125,8 +1101,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* resetCatapult */
             } else if nodeAtPoint.name == "resetCatapult" {
                 /* Remove activeArea */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
@@ -1147,8 +1123,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* cane */
             } else if nodeAtPoint.name == "cane" {
                 /* Remove activeArea */
-                self.gridNode.resetSquareArray(color: "red")
-                self.gridNode.resetSquareArray(color: "purple")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 /* Remove triangle except the one of selected catapult */
                 for catapult in setCatapultArray {
@@ -1299,8 +1275,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.itemType = .None
                 
                 /* Remove active area */
-                self.gridNode.resetSquareArray(color: "purple")
-                self.gridNode.resetSquareArray(color: "red")
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
                 resetActiveAreaForCatapult()
                 
                 /* Remove triangle except the one of selected catapult */

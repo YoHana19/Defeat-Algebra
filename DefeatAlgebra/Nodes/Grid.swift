@@ -40,8 +40,6 @@ class Grid: SKSpriteNode {
     var editedEnemy  = Enemy(variableExpressionSource: [[0,1,0,0]], forEdu: false) /* temporally */
     
     /* Flash */
-    var flashSpeed: Double = 0.5
-    var numOfFlashUp = 3
     
     /* Move & Attack & item setting area for player */
     var squareRedArray = [[SKShapeNode]]() /* for attack */
@@ -88,10 +86,10 @@ class Grid: SKSpriteNode {
         }
         
         /* Create enemy startPosArray */
-        self.resetEnemyPositon()
+        EnemyMoveController.resetEnemyPositon(grid: self)
         
         /* For display active area for player action */
-        coverGrid()
+        GridActiveAreaController.coverGrid(grid: self)
         
     }
     
@@ -127,7 +125,7 @@ class Grid: SKSpriteNode {
                 /* Touch hero's position */
                 if gridX == gameScene.hero.positionX && gridY == gameScene.hero.positionY {
                     /* Display move path */
-                    brightCellAsPath(gridX: gridX, gridY: gridY)
+                    GridActiveAreaController.brightCellAsPath(gridX: gridX, gridY: gridY, grid: self)
                     /* Set touch began position */
                     beganPos = [gridX, gridY]
                     currentPos = beganPos
@@ -201,22 +199,22 @@ class Grid: SKSpriteNode {
                             /* Finger move horizontally */
                             if nextPos[0] != beganPos[0] {
                                 gameScene.hero.moveDirection = .Horizontal
-                                dispMovePath(start: beganPos, dest: nextPos)
+                                GridActiveAreaController.dispMovePath(start: beganPos, dest: nextPos, grid: self)
                                 currentPos = nextPos
                                 /* Finger move vertically */
                             } else if nextPos[1] != beganPos[1] {
                                 gameScene.hero.moveDirection = .Vertical
-                                dispMovePath(start: beganPos, dest: nextPos)
+                                GridActiveAreaController.dispMovePath(start: beganPos, dest: nextPos, grid: self)
                                 currentPos = nextPos
                             }
                         } else {
-                            dispMovePath(start: beganPos, dest: nextPos)
+                            GridActiveAreaController.dispMovePath(start: beganPos, dest: nextPos, grid: self)
                             currentPos = nextPos
                         }
                         /* In case backing to began position */
                     } else if nextPos == beganPos {
                         currentPos = nextPos
-                        brightCellAsPath(gridX: beganPos[0], gridY: beganPos[1])
+                        GridActiveAreaController.brightCellAsPath(gridX: beganPos[0], gridY: beganPos[1], grid: self)
                         
                         directionJudgeDoneFlag = false
                     }
@@ -224,7 +222,7 @@ class Grid: SKSpriteNode {
             }
             
             if touchingEnemyFlag {
-                rePosEnemy(enemy: touchedEnemy)
+                EnemyMoveController.rePosEnemy(enemy: touchedEnemy, grid: self)
                 touchingEnemyFlag = false
             }
             
@@ -236,9 +234,9 @@ class Grid: SKSpriteNode {
              */
         } else {
             directionJudgeDoneFlag = false
-            resetMovePath()
+            GridActiveAreaController.resetMovePath(grid: self)
             if touchingEnemyFlag {
-                rePosEnemy(enemy: touchedEnemy)
+                EnemyMoveController.rePosEnemy(enemy: touchedEnemy, grid: self)
                 touchingEnemyFlag = false
             }
         }
@@ -272,10 +270,10 @@ class Grid: SKSpriteNode {
             /* Touch ends on active area */
             if nodeAtPoint.name == "activeArea" {
                 /* Reset move area */
-                self.resetSquareArray(color: "blue")
+                GridActiveAreaController.resetSquareArray(color: "blue", grid: self)
                 
                 /* Stop showing move pass */
-                resetMovePath()
+                GridActiveAreaController.resetMovePath(grid: self)
                 
                 /* Caclulate grid array position */
                 let gridX = Int(Double(location.x) / cellWidth)
@@ -322,7 +320,7 @@ class Grid: SKSpriteNode {
                 guard gameScene.heroMovingFlag == false else { return }
                 
                 /* Remove attack area square */
-                self.resetSquareArray(color: "red")
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self)
                 
                 /* Caclulate grid array position */
                 let gridX = Int(Double(location.x) / cellWidth)
@@ -392,8 +390,8 @@ class Grid: SKSpriteNode {
                 gameScene.hero.removeMagicSwordVE()
                 
                 /* Remove active area */
-                gameScene.gridNode.resetSquareArray(color: "purple")
-                gameScene.gridNode.resetSquareArray(color: "red")
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self)
                 gameScene.resetActiveAreaForCatapult()
             }
             
@@ -425,7 +423,7 @@ class Grid: SKSpriteNode {
                     self.addObjectAtGrid(object: timeBomb, x: gridX, y: gridY)
                     
                     /* Remove item active areas */
-                    self.resetSquareArray(color: "purple")
+                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
                     /* Reset item type */
                     gameScene.itemType = .None
                     /* Set item area cover */
@@ -452,7 +450,7 @@ class Grid: SKSpriteNode {
                     self.addObjectAtGrid(object: wall, x: gridX, y: gridY)
                     
                     /* Remove item active areas */
-                    self.resetSquareArray(color: "purple")
+                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
                     /* Reset item type */
                     gameScene.itemType = .None
                     /* Set item area cover */
@@ -470,7 +468,7 @@ class Grid: SKSpriteNode {
                     gameScene.magicSwordAttackDone = true
                     
                     /* Remove attack area square */
-                    self.resetSquareArray(color: "red")
+                    GridActiveAreaController.resetSquareArray(color: "red", grid: self)
                     
                     /* Set direction of hero */
                     gameScene.hero.setHeroDirection(posX: gridX, posY: gridY)
@@ -558,35 +556,10 @@ class Grid: SKSpriteNode {
                     /* Remove used itemIcon from item array and Scene */
                     gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
                     
-                    /* Use battle ship */
-                } else if gameScene.itemType == .BattleShip {
-                    
-                    /* Set timeBomb at the location you touch */
-                    let battleShip = BattleShip()
-                    battleShip.texture = SKTexture(imageNamed: "battleShipToSet")
-                    /* Make sure not to collide to hero */
-                    battleShip.physicsBody = nil
-                    self.battleShipSetArray.append(battleShip)
-                    battleShip.position = CGPoint(x: 0.0, y: (Double(gridY)+0.5)*self.cellHeight)
-                    addChild(battleShip)
-                    
-                    /* Remove item active areas */
-                    self.resetSquareArray(color: "purple")
-                    /* Reset item type */
-                    gameScene.itemType = .None
-                    /* Set item area cover */
-                    gameScene.itemAreaCover.isHidden = false
-                    
-                    /* Back to MoveState */
-                    gameScene.playerTurnState = .MoveState
-                    
-                    /* Remove used itemIcon from item array and Scene */
-                    gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
-                    
                     /* Use teleport */
                 } else if gameScene.itemType == .Teleport {
                     /* Remove item active areas */
-                    self.resetSquareArray(color: "purple")
+                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
                     /* Reset item type */
                     gameScene.itemType = .None
                     /* Set item area cover */
@@ -699,8 +672,8 @@ class Grid: SKSpriteNode {
                 castEnemyDone = false
                 
                 /* Remove active area */
-                gameScene.gridNode.resetSquareArray(color: "purple")
-                gameScene.gridNode.resetSquareArray(color: "red")
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
+                GridActiveAreaController.resetSquareArray(color: "red", grid: self)
                 gameScene.resetActiveAreaForCatapult()
                 
                 /* Remove triangle except the one of selected catapult */
@@ -720,290 +693,6 @@ class Grid: SKSpriteNode {
         }
     }
     
-    /*== Enemy Position Management ==*/
-    /* Reset enemy position array */
-    func resetEnemyPositon() {
-        for x in 0..<columns {
-            /* Loop through rows */
-            for y in 0..<rows {
-                positionEnemyAtGrid[x][y] = false
-            }
-        }
-    }
-    
-    /* Update enemy position at grid */
-    func updateEnemyPositon() {
-        for enemy in self.enemyArray {
-            self.positionEnemyAtGrid[enemy.positionX][enemy.positionY] = true
-        }
-    }
-    
-    /* Reposition enemy for checking variable exoression */
-    func rePosEnemy(enemy: Enemy) {
-        enemy.position = CGPoint(x: CGFloat((Double(enemy.positionX)+0.5)*self.cellWidth), y: CGFloat((Double(enemy.positionY)+0.5)*self.cellHeight))
-        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
-        enemy.physicsBody?.categoryBitMask = 2
-        enemy.physicsBody?.collisionBitMask = 0
-        enemy.physicsBody?.contactTestBitMask = 1
-    }
-    
-    /*== Set effect when enemy destroyed ==*/
-    func enemyDestroyEffect(enemy: Enemy) {
-        /* Load our particle effect */
-        let particles = SKEmitterNode(fileNamed: "DestroyEnemy")!
-        particles.position = CGPoint(x: enemy.position.x, y: enemy.position.y-20)
-        /* Add particles to scene */
-        self.addChild(particles)
-        let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-        let removeParticles = SKAction.removeFromParent()
-        let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
-        particles.run(seqEffect)
-        /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
-            self.run(dead)
-        }
-        
-    }
-    
-    /*== Adding Enemy ==*/
-    
-    /* Add initial enemy */
-    func addInitialEnemyAtGrid(enemyPosArray: [[Int]], enemyPosArrayForUnS: [[Int]], sVariableExpressionSource: [[Int]], uVariableExpressionSource: [[Int]]) {
-        /* Add a new enemy at grid position*/
-        
-        for posArray in enemyPosArray {
-            /* New enemy object */
-            let enemy = Enemy(variableExpressionSource: sVariableExpressionSource, forEdu: false)
-            
-            /* Set enemy speed according to stage level */
-            if GameScene.stageLevel < 1 {
-                enemy.moveSpeed = 0.2
-                enemy.punchSpeed = 0.0025
-                enemy.singleTurnDuration = 1.0
-            }
-            
-            /* set adding enemy movement */
-            setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
-        }
-        
-        for posArray in enemyPosArrayForUnS {
-            /* New enemy object */
-            let enemy = Enemy(variableExpressionSource: uVariableExpressionSource, forEdu: false)
-            
-            /* Set enemy speed according to stage level */
-            if GameScene.stageLevel < 1 {
-                enemy.moveSpeed = 0.2
-                enemy.punchSpeed = 0.0025
-                enemy.singleTurnDuration = 1.0
-            }
-            
-            if GameScene.stageLevel > 6 {
-                enemy.enemyLife = 1
-                enemy.colorizeEnemy(color: UIColor.green)
-            }
-            
-            /* set adding enemy movement */
-            setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1])
-        }
-    }
-    
-    /* Add enemy in the middle of game */
-    func addEnemyAtGrid(_ numberOfEnemy: Int, variableExpressionSource: [[Int]], yRange: Int) {
-        /* Add a new enemy at grid position*/
-        
-        for _ in 1...numberOfEnemy {
-            /* New enemy object */
-            let enemy = Enemy(variableExpressionSource: variableExpressionSource, forEdu: false)
-            
-            /* x position */
-            let randX = Int(arc4random_uniform(UInt32(startPosArray.count)))
-            let startPositionX = startPosArray[randX]
-            /* Make sure not to overlap enemies */
-            startPosArray.remove(at: randX)
-            
-            /* y position */
-            let randY = Int(arc4random_uniform(UInt32(yRange)))
-            
-            /* set adding enemy movement */
-            setAddEnemyMovement(enemy: enemy, posX: startPositionX, posY: 11-randY)
-        }
-    }
-    
-    /* Add enemy for education */
-    func addEnemyForEdu(sVariableExpressionSource: [[Int]], uVariableExpressionSource: [[Int]], numOfOrigin: Int) {
-        
-        DAUtility.getRandomNumbers(total: sVariableExpressionSource.count, times: numOfOrigin) { (nums) in
-            for i in nums {
-                /* Select origin Enemy */
-                let variableExpression = sVariableExpressionSource[i]
-                /* Select branch Enemy */
-                let branchGroup = uVariableExpressionSource.filter({ $0.last! == variableExpression.last! })
-                
-                /* New enemy object */
-                let enemyOrigin = Enemy(variableExpressionSource: [variableExpression], forEdu: true)
-                let enemyBranch = Enemy(variableExpressionSource: branchGroup, forEdu: true)
-                
-                EnemyAddController.setSUEnemyPair(origin: enemyOrigin, branch: enemyBranch, gridNode: self)
-                
-                /* Set punch inteval */
-                let randPI = Int(arc4random_uniform(100))
-                
-                /* punchInterval is 1 with 40% */
-                if randPI < 45 {
-                    enemyOrigin.punchInterval = 1
-                    enemyOrigin.punchIntervalForCount = 1
-                    enemyOrigin.setPunchIntervalLabel()
-                    enemyBranch.punchInterval = 1
-                    enemyBranch.punchIntervalForCount = 1
-                    enemyBranch.setPunchIntervalLabel()
-                    
-                    /* punchInterval is 2 with 40% */
-                } else if randPI < 90 {
-                    enemyOrigin.punchInterval = 2
-                    enemyOrigin.punchIntervalForCount = 2
-                    enemyOrigin.setPunchIntervalLabel()
-                    enemyBranch.punchInterval = 2
-                    enemyBranch.punchIntervalForCount = 2
-                    enemyBranch.setPunchIntervalLabel()
-                    
-                    /* punchInterval is 0 with 20% */
-                } else {
-                    enemyOrigin.punchInterval = 0
-                    enemyOrigin.punchIntervalForCount = 0
-                    enemyOrigin.setPunchIntervalLabel()
-                    enemyBranch.punchInterval = 0
-                    enemyBranch.punchIntervalForCount = 0
-                    enemyBranch.setPunchIntervalLabel()
-                }
-                
-                /* x position */
-                /* First enemy set will be placed left half part */
-                if i == 0 {
-                    let randX = Int(arc4random_uniform(3))
-                    let startPositionX = self.startPosArray[randX]
-                    /* set adding enemy movement */
-                    self.setAddEnemyMovement(enemy: enemyOrigin, posX: startPositionX, posY: 11)
-                    self.setAddEnemyMovement(enemy: enemyBranch, posX: startPositionX+1, posY: 11)
-                    /* First enemy set will be placed right half part */
-                } else {
-                    let randX = Int(arc4random_uniform(3))
-                    let startPositionX = self.startPosArray[randX+4]
-                    /* set adding enemy movement */
-                    self.setAddEnemyMovement(enemy: enemyOrigin, posX: startPositionX, posY: 11)
-                    self.setAddEnemyMovement(enemy: enemyBranch, posX: startPositionX+1, posY: 11)
-                }
-            }
-        }
-    }
-    
-    /* Make common stuff for adding enemy */
-    func setAddEnemyMovement(enemy: Enemy, posX: Int, posY: Int) {
-        /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-        
-        /* Store variable expression as origin */
-        enemy.originVariableExpression = enemy.variableExpressionString
-        
-        /* Set direction of enemy */
-        enemy.direction = .front
-        enemy.setMovingAnimation()
-        
-        /* Set position on screen */
-        
-        /* Keep track enemy position */
-        enemy.positionX = posX
-        enemy.positionY = posY
-        
-        /* Calculate gap between top of grid and gameScene */
-        let gridPosition = CGPoint(x: (Double(posX)+0.5)*cellWidth, y: Double(gameScene.topGap+self.size.height))
-        enemy.position = gridPosition
-        
-        /* Set enemy's move distance when showing up */
-        let startMoveDistance = Double(gameScene.topGap)+self.cellHeight*(Double(11-posY)+0.5)
-        
-        /* Calculate relative duration with distance */
-        let startDulation = TimeInterval(startMoveDistance/Double(self.cellHeight)*self.addingMoveSpeed)
-        
-        /* Move enemy for startMoveDistance */
-        let move = SKAction.moveTo(y: CGFloat((Double(enemy.positionY)+0.5)*self.cellHeight), duration: startDulation)
-        enemy.run(move)
-        
-        /* Add enemy to grid node */
-        addChild(enemy)
-        
-        /* Add enemy to enemyArray */
-        self.enemyArray.append(enemy)
-    }
-    
-    /*== Flash grid ==*/
-    
-    func flashGrid(labelNode: SKLabelNode) -> Int {
-        /* Set the number of times of flash randomly */
-        let numOfFlash = Int(arc4random_uniform(UInt32(numOfFlashUp)))+1
-        
-        /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let sound = SKAction.playSoundFileNamed("flash.wav", waitForCompletion: true)
-            /* Set flash animation */
-            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-            let group = SKAction.group([sound, seqFlash])
-            let flash = SKAction.repeat(group, count: numOfFlash)
-            self.run(flash)
-            
-        } else {
-            /* Set flash animation */
-            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-            let flash = SKAction.repeat(seqFlash, count: numOfFlash)
-            self.run(flash)
-            
-        }
-        
-        /* Display the number of flash */
-        let wholeWait = SKAction.wait(forDuration: TimeInterval((self.flashSpeed+0.2)*Double(numOfFlash)))
-        let display = SKAction.run({ labelNode.text = String(numOfFlash) })
-        let seq = SKAction.sequence([wholeWait, display])
-        self.run(seq)
-        
-        return numOfFlash
-    }
-    
-    func flashGridForCane(labelNode: SKLabelNode, numOfFlash: Int) {
-        /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let sound = SKAction.playSoundFileNamed("flash.wav", waitForCompletion: true)
-            /* Set flash animation */
-            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-            let group = SKAction.group([sound, seqFlash])
-            let flash = SKAction.repeat(group, count: numOfFlash)
-            self.run(flash)
-            
-        } else {
-            /* Set flash animation */
-            let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(self.flashSpeed/4))
-            let wait = SKAction.wait(forDuration: TimeInterval(self.flashSpeed/4))
-            let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(self.flashSpeed/4))
-            let seqFlash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
-            let flash = SKAction.repeat(seqFlash, count: numOfFlash)
-            self.run(flash)
-        }
-        
-        /* Display the number of flash */
-        let wholeWait = SKAction.wait(forDuration: TimeInterval((self.flashSpeed+0.2)*Double(numOfFlash)))
-        let display = SKAction.run({ labelNode.text = String(numOfFlash) })
-        let seq = SKAction.sequence([wholeWait, display])
-        self.run(seq)
-    }
-    
     /*== Items ==*/
     
     /* Add a new object at grid position*/
@@ -1016,494 +705,5 @@ class Grid: SKSpriteNode {
         /* Add timeBomb to grid node */
         addChild(object)
     }
-    
-    /*=================*/
-    /*== Active Area ==*/
-    /*=================*/
-    
-    /*== Setting area ==*/
-    /* Add area at cell */
-    func addSquareAtGrid(x: Int, y: Int, color: UIColor) {
-        /* Add a new creature at grid position*/
-        
-        /* Create square */
-        let square = SKShapeNode(rectOf: CGSize(width: self.cellWidth, height: cellHeight))
-        square.fillColor = color
-        square.alpha = 0.4
-        square.zPosition = 100
-        square.name = "activeArea"
-        
-        /* Calculate position on screen */
-        let gridPosition = CGPoint(x: (Double(x)+0.5)*cellWidth, y: (Double(y)+0.5)*cellHeight)
-        square.position = gridPosition
-        
-        /* Set default isAlive */
-        square.isHidden = true
-        
-        /* Add creature to grid node */
-        addChild(square)
-        
-        /* Add creature to grid array */
-        switch color {
-        case UIColor.red:
-            squareRedArray[x].append(square)
-        case UIColor.blue:
-            squareBlueArray[x].append(square)
-        case UIColor.purple:
-            squarePurpleArray[x].append(square)
-        default:
-            break;
-        }
-    }
-    
-    /* Set area on grid */
-    func coverGrid() {
-        /* Populate the grid with creatures */
-        
-        /* Red square */
-        /* Loop through columns */
-        for gridX in 0..<columns {
-            /* Initialize empty column */
-            squareRedArray.append([])
-            /* Loop through rows */
-            for gridY in 0..<rows {
-                /* Createa new creature at row / column position */
-                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.red)
-            }
-        }
-        
-        /* Blue square */
-        /* Loop through columns */
-        for gridX in 0..<columns {
-            /* Initialize empty column */
-            squareBlueArray.append([])
-            /* Loop through rows */
-            for gridY in 0..<rows {
-                /* Createa new creature at row / column position */
-                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.blue)
-            }
-        }
-        
-        /* purple square */
-        /* Loop through columns */
-        for gridX in 0..<columns {
-            /* Initialize empty column */
-            squarePurpleArray.append([])
-            /* Loop through rows */
-            for gridY in 0..<rows {
-                /* Createa new creature at row / column position */
-                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.purple)
-            }
-        }
-    }
-    
-    /* Reset squareArray */
-    func resetSquareArray(color: String) {
-        switch color {
-        case "red":
-            for x in 0..<columns {
-                /* Loop through rows */
-                for y in 0..<rows {
-                    squareRedArray[x][y].isHidden = true
-                }
-            }
-        case "blue":
-            for x in 0..<columns {
-                /* Loop through rows */
-                for y in 0..<rows {
-                    squareBlueArray[x][y].isHidden = true
-                }
-            }
-        case "purple":
-            for x in 0..<columns {
-                /* Loop through rows */
-                for y in 0..<rows {
-                    squarePurpleArray[x][y].isHidden = true
-                }
-            }
-        default:
-            break;
-        }
-        
-    }
-    
-    /*== Move ==*/
-    /* Show area where player can move */
-    func showMoveArea(posX: Int, posY: Int, moveLevel: Int) {
-        /* Show up red square according to move level */
-        switch moveLevel {
-        case 1:
-            for gridX in posX-1...posX+1 {
-                /* Make sure inside the grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    squareBlueArray[gridX][posY].isHidden = false
-                }
-            }
-            for gridY in posY-1...posY+1 {
-                /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.rows-1 {
-                    squareBlueArray[posX][gridY].isHidden = false
-                }
-            }
-        case 2:
-            for gridX in posX-2...posX+2 {
-                /* Make sure inside the grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    squareBlueArray[gridX][posY].isHidden = false
-                }
-            }
-            for gridY in posY-2...posY+2 {
-                /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.rows-1 {
-                    squareBlueArray[posX][gridY].isHidden = false
-                }
-            }
-            for gridX in posX-1...posX+1 {
-                /* Make sure within grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    for gridY in posY-1...posY+1 {
-                        /* Make sure within grid */
-                        if gridY >= 0 && gridY <= self.rows-1 {
-                            squareBlueArray[gridX][gridY].isHidden = false
-                        }
-                    }
-                }
-            }
-        case 3:
-            for gridX in posX-3...posX+3 {
-                /* Make sure inside the grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    squareBlueArray[gridX][posY].isHidden = false
-                }
-            }
-            for gridY in posY-3...posY+3 {
-                /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.rows-1 {
-                    squareBlueArray[posX][gridY].isHidden = false
-                }
-            }
-            for gridX in posX-2...posX+2 {
-                /* Make sure within grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    for gridY in posY-2...posY+2 {
-                        /* Make sure within grid */
-                        if gridY >= 0 && gridY <= self.rows-1 {
-                            /* Remove corner */
-                            if gridX == posX-2 && gridY == posY-2 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else if gridX == posX-2 && gridY == posY+2 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else if gridX == posX+2 && gridY == posY-2 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else if gridX == posX+2 && gridY == posY+2 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else {
-                                squareBlueArray[gridX][gridY].isHidden = false
-                            }
-                            
-                        }
-                    }
-                }
-            }
-        case 4:
-            for gridX in posX-4...posX+4 {
-                /* Make sure inside the grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    squareBlueArray[gridX][posY].isHidden = false
-                }
-            }
-            for gridY in posY-4...posY+4 {
-                /* Make sure inside the grid */
-                if gridY >= 0 && gridY <= self.rows-1 {
-                    squareBlueArray[posX][gridY].isHidden = false
-                }
-            }
-            for gridX in posX-3...posX+3 {
-                /* Make sure within grid */
-                if gridX >= 0 && gridX <= self.columns-1 {
-                    for gridY in posY-3...posY+3 {
-                        /* Make sure within grid */
-                        if gridY >= 0 && gridY <= self.rows-1 {
-                            /* Remove corner */
-                            if gridX == posX-3 && gridY == posY-3 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else if gridX == posX-3 && gridY == posY+3 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else if gridX == posX+3 && gridY == posY-3 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else if gridX == posX+3 && gridY == posY+3 {
-                                squareBlueArray[gridX][gridY].isHidden = true
-                            } else {
-                                squareBlueArray[gridX][gridY].isHidden = false
-                            }
-                            
-                        }
-                    }
-                }
-            }
-        default:
-            break;
-        }
-    }
-    
-    /* Swiping Move */
-    /* Display move path */
-    func dispMovePath(start: [Int], dest: [Int]) {
-        /* Get gameScene */
-        let gameScene = self.parent as! GameScene
-        
-        /* Reset display path */
-        resetMovePath()
-        
-        /* Calculate difference between beganPos and destination */
-        let diffX = dest[0] - start[0]
-        let diffY = dest[1] - start[1]
-        
-        switch gameScene.hero.moveDirection {
-            /* Set move path horizontal → vertical */
-        case .Horizontal:
-            if diffY == 0 {
-                
-                /* To right */
-                if diffX > 0 {
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: start, destPos: dest)
-                }
-                /* To left */
-                if diffX < 0 {
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: dest, destPos: start)
-                }
-            } else if diffX == 0 {
-                
-                /* To up direction */
-                if diffY > 0 {
-                    /* Cololize cell as a move path */
-                    brightColumnAsPath(startPos: start, destPos: dest)
-                }
-                /* To down direction */
-                if diffY < 0 {
-                    /* Cololize cell as a move path */
-                    brightColumnAsPath(startPos: dest, destPos: start)
-                }
-            } else if diffY > 0 {
-                
-                /* To right up direction */
-                if diffX > 0 {
-                    let viaPos = [dest[0], start[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: start, destPos: viaPos)
-                    brightColumnAsPath(startPos: viaPos, destPos: dest)
-                }
-                /* To left up direction */
-                if diffX < 0 {
-                    let viaPos = [dest[0], start[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: viaPos, destPos: start)
-                    brightColumnAsPath(startPos: viaPos, destPos: dest)
-                }
-            } else if diffY < 0 {
-                
-                /* To right down direction */
-                if diffX > 0 {
-                    let viaPos = [dest[0], start[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: start, destPos: viaPos)
-                    brightColumnAsPath(startPos: dest, destPos: viaPos)
-                }
-                /* To left down direction */
-                if diffX < 0 {
-                    let viaPos = [dest[0], start[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: viaPos, destPos: start)
-                    brightColumnAsPath(startPos: dest, destPos: viaPos)
-                }
-            }
-            break;
-            /* Set move path horizontal → vertical */
-        case .Vertical:
-            if diffX == 0 {
-                /* To up */
-                if diffY > 0 {
-                    /* Cololize cell as a move path */
-                    brightColumnAsPath(startPos: start, destPos: dest)
-                }
-                /* To down */
-                if diffY < 0 {
-                    /* Cololize cell as a move path */
-                    brightColumnAsPath(startPos: dest, destPos: start)
-                }
-            } else if diffY == 0 {
-                /* To right direction */
-                if diffX > 0 {
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: start, destPos: dest)
-                }
-                /* To left direction */
-                if diffX < 0 {
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: dest, destPos: start)
-                }
-            } else if diffY > 0 {
-                /* To right up direction */
-                if diffX > 0 {
-                    let viaPos = [start[0], dest[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: viaPos, destPos: dest)
-                    brightColumnAsPath(startPos: start, destPos: viaPos)
-                }
-                /* To left up direction */
-                if diffX < 0 {
-                    let viaPos = [start[0], dest[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: dest, destPos: viaPos)
-                    brightColumnAsPath(startPos: start, destPos: viaPos)
-                }
-            } else if diffY < 0 {
-                /* To right down direction */
-                if diffX > 0 {
-                    let viaPos = [start[0], dest[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: viaPos, destPos: dest)
-                    brightColumnAsPath(startPos: viaPos, destPos: start)
-                }
-                /* To left down direction */
-                if diffX < 0 {
-                    let viaPos = [start[0], dest[1]]
-                    /* Cololize cell as a move path */
-                    brightRowAsPath(startPos: dest, destPos: viaPos)
-                    brightColumnAsPath(startPos: viaPos, destPos: start)
-                }
-            }
-            break;
-        }
-    }
-    
-    func brightRowAsPath(startPos: [Int], destPos: [Int]) {
-        for i in startPos[0]...destPos[0] {
-            brightCellAsPath(gridX: i, gridY: startPos[1])
-        }
-    }
-    
-    func brightColumnAsPath(startPos: [Int], destPos: [Int]) {
-        for i in startPos[1]...destPos[1] {
-            brightCellAsPath(gridX: startPos[0], gridY: i)
-        }
-    }
-    
-    func brightCellAsPath(gridX: Int, gridY: Int) {
-        squareBlueArray[gridX][gridY].alpha = 0.6
-    }
-    
-    /* Reset move path */
-    func resetMovePath() {
-        for gridX in 0..<self.columns {
-            for gridY in 0..<self.rows-1 {
-                self.squareBlueArray[gridX][gridY].alpha = 0.4
-            }
-        }
-    }
-    
-    
-    /*== Attack ==*/
-    /* Show attack area */
-    func showAttackArea(posX: Int, posY: Int) {
-        /* Show up red square */
-        for gridX in posX-1...posX+1 {
-            /* Make sure inside the grid */
-            if gridX >= 0 && gridX <= self.columns-1 {
-                /* Remove hero position */
-                if gridX != posX {
-                    squareRedArray[gridX][posY].isHidden = false
-                }
-            }
-        }
-        for gridY in posY-1...posY+1 {
-            /* Make sure inside the grid */
-            if gridY >= 0 && gridY <= self.rows-1 {
-                /* Remove hero position */
-                if gridY != posY {
-                    squareRedArray[posX][gridY].isHidden = false
-                }
-            }
-        }
-    }
-    
-    /* Find hit spots for spear attack */
-    func hitSpotsForSpear() -> ([Int], [Int]) {
-        let gameScene = self.parent as! GameScene
-        switch gameScene.hero.direction {
-        case .front:
-            if gameScene.hero.positionY < 2 {
-                return ([gameScene.hero.positionX, 0], [gameScene.hero.positionX, 0])
-            } else {
-                return ([gameScene.hero.positionX, gameScene.hero.positionY-1], [gameScene.hero.positionX, gameScene.hero.positionY-2])
-            }
-        case .back:
-            if gameScene.hero.positionY > 9 {
-                return ([gameScene.hero.positionX, 11], [gameScene.hero.positionX, 11])
-            } else {
-                return ([gameScene.hero.positionX, gameScene.hero.positionY+1], [gameScene.hero.positionX, gameScene.hero.positionY+2])
-            }
-        case .left:
-            if gameScene.hero.positionX < 2 {
-                return ([0, gameScene.hero.positionY], [0, gameScene.hero.positionY])
-            } else {
-                return ([gameScene.hero.positionX-1, gameScene.hero.positionY], [gameScene.hero.positionX-2, gameScene.hero.positionY])
-            }
-        case .right:
-            if gameScene.hero.positionX > 6 {
-                return ([8, gameScene.hero.positionY], [8, gameScene.hero.positionY])
-            } else {
-                return ([gameScene.hero.positionX+1, gameScene.hero.positionY], [gameScene.hero.positionX+2, gameScene.hero.positionY])
-            }
-        }
-    }
-    
-    /*== Items ==*/
-    /* timeBomb */
-    /* Show timeBomb setting area */
-    func showtimeBombSettingArea() {
-        for gridX in 0..<self.columns {
-            for gridY in 1..<self.rows-1 {
-                self.squarePurpleArray[gridX][gridY].isHidden = false
-            }
-        }
-    }
-    
-    /* Show wall setting area */
-    func showWallSettingArea() {
-        for gridX in 0..<self.columns {
-            for gridY in 0..<self.rows-1 {
-                self.squarePurpleArray[gridX][gridY].isHidden = false
-                if gridX == self.columns-1 && gridY == self.rows-2 {
-                    for enemy in self.enemyArray {
-                        if enemy.aliveFlag {
-                            self.squarePurpleArray[enemy.positionX][enemy.positionY].isHidden = true
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    /* Battle Ship */
-    /* Show active area for battle ship */
-    func showBttleShipSettingArea() {
-        for i in 1..<self.rows-1 {
-            squarePurpleArray[0][i].isHidden = false
-        }
-    }
-    
-    /* Teleport */
-    /* Show active area for teleport */
-    func showTeleportSettingArea() {
-        for gridX in 0..<self.columns {
-            for gridY in 0..<self.rows {
-                self.squarePurpleArray[gridX][gridY].isHidden = false
-            }
-        }
-    }
-    
 }
 

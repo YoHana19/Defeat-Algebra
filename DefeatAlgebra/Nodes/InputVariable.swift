@@ -67,14 +67,14 @@ class InputVariable: SKSpriteNode {
                 self.run(blessing)
                 let wait = SKAction.wait(forDuration: 3.0)
                 let flash = SKAction.run({
-                    gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 1)
+                    GridFlashController.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 1, grid: gameScene.gridNode)
                     gameScene.caneOnFlag = true
                 })
                 let seq = SKAction.sequence([wait, flash])
                 self.run(seq)
             } else {
                 let flash = SKAction.run({
-                    gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 1)
+                    GridFlashController.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 1, grid: gameScene.gridNode)
                     gameScene.caneOnFlag = true
                 })
                 self.run(flash)
@@ -94,14 +94,14 @@ class InputVariable: SKSpriteNode {
                 self.run(blessing)
                 let wait = SKAction.wait(forDuration: 3.0)
                 let flash = SKAction.run({
-                    gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 2)
+                    GridFlashController.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 2, grid: gameScene.gridNode)
                     gameScene.caneOnFlag = true
                 })
                 let seq = SKAction.sequence([wait, flash])
                 self.run(seq)
             } else {
                 let flash = SKAction.run({
-                    gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 2)
+                    GridFlashController.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 2, grid: gameScene.gridNode)
                     gameScene.caneOnFlag = true
                 })
                 self.run(flash)
@@ -121,14 +121,14 @@ class InputVariable: SKSpriteNode {
                 self.run(blessing)
                 let wait = SKAction.wait(forDuration: 3.0)
                 let flash = SKAction.run({
-                    gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 3)
+                    GridFlashController.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 3, grid: gameScene.gridNode)
                     gameScene.caneOnFlag = true
                 })
                 let seq = SKAction.sequence([wait, flash])
                 self.run(seq)
             } else {
                 let flash = SKAction.run({
-                    gameScene.gridNode.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 3)
+                    GridFlashController.flashGridForCane(labelNode: gameScene.valueOfX, numOfFlash: 3, grid: gameScene.gridNode)
                     gameScene.caneOnFlag = true
                 })
                 self.run(flash)

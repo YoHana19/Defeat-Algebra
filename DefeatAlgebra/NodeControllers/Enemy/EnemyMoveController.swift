@@ -187,4 +187,31 @@ class EnemyMoveController {
     private static func rePosEnemy(enemy: Enemy, gridNode: Grid) {
         enemy.position = CGPoint(x: CGFloat((Double(enemy.positionX)+0.5)*gridNode.cellWidth), y: CGFloat((Double(enemy.positionY)+0.5)*gridNode.cellHeight))
     }
+    
+    /*== Enemy Position Management ==*/
+    /* Reset enemy position array */
+    static func resetEnemyPositon(grid: Grid) {
+        for x in 0..<grid.columns {
+            /* Loop through rows */
+            for y in 0..<grid.rows {
+                grid.positionEnemyAtGrid[x][y] = false
+            }
+        }
+    }
+    
+    /* Update enemy position at grid */
+    static func updateEnemyPositon(grid: Grid) {
+        for enemy in grid.enemyArray {
+            grid.positionEnemyAtGrid[enemy.positionX][enemy.positionY] = true
+        }
+    }
+    
+    /* Reposition enemy for checking variable exoression */
+    static func rePosEnemy(enemy: Enemy, grid: Grid) {
+        enemy.position = CGPoint(x: CGFloat((Double(enemy.positionX)+0.5)*grid.cellWidth), y: CGFloat((Double(enemy.positionY)+0.5)*grid.cellHeight))
+        enemy.physicsBody = SKPhysicsBody(rectangleOf: enemy.size)
+        enemy.physicsBody?.categoryBitMask = 2
+        enemy.physicsBody?.collisionBitMask = 0
+        enemy.physicsBody?.contactTestBitMask = 1
+    }
 }
