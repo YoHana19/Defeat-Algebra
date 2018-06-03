@@ -50,4 +50,12 @@ class CharacterController {
     public static func retreatMadDoctor() {
         CharacterAniController.move(character: madDoctor, dest: madDoctorOffPos, duration: 0.5)
     }
+    
+    public static func shakeDoctor() {
+        CharacterAniController.shake(node: doctor)
+    }
+    
+    public static func shakeMadDoctor() {
+        CharacterAniController.shake(node: madDoctor)
+    }
 }

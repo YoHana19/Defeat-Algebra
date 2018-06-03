@@ -15,13 +15,9 @@ class CharacterAniController {
         character.run(move)
     }
     
-    public static func SlideInToL(character: SKSpriteNode, distance: CGFloat, duration: TimeInterval) {
-        let move = SKAction.moveBy(x: -distance, y: 0, duration: duration)
-        character.run(move)
-    }
-    
-    public static func SlideInToD(character: SKSpriteNode, distance: CGFloat, duration: TimeInterval) {
-        let move = SKAction.moveBy(x: 0, y: -distance, duration: duration)
-        character.run(move)
+    public static func shake(node: SKSpriteNode) {
+        if let shake: SKAction = SKAction.init(named: "Shake") {
+            node.run(shake)
+        }
     }
 }
