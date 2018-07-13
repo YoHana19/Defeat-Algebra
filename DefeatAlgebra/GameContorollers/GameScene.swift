@@ -51,6 +51,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var buttonItem: SKNode!
     var pauseScreen: PauseScreen!
     var simplificationBoard: SimplificationBoard!
+    var madScientistNode: SKSpriteNode!
     
     /*== Game labels ==*/
     var valueOfX: SKLabelNode!
@@ -177,7 +178,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var countTurnForFlashGrid: Int = 0
     var flashInterval: Int = 8
-    var xValue: Int = 0
+    var xValue: Int = 0 {
+        didSet {
+            valueOfX.text = String(xValue)
+        }
+    }
     var flashGridDoneFlag = false
     
     /*=================*/
@@ -193,6 +198,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gridNode = childNode(withName: "gridNode") as! Grid
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
         itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
+        madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
+        SignalController.madPos = madScientistNode.absolutePos()
+        SignalController.gameScene = self
         buttonAttack = childNode(withName: "buttonAttack")
         buttonItem = childNode(withName: "buttonItem")
         buttonAttack.isHidden = true
@@ -287,6 +295,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //GameScene.stageLevel = 7
         //moveLevel = 4
         //let handedItemNameArray = ["catapult", "magicSword", "cane", "timeBomb"]
+        let handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
         
         /* Stage Level */
         levelLabel.text = String(GameScene.stageLevel+1)
@@ -747,11 +756,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 for enemy in self.gridNode.enemyArray {
                     if enemy.positionY == 0 {
                         enemy.reachCastleFlag = true
-                        if let node = enemy.childNode(withName: "punchInterval") {
-                            node.removeFromParent()
-                        }
                         enemy.punchIntervalForCount = 0
-                        enemy.setPunchIntervalLabel()
                     }
                 }
                 
@@ -768,28 +773,28 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 return
             } else if flashGridDoneFlag == false {
                 flashGridDoneFlag = true
-                
                 gridNode.numOfTurnEndEnemy = 0
                 
-                /* Make grid flash */
-                xValue = GridFlashController.flashGrid(labelNode: valueOfX, grid: self.gridNode)
                 
                 /* Calculate each enemy's variable expression */
-                for enemy in self.gridNode.enemyArray {
-                    enemy.calculatePunchLength(value: xValue)
+                let willAttackEnemies = gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
+                if willAttackEnemies.count > 0 {
+                    xValue =  Int(arc4random_uniform(UInt32(3)))+1
+                    for enemy in willAttackEnemies {
+                        enemy.calculatePunchLength(value: xValue)
+                        SignalController.send(target: enemy, num: xValue)
+                    }
+                    if let maxDistanceEnemy = willAttackEnemies.max(by: {$1.distance(to: madScientistNode) > $0.distance(to: madScientistNode)}) {
+                        let wait = SKAction.wait(forDuration: SignalController.signalSentDuration(target: maxDistanceEnemy, xValue: self.xValue)+0.2)
+                        self.run(wait, completion: {
+                            self.gameState = .PlayerTurn
+                        })
+                    }
+                } else {
+                    valueOfX.text = ""
+                    self.gameState = .PlayerTurn
                 }
                 
-                if xValue == 3 {
-                    let wait = SKAction.wait(forDuration: TimeInterval(GridFlashController.flashSpeed*Double(GridFlashController.numOfFlashUp)+0.7))
-                    let moveState = SKAction.run({ self.gameState = .PlayerTurn })
-                    let seq = SKAction.sequence([wait, moveState])
-                    self.run(seq)
-                } else {
-                    let wait = SKAction.wait(forDuration: TimeInterval(GridFlashController.flashSpeed*Double(GridFlashController.numOfFlashUp)))
-                    let moveState = SKAction.run({ self.gameState = .PlayerTurn })
-                    let seq = SKAction.sequence([wait, moveState])
-                    self.run(seq)
-                }
             }
             break;
         case .StageClear:
@@ -1601,15 +1606,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Get rid of all arms and fists */
                         let punchDone = SKAction.run({
-                            enemy.removeAllChildren()
+                            enemy.removeArmNFist()
                         })
                         
                         /* Set variable expression */
                         let setVariableExpression = SKAction.run({
                             /* Reset count down punchInterval */
                             enemy.punchIntervalForCount = enemy.punchInterval
-                            //                            enemy.makeTriangle()
-                            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
                         })
                         
                         /* Move next enemy's turn */
@@ -1620,9 +1623,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                 self.gridNode.turnIndex += 1
                                 self.gridNode.enemyArray[self.gridNode.turnIndex].myTurnFlag = true
                             }
-                            
-                            /* Set enemy turn interval */
-                            enemy.setPunchIntervalLabel()
                             
                             /* Reset enemy animation */
                             enemy.setMovingAnimation()
@@ -1679,15 +1679,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         
                         /* Get rid of all arms and fists */
                         let punchDone = SKAction.run({
-                            enemy.removeAllChildren()
+                            enemy.removeArmNFist()
                         })
                         
                         /* Set variable expression */
                         let setVariableExpression = SKAction.run({
                             /* Reset count down punchInterval */
                             enemy.punchIntervalForCount = enemy.punchInterval
-                            //                            enemy.makeTriangle()
-                            enemy.setVariableExpressionLabel(text: enemy.variableExpressionForLabel)
                         })
                         
                         /* Move next enemy's turn */
@@ -1705,8 +1703,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             /* To check all enemy turn done */
                             self.gridNode.numOfTurnEndEnemy += 1
                             
-                            /* Set enemy turn interval */
-                            enemy.setPunchIntervalLabel()
                             
                             /* Set enemy position to edge */
                             enemy.positionY = wall.posY+1

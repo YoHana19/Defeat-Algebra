@@ -185,6 +185,8 @@ class Tutorial1: SKScene, SKPhysicsContactDelegate {
         
         /* Set Character */
         CharacterController.setCharacter(scene: self)
+        //BalloonController.setBaloon(scene: self)
+        //BalloonController.setBaloonForDoctor(scene: self)
     }
     
     override func update(_ currentTime: TimeInterval) {

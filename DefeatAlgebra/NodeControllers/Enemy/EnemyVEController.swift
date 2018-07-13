@@ -18,7 +18,7 @@ class EnemyVEController {
         getVELabel(vE: enemy.variableExpression) { label in
             enemy.variableExpressionString = label
             EnemyVEController.setVariableExpressionLabel(enemy: enemy, vEString: label) { label in
-                enemy.setVariableExpressionLabel(text: label)
+                enemy.variableExpressionString = label
                 success(true)
             }
         }
@@ -37,6 +37,9 @@ class EnemyVEController {
     }
     
     static func setVariableExpressionLabel(enemy: Enemy, vEString: String, completion: @escaping (String) -> Void) {
+        enemy.variableExpressionString = vEString
+        completion(vEString)
+        /*
         if vEString.count > 4 {
             getShortVELabel(vEString: vEString) { label in
                 enemy.variableExpressionForLabel = label
@@ -46,6 +49,7 @@ class EnemyVEController {
             enemy.variableExpressionForLabel = vEString
             completion(vEString)
         }
+        */
     }
     
     private static func getShortVELabel(vEString: String, completion: @escaping (String) -> Void) {

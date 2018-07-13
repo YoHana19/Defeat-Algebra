@@ -259,7 +259,7 @@ class SimplificationBoard: SKSpriteNode {
                 /* Rewrite enemy's variable expression */
                 selectingEnemy.removeAllChildren()
                 EnemyVEController.setVariableExpressionLabel(enemy: selectingEnemy, vEString: self.variableExpression) { label in
-                    selectingEnemy.setVariableExpressionLabel(text: label)
+                    selectingEnemy.variableExpressionString = label
                 }
                 
                 /* Reset color if input variable expression is correct */

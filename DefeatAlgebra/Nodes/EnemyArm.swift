@@ -36,6 +36,8 @@ class EnemyArm: SKSpriteNode {
         physicsBody?.contactTestBitMask = 4
         
         setAngle()
+        
+        self.name = "arm"
     }
     
     /* You are required to implement this for your subclass to work */
@@ -74,10 +76,10 @@ class EnemyArm: SKSpriteNode {
     /* Shrink back enemy arm */
     func ShrinkArm(length: CGFloat, speed: CGFloat) {
         /* Calculate magnification */
-        let magnification = 1/length // Make arm shrink to length "1"
+        //let magnification = 1/length // Make arm shrink to length "1"
         
         /* Shrink arm */
-        let shrinkArm = SKAction.scaleY(to: magnification, duration: TimeInterval(length*speed))
+        let shrinkArm = SKAction.scaleY(to: 1/self.yScale, duration: TimeInterval(length*speed))
         self.run(shrinkArm)
     }
     

@@ -36,8 +36,9 @@ class EnemyFist: SKSpriteNode {
         physicsBody?.collisionBitMask = 0
         physicsBody?.contactTestBitMask = 5
       
-        
         setAngle()
+        
+        self.name = "fist"
     }
     
     /* You are required to implement this for your subclass to work */

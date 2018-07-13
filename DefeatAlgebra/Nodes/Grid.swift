@@ -507,7 +507,7 @@ class Grid: SKSpriteNode {
                                                 gameScene.hero.anchorPoint = CGPoint(x: 0.5, y: 0.5)
                                                 gameScene.hero.size = CGSize(width: 54, height: 85)
                                                 /* Display variale expression you attacked */
-                                                gameScene.hero.setMagicSwordVE(vE: enemy.variableExpressionForLabel)
+                                                gameScene.hero.setMagicSwordVE(vE: enemy.variableExpressionString)
                                                 /* Set effect */
                                                 gameScene.setMagicSowrdEffect()
                                             })

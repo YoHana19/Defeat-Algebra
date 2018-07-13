@@ -102,28 +102,22 @@ class EnemyAddController {
                 if randPI < 45 {
                     enemyOrigin.punchInterval = 1
                     enemyOrigin.punchIntervalForCount = 1
-                    enemyOrigin.setPunchIntervalLabel()
                     enemyBranch.punchInterval = 1
                     enemyBranch.punchIntervalForCount = 1
-                    enemyBranch.setPunchIntervalLabel()
                     
                     /* punchInterval is 2 with 40% */
                 } else if randPI < 90 {
                     enemyOrigin.punchInterval = 2
                     enemyOrigin.punchIntervalForCount = 2
-                    enemyOrigin.setPunchIntervalLabel()
                     enemyBranch.punchInterval = 2
                     enemyBranch.punchIntervalForCount = 2
-                    enemyBranch.setPunchIntervalLabel()
                     
                     /* punchInterval is 0 with 20% */
                 } else {
                     enemyOrigin.punchInterval = 0
                     enemyOrigin.punchIntervalForCount = 0
-                    enemyOrigin.setPunchIntervalLabel()
                     enemyBranch.punchInterval = 0
                     enemyBranch.punchIntervalForCount = 0
-                    enemyBranch.setPunchIntervalLabel()
                 }
                 
                 /* x position */
