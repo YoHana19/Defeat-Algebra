@@ -435,9 +435,9 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                             }
                         }
                         
-                        gameState = .GridFlashing
+                        gameState = .SignalSending
                     }
-                case .GridFlashing:
+                case .SignalSending:
                     
                     /* Make sure to call once */
                     if flashGridDoneFlag == false {
@@ -652,10 +652,10 @@ class Tutorial: SKScene, SKPhysicsContactDelegate {
                             }
                         }
                         
-                        gameState = .GridFlashing
+                        gameState = .SignalSending
                         playerTurnState = .DisplayPhase
                     }
-                case .GridFlashing:
+                case .SignalSending:
                     
                     /* Make sure to call once */
                     if flashGridDoneFlag == false {

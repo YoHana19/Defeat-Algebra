@@ -152,6 +152,7 @@ class Grid: SKSpriteNode {
              }
              */
             
+            /*
             /* Touch enemy to edit variable expression */
             if !gameScene.usingMagicSword {
                 if nodeAtPoint.name == "enemy" {
@@ -167,6 +168,7 @@ class Grid: SKSpriteNode {
                     gameScene.boardActiveFlag = true
                 }
             }
+            */
         }
     }
     
@@ -322,7 +324,7 @@ class Grid: SKSpriteNode {
                 }
                 
                 
-                /* Touch point to attack to */
+            /* Touch point to attack to */
             } else if gameScene.playerTurnState == .AttackState {
                 
                 /* Touch ends on active area */
@@ -406,7 +408,7 @@ class Grid: SKSpriteNode {
                     gameScene.resetActiveAreaForCatapult()
                 }
                 
-                /* Touch position to use item at */
+            /* Touch position to use item at */
             } else if gameScene.playerTurnState == .UsingItem {
                 
                 /* Touch ends on active area */
@@ -587,10 +589,16 @@ class Grid: SKSpriteNode {
                         gameScene.playerTurnState = .TurnEnd
                     }
                     
-                    /* Touch ends enemy for magic sword */
+                /* Touch ends enemy for magic sword */
                 } else if nodeAtPoint.name == "enemy" {
                     let enemy = nodeAtPoint as! Enemy
+                    print("touch enemy")
+                    print(gameScene.itemType)
+                    if gameScene.itemType == .EqRob {
+                        gameScene.eqRob.go(to: enemy)
+                    }
                     
+                    /*
                     guard gameScene.magicSwordAttackDone else { return }
                     guard gameScene.usingMagicSword else { return }
                     
@@ -644,8 +652,8 @@ class Grid: SKSpriteNode {
                         /* Reset flag */
                         castEnemyDone = false
                     }
-                    
-                    /* Touch ends on anywhere except active area or enemy */
+                    */
+                /* Touch ends on anywhere except active area or enemy */
                 } else {
                     
                     /* Make sure to be invalid when using catpult */

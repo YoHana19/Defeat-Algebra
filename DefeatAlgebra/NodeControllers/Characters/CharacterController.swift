@@ -10,10 +10,14 @@ import Foundation
 import SpriteKit
 
 class CharacterController {
+    static let doctorSize = CGSize(width: 264, height: 310.4)
     static let doctorOnPos = CGPoint(x: 170, y: 500)
     static let doctorOffPos = CGPoint(x: -170, y: 500)
+    
+    static let madDoctorSize = CGSize(width: 228.8, height: 422.5)
     static let madDoctorOnPos = CGPoint(x: 180, y: 1100)
     static let madDoctorOffPos = CGPoint(x: 180, y: 1600)
+    
     static let mainHeroOnPos = CGPoint(x: 700, y: 300)
     static let mainHeroOffPos = CGPoint(x: 700, y: 300)
     
@@ -36,26 +40,26 @@ class CharacterController {
     }
     
     public static func showDoctor() {
-        CharacterAniController.move(character: doctor, dest: doctorOnPos, duration: 0.5)
+        doctor.move(from: nil, to: doctorOnPos)
     }
     
     public static func showMadDoctor() {
-        CharacterAniController.move(character: madDoctor, dest: madDoctorOnPos, duration: 0.5)
+        madDoctor.move(from: nil, to: madDoctorOnPos)
     }
     
     public static func retreatDoctor() {
-        CharacterAniController.move(character: doctor, dest: doctorOffPos, duration: 0.5)
+        doctor.move(from: nil, to: doctorOffPos)
     }
     
     public static func retreatMadDoctor() {
-        CharacterAniController.move(character: madDoctor, dest: madDoctorOffPos, duration: 0.5)
+        madDoctor.move(from: nil, to: madDoctorOffPos)
     }
     
     public static func shakeDoctor() {
-        CharacterAniController.shake(node: doctor)
+        doctor.shake()
     }
     
     public static func shakeMadDoctor() {
-        CharacterAniController.shake(node: madDoctor)
+        madDoctor.shake()
     }
 }

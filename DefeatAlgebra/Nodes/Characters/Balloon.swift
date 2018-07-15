@@ -11,6 +11,8 @@ import SpriteKit
 
 class Balloon: SKSpriteNode {
     
+    var textLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+    
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "BalloonMulti2")
@@ -18,15 +20,24 @@ class Balloon: SKSpriteNode {
         super.init(texture: texture, color: UIColor.clear, size: bodySize)
         
         /* Set Z-Position, ensure ontop of screen */
-        zPosition = 100
-        
+        zPosition = 101
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        setTextLabel()
     }
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    func setTextLabel() {
+        textLabel.fontSize = 20
+        textLabel.position = CGPoint(x: 0, y: 0)
+        textLabel.zPosition = 3
+        textLabel.fontColor = UIColor.red
+        textLabel.text = "あああああああああああ"
+        self.addChild(textLabel)
     }
     
 }

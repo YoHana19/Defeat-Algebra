@@ -8,6 +8,7 @@ def install_pods
     pod 'Firebase/Database'
     pod 'Firebase/Storage'
     pod 'Firestore', :podspec => 'https://storage.googleapis.com/firebase-preview-drop/ios/firestore/0.7.0/Firestore.podspec.json'
+    pod 'SpriteKitEasingSwift'
 end
 
 target 'DefeatAlgebra' do

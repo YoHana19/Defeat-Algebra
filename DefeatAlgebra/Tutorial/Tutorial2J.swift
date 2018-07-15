@@ -486,7 +486,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                         self.run(seq)
                     } else {
                         /* Move to next state */
-                        self.gameState = .GridFlashing
+                        self.gameState = .SignalSending
                     }
                 }
             } else if Tutorial.tutorialPhase == 4 {
@@ -519,7 +519,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                         self.run(seq)
                     } else {
                         /* Move to next state */
-                        self.gameState = .GridFlashing
+                        self.gameState = .SignalSending
                     }
                 }
             }
@@ -752,7 +752,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
                 
             }
             break;
-        case .GridFlashing:
+        case .SignalSending:
             
             /* Make sure to call once */
             if flashGridDoneFlag == false {
@@ -839,7 +839,7 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         guard pauseFlag == false else { return }
         
         if Tutorial.tutorialPhase == 3 && tutorialState == .T1 {
-            gameState = .GridFlashing
+            gameState = .SignalSending
             tutorialState = .T2
             resetDiscription()
             return
@@ -1365,27 +1365,6 @@ class Tutorial2: SKScene, SKPhysicsContactDelegate {
         let seqEffect2 = SKAction.sequence([waitRemoveSmoke, removeParticles, onFlag])
         particles.run(seqEffect)
         particles2.run(seqEffect2)
-    }
-    
-    /*================*/
-    /*== Grid Flash ==*/
-    /*================*/
-    
-    /* Make grid flash in fixed interval */
-    func flashGrid() {
-        
-        /* Stop all enemy's movement */
-        for enemy in self.gridNode.enemyArray {
-            enemy.removeAllActions()
-            enemy.setStandingtexture()
-        }
-        
-        /* Make sure to stop all enemy before move to GridFlashing state */
-        let wait = SKAction.wait(forDuration: 1.0)
-        let moveState = SKAction.run({ self.gameState = .GridFlashing })
-        let seq = SKAction.sequence([wait, moveState])
-        self.run(seq)
-        
     }
     
     /*=====================*/

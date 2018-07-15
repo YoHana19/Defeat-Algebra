@@ -26,7 +26,7 @@ import Crashlytics
 import AVFoundation
 
 enum GameSceneState {
-    case AddEnemy, PlayerTurn, EnemyTurn, GridFlashing, StageClear, GameOver
+    case AddEnemy, PlayerTurn, EnemyTurn, SignalSending, StageClear, GameOver
 }
 
 enum Direction: Int {
@@ -38,7 +38,7 @@ enum PlayerTurnState {
 }
 
 enum ItemType {
-    case None, timeBomb, Catapult, Wall, MagicSword, Teleport, ResetCatapult, Cane
+    case None, timeBomb, Catapult, Wall, MagicSword, Teleport, ResetCatapult, Cane, EqRob
 }
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -52,6 +52,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var pauseScreen: PauseScreen!
     var simplificationBoard: SimplificationBoard!
     var madScientistNode: SKSpriteNode!
+    var eqRob: EqRob!
+    var inputPanel: InputPanel!
     
     /*== Game labels ==*/
     var valueOfX: SKLabelNode!
@@ -199,6 +201,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
         itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
+        eqRob = childNode(withName: "eqRob") as! EqRob
+        EqRobController.gameScene = self
         SignalController.madPos = madScientistNode.absolutePos()
         SignalController.gameScene = self
         buttonAttack = childNode(withName: "buttonAttack")
@@ -306,10 +310,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             displayitem(name: itemName)
         }
         
+        /* Set characters */
+        CharacterController.setCharacter(scene: self)
+        
         /* Set input boards */
         setInputBoard()
         setInputBoardForCane()
         setSimplificationBoard()
+        setInputPanel()
         
         /* Set Pause screen */
         pauseScreen = PauseScreen()
@@ -392,7 +400,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                             
                             /* Move to next state */
-                            self.gameState = .GridFlashing
+                            self.gameState = .SignalSending
                         })
                         let seq = SKAction.sequence([addEnemy, wait, moveState])
                         self.run(seq)
@@ -415,7 +423,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                 
                                 /* Count up to adding normal enemy time */
                                 /* Move to next state */
-                                self.gameState = .GridFlashing
+                                self.gameState = .SignalSending
                                 
                             })
                             let seq = SKAction.sequence([addEnemy, wait, moveState])
@@ -436,7 +444,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                                 EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                                 
                                 /* Move to next state */
-                                self.gameState = .GridFlashing
+                                self.gameState = .SignalSending
                             })
                             let seq = SKAction.sequence([addEnemy, wait, moveState])
                             self.run(seq)
@@ -444,12 +452,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         }
                     } else {
                         /* Move to next state */
-                        self.gameState = .GridFlashing
+                        self.gameState = .SignalSending
                     }
                 }
             } else {
                 /* Move to next state */
-                self.gameState = .GridFlashing
+                self.gameState = .SignalSending
             }
             break;
         case .PlayerTurn:
@@ -652,8 +660,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 case .Cane:
                     inputBoardForCane.isHidden = false
                     break;
+                case .EqRob:
+                    break;
                 }
-                
+            
                 /* Wait for player touch to point position to use item at */
                 break;
             case .TurnEnd:
@@ -765,7 +775,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
             }
             break;
-        case .GridFlashing:
+        case .SignalSending:
             /* Make sure to call once */
             if caneOnFlag {
                 gameState = .PlayerTurn
@@ -870,7 +880,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     GridActiveAreaController.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, grid: self.gridNode)
                     self.playerTurnState = .AttackState
                 }
-                /* Touch item button */
+            /* Touch item button */
             } else if nodeAtPoint.name == "buttonItem" {
                 guard self.heroMovingFlag == false else { return }
                 
@@ -885,7 +895,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 self.playerTurnState = .UsingItem
             }
             
-            /* Select attack position */
+        /* Select attack position */
         } else if playerTurnState == .AttackState {
             /* Touch item button */
             if nodeAtPoint.name == "buttonItem" {
@@ -901,13 +911,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Change state to UsingItem */
                 self.playerTurnState = .UsingItem
                 
-                /* If touch anywhere but activeArea, back to MoveState  */
+            /* If touch anywhere but activeArea, back to MoveState  */
             } else if nodeAtPoint.name != "activeArea" {
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
                 self.playerTurnState = .MoveState
             }
             
-            /* Use item from itemArea */
+        /* Use item from itemArea */
         } else if playerTurnState == .UsingItem {
             /* Touch attack button */
             if nodeAtPoint.name == "buttonAttack" {
@@ -940,7 +950,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     inputBoardForCane.isHidden = true
                 }
                 
-                /* Use timeBomb */
+            /* Use timeBomb */
             } else if nodeAtPoint.name == "timeBomb" {
                 /* Remove activeArea for catapult */
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
@@ -961,7 +971,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* Use catapult */
+            /* Use catapult */
             } else if nodeAtPoint.name == "catapult" {
                 /* Remove active area if any */
                 GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
@@ -985,7 +995,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* Use multiAttack */
+            /* Use multiAttack */
             } else if nodeAtPoint.name == "multiAttack" {
                 /* Remove active area if any */
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
@@ -1039,7 +1049,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 let seq = SKAction.sequence([wait, moveState])
                 self.run(seq)
                 
-                /* wall */
+            /* wall */
             } else if nodeAtPoint.name == "wall" {
                 /* Remove activeArea */
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
@@ -1060,7 +1070,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* magic sword */
+            /* magic sword */
             } else if nodeAtPoint.name == "magicSword" {
                 /* Remove activeArea */
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
@@ -1082,7 +1092,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* teleport */
+            /* teleport */
             } else if nodeAtPoint.name == "teleport" {
                 /* Remove activeArea */
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
@@ -1103,7 +1113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* resetCatapult */
+            /* resetCatapult */
             } else if nodeAtPoint.name == "resetCatapult" {
                 /* Remove activeArea */
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
@@ -1125,7 +1135,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* cane */
+            /* cane */
             } else if nodeAtPoint.name == "cane" {
                 /* Remove activeArea */
                 GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
@@ -1144,7 +1154,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Get index of game using */
                 usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
                 
-                /* Touch active area  */
+            /* Touch active area  */
             } else if nodeAtPoint.name == "activeArea" {
                 /* Using catapult */
                 if itemType == .Catapult {
@@ -1188,7 +1198,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Remove used itemIcon from item array and Scene */
                     resetDisplayItem(index: usingItemIndex)
                     
-                    /* Using resetCatapult */
+                /* Using resetCatapult */
                 } else if itemType == .ResetCatapult {
                     selectCatapultDoneFlag = false
                     /* Remove active area */
@@ -1212,7 +1222,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     playerTurnState = .MoveState
                     
                 }
-                /* Reset position of catapult or Toggle input board visibility */
+            /* Reset position of catapult or Toggle input board visibility */
             } else if nodeAtPoint.name == "catapultToSet" {
                 /* using resetCatapult */
                 if selecttingCatapultFlag {
@@ -1242,8 +1252,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     guard itemType == .Catapult else { return }
                     self.inputBoard.isActive = !self.inputBoard.isActive
                 }
-                
-                /* If player touch other place than item icons, back to MoveState */
+            } else if nodeAtPoint.name == "eqRob" {
+                print("tougch eqRob")
+                EqRobController.inputPanelWithDoctor()
+                itemType = .EqRob
+            /* If player touch other place than item icons, back to MoveState */
             } else {
                 guard setCatapultDoneFlag == false else { return }
                 guard selectCatapultDoneFlag == false else { return }
@@ -1949,6 +1962,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(simplificationBoard)
     }
     
+    /* Set input panel */
+    func setInputPanel() {
+        inputPanel = InputPanel()
+        inputPanel.isHidden = true
+        addChild(inputPanel)
+    }
+    
     /* Throw catapult stone animation */
     func throwBomb(value: Int, setCatapult: Catapult) {
         /* Create bomb */
@@ -2263,30 +2283,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         inputBoardForCane = InputVariable()
         inputBoardForCane.isHidden = true
         addChild(inputBoardForCane)
-    }
-    
-    /*================*/
-    /*== Grid Flash ==*/
-    /*================*/
-    
-    /* Make grid flash in fixed interval */
-    func flashGrid() {
-        /* Time to flash grid */
-        if countTurnForFlashGrid > flashInterval {
-            
-            /* Stop all enemy's movement */
-            for enemy in self.gridNode.enemyArray {
-                enemy.removeAllActions()
-                enemy.setStandingtexture()
-            }
-            
-            /* Make sure to stop all enemy before move to GridFlashing state */
-            let wait = SKAction.wait(forDuration: 1.0)
-            let moveState = SKAction.run({ self.gameState = .GridFlashing })
-            let seq = SKAction.sequence([wait, moveState])
-            self.run(seq)
-            
-        }
     }
     
     /*=====================*/

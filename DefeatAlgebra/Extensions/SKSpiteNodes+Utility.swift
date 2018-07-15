@@ -28,7 +28,7 @@ extension SKSpriteNode {
         return distance
     }
     
-    func angle(with target: SKSpriteNode) -> CGFloat {
+    func angleDegree(with target: SKSpriteNode) -> CGFloat {
         let b = self.absolutePos()
         let a = target.absolutePos()
         var r = atan2(-b.y - -a.y, b.x - a.x)
@@ -37,9 +37,21 @@ extension SKSpriteNode {
         }
         let degree = floor(r * 360 / (2 * .pi))
         if degree > 180 {
-            return -1 * (degree - 180)
+            return -1 * (360-degree)
         } else {
             return degree
         }
+    }
+    
+    func angleRadian(with target: SKSpriteNode) -> CGFloat {
+        let b = self.absolutePos()
+        let a = target.absolutePos()
+        var r = atan2(-b.y - -a.y, b.x - a.x)
+        return r
+    }
+    
+    func scale(width: CGFloat) {
+        let ratio = self.size.height/self.size.width
+        self.size = CGSize(width: width, height: width*ratio)
     }
 }

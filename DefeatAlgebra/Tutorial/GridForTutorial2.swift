@@ -276,7 +276,7 @@ class GridForTutorial2: SKSpriteNode {
         guard gameScene.pauseFlag == false else { return }
         
         if Tutorial.tutorialPhase == 3 && gameScene.tutorialState == .T1 {
-            gameScene.gameState = .GridFlashing
+            gameScene.gameState = .SignalSending
             gameScene.tutorialState = .T2
             gameScene.resetDiscription()
             return
