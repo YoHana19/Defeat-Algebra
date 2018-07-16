@@ -68,6 +68,7 @@ class Enemy: SKSpriteNode {
     var editedVEFlag = false
     var forEduOriginFlag = false
     var forEduBranchFlag = false
+    var isSelectedForEqRob = false
     
     var gridNode: Grid {
         return self.parent as! Grid
@@ -131,7 +132,8 @@ class Enemy: SKSpriteNode {
         case .front:
             self.texture = SKTexture(imageNamed: "front1")
         case .back:
-            self.texture = SKTexture(imageNamed: "back1")
+            //self.texture = SKTexture(imageNamed: "back1")
+            break;
         case .left:
             self.texture = SKTexture(imageNamed: "left1")
         case .right:

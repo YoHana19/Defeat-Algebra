@@ -9,8 +9,8 @@
 import Foundation
 import SpriteKit
 
-extension SKSpriteNode {
-    // this only works for node on scene or grid
+extension SKNode {
+    // this only works for node which has one or no parent
     func absolutePos() -> CGPoint {
         if let parent = self.parent {
             let parentPos = parent.position
@@ -21,14 +21,21 @@ extension SKSpriteNode {
         }
     }
     
-    func distance(to target: SKSpriteNode) -> CGFloat {
+    func distance(to target: SKNode) -> CGFloat {
         let dx = self.absolutePos().x - target.absolutePos().x
         let dy = self.absolutePos().y - target.absolutePos().y
         let distance = sqrt(pow(dx, 2) + pow(dy, 2))
         return distance
     }
     
-    func angleDegree(with target: SKSpriteNode) -> CGFloat {
+    func distance(toPos position: CGPoint) -> CGFloat {
+        let dx = self.absolutePos().x - position.x
+        let dy = self.absolutePos().y - position.y
+        let distance = sqrt(pow(dx, 2) + pow(dy, 2))
+        return distance
+    }
+    
+    func angleDegree(with target: SKNode) -> CGFloat {
         let b = self.absolutePos()
         let a = target.absolutePos()
         var r = atan2(-b.y - -a.y, b.x - a.x)
@@ -43,15 +50,17 @@ extension SKSpriteNode {
         }
     }
     
-    func angleRadian(with target: SKSpriteNode) -> CGFloat {
+    func angleRadian(with target: SKNode) -> CGFloat {
         let b = self.absolutePos()
         let a = target.absolutePos()
         var r = atan2(-b.y - -a.y, b.x - a.x)
         return r
     }
     
-    func scale(width: CGFloat) {
-        let ratio = self.size.height/self.size.width
-        self.size = CGSize(width: width, height: width*ratio)
+    func angleRadian(withPos position: CGPoint) -> CGFloat {
+        let b = self.absolutePos()
+        let a = position
+        var r = atan2(-b.y - -a.y, b.x - a.x)
+        return r
     }
 }

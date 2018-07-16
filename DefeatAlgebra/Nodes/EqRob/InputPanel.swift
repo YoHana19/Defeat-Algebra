@@ -37,6 +37,7 @@ class InputPanel: SKSpriteNode {
     var veLabel4: SKLabelNode!
     var labelArray = [SKLabelNode]()
     
+    var confirmedVE: String = ""
     var variableExpression: String = "" {
         didSet {
             if variableExpression.count == 0 {
@@ -86,6 +87,7 @@ class InputPanel: SKSpriteNode {
     var cover0Btn = SKShapeNode()
     var coverNumArray = [SKShapeNode]()
     var coverOpeArray = [SKShapeNode]()
+    var eqRobPoint = SKShapeNode(circleOfRadius: 10)
     
     /* Flags for validation */
     var numberFlag = false
@@ -110,12 +112,13 @@ class InputPanel: SKSpriteNode {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         self.position = CGPoint(x: 375, y: 668)
-        //self.isHidden = true
+        self.isHidden = true
         
         /* Set buttons */
         setButtons()
         setLabels()
         
+        setEqRobPoint()
     }
     
     /* You are required to implement this for your subclass to work */
@@ -351,6 +354,7 @@ class InputPanel: SKSpriteNode {
         if nodeAtPoint.name == "buttonOK" {
             VECategory.getCategory(ve: variableExpression) { cate in
                 gameScene.eqRob.veCategory = cate
+                self.confirmedVE = self.variableExpression
                 
                 /* Reset stuffs */
                 self.variableExpression = ""
@@ -363,6 +367,7 @@ class InputPanel: SKSpriteNode {
                 self.coverOperant()
                 self.coverOK()
                 
+                EqRobController.execute(1, enemy: nil)
                 self.isHidden = true
             }
         }
@@ -497,6 +502,14 @@ class InputPanel: SKSpriteNode {
         addChild(circle)
         return circle
         
+    }
+    
+    func setEqRobPoint() {
+        eqRobPoint.strokeColor = UIColor.clear
+        eqRobPoint.fillColor = UIColor.clear
+        eqRobPoint.position = CGPoint(x: -frame.width/2+70, y: frame.height/2-70)
+        eqRobPoint.zPosition = 5
+        addChild(eqRobPoint)
     }
     
     /* Toggle +- buttons */

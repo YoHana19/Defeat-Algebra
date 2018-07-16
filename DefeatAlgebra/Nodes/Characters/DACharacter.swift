@@ -36,10 +36,6 @@ class DACharacter: SKSpriteNode {
         self.position = pos
     }
     
-    func reSize(width: CGFloat) {
-        self.scale(width: width)
-    }
-    
     func move(from oldPos: CGPoint?, to newPos: CGPoint) {
         self.position = oldPos ?? self.position
         let move = SKAction.move(to: newPos, duration: moveSpan)

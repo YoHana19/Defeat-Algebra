@@ -589,13 +589,16 @@ class Grid: SKSpriteNode {
                         gameScene.playerTurnState = .TurnEnd
                     }
                     
-                /* Touch ends enemy for magic sword */
+                /* Touch ends enemy for eqRob */
                 } else if nodeAtPoint.name == "enemy" {
                     let enemy = nodeAtPoint as! Enemy
                     print("touch enemy")
                     print(gameScene.itemType)
                     if gameScene.itemType == .EqRob {
-                        gameScene.eqRob.go(to: enemy)
+                        //gameScene.eqRob.go(to: enemy) {}
+                        guard !enemy.isSelectedForEqRob else { return }
+                        enemy.isSelectedForEqRob = true
+                        EqRobController.execute(2, enemy: enemy)
                     }
                     
                     /*

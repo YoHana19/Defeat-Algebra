@@ -54,6 +54,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var madScientistNode: SKSpriteNode!
     var eqRob: EqRob!
     var inputPanel: InputPanel!
+    var selectionPanel: SelectionPanel!
     
     /*== Game labels ==*/
     var valueOfX: SKLabelNode!
@@ -202,13 +203,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
         eqRob = childNode(withName: "eqRob") as! EqRob
-        EqRobController.gameScene = self
         SignalController.madPos = madScientistNode.absolutePos()
-        SignalController.gameScene = self
         buttonAttack = childNode(withName: "buttonAttack")
         buttonItem = childNode(withName: "buttonItem")
         buttonAttack.isHidden = true
         buttonItem.isHidden = true
+        
+        EqRobController.gameScene = self
+        EqRobController.eqRobOriginPos = self.eqRob.absolutePos()
+        SignalController.gameScene = self
+        TouchAreaController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {
@@ -318,6 +322,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         setInputBoardForCane()
         setSimplificationBoard()
         setInputPanel()
+        setSelectionPanel()
         
         /* Set Pause screen */
         pauseScreen = PauseScreen()
@@ -863,23 +868,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Touch attack button */
             if nodeAtPoint.name == "buttonAttack" {
                 guard self.heroMovingFlag == false else { return }
+                guard self.hero.attackDoneFlag == false else { return }
                 
-                if self.hero.attackDoneFlag {
-                    return
-                } else {
-                    /* Reset item type */
-                    self.itemType = .None
-                    
-                    /* Reset active area */
-                    GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
-                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
-                    
-                    /* Set item area cover */
-                    self.itemAreaCover.isHidden = false
-                    
-                    GridActiveAreaController.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, grid: self.gridNode)
-                    self.playerTurnState = .AttackState
-                }
+                /* Reset item type */
+                self.itemType = .None
+                
+                /* Reset active area */
+                GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
+                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
+                
+                /* Set item area cover */
+                self.itemAreaCover.isHidden = false
+                
+                GridActiveAreaController.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, grid: self.gridNode)
+                self.playerTurnState = .AttackState
+                
             /* Touch item button */
             } else if nodeAtPoint.name == "buttonItem" {
                 guard self.heroMovingFlag == false else { return }
@@ -1254,7 +1257,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             } else if nodeAtPoint.name == "eqRob" {
                 print("tougch eqRob")
-                EqRobController.inputPanelWithDoctor()
+                EqRobController.execute(0, enemy: nil)
                 itemType = .EqRob
             /* If player touch other place than item icons, back to MoveState */
             } else {
@@ -1306,6 +1309,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Remove input board for cane */
                 inputBoardForCane.isHidden = true
+                
+                EqRobController.back(0)
             }
         } else if playerTurnState == .ShowingCard {
             cardArray[0].removeFromParent()
@@ -1967,6 +1972,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         inputPanel = InputPanel()
         inputPanel.isHidden = true
         addChild(inputPanel)
+    }
+    
+    /* Set input panel */
+    func setSelectionPanel() {
+        selectionPanel = SelectionPanel()
+        selectionPanel.isHidden = true
+        addChild(selectionPanel)
     }
     
     /* Throw catapult stone animation */

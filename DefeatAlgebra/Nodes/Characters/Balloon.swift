@@ -8,10 +8,11 @@
 
 import Foundation
 import SpriteKit
+import UIKit
 
 class Balloon: SKSpriteNode {
     
-    var textLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+    var fontSize: CGFloat = 37
     
     init() {
         /* Initialize with enemy asset */
@@ -23,7 +24,7 @@ class Balloon: SKSpriteNode {
         zPosition = 101
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        setTextLabel()
+        
     }
     
     /* You are required to implement this for your subclass to work */
@@ -31,13 +32,23 @@ class Balloon: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    func setTextLabel() {
-        textLabel.fontSize = 20
-        textLabel.position = CGPoint(x: 0, y: 0)
-        textLabel.zPosition = 3
-        textLabel.fontColor = UIColor.red
-        textLabel.text = "あああああああああああ"
-        self.addChild(textLabel)
+    func setLines(with text: String) {
+        if let label = self.childNode(withName: "line") {
+            label.removeFromParent()
+        }
+        
+        let singleLineMessage = SKLabelNode(fontNamed: "GillSans-Bold")
+        singleLineMessage.fontSize = fontSize
+        singleLineMessage.verticalAlignmentMode = .center // Keep the origin in the center
+        singleLineMessage.horizontalAlignmentMode = .left
+        singleLineMessage.text = text
+        
+        let textLabel = singleLineMessage.multilined()
+        textLabel.position = CGPoint(x: -170, y: 0)
+        textLabel.name = "line"
+        textLabel.zPosition = 3  // On top of all other nodes
+        textLabel.fontColor = UIColor.white
+        addChild(textLabel)
     }
     
 }

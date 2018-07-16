@@ -82,12 +82,18 @@
 		204CE03C20FB85A200D45FFE /* EqRobController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE03A20FB85A200D45FFE /* EqRobController.swift */; };
 		204CE03E20FB94FE00D45FFE /* DACharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE03D20FB94FE00D45FFE /* DACharacter.swift */; };
 		204CE03F20FB94FE00D45FFE /* DACharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE03D20FB94FE00D45FFE /* DACharacter.swift */; };
+		2052888620FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */; };
+		2052888720FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */; };
+		2052888920FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */; };
+		2052888A20FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */; };
+		2052888C20FC91CB00B011D2 /* TouchAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* TouchAreaController.swift */; };
+		2052888D20FC91CB00B011D2 /* TouchAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* TouchAreaController.swift */; };
 		2058CA8420F883FB005DF357 /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8320F883FB005DF357 /* Signal.swift */; };
 		2058CA8520F883FB005DF357 /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8320F883FB005DF357 /* Signal.swift */; };
 		2058CA8720F885A6005DF357 /* SignalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8620F885A6005DF357 /* SignalController.swift */; };
 		2058CA8820F885A6005DF357 /* SignalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8620F885A6005DF357 /* SignalController.swift */; };
-		2058CA8B20F88726005DF357 /* SKSpiteNodes+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8A20F88726005DF357 /* SKSpiteNodes+Utility.swift */; };
-		2058CA8C20F88726005DF357 /* SKSpiteNodes+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8A20F88726005DF357 /* SKSpiteNodes+Utility.swift */; };
+		2058CA8B20F88726005DF357 /* SKNode+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8A20F88726005DF357 /* SKNode+Utility.swift */; };
+		2058CA8C20F88726005DF357 /* SKNode+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8A20F88726005DF357 /* SKNode+Utility.swift */; };
 		2058CA8E20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */; };
 		2058CA8F20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */; };
 		205A0ECF2079EDBC006A44A6 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205A0ECE2079EDBC006A44A6 /* Login.storyboard */; };
@@ -98,6 +104,12 @@
 		205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED5207A0D58006A44A6 /* LoginService.swift */; };
 		205A0EDA207A0ECB006A44A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED9207A0ECB006A44A6 /* User.swift */; };
 		205A0EDB207A0ECB006A44A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED9207A0ECB006A44A6 /* User.swift */; };
+		20644DB820FC9CB300745E4C /* SelectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DB720FC9CB300745E4C /* SelectionPanel.swift */; };
+		20644DB920FC9CB300745E4C /* SelectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DB720FC9CB300745E4C /* SelectionPanel.swift */; };
+		20644DBB20FCABAB00745E4C /* SelectedEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DBA20FCABAB00745E4C /* SelectedEnemy.swift */; };
+		20644DBC20FCABAB00745E4C /* SelectedEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DBA20FCABAB00745E4C /* SelectedEnemy.swift */; };
+		20644DBE20FCDB6A00745E4C /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DBD20FCDB6A00745E4C /* Line.swift */; };
+		20644DBF20FCDB6A00745E4C /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DBD20FCDB6A00745E4C /* Line.swift */; };
 		207A673920D69D300026A770 /* Balloon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A673820D69D300026A770 /* Balloon.swift */; };
 		207A673A20D69D300026A770 /* Balloon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A673820D69D300026A770 /* Balloon.swift */; };
 		207A673C20D69DED0026A770 /* BalloonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A673B20D69DED0026A770 /* BalloonController.swift */; };
@@ -310,14 +322,20 @@
 		204CE03720FB830F00D45FFE /* test.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = test.sks; sourceTree = "<group>"; };
 		204CE03A20FB85A200D45FFE /* EqRobController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobController.swift; sourceTree = "<group>"; };
 		204CE03D20FB94FE00D45FFE /* DACharacter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DACharacter.swift; sourceTree = "<group>"; };
+		2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKLabelNode+MultiLines.swift"; sourceTree = "<group>"; };
+		2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+DAMultiLines.swift"; sourceTree = "<group>"; };
+		2052888B20FC91CB00B011D2 /* TouchAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAreaController.swift; sourceTree = "<group>"; };
 		2058CA8320F883FB005DF357 /* Signal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
 		2058CA8620F885A6005DF357 /* SignalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalController.swift; sourceTree = "<group>"; };
-		2058CA8A20F88726005DF357 /* SKSpiteNodes+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKSpiteNodes+Utility.swift"; sourceTree = "<group>"; };
+		2058CA8A20F88726005DF357 /* SKNode+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKNode+Utility.swift"; sourceTree = "<group>"; };
 		2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyAttackController.swift; sourceTree = "<group>"; };
 		205A0ECE2079EDBC006A44A6 /* Login.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
 		205A0ED12079EE0D006A44A6 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		205A0ED5207A0D58006A44A6 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		205A0ED9207A0ECB006A44A6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		20644DB720FC9CB300745E4C /* SelectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionPanel.swift; sourceTree = "<group>"; };
+		20644DBA20FCABAB00745E4C /* SelectedEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedEnemy.swift; sourceTree = "<group>"; };
+		20644DBD20FCDB6A00745E4C /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 		207A673820D69D300026A770 /* Balloon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Balloon.swift; sourceTree = "<group>"; };
 		207A673B20D69DED0026A770 /* BalloonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonController.swift; sourceTree = "<group>"; };
 		208C5D56202384FE0006ADE4 /* DAUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAUtility.swift; sourceTree = "<group>"; };
@@ -555,7 +573,9 @@
 		2058CA8920F886F0005DF357 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				2058CA8A20F88726005DF357 /* SKSpiteNodes+Utility.swift */,
+				2058CA8A20F88726005DF357 /* SKNode+Utility.swift */,
+				2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */,
+				2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -576,6 +596,18 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		20644DB620FC9C9200745E4C /* EqRob */ = {
+			isa = PBXGroup;
+			children = (
+				204CE02820FB0C6C00D45FFE /* EqRob.swift */,
+				204CE03420FB4A7000D45FFE /* InputPanel.swift */,
+				20644DB720FC9CB300745E4C /* SelectionPanel.swift */,
+				20644DBA20FCABAB00745E4C /* SelectedEnemy.swift */,
+				20644DBD20FCDB6A00745E4C /* Line.swift */,
+			);
+			path = EqRob;
+			sourceTree = "<group>";
+		};
 		20D0FEC820B6C0B000C547A5 /* LevelSelectMenu */ = {
 			isa = PBXGroup;
 			children = (
@@ -593,6 +625,8 @@
 				20D0FED320B6C0E300C547A5 /* GameScene.sks */,
 				20D0FED420B6C0E300C547A5 /* GameScene.swift */,
 				20D0FED520B6C0E300C547A5 /* EnemyProperty.swift */,
+				2052888B20FC91CB00B011D2 /* TouchAreaController.swift */,
+				204CE03A20FB85A200D45FFE /* EqRobController.swift */,
 				204CE03720FB830F00D45FFE /* test.sks */,
 			);
 			path = GameContorollers;
@@ -604,7 +638,6 @@
 				204163A120C2651F00217F6A /* Grid */,
 				20D0FEDD20B6C11100C547A5 /* Enemy */,
 				20D0FEE220B6C11100C547A5 /* Characters */,
-				204CE03A20FB85A200D45FFE /* EqRobController.swift */,
 				2058CA8620F885A6005DF357 /* SignalController.swift */,
 			);
 			name = NodeControllers;
@@ -636,7 +669,7 @@
 		20D0FEF420B6C12300C547A5 /* Nodes */ = {
 			isa = PBXGroup;
 			children = (
-				204CE03420FB4A7000D45FFE /* InputPanel.swift */,
+				20644DB620FC9C9200745E4C /* EqRob */,
 				20D0FEF520B6C12300C547A5 /* InputVariable.swift */,
 				20D0FEF620B6C12300C547A5 /* Hero.swift */,
 				20D0FEF720B6C12300C547A5 /* InputVariableExpression.swift */,
@@ -647,7 +680,6 @@
 				20D0FEFC20B6C12300C547A5 /* PauseScreen.swift */,
 				20D0FEFD20B6C12300C547A5 /* Grid.swift */,
 				2058CA8320F883FB005DF357 /* Signal.swift */,
-				204CE02820FB0C6C00D45FFE /* EqRob.swift */,
 				20D0FEFE20B6C12300C547A5 /* Items */,
 				20D0FF0C20B6C12300C547A5 /* Characters */,
 			);
@@ -1150,6 +1182,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				204CE02F20FB367A00D45FFE /* VECategory.swift in Sources */,
+				20644DB820FC9CB300745E4C /* SelectionPanel.swift in Sources */,
 				2058CA8E20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */,
 				20D0FF3D20B6C12300C547A5 /* MadDoctor.swift in Sources */,
 				204CE02920FB0C6C00D45FFE /* EqRob.swift in Sources */,
@@ -1180,16 +1213,18 @@
 				20D0FF3520B6C12300C547A5 /* Catapult.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				204163AC20C2767100217F6A /* Tutorial1.swift in Sources */,
+				2052888C20FC91CB00B011D2 /* TouchAreaController.swift in Sources */,
 				20D0FF2D20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE620B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3720B6C12300C547A5 /* Wall.swift in Sources */,
 				207A673C20D69DED0026A770 /* BalloonController.swift in Sources */,
-				2058CA8B20F88726005DF357 /* SKSpiteNodes+Utility.swift in Sources */,
+				2058CA8B20F88726005DF357 /* SKNode+Utility.swift in Sources */,
 				208C5D57202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				20D0FF3320B6C12300C547A5 /* Heart.swift in Sources */,
 				204CE03B20FB85A200D45FFE /* EqRobController.swift in Sources */,
 				205A0EDA207A0ECB006A44A6 /* User.swift in Sources */,
 				20D0FED820B6C0E300C547A5 /* GameScene.swift in Sources */,
+				2052888620FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
 				203B2A521F67B97100DDCC03 /* HeroForTutorial2.swift in Sources */,
 				20D0FF1F20B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1B20B6C12300C547A5 /* Enemy.swift in Sources */,
@@ -1203,6 +1238,8 @@
 				20D0FF1120B6C12300C547A5 /* InputVariable.swift in Sources */,
 				20D0FF2B20B6C12300C547A5 /* BattleShip.swift in Sources */,
 				20D0FF3120B6C12300C547A5 /* MultiAttack.swift in Sources */,
+				20644DBE20FCDB6A00745E4C /* Line.swift in Sources */,
+				20644DBB20FCABAB00745E4C /* SelectedEnemy.swift in Sources */,
 				207A673920D69D300026A770 /* Balloon.swift in Sources */,
 				20D0FEEE20B6C11100C547A5 /* CharacterLinesController.swift in Sources */,
 				203B2A501F67B97100DDCC03 /* GridForTutorial2.swift in Sources */,
@@ -1219,6 +1256,7 @@
 				203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */,
 				203B2A731F67BBD100DDCC03 /* ConfirmScreen.swift in Sources */,
 				20D0FF2F20B6C12300C547A5 /* Teleport.swift in Sources */,
+				2052888920FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,
 				204CE03520FB4A7000D45FFE /* InputPanel.swift in Sources */,
 				203B2A751F67BBD100DDCC03 /* Credits.swift in Sources */,
 			);
@@ -1229,6 +1267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				204CE03020FB367A00D45FFE /* VECategory.swift in Sources */,
+				20644DB920FC9CB300745E4C /* SelectionPanel.swift in Sources */,
 				2058CA8F20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */,
 				20D0FF3E20B6C12300C547A5 /* MadDoctor.swift in Sources */,
 				204CE02A20FB0C6C00D45FFE /* EqRob.swift in Sources */,
@@ -1259,16 +1298,18 @@
 				20D0FF3620B6C12300C547A5 /* Catapult.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				204163AD20C2767100217F6A /* Tutorial1.swift in Sources */,
+				2052888D20FC91CB00B011D2 /* TouchAreaController.swift in Sources */,
 				20D0FF2E20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE720B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3820B6C12300C547A5 /* Wall.swift in Sources */,
 				207A673D20D69DED0026A770 /* BalloonController.swift in Sources */,
-				2058CA8C20F88726005DF357 /* SKSpiteNodes+Utility.swift in Sources */,
+				2058CA8C20F88726005DF357 /* SKNode+Utility.swift in Sources */,
 				208C5D6620280E2E0006ADE4 /* TutorialJ.swift in Sources */,
 				20D0FF3420B6C12300C547A5 /* Heart.swift in Sources */,
 				204CE03C20FB85A200D45FFE /* EqRobController.swift in Sources */,
 				205A0EDB207A0ECB006A44A6 /* User.swift in Sources */,
 				20D0FED920B6C0E300C547A5 /* GameScene.swift in Sources */,
+				2052888720FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
 				20E9E8A120223B1400D31410 /* HeroForTutorial2.swift in Sources */,
 				20D0FF2020B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1C20B6C12300C547A5 /* Enemy.swift in Sources */,
@@ -1282,6 +1323,8 @@
 				20D0FF1220B6C12300C547A5 /* InputVariable.swift in Sources */,
 				20D0FF2C20B6C12300C547A5 /* BattleShip.swift in Sources */,
 				20D0FF3220B6C12300C547A5 /* MultiAttack.swift in Sources */,
+				20644DBF20FCDB6A00745E4C /* Line.swift in Sources */,
+				20644DBC20FCABAB00745E4C /* SelectedEnemy.swift in Sources */,
 				207A673A20D69D300026A770 /* Balloon.swift in Sources */,
 				20D0FEEF20B6C11100C547A5 /* CharacterLinesController.swift in Sources */,
 				20E9E8A620223B1400D31410 /* GridForTutorial2.swift in Sources */,
@@ -1298,6 +1341,7 @@
 				20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */,
 				20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */,
 				20D0FF3020B6C12300C547A5 /* Teleport.swift in Sources */,
+				2052888A20FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,
 				204CE03620FB4A7000D45FFE /* InputPanel.swift in Sources */,
 				20E9E8B820223B1400D31410 /* Credits.swift in Sources */,
 			);
