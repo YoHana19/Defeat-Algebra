@@ -13,18 +13,18 @@ import UIKit
 class Balloon: SKSpriteNode {
     
     var fontSize: CGFloat = 37
+    let texture0 = SKTexture(imageNamed: "BalloonMulti2")
+    let texture1 = SKTexture(imageNamed: "Balloon2")
     
     init() {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "BalloonMulti2")
         let bodySize = CGSize(width: 504, height: 311.5)
-        super.init(texture: texture, color: UIColor.clear, size: bodySize)
+        super.init(texture: texture0, color: UIColor.clear, size: bodySize)
         
         /* Set Z-Position, ensure ontop of screen */
-        zPosition = 101
+        zPosition = 20
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
     }
     
     /* You are required to implement this for your subclass to work */
@@ -50,5 +50,4 @@ class Balloon: SKSpriteNode {
         textLabel.fontColor = UIColor.white
         addChild(textLabel)
     }
-    
 }

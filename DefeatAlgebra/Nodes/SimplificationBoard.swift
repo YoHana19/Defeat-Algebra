@@ -59,7 +59,7 @@ class SimplificationBoard: SKSpriteNode {
         isUserInteractionEnabled = true
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 100
+        zPosition = 10
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)

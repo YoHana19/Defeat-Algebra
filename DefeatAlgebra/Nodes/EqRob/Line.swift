@@ -9,7 +9,6 @@
 import Foundation
 import SpriteKit
 
-//物理世界に影響される線を引くクラスです。
 class Line: SKShapeNode {
     
     var line: SKShapeNode
@@ -35,7 +34,7 @@ class Line: SKShapeNode {
         self.lineWidth = width
         self.strokeColor = color
         
-        self.zPosition = 100
+        self.zPosition = 3
         
     }
     

@@ -175,6 +175,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var inputBoardForCane: InputVariable!
     var caneOnFlag = false
     
+    var eqRobTurnCountingDone = false
+    
     /*================*/
     /*== Grid Flash ==*/
     /*================*/
@@ -212,7 +214,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         EqRobController.gameScene = self
         EqRobController.eqRobOriginPos = self.eqRob.absolutePos()
         SignalController.gameScene = self
-        TouchAreaController.gameScene = self
+        MoveTouchController.gameScene = self
+        AttackTouchController.gameScene = self
+        ItemTouchController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {
@@ -498,7 +502,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                             for enemy in self.gridNode.enemyArray {
                                 /* Hit enemy! */
                                 if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
+                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self) {}
                                 }
                             }
                             if i == self.gridNode.timeBombSetArray.count-1 {
@@ -587,6 +591,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     catapultOnceFlag = false
                     activateCatapultDone = false
                     highestCatapultValue = 0
+                    
+                    if !eqRobTurnCountingDone {
+                        eqRobTurnCountingDone = true
+                        if eqRob.turn > 0 {
+                            eqRob.turn -= 1
+                        }
+                    }
                 }
             case .MoveState:
                 if hero.moveDoneFlag == false {
@@ -671,12 +682,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
                 /* Wait for player touch to point position to use item at */
                 break;
-            case .TurnEnd:
+            case .TurnEnd:                
                 /* Reset Flags */
                 addEnemyDoneFlag = false
                 enemyTurnDoneFlag = false
                 hero.moveDoneFlag = false
                 hero.attackDoneFlag = false
+                eqRobTurnCountingDone = false
                 
                 /* Remove action buttons */
                 buttonAttack.isHidden = true
@@ -864,116 +876,55 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         guard gameState == .PlayerTurn else { return }
         
-        if playerTurnState == .MoveState {
+        if nodeAtPoint.name == "eqRob" {
+            guard playerTurnState == .MoveState || playerTurnState == .AttackState || playerTurnState == .UsingItem else { return }
+            
+            /* Hide attack and item buttons */
+            buttonAttack.isHidden = true
+            buttonItem.isHidden = true
+            /* Reset hero */
+            hero.resetHero()
+            /* Remove active area */
+            GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
+            GridActiveAreaController.resetSquareArray(color: "purple", grid: gridNode)
+            GridActiveAreaController.resetSquareArray(color: "red", grid: gridNode)
+            itemAreaCover.isHidden = false
+            playerTurnState = .UsingItem
+            itemType = .EqRob
+            
+            EqRobTouchController.onEvent()
+            
+        } else if playerTurnState == .MoveState {
             /* Touch attack button */
             if nodeAtPoint.name == "buttonAttack" {
-                guard self.heroMovingFlag == false else { return }
-                guard self.hero.attackDoneFlag == false else { return }
-                
-                /* Reset item type */
-                self.itemType = .None
-                
-                /* Reset active area */
-                GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
-                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
-                
-                /* Set item area cover */
-                self.itemAreaCover.isHidden = false
-                
-                GridActiveAreaController.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, grid: self.gridNode)
-                self.playerTurnState = .AttackState
+                MoveTouchController.buttonAttackTapped()
                 
             /* Touch item button */
             } else if nodeAtPoint.name == "buttonItem" {
-                guard self.heroMovingFlag == false else { return }
-                
-                /* Reset active area */
-                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
-                GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
-                
-                /* Remove item area cover */
-                self.itemAreaCover.isHidden = true
-                
-                /* Change state to UsingItem */
-                self.playerTurnState = .UsingItem
+                MoveTouchController.buttonItemTapped()
             }
             
         /* Select attack position */
         } else if playerTurnState == .AttackState {
             /* Touch item button */
             if nodeAtPoint.name == "buttonItem" {
-                guard self.heroMovingFlag == false else { return }
-                
-                /* Reset active area */
-                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
-                GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
-                
-                /* Remove item area cover */
-                self.itemAreaCover.isHidden = true
-                
-                /* Change state to UsingItem */
-                self.playerTurnState = .UsingItem
-                
+                AttackTouchController.buttonItemTapped()
             /* If touch anywhere but activeArea, back to MoveState  */
             } else if nodeAtPoint.name != "activeArea" {
-                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
-                self.playerTurnState = .MoveState
+                AttackTouchController.othersTouched()
             }
             
         /* Use item from itemArea */
         } else if playerTurnState == .UsingItem {
             /* Touch attack button */
             if nodeAtPoint.name == "buttonAttack" {
-                guard self.heroMovingFlag == false else { return }
-                
-                if self.hero.attackDoneFlag {
-                    return
-                } else {
-                    /* Reset item type */
-                    self.itemType = .None
-                    
-                    /* Reset active area */
-                    GridActiveAreaController.resetSquareArray(color: "blue", grid: self.gridNode)
-                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
-                    
-                    /* Set item area cover */
-                    self.itemAreaCover.isHidden = false
-                    
-                    GridActiveAreaController.showAttackArea(posX: self.hero.positionX, posY: self.hero.positionY, grid: self.gridNode)
-                    self.playerTurnState = .AttackState
-                    
-                    /* Remove triangle except the one of selected catapult */
-                    for catapult in setCatapultArray {
-                        if let node = catapult.childNode(withName: "pointingCatapult") {
-                            node.removeFromParent()
-                        }
-                    }
-                    
-                    /* Remove input board for cane */
-                    inputBoardForCane.isHidden = true
-                }
+                ItemTouchController.buttonAttackTapped()
                 
             /* Use timeBomb */
             } else if nodeAtPoint.name == "timeBomb" {
-                /* Remove activeArea for catapult */
-                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
-                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
-                resetActiveAreaForCatapult()
-                /* Remove triangle except the one of selected catapult */
-                for catapult in setCatapultArray {
-                    if let node = catapult.childNode(withName: "pointingCatapult") {
-                        node.removeFromParent()
-                    }
-                }
-                /* Remove input board for cane */
-                inputBoardForCane.isHidden = true
+                ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                 
-                /* Set timeBomb using state */
-                itemType = .timeBomb
-                
-                /* Get index of game using */
-                usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                
+            /*
             /* Use catapult */
             } else if nodeAtPoint.name == "catapult" {
                 /* Remove active area if any */
@@ -1025,7 +976,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         /* Look for the enemy to destroy */
                         for enemy in self.gridNode.enemyArray {
                             if enemy.positionX == self.hero.positionX && enemy.positionY == hitSpotArray.2 || enemy.positionX == self.hero.positionX && enemy.positionY == hitSpotArray.3 || enemy.positionX == hitSpotArray.0 && enemy.positionY == self.hero.positionY || enemy.positionX == hitSpotArray.1 && enemy.positionY == self.hero.positionY {
-                                EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
+                                EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self) {}
                             }
                         }
                     })
@@ -1225,6 +1176,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     playerTurnState = .MoveState
                     
                 }
+ 
             /* Reset position of catapult or Toggle input board visibility */
             } else if nodeAtPoint.name == "catapultToSet" {
                 /* using resetCatapult */
@@ -1255,66 +1207,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     guard itemType == .Catapult else { return }
                     self.inputBoard.isActive = !self.inputBoard.isActive
                 }
-            } else if nodeAtPoint.name == "eqRob" {
-                print("tougch eqRob")
-                EqRobController.execute(0, enemy: nil)
-                itemType = .EqRob
+            */
+
             /* If player touch other place than item icons, back to MoveState */
             } else {
-                guard setCatapultDoneFlag == false else { return }
-                guard selectCatapultDoneFlag == false else { return }
-                
-                /* Show attack and item buttons */
-                buttonAttack.isHidden = false
-                buttonItem.isHidden = false
-                
-                playerTurnState = .MoveState
-                /* Set item area cover */
-                itemAreaCover.isHidden = false
-                
-                /* Reset hero */
-                hero.resetHero()
-                /* Remove effect */
-                removeMagicSowrdEffect()
-                
-                /* Reset color of enemy for magic sword */
-                if usingMagicSword {
-                    usingMagicSword = false
-                    for enemy in self.gridNode.enemyArray {
-                        if enemy.enemyLife > 0 {
-                            enemy.colorizeEnemy(color: UIColor.green)
-                        } else {
-                            enemy.resetColorizeEnemy()
-                        }
-                    }
-                }
-                
-                /* Remove variable expression display for magic sword */
-                hero.removeMagicSwordVE()
-                
-                /* Reset item type */
-                self.itemType = .None
-                
-                /* Remove active area */
-                GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
-                GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
-                resetActiveAreaForCatapult()
-                
-                /* Remove triangle except the one of selected catapult */
-                for catapult in setCatapultArray {
-                    if let node = catapult.childNode(withName: "pointingCatapult") {
-                        node.removeFromParent()
-                    }
-                }
-                
-                /* Remove input board for cane */
-                inputBoardForCane.isHidden = true
-                
-                EqRobController.back(0)
+                ItemTouchController.othersTouched()
             }
         } else if playerTurnState == .ShowingCard {
             cardArray[0].removeFromParent()
             cardArray.removeFirst()
+            gameState = .EnemyTurn
         }
         
     }
@@ -1665,7 +1567,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* bullet hit enemy */
                 } else if contactA.node?.name == "bullet" {
                     let enemy = contactB.node as! Enemy
-                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
+                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self) {}
                 }
                 
             }
@@ -1741,7 +1643,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Bullet hit enemy */
                 } else if contactB.node?.name == "bullet" {
                     let enemy = contactA.node as! Enemy
-                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
+                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self) {}
                 }
             }
         }
@@ -1773,7 +1675,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let item = SKSpriteNode(imageNamed: name)
         item.size = CGSize(width: 69, height: 69)
         item.position = CGPoint(x: Double(index)*91+56.5, y: 47.5)
-        item.zPosition = 2
         item.name = name
         self.itemArray.append(item)
         addChild(item)
@@ -1794,7 +1695,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         itemAreaCover.fillColor = UIColor.black
         itemAreaCover.alpha = 0.6
         itemAreaCover.position = itemAreaNode.position
-        itemAreaCover.zPosition = 100
+        itemAreaCover.zPosition = 3
         addChild(itemAreaCover)
     }
     
@@ -2066,7 +1967,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     for enemy in self.gridNode.enemyArray {
                         /* Hit enemy! */
                         if enemy.positionX == setCatapult.xPos && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos-1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos+1 && enemy.positionY == value-1 || enemy.positionX == setCatapult.xPos && enemy.positionY == value || enemy.positionX == setCatapult.xPos && enemy.positionY == value-2 {
-                            EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self)
+                            EnemyDeadController.hitEnemy(enemy: enemy, gameScene: self) {}
                         }
                     }
                 })
@@ -2452,7 +2353,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     life.size = CGSize(width: 50, height: 50)
                     life.position = CGPoint(x: Double(i)*60+45, y: 140)
                     life.name = "life"
-                    life.zPosition = 90
+                    life.zPosition = 6
                     addChild(life)
                 }
             }

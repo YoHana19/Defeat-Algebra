@@ -38,7 +38,7 @@ class Hero: SKSpriteNode {
         super.init(texture: texture, color: UIColor.clear, size: heroSize)
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 4
+        zPosition = 3
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)

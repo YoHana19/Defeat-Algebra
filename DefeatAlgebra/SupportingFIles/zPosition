@@ -1,0 +1,39 @@
+zPosition
+
+ground -1
+grid 0
+itemAreaNode 0
+buttonPause 0
+signalHolder 0
+madSicentistNode 0
+levelLabel 1
+x=Label 1
+valueOfX 1
+items 2
+signal 2
+hero 3
+line 3
+itemAreaCover 3
+pointingIcon 4
+enemy 4
+castleNode 5
+life 6
+buttonAttack 6
+buttonItem 6
+inputPanel 10
+inputVariable 10
+inputVariableExpresion 10
+simprificationBoard 10
+selectionPanel 10
+eqRob 11
+DACaracter 20
+Baloon 20
+
+buttonRetry 100
+buttonNextLevel 100
+clearLabel 100
+gameOverLabel 100
+playerPhaseLabel 100
+enemyPhaseLabel 100
+
+pauseScreen 200

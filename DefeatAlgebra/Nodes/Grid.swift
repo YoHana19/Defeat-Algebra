@@ -329,83 +329,11 @@ class Grid: SKSpriteNode {
                 
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
+                    AttackTouchController.activeAreaTouched(touchedPoint: location)
                     
-                    guard gameScene.heroMovingFlag == false else { return }
-                    
-                    /* Remove attack area square */
-                    GridActiveAreaController.resetSquareArray(color: "red", grid: self)
-                    
-                    /* Caclulate grid array position */
-                    let gridX = Int(Double(location.x) / cellWidth)
-                    let gridY = Int(Double(location.y) / cellHeight)
-                    
-                    /* Set direction of hero */
-                    gameScene.hero.setHeroDirection(posX: gridX, posY: gridY)
-                    
-                    gameScene.hero.setSwordAnimation()
-                    /* Play Sound */
-                    if MainMenu.soundOnFlag {
-                        let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
-                        self.run(attack)
-                    }
-                    /* If hitting enemy! */
-                    if self.positionEnemyAtGrid[gridX][gridY] {
-                        let waitAni = SKAction.wait(forDuration: 0.5)
-                        let destroyEnemy = SKAction.run({
-                            /* Look for the enemy to destroy */
-                            for enemy in self.enemyArray {
-                                if enemy.positionX == gridX && enemy.positionY == gridY {
-                                    EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene)
-                                }
-                            }
-                        })
-                        let seq = SKAction.sequence([waitAni, destroyEnemy])
-                        self.run(seq)
-                    }
-                    
-                    /* Back to MoveState */
-                    gameScene.hero.attackDoneFlag = true
-                    let wait = SKAction.wait(forDuration: gameScene.turnEndWait+1.0) /* 1.0 is wait time for animation */
-                    let moveState = SKAction.run({
-                        /* Reset hero animation to back */
-                        gameScene.hero.resetHero()
-                        gameScene.playerTurnState = .MoveState
-                    })
-                    let seq = SKAction.sequence([wait, moveState])
-                    self.run(seq)
-                    
-                    /* If touch anywhere but activeArea, back to MoveState  */
+                /* If touch anywhere but activeArea, back to MoveState  */
                 } else {
-                    
-                    /* Make sure to be invalid when using catpult */
-                    guard gameScene.setCatapultDoneFlag == false else { return }
-                    
-                    gameScene.playerTurnState = .MoveState
-                    /* Set item area cover */
-                    gameScene.itemAreaCover.isHidden = false
-                    
-                    /* Reset item type */
-                    gameScene.itemType = .None
-                    gameScene.magicSwordAttackDone = false
-                    
-                    /* Reset color of enemy */
-                    if gameScene.usingMagicSword {
-                        for enemy in self.enemyArray {
-                            if enemy.enemyLife > 0 {
-                                enemy.colorizeEnemy(color: UIColor.green)
-                            } else {
-                                enemy.resetColorizeEnemy()
-                            }
-                        }
-                    }
-                    
-                    /* Remove variable expression display */
-                    gameScene.hero.removeMagicSwordVE()
-                    
-                    /* Remove active area */
-                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
-                    GridActiveAreaController.resetSquareArray(color: "red", grid: self)
-                    gameScene.resetActiveAreaForCatapult()
+                    AttackTouchController.othersTouched()
                 }
                 
             /* Touch position to use item at */
@@ -413,8 +341,6 @@ class Grid: SKSpriteNode {
                 
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
-                    let touch = touches.first!              // Get the first touch
-                    let location = touch.location(in: self) // Find the location of that touch in this view
                     
                     /* Caclulate grid array position */
                     let gridX = Int(Double(location.x) / cellWidth)
@@ -422,33 +348,10 @@ class Grid: SKSpriteNode {
                     
                     /* Use timeBomb */
                     if gameScene.itemType == .timeBomb {
-                        
-                        /* Store position of set timeBomb */
-                        self.timeBombSetPosArray.append([gridX, gridY])
-                        
-                        /* Set timeBomb at the location you touch */
-                        let timeBomb = TimeBomb()
-                        timeBomb.texture = SKTexture(imageNamed: "timeBombToSet")
-                        timeBomb.zPosition = 3
-                        /* Make sure not to collide to hero */
-                        timeBomb.physicsBody = nil
-                        self.timeBombSetArray.append(timeBomb)
-                        self.addObjectAtGrid(object: timeBomb, x: gridX, y: gridY)
-                        
-                        /* Remove item active areas */
-                        GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
-                        /* Reset item type */
-                        gameScene.itemType = .None
-                        /* Set item area cover */
-                        gameScene.itemAreaCover.isHidden = false
-                        
-                        /* Back to MoveState */
-                        gameScene.playerTurnState = .MoveState
-                        
-                        /* Remove used itemIcon from item array and Scene */
-                        gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
-                        
-                        /* Use wall */
+                        ItemTouchController.AAForTimeBombTapped(gridX: gridX, gridY: gridY)
+                    }
+                    /*
+                    /* Use wall */
                     } else if gameScene.itemType == .Wall {
                         /* Set wall */
                         let wall = Wall()
@@ -588,18 +491,11 @@ class Grid: SKSpriteNode {
                         gameScene.hero.resetHero()
                         gameScene.playerTurnState = .TurnEnd
                     }
-                    
+                    */
                 /* Touch ends enemy for eqRob */
                 } else if nodeAtPoint.name == "enemy" {
                     let enemy = nodeAtPoint as! Enemy
-                    print("touch enemy")
-                    print(gameScene.itemType)
-                    if gameScene.itemType == .EqRob {
-                        //gameScene.eqRob.go(to: enemy) {}
-                        guard !enemy.isSelectedForEqRob else { return }
-                        enemy.isSelectedForEqRob = true
-                        EqRobController.execute(2, enemy: enemy)
-                    }
+                    ItemTouchController.enemyTapped(enemy: enemy)
                     
                     /*
                     guard gameScene.magicSwordAttackDone else { return }
@@ -658,60 +554,12 @@ class Grid: SKSpriteNode {
                     */
                 /* Touch ends on anywhere except active area or enemy */
                 } else {
-                    
-                    /* Make sure to be invalid when using catpult */
-                    guard gameScene.setCatapultDoneFlag == false else { return }
-                    guard gameScene.selectCatapultDoneFlag == false else { return }
-                    
-                    /* Reset hero */
-                    gameScene.hero.resetHero()
-                    /* Remove effect */
-                    gameScene.removeMagicSowrdEffect()
-                    
-                    gameScene.playerTurnState = .MoveState
-                    /* Set item area cover */
-                    gameScene.itemAreaCover.isHidden = false
-                    
-                    /* Reset item type */
-                    gameScene.itemType = .None
-                    gameScene.magicSwordAttackDone = false
-                    
-                    /* Reset color of enemy */
-                    if gameScene.usingMagicSword {
-                        gameScene.usingMagicSword = false
-                        for enemy in self.enemyArray {
-                            if enemy.enemyLife > 0 {
-                                enemy.colorizeEnemy(color: UIColor.green)
-                            } else {
-                                enemy.resetColorizeEnemy()
-                            }
-                        }
-                    }
-                    
-                    /* Remove variable expression display */
-                    gameScene.hero.removeMagicSwordVE()
-                    /* Reset flag */
-                    castEnemyDone = false
-                    
-                    /* Remove active area */
-                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self)
-                    GridActiveAreaController.resetSquareArray(color: "red", grid: self)
-                    gameScene.resetActiveAreaForCatapult()
-                    
-                    /* Remove triangle except the one of selected catapult */
-                    for catapult in gameScene.setCatapultArray {
-                        if let node = catapult.childNode(withName: "pointingCatapult") {
-                            node.removeFromParent()
-                        }
-                    }
-                    
-                    /* Remove input board for cane */
-                    gameScene.inputBoardForCane.isHidden = true
+                    ItemTouchController.othersTouched()
                 }
             } else if gameScene.playerTurnState == .ShowingCard {
                 gameScene.cardArray[0].removeFromParent()
                 gameScene.cardArray.removeFirst()
-                gameScene.gameState = .GameOver
+                gameScene.gameState = .EnemyTurn
             }
         }
     }
@@ -723,8 +571,6 @@ class Grid: SKSpriteNode {
         /* Calculate position on screen */
         let gridPosition = CGPoint(x: (Double(x)+0.5)*cellWidth, y: (Double(y)+0.5)*cellHeight)
         object.position = gridPosition
-        object.zPosition = 3
-        
         /* Add timeBomb to grid node */
         addChild(object)
     }

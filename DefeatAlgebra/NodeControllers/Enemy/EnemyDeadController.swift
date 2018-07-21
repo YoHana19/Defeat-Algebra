@@ -10,19 +10,11 @@ import Foundation
 import SpriteKit
 
 class EnemyDeadController {
-    static func hitEnemy(enemy: Enemy, gameScene: GameScene) {
+    static func hitEnemy(enemy: Enemy, gameScene: GameScene, completion: @escaping () -> Void) {
         if enemy.enemyLife > 0 {
             enemy.enemyLife -= 1
             enemy.resetColorizeEnemy()
         } else {
-            /* Effect */
-            enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy)
-            
-            /* Enemy */
-            let waitEffectRemove = SKAction.wait(forDuration: 1.0)
-            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-            let seqEnemy = SKAction.sequence([waitEffectRemove, removeEnemy])
-            gameScene.run(seqEnemy)
             enemy.aliveFlag = false
             /* Count defeated enemy */
             gameScene.totalNumOfEnemy -= 1
@@ -34,11 +26,19 @@ class EnemyDeadController {
             } else if enemy.forEduBranchFlag {
                 EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: gameScene.gridNode)
             }
+            
+            /* Effect */
+            enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy) {
+                /* Enemy */
+                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                gameScene.run(removeEnemy)
+                return completion()
+            }
         }
     }
     
     /*== Set effect when enemy destroyed ==*/
-    private static func enemyDestroyEffect(grid: Grid, enemy: Enemy) {
+    private static func enemyDestroyEffect(grid: Grid, enemy: Enemy, completion: @escaping () -> Void) {
         /* Load our particle effect */
         let particles = SKEmitterNode(fileNamed: "DestroyEnemy")!
         particles.position = CGPoint(x: enemy.position.x, y: enemy.position.y-20)
@@ -47,13 +47,14 @@ class EnemyDeadController {
         let waitEffectRemove = SKAction.wait(forDuration: 1.0)
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
-        particles.run(seqEffect)
         /* Play Sound */
         if MainMenu.soundOnFlag {
             let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
             grid.run(dead)
         }
-        
+        particles.run(seqEffect, completion: {
+            return completion()
+        })
     }
     
     static func originEnemyDead(origin: Enemy, gridNode: Grid) {

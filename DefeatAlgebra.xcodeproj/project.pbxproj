@@ -70,6 +70,10 @@
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
 		204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
 		204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
+		204CDDE820FEEA7C0061DCB7 /* zPosition in Resources */ = {isa = PBXBuildFile; fileRef = 204CDDE720FEEA7B0061DCB7 /* zPosition */; };
+		204CDDE920FEEA7C0061DCB7 /* zPosition in Resources */ = {isa = PBXBuildFile; fileRef = 204CDDE720FEEA7B0061DCB7 /* zPosition */; };
+		204CDDEB21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */; };
+		204CDDEC21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */; };
 		204CE02920FB0C6C00D45FFE /* EqRob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE02820FB0C6C00D45FFE /* EqRob.swift */; };
 		204CE02A20FB0C6C00D45FFE /* EqRob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE02820FB0C6C00D45FFE /* EqRob.swift */; };
 		204CE02F20FB367A00D45FFE /* VECategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE02E20FB367A00D45FFE /* VECategory.swift */; };
@@ -86,8 +90,8 @@
 		2052888720FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */; };
 		2052888920FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */; };
 		2052888A20FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */; };
-		2052888C20FC91CB00B011D2 /* TouchAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* TouchAreaController.swift */; };
-		2052888D20FC91CB00B011D2 /* TouchAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* TouchAreaController.swift */; };
+		2052888C20FC91CB00B011D2 /* MoveTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* MoveTouchController.swift */; };
+		2052888D20FC91CB00B011D2 /* MoveTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* MoveTouchController.swift */; };
 		2058CA8420F883FB005DF357 /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8320F883FB005DF357 /* Signal.swift */; };
 		2058CA8520F883FB005DF357 /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8320F883FB005DF357 /* Signal.swift */; };
 		2058CA8720F885A6005DF357 /* SignalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8620F885A6005DF357 /* SignalController.swift */; };
@@ -196,6 +200,10 @@
 		20D0FF4620B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FF4520B6C14B00C547A5 /* DAUserDefaultUtility.swift */; };
 		20D0FF4720B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FF4520B6C14B00C547A5 /* DAUserDefaultUtility.swift */; };
 		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
+		20E8079E20FDE7C700EED36D /* AttackTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E8079D20FDE7C700EED36D /* AttackTouchController.swift */; };
+		20E8079F20FDE7C700EED36D /* AttackTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E8079D20FDE7C700EED36D /* AttackTouchController.swift */; };
+		20E807A120FDE7F400EED36D /* ItemTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E807A020FDE7F400EED36D /* ItemTouchController.swift */; };
+		20E807A220FDE7F400EED36D /* ItemTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E807A020FDE7F400EED36D /* ItemTouchController.swift */; };
 		20E9E88A20223B1400D31410 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D8B1F074FE800F4DD11 /* GameViewController.swift */; };
 		20E9E88B20223B1400D31410 /* MSButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201CF0291F11BE1D001346C7 /* MSButtonNode.swift */; };
 		20E9E88C20223B1400D31410 /* EnemyForTutorial2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A421F67B97100DDCC03 /* EnemyForTutorial2.swift */; };
@@ -316,6 +324,8 @@
 		204C7D901F074FE800F4DD11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204C7D931F074FE800F4DD11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		204CDDE720FEEA7B0061DCB7 /* zPosition */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = zPosition; path = SupportingFIles/zPosition; sourceTree = "<group>"; };
+		204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobForInstruction.swift; sourceTree = "<group>"; };
 		204CE02820FB0C6C00D45FFE /* EqRob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRob.swift; sourceTree = "<group>"; };
 		204CE02E20FB367A00D45FFE /* VECategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VECategory.swift; sourceTree = "<group>"; };
 		204CE03420FB4A7000D45FFE /* InputPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPanel.swift; sourceTree = "<group>"; };
@@ -324,7 +334,7 @@
 		204CE03D20FB94FE00D45FFE /* DACharacter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DACharacter.swift; sourceTree = "<group>"; };
 		2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKLabelNode+MultiLines.swift"; sourceTree = "<group>"; };
 		2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+DAMultiLines.swift"; sourceTree = "<group>"; };
-		2052888B20FC91CB00B011D2 /* TouchAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchAreaController.swift; sourceTree = "<group>"; };
+		2052888B20FC91CB00B011D2 /* MoveTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveTouchController.swift; sourceTree = "<group>"; };
 		2058CA8320F883FB005DF357 /* Signal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
 		2058CA8620F885A6005DF357 /* SignalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalController.swift; sourceTree = "<group>"; };
 		2058CA8A20F88726005DF357 /* SKNode+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKNode+Utility.swift"; sourceTree = "<group>"; };
@@ -381,6 +391,8 @@
 		20D0FF1020B6C12300C547A5 /* MainHero.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainHero.swift; sourceTree = "<group>"; };
 		20D0FF4520B6C14B00C547A5 /* DAUserDefaultUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAUserDefaultUtility.swift; sourceTree = "<group>"; };
 		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
+		20E8079D20FDE7C700EED36D /* AttackTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackTouchController.swift; sourceTree = "<group>"; };
+		20E807A020FDE7F400EED36D /* ItemTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTouchController.swift; sourceTree = "<group>"; };
 		20E9E8EA20223B1400D31410 /* DefeatAlgebraJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DefeatAlgebraJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20E9E8EB20223B1900D31410 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/yohanashima/Desktop/Make School Project/Defeat-Algebra/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist"; sourceTree = "<absolute>"; };
 		20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -562,6 +574,7 @@
 				20DF7CE72021B93A006BFBB0 /* Helper */,
 				2058CA8920F886F0005DF357 /* Extensions */,
 				20E9E8EC20223B8300D31410 /* SupportingFIles */,
+				204CDDE720FEEA7B0061DCB7 /* zPosition */,
 				20E9E8ED20223BD500D31410 /* Storyboards */,
 				204C7D901F074FE800F4DD11 /* Assets.xcassets */,
 				201ECBAA1F351AED00FB833A /* Fabric.framework */,
@@ -603,6 +616,7 @@
 				204CE03420FB4A7000D45FFE /* InputPanel.swift */,
 				20644DB720FC9CB300745E4C /* SelectionPanel.swift */,
 				20644DBA20FCABAB00745E4C /* SelectedEnemy.swift */,
+				204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */,
 				20644DBD20FCDB6A00745E4C /* Line.swift */,
 			);
 			path = EqRob;
@@ -625,7 +639,9 @@
 				20D0FED320B6C0E300C547A5 /* GameScene.sks */,
 				20D0FED420B6C0E300C547A5 /* GameScene.swift */,
 				20D0FED520B6C0E300C547A5 /* EnemyProperty.swift */,
-				2052888B20FC91CB00B011D2 /* TouchAreaController.swift */,
+				2052888B20FC91CB00B011D2 /* MoveTouchController.swift */,
+				20E8079D20FDE7C700EED36D /* AttackTouchController.swift */,
+				20E807A020FDE7F400EED36D /* ItemTouchController.swift */,
 				204CE03A20FB85A200D45FFE /* EqRobController.swift */,
 				204CE03720FB830F00D45FFE /* test.sks */,
 			);
@@ -911,6 +927,7 @@
 				201B8C7B1F3AEB1B00E91301 /* selectNewGame.wav in Resources */,
 				20D0FED620B6C0E300C547A5 /* GameScene.sks in Resources */,
 				20D0FECE20B6C0B000C547A5 /* LevelSelectMenu.sks in Resources */,
+				204CDDE820FEEA7C0061DCB7 /* zPosition in Resources */,
 				200829DE1F32CA860038AEC0 /* CatapultFire2.sks in Resources */,
 				203AEA991F3AFFF300C5CD4E /* mainMenu.mp3 in Resources */,
 				204163A920C2765E00217F6A /* Tutorial1.sks in Resources */,
@@ -959,6 +976,7 @@
 				20E9E8DA20223B1400D31410 /* selectNewGame.wav in Resources */,
 				20D0FED720B6C0E300C547A5 /* GameScene.sks in Resources */,
 				20D0FECF20B6C0B000C547A5 /* LevelSelectMenu.sks in Resources */,
+				204CDDE920FEEA7C0061DCB7 /* zPosition in Resources */,
 				20E9E8DB20223B1400D31410 /* CatapultFire2.sks in Resources */,
 				20E9E8DC20223B1400D31410 /* mainMenu.mp3 in Resources */,
 				204163AA20C2765E00217F6A /* Tutorial1.sks in Resources */,
@@ -1207,13 +1225,15 @@
 				20D0FF4320B6C12300C547A5 /* MainHero.swift in Sources */,
 				20D0FEF020B6C11200C547A5 /* CharacterController.swift in Sources */,
 				20D0FF2320B6C12300C547A5 /* ResetCatapult.swift in Sources */,
+				20E807A120FDE7F400EED36D /* ItemTouchController.swift in Sources */,
 				20D0FF2920B6C12300C547A5 /* Spear.swift in Sources */,
 				203B2A7A1F67BBD200DDCC03 /* SettingScreen.swift in Sources */,
 				20D0FEDA20B6C0E300C547A5 /* EnemyProperty.swift in Sources */,
 				20D0FF3520B6C12300C547A5 /* Catapult.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				204163AC20C2767100217F6A /* Tutorial1.swift in Sources */,
-				2052888C20FC91CB00B011D2 /* TouchAreaController.swift in Sources */,
+				2052888C20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
+				20E8079E20FDE7C700EED36D /* AttackTouchController.swift in Sources */,
 				20D0FF2D20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE620B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3720B6C12300C547A5 /* Wall.swift in Sources */,
@@ -1228,6 +1248,7 @@
 				203B2A521F67B97100DDCC03 /* HeroForTutorial2.swift in Sources */,
 				20D0FF1F20B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1B20B6C12300C547A5 /* Enemy.swift in Sources */,
+				204CDDEB21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */,
 				20D0FF1520B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				204163A320C2653F00217F6A /* GridFlashController.swift in Sources */,
 				204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */,
@@ -1292,13 +1313,15 @@
 				20D0FF4420B6C12300C547A5 /* MainHero.swift in Sources */,
 				20D0FEF120B6C11200C547A5 /* CharacterController.swift in Sources */,
 				20D0FF2420B6C12300C547A5 /* ResetCatapult.swift in Sources */,
+				20E807A220FDE7F400EED36D /* ItemTouchController.swift in Sources */,
 				20D0FF2A20B6C12300C547A5 /* Spear.swift in Sources */,
 				20D0FEDB20B6C0E300C547A5 /* EnemyProperty.swift in Sources */,
 				20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */,
 				20D0FF3620B6C12300C547A5 /* Catapult.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				204163AD20C2767100217F6A /* Tutorial1.swift in Sources */,
-				2052888D20FC91CB00B011D2 /* TouchAreaController.swift in Sources */,
+				2052888D20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
+				20E8079F20FDE7C700EED36D /* AttackTouchController.swift in Sources */,
 				20D0FF2E20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE720B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3820B6C12300C547A5 /* Wall.swift in Sources */,
@@ -1313,6 +1336,7 @@
 				20E9E8A120223B1400D31410 /* HeroForTutorial2.swift in Sources */,
 				20D0FF2020B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1C20B6C12300C547A5 /* Enemy.swift in Sources */,
+				204CDDEC21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */,
 				20D0FF1620B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				204163A420C2653F00217F6A /* GridFlashController.swift in Sources */,
 				204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */,

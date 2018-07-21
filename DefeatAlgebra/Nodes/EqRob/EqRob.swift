@@ -17,13 +17,27 @@ class EqRob: SKSpriteNode {
     var rotateForeverSpeed: TimeInterval = 3
     
     var veCategory: Int = 0
+    let attackSpace: CGFloat = 160
+    let waitingSpace: CGFloat = 60
+    var nearPoint = CGPoint(x: 0, y: 0)
+    
+    let chargingTurnIndex = 2
+    let deadTurnIndex = 5
+    var wasDead = false
+    var turn = 0 {
+        didSet {
+            if turn == 0 {
+                EqRobController.execute(6, enemy: nil)
+            }
+        }
+    }
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         
         self.name = "eqRob"
-        self.zPosition = 101
+        self.zPosition = 11
     }
     
     func go(to target: SKNode, completion: @escaping () -> Void) {
@@ -36,7 +50,15 @@ class EqRob: SKSpriteNode {
     
     func go(toPos position: CGPoint, completion: @escaping () -> Void) {
         self.look(atPos: position) {
-            self.move(to: position, easeFunction: nil, easeType: nil) {
+            self.move(toPos: position, easeFunction: nil, easeType: nil) {
+                return completion()
+            }
+        }
+    }
+    
+    func goNear(to target: SKNode, completion: @escaping () -> Void) {
+        self.look(at: target) {
+            self.moveNear(to: target) {
                 return completion()
             }
         }
@@ -73,6 +95,7 @@ class EqRob: SKSpriteNode {
         let easeFunction = easeFunction ?? .curveTypeLinear
         let easeType = easeType ?? .easeTypeOut
         let distance = self.distance(to: target)
+        guard distance > 0 else { return completion() }
         let move = SKEase.move(easeFunction: easeFunction,
                     easeType: easeType,
                     time: TimeInterval(moveSpeed*distance),
@@ -84,11 +107,11 @@ class EqRob: SKSpriteNode {
         })
     }
     
-    func move(to position: CGPoint, easeFunction: CurveType?, easeType: EaseType?, completion: @escaping () -> Void) {
+    func move(toPos position: CGPoint, easeFunction: CurveType?, easeType: EaseType?, completion: @escaping () -> Void) {
         let easeFunction = easeFunction ?? .curveTypeLinear
         let easeType = easeType ?? .easeTypeOut
         let distance = self.distance(toPos: position)
-        print(distance)
+        guard distance > 0 else { return completion() }
         let move = SKEase.move(easeFunction: easeFunction,
                                easeType: easeType,
                                time: TimeInterval(moveSpeed*distance),
@@ -100,21 +123,88 @@ class EqRob: SKSpriteNode {
         })
     }
     
-    func kill(_ target: Enemy, completion: @escaping () -> Void) {
-        self.detect(target) { completion in
-            if completion {
-                target.removeFromParent()
-            } else {
-                self.isHidden = true
+    func moveNear(to target: SKNode, completion: @escaping () -> Void) {
+        let distance = self.distance(to: target)
+        if distance - attackSpace > 0 {
+            let dx = target.absolutePos().x - self.absolutePos().x
+            let dy = target.absolutePos().y - self.absolutePos().y
+            let ratio = attackSpace / distance
+            let move = SKAction.move(by: CGVector(dx: dx*(1-ratio), dy: dy*(1-ratio)), duration: TimeInterval(moveSpeed*(distance-attackSpace)))
+            self.run(move, completion: {
+                self.nearPoint = self.absolutePos()
+                return completion()
+            })
+        } else {
+            self.nearPoint = self.absolutePos()
+            return completion()
+        }
+    }
+    
+    func stepOff(toPos position: CGPoint, completion: @escaping () -> Void) {
+        let distance = self.distance(toPos: position)
+        if distance - waitingSpace > 0 {
+            let dx = position.x - self.absolutePos().x
+            let dy = position.y - self.absolutePos().y
+            let ratio = waitingSpace / distance
+            let move = SKAction.move(by: CGVector(dx: dx*ratio, dy: dy*ratio), duration: TimeInterval(moveSpeed*waitingSpace))
+            self.run(move, completion: {
+                return completion()
+            })
+        } else {
+            return completion()
+        }
+    }
+    
+    func attack(to target: SKNode, completion: @escaping () -> Void) {
+        move(to: target, easeFunction: .curveTypeElastic, easeType: .easeTypeOut) {
+            return completion()
+        }
+    }
+    
+    func goAndAttack(to target: SKNode, completion: @escaping () -> Void) {
+        goNear(to: target) {
+            self.attack(to: target) {
+                self.stepOff(toPos: self.nearPoint) {
+                    return completion()
+                }
             }
         }
     }
     
-    func detect(_ target: Enemy, completion: @escaping (Bool) -> Void) {
-        if self.veCategory == target.vECategory {
-            return completion(true)
-        } else {
-            return completion(false)
+    func kill(_ target: Enemy, completion: @escaping () -> Void) {
+        goAndAttack(to: target) {
+            EnemyDeadController.hitEnemy(enemy: target, gameScene: self.parent! as! GameScene) {
+                return completion()
+            }
         }
+    }
+    
+    func killed(_ target: Enemy, completion: @escaping () -> Void) {
+        goAndAttack(to: target) {
+            self.destroyed {
+                return completion()
+            }
+        }
+    }
+    
+    func destroyed(completion: @escaping () -> Void) {
+        /* Load our particle effect */
+        let particles = SKEmitterNode(fileNamed: "DestroyEnemy")!
+        particles.zPosition = 102
+        particles.position = CGPoint(x: self.position.x, y: self.position.y-20)
+        /* Add particles to scene */
+        self.parent!.addChild(particles)
+        let waitEffectRemove = SKAction.wait(forDuration: 2.0)
+        let removeParticles = SKAction.removeFromParent()
+        let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
+            self.parent!.run(dead)
+        }
+        particles.run(seqEffect, completion: {
+            self.isHidden = true
+            return completion()
+        })
     }
 }

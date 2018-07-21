@@ -12,7 +12,7 @@ import SpriteKit
 class CharacterController {
     static let doctorSize = CGSize(width: 264, height: 310.4)
     static let doctorOnPos = CGPoint(x: 170, y: 500)
-    static let doctorOffPos = CGPoint(x: -170, y: 500)
+    static let doctorOffPos = CGPoint(x: -350, y: 500)
     
     static let madDoctorSize = CGSize(width: 228.8, height: 422.5)
     static let madDoctorOnPos = CGPoint(x: 180, y: 1100)

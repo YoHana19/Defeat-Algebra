@@ -12,10 +12,15 @@ import SpriteKit
 class SelectionPanel: SKSpriteNode {
     
     var veLabel: SKLabelNode!
+    var xValueLabel: SKLabelNode!
     var againButton: SKSpriteNode!
     let leftTop = CGPoint(x: 100, y: -180)
     let rightTop = CGPoint(x: 420, y: -180)
     let merginY: CGFloat = 90
+    var enemiesOnPanel = [SelectedEnemy]()
+    let moveSpan: TimeInterval = 1.0
+    var instructedEnemy = SelectedEnemy()
+    var instructedEqRob = EqRobForInstruction()
     
     init() {
         /* Initialize with enemy asset */
@@ -26,7 +31,7 @@ class SelectionPanel: SKSpriteNode {
         isUserInteractionEnabled = true
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 101
+        zPosition = 10
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0, y: 1.0)
@@ -50,8 +55,27 @@ class SelectionPanel: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)
         if nodeAtPoint.name == "again" {
-            EqRobController.resetSelectedEnemyOnPanel()
+            EqRobController.back(1)
         }
+    }
+    
+    func moveWithScaling(to: CGPoint, value: CGFloat, completion: @escaping () -> Void) {
+        self.scale(value: value)
+        self.move(toPos: to) {
+            return completion()
+        }
+    }
+    
+    func scale(value: CGFloat) {
+        let scale = SKAction.scale(to: value, duration: moveSpan)
+        self.run(scale)
+    }
+    
+    func move(toPos position: CGPoint, completion: @escaping () -> Void) {
+        let move = SKAction.move(to: position, duration: moveSpan)
+        self.run(move, completion: {
+            return completion()
+        })
     }
     
     func setLabel() {
@@ -61,6 +85,16 @@ class SelectionPanel: SKSpriteNode {
         veLabel.zPosition = 3
         veLabel.fontColor = UIColor.white
         self.addChild(veLabel)
+        
+        xValueLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        xValueLabel.fontSize = 60
+        xValueLabel.position = CGPoint(x: 35, y: -180)
+        xValueLabel.horizontalAlignmentMode = .left
+        xValueLabel.text = "x="
+        xValueLabel.zPosition = 3
+        xValueLabel.fontColor = UIColor.white
+        xValueLabel.isHidden = true
+        self.addChild(xValueLabel)
     }
     
     func setAgainButton() {
@@ -74,7 +108,6 @@ class SelectionPanel: SKSpriteNode {
     
     func setSelectedEnemy(target: Enemy, index: Int) {
         let enemy = SelectedEnemy()
-        enemy.name = "selectedEnemy"
         enemy.veLabel.text = target.variableExpressionString
         enemy.setStandingtexture(direction: target.direction)
         if index < 4 {
@@ -82,6 +115,7 @@ class SelectionPanel: SKSpriteNode {
         } else {
             enemy.position = CGPoint(x: rightTop.x, y: rightTop.y-merginY*CGFloat(index-4))
         }
+        enemiesOnPanel.append(enemy)
         self.addChild(enemy)
     }
     
@@ -91,5 +125,40 @@ class SelectionPanel: SKSpriteNode {
                 child.removeFromParent()
             }
         }
+        enemiesOnPanel = [SelectedEnemy]()
+    }
+    
+    func putCrossOnEnemyOnPanel(index: Int) {
+        enemiesOnPanel[index].showCrossNode()
+    }
+    
+    func setInstruction(enemyVe: String) {
+        resetAllEnemies()
+        instructedEnemy = SelectedEnemy()
+        instructedEqRob = EqRobForInstruction()
+        instructedEnemy.veString = enemyVe
+        instructedEnemy.veLabel.text = enemyVe
+        instructedEqRob.veString = veLabel.text!
+        instructedEqRob.veLabel.text = veLabel.text!
+        instructedEnemy.setScale(0.8)
+        instructedEqRob.setScale(0.8)
+        instructedEnemy.position = CGPoint(x: 230, y: -280)
+        instructedEqRob.position = CGPoint(x: 230, y: -180)
+        addChild(instructedEnemy)
+        addChild(instructedEqRob)
+        xValueLabel.isHidden = false
+    }
+    
+    func setXVlaue(value: String) {
+        xValueLabel.text = "x=" + value
+    }
+    
+    func resetInstruction() {
+        xValueLabel.text = "x="
+        xValueLabel.isHidden = true
+        instructedEnemy.removeFromParent()
+        instructedEqRob.removeFromParent()
+        self.isHidden = true
+        againButton.isHidden = false
     }
 }

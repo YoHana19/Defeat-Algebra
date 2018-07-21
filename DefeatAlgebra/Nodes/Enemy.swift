@@ -35,9 +35,9 @@ class Enemy: SKSpriteNode {
                 state = .Attack
             } else {
                 state = .Move
-                punchIntervalLabel.fontColor = UIColor.white
-                variableExpressionLabel.fontColor = UIColor.white
             }
+            punchIntervalLabel.fontColor = UIColor.white
+            variableExpressionLabel.fontColor = UIColor.white
             punchIntervalLabel.text = String(punchIntervalForCount)
         }
     }
@@ -97,7 +97,7 @@ class Enemy: SKSpriteNode {
         }
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 7
+        zPosition = 4
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -156,6 +156,25 @@ class Enemy: SKSpriteNode {
         case .right:
             let enemyMoveAnimation = SKAction(named: "enemyMoveRight")!
             self.run(enemyMoveAnimation)
+        }
+    }
+    
+    /* Set pointing icon */
+    func pointing() {
+        let icon = SKSpriteNode(imageNamed: "pointing")
+        icon.name = "pointing"
+        icon.size = CGSize(width: 50, height: 50)
+        icon.position = CGPoint(x: 60, y: 60)
+        icon.zPosition = 4
+        let shakePoint = SKAction(named: "shakePoint")
+        let repeatAction = SKAction.repeatForever(shakePoint!)
+        icon.run(repeatAction)
+        addChild(icon)
+    }
+    
+    func removePointing() {
+        if let icon = childNode(withName: "pointing") {
+            icon.removeFromParent()
         }
     }
     

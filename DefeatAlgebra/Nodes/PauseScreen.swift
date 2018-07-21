@@ -59,6 +59,9 @@ class PauseScreen: SKSpriteNode {
             self.isHidden = true
             
         } else if nodeAtPoint.name == "pauseRetry" {
+            /* EqRob */
+            EqRobController.back(2)
+            
             /* Sound */
             gameScene.main.stop()
             gameScene.stageClear.stop()
@@ -77,6 +80,9 @@ class PauseScreen: SKSpriteNode {
             /* Restart GameScene */
             skView?.presentScene(scene)
         } else if nodeAtPoint.name == "pauseMainMenu" {
+            /* EqRob */
+            EqRobController.back(2)
+            
             /* Sound */
             gameScene.main.stop()
             gameScene.stageClear.stop()

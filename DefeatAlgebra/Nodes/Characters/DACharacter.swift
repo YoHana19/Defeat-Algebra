@@ -12,7 +12,7 @@ import SpriteKitEasingSwift
 
 class DACharacter: SKSpriteNode {
     
-    var moveSpan: TimeInterval = 0.5
+    static let moveSpan: TimeInterval = 0.5
     var balloon = Balloon()
     
     init(charaTexture: SKTexture, charaSize: CGSize) {
@@ -20,7 +20,7 @@ class DACharacter: SKSpriteNode {
         super.init(texture: charaTexture, color: UIColor.clear, size: charaSize)
         
         /* Set Z-Position, ensure ontop of screen */
-        zPosition = 101
+        zPosition = 20
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
@@ -36,10 +36,24 @@ class DACharacter: SKSpriteNode {
         self.position = pos
     }
     
-    func move(from oldPos: CGPoint?, to newPos: CGPoint) {
+    func moveWithScaling(to: CGPoint, value: CGFloat, duration: TimeInterval = DACharacter.moveSpan, completion: @escaping () -> Void) {
+        scale(value: value, duration: duration)
+        move(from: nil, to: to, duration: duration)
+        let wait = SKAction.wait(forDuration: duration)
+        self.run(wait, completion: {
+            return completion()
+        })
+    }
+    
+    func move(from oldPos: CGPoint?, to newPos: CGPoint, duration: TimeInterval = DACharacter.moveSpan) {
         self.position = oldPos ?? self.position
-        let move = SKAction.move(to: newPos, duration: moveSpan)
+        let move = SKAction.move(to: newPos, duration: duration)
         self.run(move)
+    }
+    
+    func scale(value: CGFloat, duration: TimeInterval = DACharacter.moveSpan) {
+        let scale = SKAction.scale(to: value, duration: duration)
+        self.run(scale)
     }
     
     func shake() {

@@ -1,24 +1,23 @@
 //
-//  SelectedEnemy.swift
+//  EqRobForInstruction.swift
 //  DefeatAlgebra
 //
-//  Created by yo hanashima on 2018/07/16.
+//  Created by yo hanashima on 2018/07/19.
 //  Copyright © 2018 yo hanashima. All rights reserved.
 //
 
 import Foundation
 import SpriteKit
 
-class SelectedEnemy: SKSpriteNode {
+class EqRobForInstruction: SKSpriteNode {
     
     var veString: String = ""
     var veLabel: SKLabelNode!
-    var crossNode: SKSpriteNode!
     
     init() {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "front1")
-        let enemySize = CGSize(width: 80, height: 80)
+        let texture = SKTexture(imageNamed: "eqRob")
+        let enemySize = CGSize(width: 79, height: 80)
         super.init(texture: texture, color: UIColor.clear, size: enemySize)
         
         /* Enable own touch implementation for this node */
@@ -30,10 +29,9 @@ class SelectedEnemy: SKSpriteNode {
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
-        self.name = "selectedEnemy"
+        self.name = "eqRobForInstruction"
         
         setLabel()
-        setCrossNode()
     }
     
     /* You are required to implement this for your subclass to work */
@@ -53,34 +51,6 @@ class SelectedEnemy: SKSpriteNode {
         self.addChild(veLabel)
     }
     
-    func setStandingtexture(direction: Direction) {
-        switch direction {
-        case .front:
-            self.texture = SKTexture(imageNamed: "front1")
-        case .back:
-            //self.texture = SKTexture(imageNamed: "back1")
-            break;
-        case .left:
-            self.texture = SKTexture(imageNamed: "left1")
-        case .right:
-            self.texture = SKTexture(imageNamed: "right1")
-        }
-    }
-    
-    func setCrossNode() {
-        let texture = SKTexture(imageNamed: "cross")
-        let size = CGSize(width: 60, height: 60)
-        crossNode = SKSpriteNode(texture: texture, color: UIColor.clear, size: size)
-        crossNode.position = CGPoint(x: 0, y: 0)
-        crossNode.isHidden = true
-        crossNode.zPosition = 4
-        addChild(crossNode)
-    }
-    
-    func showCrossNode() {
-        crossNode.isHidden = false
-    }
-    
     func showCalculation(value: Int) {
         let numForm =  veString.replacingOccurrences(of: "x", with: String(value))
         VECategory.getCategory(ve: veString) { cate in
@@ -88,5 +58,4 @@ class SelectedEnemy: SKSpriteNode {
             self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
         }
     }
-    
 }
