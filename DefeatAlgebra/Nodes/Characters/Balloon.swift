@@ -15,6 +15,7 @@ class Balloon: SKSpriteNode {
     var fontSize: CGFloat = 37
     let texture0 = SKTexture(imageNamed: "BalloonMulti2")
     let texture1 = SKTexture(imageNamed: "Balloon2")
+    let texture2 = SKTexture(imageNamed: "Balloon3")
     
     init() {
         /* Initialize with enemy asset */
@@ -32,7 +33,7 @@ class Balloon: SKSpriteNode {
         super.init(coder: aDecoder)
     }
     
-    func setLines(with text: String) {
+    func setLines(with text: String, pos: Int) {
         if let label = self.childNode(withName: "line") {
             label.removeFromParent()
         }
@@ -44,10 +45,61 @@ class Balloon: SKSpriteNode {
         singleLineMessage.text = text
         
         let textLabel = singleLineMessage.multilined()
-        textLabel.position = CGPoint(x: -170, y: 0)
+        switch pos {
+        case 0:
+            doctorTextPos(with: textLabel, numOfLines: textLabel.children.count)
+            break;
+        case 1:
+            madDoctorTextPos(with: textLabel, numOfLines: textLabel.children.count)
+            break;
+        case 2:
+            mainHeroTextPos(with: textLabel, numOfLines: textLabel.children.count)
+            break;
+        default:
+            break;
+        }
         textLabel.name = "line"
         textLabel.zPosition = 3  // On top of all other nodes
         textLabel.fontColor = UIColor.white
         addChild(textLabel)
+    }
+    
+    func doctorTextPos(with label: SKLabelNode, numOfLines: Int) {
+        switch numOfLines {
+        case 2:
+            label.position = CGPoint(x: -170, y: -20)
+            break;
+        case 4:
+            label.position = CGPoint(x: -170, y: -25)
+            break;
+        default:
+            label.position = CGPoint(x: -170, y: 0)
+            break;
+        }
+    }
+    
+    func madDoctorTextPos(with label: SKLabelNode, numOfLines: Int) {
+        switch numOfLines {
+        case 4:
+            label.position = CGPoint(x: -170, y: -20)
+            break;
+        default:
+            label.position = CGPoint(x: -170, y: 0)
+            break;
+        }
+    }
+    
+    func mainHeroTextPos(with label: SKLabelNode, numOfLines: Int) {
+        switch numOfLines {
+        case 2:
+            label.position = CGPoint(x: -190, y: -20)
+            break;
+        case 4:
+            label.position = CGPoint(x: -190, y: -30)
+            break;
+        default:
+            label.position = CGPoint(x: -190, y: 0)
+            break;
+        }
     }
 }

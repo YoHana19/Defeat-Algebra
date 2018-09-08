@@ -125,24 +125,32 @@ class Hero: SKSpriteNode {
     }
     
     /* Set hero sword attack animation */
-    func setSwordAnimation() {
+    func setSwordAnimation(completion: @escaping () -> Void) {
         switch direction {
         case .front:
             self.anchorPoint = CGPoint(x: 0.5, y: 1)
             let heroSwordAnimation = SKAction(named: "heroSwordBackward")!
-            self.run(heroSwordAnimation)
+            self.run(heroSwordAnimation, completion: {
+                return completion()
+            })
         case .back:
             self.anchorPoint = CGPoint(x: 0.5, y: 0)
             let heroSwordAnimation = SKAction(named: "heroSwordForward")!
-            self.run(heroSwordAnimation)
+            self.run(heroSwordAnimation, completion: {
+                return completion()
+            })
         case .left:
             self.anchorPoint = CGPoint(x: 1, y: 0.5)
             let heroSwordAnimation = SKAction(named: "heroSwordLeft")!
-            self.run(heroSwordAnimation)
+            self.run(heroSwordAnimation, completion: {
+                return completion()
+            })
         case .right:
             self.anchorPoint = CGPoint(x: 0, y: 0.5)
             let heroSwordAnimation = SKAction(named: "heroSwordRight")!
-            self.run(heroSwordAnimation)
+            self.run(heroSwordAnimation, completion: {
+                return completion()
+            })
         }
     }
     
@@ -204,6 +212,21 @@ class Hero: SKSpriteNode {
         self.size = CGSize(width: 50, height: 50)
         self.setTexture()
         self.setMovingAnimation()
+    }
+    
+    func attack(completion: @escaping () -> Void) {
+        setSwordAnimation() {
+            self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            self.size = CGSize(width: 50, height: 50)
+            return completion()
+        }
+    }
+    
+    func resetPos() {
+        let gameScene = self.parent as! GameScene
+        self.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        self.size = CGSize(width: 50, height: 50)
+        self.position = CGPoint(x: gameScene.gridNode.position.x+CGFloat(gameScene.gridNode.cellWidth/2)+CGFloat(gameScene.gridNode.cellWidth*Double(self.positionX)), y: gameScene.gridNode.position.y+CGFloat(gameScene.gridNode.cellHeight/2)+CGFloat(gameScene.gridNode.cellHeight*Double(self.positionY)))
     }
     
     /*===============*/

@@ -90,11 +90,7 @@ class InputPanel: SKSpriteNode {
     var eqRobPoint = SKShapeNode(circleOfRadius: 10)
     
     /* Flags for validation */
-    var numberFlag = false
-    var xFlag = false
-    var operationFlag = false
     var putXFlag = false
-    var errorFlag = false
     
     init() {
         /* Initialize with enemy asset */
@@ -151,6 +147,25 @@ class InputPanel: SKSpriteNode {
             
             variableExpression.append("x")
             
+            /* Calculate value */
+            if operant == 0 {
+                if coefficientFlag == false {
+                    gameScene.eqRob.coefficientArray.append(1)
+                } else {
+                    gameScene.eqRob.coefficientArray.append(tempSpot)
+                    coefficientFlag = false
+                    tempSpot = 0
+                }
+            } else {
+                if coefficientFlag == false {
+                    gameScene.eqRob.coefficientArray.append(-1)
+                } else {
+                    gameScene.eqRob.coefficientArray.append(-tempSpot)
+                    coefficientFlag = false
+                    tempSpot = 0
+                }
+            }
+            
         }
         
         /* Touch button 1 */
@@ -169,6 +184,9 @@ class InputPanel: SKSpriteNode {
             
             variableExpression.append("1")
             
+            /* Calculate value */
+            tempSpot = 1
+            coefficientFlag = true
         }
         
         /* Touch button 2 */
@@ -186,6 +204,10 @@ class InputPanel: SKSpriteNode {
             }
             
             variableExpression.append("2")
+            
+            /* Calculate value */
+            tempSpot = 2
+            coefficientFlag = true
         }
         
         /* Touch button 3 */
@@ -202,6 +224,10 @@ class InputPanel: SKSpriteNode {
                 coverOK()
             }
             variableExpression.append("3")
+            
+            /* Calculate value */
+            tempSpot = 3
+            coefficientFlag = true
         }
         
         /* Touch button 4 */
@@ -218,6 +244,10 @@ class InputPanel: SKSpriteNode {
                 coverOK()
             }
             variableExpression.append("4")
+            
+            /* Calculate value */
+            tempSpot = 4
+            coefficientFlag = true
             
         }
         
@@ -236,6 +266,10 @@ class InputPanel: SKSpriteNode {
             }
             
             variableExpression.append("5")
+        
+            /* Calculate value */
+            tempSpot = 5
+            coefficientFlag = true
         }
         
         /* Touch button 6 */
@@ -253,6 +287,10 @@ class InputPanel: SKSpriteNode {
             }
             
             variableExpression.append("6")
+            
+            /* Calculate value */
+            tempSpot = 6
+            coefficientFlag = true
         }
         
         /* Touch button 7 */
@@ -270,6 +308,10 @@ class InputPanel: SKSpriteNode {
             }
             
             variableExpression.append("7")
+            
+            /* Calculate value */
+            tempSpot = 7
+            coefficientFlag = true
         }
         
         /* Touch button 8 */
@@ -287,6 +329,10 @@ class InputPanel: SKSpriteNode {
             }
             
             variableExpression.append("8")
+            
+            /* Calculate value */
+            tempSpot = 8
+            coefficientFlag = true
         }
         /* Touch button 9 */
         if nodeAtPoint.name == "button9" {
@@ -304,6 +350,10 @@ class InputPanel: SKSpriteNode {
             
             variableExpression.append("9")
             
+            /* Calculate value */
+            tempSpot = 9
+            coefficientFlag = true
+            
         }
         
         /* Touch button + */
@@ -317,6 +367,23 @@ class InputPanel: SKSpriteNode {
             coverOperant()
             coverOK()
             variableExpression.append("+")
+            
+            /* Calculate value */
+            if coefficientFlag {
+                if operant == 0 {
+                    gameScene.eqRob.constantsArray.append(tempSpot)
+                    operant = 0
+                    coefficientFlag = false
+                    tempSpot = 0
+                } else {
+                    gameScene.eqRob.constantsArray.append(-tempSpot)
+                    operant = 0
+                    coefficientFlag = false
+                    tempSpot = 0
+                }
+            } else {
+                operant = 0
+            }
         }
         
         /* Touch button - */
@@ -330,6 +397,23 @@ class InputPanel: SKSpriteNode {
             coverOperant()
             coverOK()
             variableExpression.append("-")
+            
+            /* Calculate value */
+            if coefficientFlag {
+                if operant == 0 {
+                    gameScene.eqRob.constantsArray.append(tempSpot)
+                    operant = 1
+                    coefficientFlag = false
+                    tempSpot = 0
+                } else {
+                    gameScene.eqRob.constantsArray.append(-tempSpot)
+                    operant = 1
+                    coefficientFlag = false
+                    tempSpot = 0
+                }
+            } else {
+                operant = 1
+            }
         }
         
         /* Touch button clear */
@@ -338,6 +422,9 @@ class InputPanel: SKSpriteNode {
             /* Reset */
             variableExpression = ""
             putXFlag = false
+            operant = 0
+            coefficientFlag = false
+            tempSpot = 0
             
             /* Valid x, num */
             uncoverNumber()
@@ -348,10 +435,18 @@ class InputPanel: SKSpriteNode {
             coverOK()
             cover0()
             
+            /* Reset elemnts of variable expression of cannon */
+            gameScene.eqRob.resetVEElementArray()
         }
         
         /* Touch button ok */
         if nodeAtPoint.name == "buttonOK" {
+            if operant == 0 {
+                gameScene.eqRob.constantsArray.append(tempSpot)
+            } else {
+                gameScene.eqRob.constantsArray.append(-tempSpot)
+            }
+            
             VECategory.getCategory(ve: variableExpression) { cate in
                 gameScene.eqRob.veCategory = cate
                 self.confirmedVE = self.variableExpression
@@ -359,6 +454,9 @@ class InputPanel: SKSpriteNode {
                 /* Reset stuffs */
                 self.variableExpression = ""
                 self.putXFlag = false
+                self.operant = 0
+                self.coefficientFlag = false
+                self.tempSpot = 0
                 /* Valid x, num */
                 self.uncoverNumber()
                 self.uncoverX()
@@ -460,7 +558,7 @@ class InputPanel: SKSpriteNode {
         addChild(buttonClear)
         
         /* button fire */
-        let buttonOK = SKSpriteNode(imageNamed: "inputFire")
+        let buttonOK = SKSpriteNode(imageNamed: "inputOk")
         buttonOK.size = bigButtonSize
         buttonOK.position = okButtonPos
         buttonOK.name = "buttonOK"

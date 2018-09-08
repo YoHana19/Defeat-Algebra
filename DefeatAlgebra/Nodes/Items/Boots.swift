@@ -9,26 +9,14 @@
 import Foundation
 import SpriteKit
 
-class Boots: SKSpriteNode {
+class Boots: Item {
     
-    var spotPos = [Int]()
+    let tx = SKTexture(imageNamed: "boots")
     
     init() {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "boots")
-        super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
-        /* Set Z-Position, ensure ontop of grid */
-        zPosition = 2
-        
-        /* Set anchor point to bottom-left */
-        anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        // Set physics properties
-        physicsBody = SKPhysicsBody(rectangleOf: texture.size())
-        physicsBody?.categoryBitMask = 64
-        physicsBody?.collisionBitMask = 0
-        physicsBody?.contactTestBitMask = 1
+        super.init(texture: tx, size: tx.size())
         
         setName()
     }

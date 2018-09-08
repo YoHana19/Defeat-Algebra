@@ -11,9 +11,15 @@ import SpriteKit
 
 class Signal: SKSpriteNode {
     
-    init() {
+    let red = SKTexture(imageNamed: "signalRed")
+    let yellow = SKTexture(imageNamed: "signalYellow")
+    
+    init(color: String) {
         /* Initialize with enemy asset */
-        let texture = SKTexture(imageNamed: "signal")
+        var texture = red
+        if (color == "yellow") {
+            texture = yellow
+        }
         super.init(texture: texture, color: UIColor.clear, size: texture.size())
         
         /* Set Z-Position, ensure ontop of grid */

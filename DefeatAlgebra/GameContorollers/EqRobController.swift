@@ -100,9 +100,11 @@ struct EqRobController {
     }
     
     private static func hideInputPanelWithDoctor() {
+        gameScene.inputPanel.variableExpression = ""
         hideInputPanel()
         EqRobTouchController.state = .Ready
         gameScene.eqRob.stopAction()
+        gameScene.eqRob.resetVEElementArray()
         gameScene.eqRob.go(toPos: eqRobOriginPos) {
             let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
             gameScene.eqRob.run(rotate)
@@ -114,6 +116,7 @@ struct EqRobController {
     
     private static func showSelectionPanelWithDoctor() {
         hideInputPanel()
+        EqRobTouchController.state = .WillAttack
         showSelectionPanel()
         gameScene.eqRob.stopAction()
         gameScene.eqRob.go(toPos: eqRobOriginPos) {
@@ -220,7 +223,6 @@ struct EqRobController {
     private static func eqRobDead(enemy: Enemy) {
         lines.forEach { $0.removeFromParent() }
         doctorSays(in: .EqRobDestroyed, value: nil)
-        EqRobTouchController.state = .DeadInstruction
         makeInsturctionForKilled(enemy: enemy)
         instructedEnemy = enemy
     }
@@ -236,6 +238,7 @@ struct EqRobController {
             CharacterController.doctor.changeBalloonTexture(index: 1)
             CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
                 doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+                EqRobTouchController.state = .DeadInstruction
             }
         } else {
             let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
@@ -247,6 +250,7 @@ struct EqRobController {
             CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
                 print(EqRobLines.curIndex)
                 doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+                EqRobTouchController.state = .DeadInstruction
             }
         }
     }
@@ -259,6 +263,7 @@ struct EqRobController {
     
     private static func attackDone() {
         if isPerfect {
+            gameScene.selectionPanel.resetAllEnemies()
             doctorSays(in: .PerfectKill, value: nil)
         } else {
             doctorSays(in: .MissEnemies, value: nil)
@@ -299,6 +304,7 @@ struct EqRobController {
             CharacterController.doctor.changeBalloonTexture(index: 1)
             CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
                 doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+                EqRobTouchController.state = .AliveInstruction
             }
         } else {
             let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
@@ -308,6 +314,7 @@ struct EqRobController {
             CharacterController.doctor.changeBalloonTexture(index: 1)
             CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
                 doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+                EqRobTouchController.state = .AliveInstruction
             }
         }
     }
@@ -328,6 +335,7 @@ struct EqRobController {
             if EqRobLines.curIndex == 0 {
                 back(3)
             } else if EqRobLines.curIndex == 1 {
+                EqRobTouchController.state = .Dead // just for disabel touching
                 makeInsturctionForMiss(enemy: instructedEnemy!)
             } else if EqRobLines.curIndex == 2 || EqRobLines.curIndex == 3 {
                 doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: instructedEnemy!, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
@@ -365,6 +373,7 @@ struct EqRobController {
             gameScene.eqRob.turn = gameScene.eqRob.chargingTurnIndex
             gameScene.eqRob.wasDead = false
         }
+        gameScene.eqRob.resetVEElementArray()
         isPerfect = false
         instructedEnemy?.removePointing()
         gameScene.selectionPanel.resetInstruction()
@@ -425,6 +434,8 @@ struct EqRobController {
     
     private static func showSelectionPanel() {
         gameScene.selectionPanel.isHidden = false
+        gameScene.selectionPanel.setScale(0.55)
+        gameScene.selectionPanel.position = CGPoint(x: 390, y: 294)
     }
     
     private static func hideSelectionPanel() {
@@ -433,7 +444,7 @@ struct EqRobController {
     
     private static func doctorSays(in state: EqRobLinesState, value: String?) {
         EqRobLines.getLines(state: state, value: value).DAMultilined() { line in
-            CharacterController.doctor.balloon.setLines(with: line)
+            CharacterController.doctor.balloon.setLines(with: line, pos: 0)
         }
     }
     
@@ -446,7 +457,7 @@ struct EqRobController {
 }
 
 enum EqRobState {
-    case Ready, Pending, Attack, Attacking, DeadInstruction, AliveInstruction, Dead, Charging
+    case Ready, Pending, WillAttack, Attack, Attacking, DeadInstruction, AliveInstruction, Dead, Charging
 }
 
 struct EqRobTouchController {
@@ -599,7 +610,7 @@ struct EqRobLines {
         let rand = arc4random_uniform(UInt32(cand.count))
         selectedRand = cand[Int(rand)]
         let valueOfEnemy = VECategory.calculateValue(veCategory: enemy.vECategory, value: selectedRand)
-        let valueOfEqRob = VECategory.calculateValue(veCategory: eqRob.veCategory, value: selectedRand)
+        let valueOfEqRob = eqRob.calculateValue(value: selectedRand)
         print("\(selectedRand), \(valueOfEqRob), \(valueOfEnemy)")
         if valueOfEnemy == valueOfEqRob {
             return "x=\(selectedRand)のとき、\(eqRobVe)は\(valueOfEqRob)、\(enemy.variableExpressionString)は\(valueOfEnemy)で同じ値になるじゃろ"

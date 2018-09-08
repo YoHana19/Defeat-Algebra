@@ -164,6 +164,7 @@ class LevelSelectMenu: SKScene {
             skView?.presentScene(scene)
         }
         
+        /*
         button8.selectedHandler = { [weak self] in
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView?
@@ -199,6 +200,7 @@ class LevelSelectMenu: SKScene {
             /* Restart GameScene */
             skView?.presentScene(scene)
         }
+        */
         
         buttonBack.selectedHandler = { [weak self] in
             let skView = self?.view as SKView?

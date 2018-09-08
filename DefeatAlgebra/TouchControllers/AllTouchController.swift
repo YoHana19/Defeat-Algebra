@@ -1,0 +1,52 @@
+//
+//  AllTouchController.swift
+//  DefeatAlgebra
+//
+//  Created by yo hanashima on 2018/07/22.
+//  Copyright © 2018 yo hanashima. All rights reserved.
+//
+
+import Foundation
+import SpriteKit
+
+struct AllTouchController {
+    public static var gameScene: GameScene!
+    
+    public static func eqRobTouched() {
+        guard gameScene.playerTurnState == .MoveState || gameScene.playerTurnState == .AttackState || gameScene.playerTurnState == .UsingItem else { return }
+        
+        /* Hide attack and item buttons */
+        gameScene.buttonAttack.isHidden = true
+        gameScene.buttonItem.isHidden = true
+        /* Reset hero */
+        gameScene.hero.resetHero()
+        /* Remove active area */
+        GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
+        GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
+        GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
+        gameScene.itemAreaCover.isHidden = false
+        gameScene.playerTurnState = .UsingItem
+        gameScene.itemType = .EqRob
+        
+        EqRobTouchController.onEvent()
+    }
+    
+    public static func cannonTouched(node: Cannon) {
+        guard gameScene.playerTurnState == .MoveState || gameScene.playerTurnState == .AttackState || gameScene.playerTurnState == .UsingItem else { return }
+        
+        /* Hide attack and item buttons */
+        gameScene.buttonAttack.isHidden = true
+        gameScene.buttonItem.isHidden = true
+        /* Reset hero */
+        gameScene.hero.resetHero()
+        /* Remove active area */
+        GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
+        GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
+        GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
+        gameScene.itemAreaCover.isHidden = false
+        gameScene.playerTurnState = .UsingItem
+        gameScene.itemType = .Cannon
+        
+        CannonTouchController.onEvent(cannon: node)
+    }
+}

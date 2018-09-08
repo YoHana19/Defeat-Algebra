@@ -14,6 +14,9 @@ class EqRobForInstruction: SKSpriteNode {
     var veString: String = ""
     var veLabel: SKLabelNode!
     
+    var constantsArray = [Int]()
+    var coefficientArray = [Int]()
+    
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "eqRob")
@@ -52,10 +55,44 @@ class EqRobForInstruction: SKSpriteNode {
     }
     
     func showCalculation(value: Int) {
-        let numForm =  veString.replacingOccurrences(of: "x", with: String(value))
-        VECategory.getCategory(ve: veString) { cate in
-            let result = VECategory.calculateValue(veCategory: cate, value: value)
-            self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
+        var characters = veString.map { String($0) }
+        let dispatchGroup = DispatchGroup()
+        for (i, c) in characters.enumerated() {
+            dispatchGroup.enter()
+            if c == "x" {
+                if i > 0 {
+                    if characters[i-1] == "+" || characters[i-1] == "-" || characters[i-1] == "×" {
+                        characters[i] = String(value)
+                        dispatchGroup.leave()
+                    } else {
+                        characters[i] = "×" + String(value)
+                        dispatchGroup.leave()
+                    }
+                } else {
+                    characters[i] = String(value)
+                    dispatchGroup.leave()
+                }
+            } else {
+                dispatchGroup.leave()
+            }
         }
+        dispatchGroup.notify(queue: .main, execute: {
+            var numForm = ""
+            characters.forEach { numForm += $0 }
+            let result = self.calculateValue(value: value)
+            self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
+        })
+    }
+    
+    /* Calculate the distance to throw bomb */
+    func calculateValue(value: Int) -> Int {
+        var outPut = 0
+        for constant in constantsArray {
+            outPut += constant
+        }
+        for coeffcient in coefficientArray {
+            outPut += coeffcient*value
+        }
+        return outPut
     }
 }

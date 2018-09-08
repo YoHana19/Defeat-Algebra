@@ -29,8 +29,6 @@ class ItemList: SKScene {
         setItem(itemArray: itemArray)
         setCoverItem()
         
-        let ud = UserDefaults.standard
-        GameScene.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [false, false, false, false, false, false, false, false, false, false, false, false, false]
         
         unlockItem()
         
@@ -193,11 +191,6 @@ class ItemList: SKScene {
     }
     
     func unlockItem() {
-        for (i, flag) in GameScene.firstGetItemFlagArray.enumerated() {
-            if flag {
-                lockedArray[i].isHidden = true
-            }
-        }
     }
     
     /* Show item card when get it firstly */

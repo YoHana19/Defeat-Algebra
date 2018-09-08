@@ -14,21 +14,17 @@ extension Enemy {
     func calculatePunchLength(value: Int) {
         if self.positionY == 0 {
             self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
-        } else if self.positionY < self.valueOfEnemy {
-            /* punch length to castle */
-            self.punchLength  = CGFloat(Double(self.positionY)*gridNode.cellHeight+100.0)
         } else {
             /* Calculate value of variable expression of enemy */
-            if variableExpression[0] == 4 {
-                self.valueOfEnemy = value*self.variableExpression[1]-variableExpression[2]
-            } else if variableExpression[0] == 5 || variableExpression[0] == 7 {
-                self.valueOfEnemy = variableExpression[2]-value*self.variableExpression[1]
-            } else {
-                self.valueOfEnemy = value*self.variableExpression[1]+variableExpression[2]
-            }
+            self.valueOfEnemy = VECategory.calculateValue(veCategory: self.vECategory, value: value)
             
-            /* Calculate length of punch */
-            self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
+            if self.positionY < self.valueOfEnemy {
+                /* punch length to castle */
+                self.punchLength  = CGFloat(Double(self.positionY)*gridNode.cellHeight+100.0)
+            } else {
+                /* Calculate length of punch */
+                self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
+            }
         }
     }
     
@@ -63,9 +59,6 @@ extension Enemy {
                 }
             }
         } else {
-            /* Keep track enemy position */
-            self.positionY -= self.valueOfEnemy
-            
             /* Do punch */
             punch() { armAndFist in
                 self.subSetArm(arms: armAndFist.arm) { (newArms) in
@@ -74,6 +67,8 @@ extension Enemy {
                     }
                     self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
                         self.turnEnd()
+                        /* Keep track enemy position */
+                        self.positionY -= self.valueOfEnemy
                     }
                 }
             }
@@ -311,6 +306,55 @@ extension Enemy {
         let wait = SKAction.wait(forDuration: TimeInterval(self.punchLength*self.punchSpeed))
         self.run(wait, completion: {
             return completion()
+        })
+    }
+    
+    /* Punch when enemy reach to castle */
+    public func punchToWall(wall: Wall) {
+        /* Make sure not to call if it's not my turn */
+        guard myTurnFlag else { return }
+        
+        print(self.wallHitFlag)
+        guard wallHitFlag == false else { return }
+        wallHitFlag = true
+        
+        self.removeAllActions()
+        let lengthToWall = self.positionY - wall.posY - 1
+        
+        if lengthToWall < 1 {
+            self.turnEnd()
+            self.positionY = wall.posY+1
+        } else {
+            self.punchLength = self.firstPunchLength + CGFloat(lengthToWall-1) * self.singlePunchLength
+            getArmsNFists() { armNfist in
+                self.subSetArm(arms: armNfist.0) { arms in
+                    for arm in armNfist.0 {
+                        arm.removeFromParent()
+                    }
+                    self.drawPunchNMove(arms: arms, fists: armNfist.1, num: lengthToWall) {
+                        self.turnEnd()
+                        self.positionY = wall.posY+1
+                    }
+                }
+            }
+        }
+    }
+    
+    private func getArmsNFists(completion: @escaping (([EnemyArm], [EnemyFist])) -> Void) {
+        let dispatchGroup = DispatchGroup()
+        var arms = [EnemyArm]()
+        var fists = [EnemyFist]()
+        for child in self.children {
+            dispatchGroup.enter()
+            if child.name == "arm" {
+                arms.append(child as! EnemyArm)
+            } else if child.name == "fist" {
+                fists.append(child as! EnemyFist)
+            }
+            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            return completion((arms, fists))
         })
     }
 }

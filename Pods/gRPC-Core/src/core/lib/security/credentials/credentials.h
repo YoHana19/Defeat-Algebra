@@ -19,6 +19,8 @@
 #ifndef GRPC_CORE_LIB_SECURITY_CREDENTIALS_CREDENTIALS_H
 #define GRPC_CORE_LIB_SECURITY_CREDENTIALS_CREDENTIALS_H
 
+#include <grpc/support/port_platform.h>
+
 #include <grpc/grpc.h>
 #include <grpc/grpc_security.h>
 #include <grpc/support/sync.h>
@@ -27,7 +29,7 @@
 #include "src/core/lib/http/httpcli.h"
 #include "src/core/lib/http/parser.h"
 #include "src/core/lib/iomgr/polling_entity.h"
-#include "src/core/lib/security/transport/security_connector.h"
+#include "src/core/lib/security/security_connector/security_connector.h"
 
 struct grpc_http_response;
 
@@ -43,6 +45,7 @@ typedef enum {
 #define GRPC_CHANNEL_CREDENTIALS_TYPE_SSL "Ssl"
 #define GRPC_CHANNEL_CREDENTIALS_TYPE_FAKE_TRANSPORT_SECURITY \
   "FakeTransportSecurity"
+#define GRPC_CHANNEL_CREDENTIALS_TYPE_GOOGLE_DEFAULT "GoogleDefault"
 
 #define GRPC_CALL_CREDENTIALS_TYPE_OAUTH2 "Oauth2"
 #define GRPC_CALL_CREDENTIALS_TYPE_JWT "Jwt"

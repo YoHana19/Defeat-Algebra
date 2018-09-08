@@ -11,29 +11,24 @@ import SpriteKit
 
 class EnemyDeadController {
     static func hitEnemy(enemy: Enemy, gameScene: GameScene, completion: @escaping () -> Void) {
-        if enemy.enemyLife > 0 {
-            enemy.enemyLife -= 1
-            enemy.resetColorizeEnemy()
-        } else {
-            enemy.aliveFlag = false
-            /* Count defeated enemy */
-            gameScene.totalNumOfEnemy -= 1
-            
-            /* If you killed origin enemy */
-            if enemy.forEduOriginFlag {
-                EnemyDeadController.originEnemyDead(origin: enemy, gridNode: gameScene.gridNode)
-                /* If you killed branch enemy */
-            } else if enemy.forEduBranchFlag {
-                EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: gameScene.gridNode)
-            }
-            
-            /* Effect */
-            enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy) {
-                /* Enemy */
-                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-                gameScene.run(removeEnemy)
-                return completion()
-            }
+        enemy.aliveFlag = false
+        /* Count defeated enemy */
+        gameScene.totalNumOfEnemy -= 1
+        
+        /* If you killed origin enemy */
+        if enemy.forEduOriginFlag {
+            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: gameScene.gridNode)
+            /* If you killed branch enemy */
+        } else if enemy.forEduBranchFlag {
+            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: gameScene.gridNode)
+        }
+        
+        /* Effect */
+        enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy) {
+            /* Enemy */
+            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+            gameScene.run(removeEnemy)
+            return completion()
         }
     }
     

@@ -25,15 +25,15 @@ class BalloonController {
         scene.addChild(balloon)
     }
     
-    public static func setBaloonForDoctor(scene: SKScene) {
+    public static func setBaloonForDoctor() {
         balloon.position = forDoctorOnPos
     }
     
-    public static func setBaloonForMadDoctor(scene: SKScene) {
+    public static func setBaloonForMadDoctor() {
         balloon.position = forMadDoctorOnPos
     }
     
-    public static func setBaloonForMainHero(scene: SKScene) {
+    public static func setBaloonForMainHero() {
         balloon.position = forMainHeroOnPos
     }
     

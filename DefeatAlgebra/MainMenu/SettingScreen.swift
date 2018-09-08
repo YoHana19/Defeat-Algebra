@@ -64,7 +64,7 @@ class SettingScreen: SKSpriteNode {
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
         if nodeAtPoint.name == "buttonTutorial" {
-            
+            /*
             /* Grab reference to the SpriteKit view */
             let skView = mainMenu.view as SKView?
             
@@ -86,7 +86,7 @@ class SettingScreen: SKSpriteNode {
             
             /* Restart GameScene */
             skView?.presentScene(scene)
-            
+            */
         } else if nodeAtPoint.name == "buttonItemList" {
             
             /* Grab reference to the SpriteKit view */

@@ -133,6 +133,7 @@ class SelectionPanel: SKSpriteNode {
     }
     
     func setInstruction(enemyVe: String) {
+        let gameScene = self.parent as! GameScene
         resetAllEnemies()
         instructedEnemy = SelectedEnemy()
         instructedEqRob = EqRobForInstruction()
@@ -144,6 +145,8 @@ class SelectionPanel: SKSpriteNode {
         instructedEqRob.setScale(0.8)
         instructedEnemy.position = CGPoint(x: 230, y: -280)
         instructedEqRob.position = CGPoint(x: 230, y: -180)
+        instructedEqRob.coefficientArray = gameScene.eqRob.coefficientArray
+        instructedEqRob.constantsArray = gameScene.eqRob.constantsArray
         addChild(instructedEnemy)
         addChild(instructedEqRob)
         xValueLabel.isHidden = false

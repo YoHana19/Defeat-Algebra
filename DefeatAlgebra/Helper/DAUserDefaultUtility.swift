@@ -14,6 +14,12 @@ enum GameProperty {
 
 class DAUserDefaultUtility {
     static let ud = UserDefaults.standard
+    static var logDefenceFirst = false
+    static var bootsGotFirst = false
+    static var timeBombGotFirst = false
+    static var heartGotFirst = false
+    static var caneGotFirst = false
+    static var wallGotFirst = false
     
     public static func DrawData(gameScene: GameScene) {
         /* Stage Level */
@@ -24,8 +30,13 @@ class DAUserDefaultUtility {
         gameScene.handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
         /* Life */
         gameScene.maxLife = ud.integer(forKey: "life") == 0 ? 3 : ud.integer(forKey: "life")
-        /* Item flag */
-        GameScene.firstGetItemFlagArray = ud.array(forKey: "firstGetItemFlagArray") as? [Bool] ?? [false, false, false, false, false, false, false, false, false, false, false, false, false]
+        
+        logDefenceFirst = ud.bool(forKey: "logDefenceFirst")
+        bootsGotFirst = ud.bool(forKey: "bootsGotFirst")
+        timeBombGotFirst = ud.bool(forKey: "timeBombGotFirst")
+        heartGotFirst = ud.bool(forKey: "heartGotFirst")
+        caneGotFirst = ud.bool(forKey: "caneGotFirst")
+        wallGotFirst = ud.bool(forKey: "wallGotFirst")
     }
     
     public static func SetData(gameScene: GameScene?) {
@@ -44,5 +55,9 @@ class DAUserDefaultUtility {
         }
         /* Life */
         ud.set(gameScene.maxLife, forKey: "life")
+    }
+    
+    public static func doneFirstly(name: String) {
+        ud.set(true, forKey: name)
     }
 }

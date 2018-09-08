@@ -9,30 +9,17 @@
 import Foundation
 import SpriteKit
 
-class Wall: SKSpriteNode {
+class Wall: Item {
     
     var posX = 0
     var posY = 0
-    var spotPos = [Int]()
+    let tx = SKTexture(imageNamed: "wall")
+    let bodySize = CGSize(width: 60, height: 60)
     
     init() {
         /* Initialize with 'mine' asset */
-        let texture = SKTexture(imageNamed: "wall")
-        let bodySize = CGSize(width: 60, height: 60)
-        super.init(texture: texture, color: UIColor.clear, size: bodySize)
-        
-        /* Set Z-Position, ensure ontop of grid */
-        zPosition = 2
-        
-        /* Set anchor point to center */
-        anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        // Set physics properties
-        physicsBody = SKPhysicsBody(rectangleOf: bodySize)
-        physicsBody?.categoryBitMask = 64
-        physicsBody?.collisionBitMask = 0
-        physicsBody?.contactTestBitMask = 1
-        
+        super.init(texture: tx, size: bodySize)
+    
         /* For detect what object to tougch */
         setName()
     }

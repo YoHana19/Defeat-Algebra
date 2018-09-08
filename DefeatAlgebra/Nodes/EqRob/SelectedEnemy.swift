@@ -82,11 +82,35 @@ class SelectedEnemy: SKSpriteNode {
     }
     
     func showCalculation(value: Int) {
-        let numForm =  veString.replacingOccurrences(of: "x", with: String(value))
-        VECategory.getCategory(ve: veString) { cate in
-            let result = VECategory.calculateValue(veCategory: cate, value: value)
-            self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
+        var characters = veString.map { String($0) }
+        let dispatchGroup = DispatchGroup()
+        for (i, c) in characters.enumerated() {
+            dispatchGroup.enter()
+            if c == "x" {
+                if i > 0 {
+                    if characters[i-1] == "+" || characters[i-1] == "-" || characters[i-1] == "×" {
+                        characters[i] = String(value)
+                        dispatchGroup.leave()
+                    } else {
+                        characters[i] = "×" + String(value)
+                        dispatchGroup.leave()
+                    }
+                } else {
+                    characters[i] = String(value)
+                    dispatchGroup.leave()
+                }
+            } else {
+                dispatchGroup.leave()
+            }
         }
+        dispatchGroup.notify(queue: .main, execute: {
+            var numForm = ""
+            characters.forEach { numForm += $0 }
+            VECategory.getCategory(ve: self.veString) { cate in
+                let result = VECategory.calculateValue(veCategory: cate, value: value)
+                self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
+            }
+        })
     }
     
 }

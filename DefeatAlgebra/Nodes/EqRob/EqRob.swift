@@ -32,6 +32,9 @@ class EqRob: SKSpriteNode {
         }
     }
     
+    var constantsArray = [Int]()
+    var coefficientArray = [Int]()
+    
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -206,5 +209,22 @@ class EqRob: SKSpriteNode {
             self.isHidden = true
             return completion()
         })
+    }
+    
+    /* Calculate the distance to throw bomb */
+    func calculateValue(value: Int) -> Int {
+        var outPut = 0
+        for constant in constantsArray {
+            outPut += constant
+        }
+        for coeffcient in coefficientArray {
+            outPut += coeffcient*value
+        }
+        return outPut
+    }
+    
+    func resetVEElementArray() {
+        constantsArray.removeAll()
+        coefficientArray.removeAll()
     }
 }

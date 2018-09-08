@@ -53,20 +53,20 @@ class ConfirmScreen: SKSpriteNode {
             /* Reset game property */
             let ud = UserDefaults.standard
             /* Stage level */
-            ud.set(0, forKey: "stageLevelEasy")
+            ud.set(0, forKey: "stageLevel")
             /* Hero */
-            ud.set([1], forKey: "moveLevelArrayEasy")
+            ud.set([1], forKey: "moveLevel")
             /* item */
             let itemNameArray = [String]()
-            ud.set(itemNameArray, forKey: "itemNameArrayEasy")
+            ud.set(itemNameArray, forKey: "itemNameArray")
             /* life */
-            ud.set(3, forKey: "lifeEasy")
+            ud.set(3, forKey: "life")
             
             /* Grab reference to the SpriteKit view */
             let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
+            guard let scene = ScenarioScene(fileNamed: "ScenarioScene") as ScenarioScene? else {
                 return
             }
             

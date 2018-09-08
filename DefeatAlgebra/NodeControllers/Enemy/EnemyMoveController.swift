@@ -8,6 +8,7 @@
 
 import Foundation
 import SpriteKit
+import SpriteKitEasingSwift
 
 class EnemyMoveController {
     static func move(enemy: Enemy, gridNode: Grid) {
@@ -213,5 +214,16 @@ class EnemyMoveController {
         enemy.physicsBody?.categoryBitMask = 2
         enemy.physicsBody?.collisionBitMask = 0
         enemy.physicsBody?.contactTestBitMask = 1
+    }
+    
+    static func blowedToback(enemy: Enemy, grid: Grid) {
+        enemy.positionY = 11
+        let targetPoint = CGPoint(x: enemy.position.x, y: CGFloat((Double(11)+0.5)*grid.cellHeight))
+        let move = SKEase.move(easeFunction: .curveTypeQuintic,
+                               easeType: .easeTypeOut,
+                               time: 3.5,
+                               from: enemy.position,
+                               to: targetPoint)
+        enemy.run(move)
     }
 }

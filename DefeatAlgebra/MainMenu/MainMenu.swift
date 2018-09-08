@@ -14,21 +14,11 @@ class MainMenu: SKScene {
     /* UI Connections */
     var buttonNewGame: MSButtonNode!
     var buttonContinue: MSButtonNode!
-    var buttonTutorial: MSButtonNode!
     var settingScreen: SettingScreen!
     var confirmScreen: ConfirmScreen!
     var buttonLevelSelect: MSButtonNode!
     
-    /* Flag */
-    static var tutorialHeroDone = false
-    static var tutorialEnemyDone = false
-    static var tutorialAttackDone = false
-    static var tutorialPracticeDone = false
-    static var tutorialTimeBombDone = false
-    static var tutorialAllDone = false
-    
     var confirmingNewGameFlag = false
-    
     var notInitialFlag = true
     
     /* Sound */
@@ -41,12 +31,6 @@ class MainMenu: SKScene {
         /* Check user has played */
         let ud = UserDefaults.standard
         notInitialFlag = ud.bool(forKey: "notInitialFlag")
-        MainMenu.tutorialHeroDone = ud.bool(forKey: "tutorialHeroDone")
-        MainMenu.tutorialEnemyDone = ud.bool(forKey: "tutorialEnemyDone")
-        MainMenu.tutorialAttackDone = ud.bool(forKey: "tutorialAttackDone")
-        MainMenu.tutorialPracticeDone = ud.bool(forKey: "tutorialPracticeDone")
-        MainMenu.tutorialTimeBombDone = ud.bool(forKey: "tutorialTimeBombDone")
-        MainMenu.tutorialAllDone = ud.bool(forKey: "tutorialAllDone")
         MainMenu.soundOnFlag = ud.bool(forKey: "soundOn")
         if notInitialFlag == false {
             MainMenu.soundOnFlag = true
@@ -56,47 +40,12 @@ class MainMenu: SKScene {
         /* Set UI connections */
         buttonNewGame = self.childNode(withName: "buttonNewGame") as! MSButtonNode
         buttonContinue = self.childNode(withName: "buttonContinue") as! MSButtonNode
-        buttonTutorial = self.childNode(withName: "buttonTutorial") as! MSButtonNode
         buttonLevelSelect = self.childNode(withName: "LevelSelect") as! MSButtonNode
-        
-        /* Before tutorial done */
-        if MainMenu.tutorialAllDone == false {
-            buttonNewGame.state = .msButtonNodeStateHidden
-            buttonContinue.state = .msButtonNodeStateHidden
-            /* After tutorial done */
-        } else {
-            buttonTutorial.state = .msButtonNodeStateHidden
-        }
         
         /* Sound */
         if MainMenu.soundOnFlag {
             sound.play()
             sound.numberOfLoops = -1
-        }
-        
-        /* Start tutorial */
-        buttonTutorial.selectedHandler = { [weak self] in
-            /* Grab reference to the SpriteKit view */
-            let skView = self?.view as SKView?
-            
-            /* Load Game scene */
-            guard let scene = Tutorial(fileNamed:"Tutorial") as Tutorial? else {
-                return
-            }
-            
-            Tutorial.tutorialPhase = 0
-            
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                scene.run(sound)
-            }
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
         }
         
         /* For Debug */
