@@ -168,7 +168,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*== Castle life ==*/
     /*=================*/
     
-    var maxLife = 3
+    //var maxLife = 3
     var life: Int = 3
     
     var log0: Log!
@@ -285,19 +285,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Store game property */
             DAUserDefaultUtility.SetData(gameScene: self)
             
-            /* Grab reference to the SpriteKit view */
-            let skView = self?.view as SKView?
-            
-            /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
-                return
+            if GameScene.stageLevel == 2 || GameScene.stageLevel == 4 || GameScene.stageLevel == 6 || GameScene.stageLevel == 7 {
+                
+                /* Grab reference to the SpriteKit view */
+                let skView = self?.view as SKView?
+                
+                /* Load Game scene */
+                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+            } else {
+                /* Grab reference to the SpriteKit view */
+                let skView = self?.view as SKView?
+                
+                /* Load Game scene */
+                guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
             }
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
         }
         
         /* Pause button */
@@ -320,6 +337,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Stage Level */
         levelLabel.text = String(GameScene.stageLevel+1)
+        if GameScene.stageLevel == 7 {
+            levelLabel.text = "F"
+            //levelLabel.fontSize = 30
+        }
         /* Set hero */
         setHero()
         /* Items */
@@ -368,30 +389,23 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         castleNode.physicsBody?.contactTestBitMask = 24
         
         /* Set life */
-        setLife(numOflife: maxLife)
+        setLife(numOflife: life)
         
         if GameScene.stageLevel > 3 {
             eqRob.isHidden = false
+            EqRobTouchController.state = .Ready
         } else {
             eqRob.isHidden = true
         }
         
-        if GameScene.stageLevel > 4 {
-            CannonController.add(type: 0, pos: [2, 9])
-            CannonController.add(type: 0, pos: [3, 9])
-            CannonController.add(type: 0, pos: [4, 9])
-            CannonController.add(type: 0, pos: [5, 9])
-            CannonController.add(type: 0, pos: [6, 9])
-            CannonController.add(type: 0, pos: [7, 9])
-            signalInvisible = true
-        }
-        
+        setCanoon()
+        SignalSendingTurnController.done = false
         gridNode.isTutorial = false
     }
     
     override func update(_ currentTime: TimeInterval) {
         /* For debug */
-        //print("\(gameState), \(playerTurnState), \(itemType)")
+        print("\(gameState), \(playerTurnState), \(itemType)")
         
         SpeakInGameController.controlAction()
         
@@ -491,6 +505,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             guard SpeakInGameController.userTouch(on: nodeAtPoint.name) else { return }
             
             if nodeAtPoint.name == "eqRob" {
+                
                 AllTouchController.eqRobTouched()
                 
             } else if playerTurnState == .MoveState {
@@ -604,7 +619,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Get heart */
                     } else if item.name == "heart" {
                         item.removeFromParent()
-                        maxLife += 1
+                        //maxLife += 1
                         life += 1
                         setLife(numOflife: life)
                         if !DAUserDefaultUtility.heartGotFirst {
@@ -646,7 +661,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     /* Get heart */
                     } else if item.name == "heart" {
                         item.removeFromParent()
-                        maxLife += 1
+                        //maxLife += 1
                         life += 1
                         setLife(numOflife: life)
                         if !DAUserDefaultUtility.heartGotFirst {
@@ -822,7 +837,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             break;
         case "cane":
             if !DAUserDefaultUtility.caneGotFirst {
-                SpeakInGameController.doAction(type: .CaneGotFirstly)
+                let willAttackEnemies = gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
+                if willAttackEnemies.count > 0 {
+                    SpeakInGameController.doAction(type: .CaneGotFirstly)
+                }
             }
             break;
         case "wall":
@@ -886,6 +904,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         inputPanelForCannon = InputPanelForCannon()
         inputPanelForCannon.isHidden = true
         addChild(inputPanelForCannon)
+    }
+    
+    func setCanoon() {
+        if GameScene.stageLevel == 6 {
+            CannonController.add(type: 0, pos: [1, 10])
+            CannonController.add(type: 0, pos: [3, 9])
+            CannonController.add(type: 0, pos: [5, 10])
+            CannonController.add(type: 0, pos: [7, 9])
+        } else if GameScene.stageLevel == 7 {
+            CannonController.add(type: 0, pos: [1, 10])
+            CannonController.add(type: 0, pos: [3, 9])
+            CannonController.add(type: 0, pos: [5, 10])
+            CannonController.add(type: 0, pos: [7, 9])
+            signalInvisible = true
+        }
     }
     
     
@@ -958,11 +991,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /*== Set Life ==*/
     func setLife(numOflife: Int) {
-        for i in 0..<maxLife {
+        for i in 0..<numOflife+1 {
             if let node = childNode(withName: "life") {
                 node.removeFromParent()
             }
-            if i == maxLife-1 {
+            if i == numOflife {
                 for i in 0..<numOflife {
                     let life = SKSpriteNode(imageNamed: "heart")
                     life.size = CGSize(width: 50, height: 50)
@@ -991,6 +1024,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.addChild(label)
     }
     
+    func showPunchIntervalLabel(active: Bool) {
+        for enemy in gridNode.enemyArray {
+            enemy.punchIntervalLabel.isHidden = !active
+        }
+    }
+    
+    // Pointing icon
     func pointingAtkBtn() {
         let pos = CGPoint(x: buttonAttack.position.x + 50, y: buttonAttack.position.y + 50)
         pointing(pos: pos)
@@ -1006,15 +1046,66 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pointing(pos: pos)
     }
     
+    func pointingEqRob() {
+        let pos = CGPoint(x: eqRob.position.x + 50, y: eqRob.position.y + 50)
+        pointing(pos: pos)
+    }
+    
+    func pointingGridAt(x: Int, y: Int) {
+        let gridPos = CGPoint(x: gridNode.position.x+CGFloat(self.gridNode.cellWidth/2)+CGFloat(self.gridNode.cellWidth*Double(x)), y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*Double(y)))
+        let pos = CGPoint(x: gridPos.x + 70, y: gridPos.y + 80)
+        pointing(pos: pos)
+    }
+    
+    func pointingInputButton(name: String) {
+        if name == "1" {
+            let pos = CGPoint(x: 300, y: 720)
+            pointing(pos: pos)
+        } else if name == "2" {
+            let pos = CGPoint(x: 390, y: 720)
+            pointing(pos: pos)
+        } else if name == "3" {
+            let pos = CGPoint(x: 480, y: 720)
+            pointing(pos: pos)
+        } else if name == "4" {
+            let pos = CGPoint(x: 570, y: 720)
+            pointing(pos: pos)
+        } else if name == "x" {
+            let pos = CGPoint(x: 390, y: 550)
+            pointing(pos: pos)
+        } else if name == "+" {
+            let pos = CGPoint(x: 290, y: 550)
+            pointing(pos: pos)
+        } else if name == "OK" {
+            let pos = CGPoint(x: 700, y: 600)
+            pointing(pos: pos)
+        }
+    }
+    
     /* Set pointing icon */
     private func pointing(pos: CGPoint) {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.name = "pointing"
         icon.size = CGSize(width: 50, height: 50)
         icon.position = pos
-        icon.zPosition = 7
+        icon.zPosition = 12
         let shakePoint = SKAction(named: "shakePoint")
         let repeatAction = SKAction.repeatForever(shakePoint!)
+        icon.run(repeatAction)
+        addChild(icon)
+    }
+    
+    func movingPointing() {
+        let icon = SKSpriteNode(imageNamed: "pointing")
+        icon.name = "pointing"
+        icon.size = CGSize(width: 50, height: 50)
+        icon.position = hero.position
+        icon.zPosition = 7
+        let moveHorizontal = SKAction.moveBy(x: CGFloat(-gridNode.cellWidth*2+10), y: 0, duration: 1.0)
+        let moveVertical = SKAction.moveBy(x: 0, y: CGFloat(gridNode.cellHeight*1), duration: 1.0)
+        let resetPos = SKAction.run({ icon.position = self.hero.position })
+        let seq = SKAction.sequence([moveHorizontal, moveVertical, resetPos])
+        let repeatAction = SKAction.repeatForever(seq)
         icon.run(repeatAction)
         addChild(icon)
     }
@@ -1024,124 +1115,5 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             icon.removeFromParent()
         }
     }
-    
-    /* Auto Set item */
-    func autoSetItems() {
-        /* Determine position to set */
-        let randPos = Int(arc4random_uniform(UInt32(itemSpot.count)))
-        let position = itemSpot[randPos]
-        itemSpot.remove(at: randPos)
-        
-        /* Determine item to set */
-        let rand = arc4random_uniform(100)
-        if rand < 3 {
-            let boots = Boots()
-            boots.spotPos = position
-            self.gridNode.addObjectAtGrid(object: boots, x: position[0], y: position[1])
-        } else if rand < 10 {
-            let timeBomb = TimeBomb()
-            timeBomb.spotPos = position
-            self.gridNode.addObjectAtGrid(object: timeBomb, x: position[0], y: position[1])
-        } else if rand < 15 {
-            let heart = Heart()
-            heart.spotPos = position
-            self.gridNode.addObjectAtGrid(object: heart, x: position[0], y: position[1])
-        } else if rand < 22 {
-            let multiAttack = MultiAttack()
-            multiAttack.spotPos = position
-            self.gridNode.addObjectAtGrid(object: multiAttack, x: position[0], y: position[1])
-        } else if rand < 32 {
-            let wall = Wall()
-            wall.spotPos = position
-            self.gridNode.addObjectAtGrid(object: wall, x: position[0], y: position[1])
-        } else if rand < 37 {
-            let battleShip = BattleShip()
-            battleShip.spotPos = position
-            self.gridNode.addObjectAtGrid(object: battleShip, x: position[0], y: position[1])
-        } else if rand < 55 {
-            let magicSword = MagicSword()
-            magicSword.spotPos = position
-            self.gridNode.addObjectAtGrid(object: magicSword, x: position[0], y: position[1])
-        } else if rand < 73 {
-            let catapult = Catapult()
-            catapult.spotPos = position
-            self.gridNode.addObjectAtGrid(object: catapult, x: position[0], y: position[1])
-        } else if rand < 78 {
-            let resetCatapult = ResetCatapult()
-            resetCatapult.spotPos = position
-            self.gridNode.addObjectAtGrid(object: resetCatapult, x: position[0], y: position[1])
-        } else if rand < 88 {
-            let cane = Cane()
-            cane.spotPos = position
-            self.gridNode.addObjectAtGrid(object: cane, x: position[0], y: position[1])
-        } else if rand < 93 {
-            let teleport = Teleport()
-            teleport.spotPos = position
-            self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
-        } else if rand < 100 {
-            let spear = Spear()
-            spear.spotPos = position
-            self.gridNode.addObjectAtGrid(object: spear, x: position[0], y: position[1])
-        }
-    }
-    
-    func autoSetInitialItems(posArray: [[Int]]) {
-        
-        for position in posArray {
-            itemSpot = itemSpot.filter({ $0 != position })
-            /* Determine item to set */
-            let rand = arc4random_uniform(100)
-            if rand < 3 {
-                let boots = Boots()
-                boots.spotPos = position
-                self.gridNode.addObjectAtGrid(object: boots, x: position[0], y: position[1])
-            } else if rand < 10 {
-                let timeBomb = TimeBomb()
-                timeBomb.spotPos = position
-                self.gridNode.addObjectAtGrid(object: timeBomb, x: position[0], y: position[1])
-            } else if rand < 15 {
-                let heart = Heart()
-                heart.spotPos = position
-                self.gridNode.addObjectAtGrid(object: heart, x: position[0], y: position[1])
-            } else if rand < 22 {
-                let multiAttack = MultiAttack()
-                multiAttack.spotPos = position
-                self.gridNode.addObjectAtGrid(object: multiAttack, x: position[0], y: position[1])
-            } else if rand < 32 {
-                let wall = Wall()
-                wall.spotPos = position
-                self.gridNode.addObjectAtGrid(object: wall, x: position[0], y: position[1])
-            } else if rand < 37 {
-                let battleShip = BattleShip()
-                battleShip.spotPos = position
-                self.gridNode.addObjectAtGrid(object: battleShip, x: position[0], y: position[1])
-            } else if rand < 55 {
-                let magicSword = MagicSword()
-                magicSword.spotPos = position
-                self.gridNode.addObjectAtGrid(object: magicSword, x: position[0], y: position[1])
-            } else if rand < 73 {
-                let catapult = Catapult()
-                catapult.spotPos = position
-                self.gridNode.addObjectAtGrid(object: catapult, x: position[0], y: position[1])
-            } else if rand < 78 {
-                let resetCatapult = ResetCatapult()
-                resetCatapult.spotPos = position
-                self.gridNode.addObjectAtGrid(object: resetCatapult, x: position[0], y: position[1])
-            } else if rand < 88 {
-                let cane = Cane()
-                cane.spotPos = position
-                self.gridNode.addObjectAtGrid(object: cane, x: position[0], y: position[1])
-            } else if rand < 93 {
-                let teleport = Teleport()
-                teleport.spotPos = position
-                self.gridNode.addObjectAtGrid(object: teleport, x: position[0], y: position[1])
-            } else if rand < 100 {
-                let spear = Spear()
-                spear.spotPos = position
-                self.gridNode.addObjectAtGrid(object: spear, x: position[0], y: position[1])
-            }
-        }
-    }
-    
 }
 

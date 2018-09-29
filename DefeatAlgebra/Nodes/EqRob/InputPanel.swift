@@ -65,22 +65,22 @@ class InputPanel: SKSpriteNode {
     var tempSpot = 0
     
     /* Set buttons */
-    var buttonX: SKSpriteNode!
-    var button0: SKSpriteNode!
-    var button1: SKSpriteNode!
-    var button2: SKSpriteNode!
-    var button3: SKSpriteNode!
-    var button4: SKSpriteNode!
-    var button5: SKSpriteNode!
-    var button6: SKSpriteNode!
-    var button7: SKSpriteNode!
-    var button8: SKSpriteNode!
-    var button9: SKSpriteNode!
-    var buttonPlus: SKSpriteNode!
-    var buttonMinus: SKSpriteNode!
+    public var buttonX: SKSpriteNode!
+    public var button0: SKSpriteNode!
+    public var button1: SKSpriteNode!
+    public var button2: SKSpriteNode!
+    public var button3: SKSpriteNode!
+    public var button4: SKSpriteNode!
+    public var button5: SKSpriteNode!
+    public var button6: SKSpriteNode!
+    public var button7: SKSpriteNode!
+    public var button8: SKSpriteNode!
+    public var button9: SKSpriteNode!
+    public var buttonPlus: SKSpriteNode!
+    public var buttonMinus: SKSpriteNode!
     
-    var buttonClear: SKSpriteNode!
-    var buttonOK: SKSpriteNode!
+    public var buttonClear: SKSpriteNode!
+    public var buttonOK: SKSpriteNode!
     
     var coverXBtn = SKShapeNode()
     var coverOKBtn = SKShapeNode()
@@ -130,6 +130,10 @@ class InputPanel: SKSpriteNode {
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
+        
+        if GameScene.stageLevel == 4, let _ = gameScene as? ScenarioScene {
+            guard EqRobTutorialController.userTouch(on: nodeAtPoint.name) else { return }
+        }
         
         /* Touch button x */
         if nodeAtPoint.name == "buttonX" {
@@ -450,7 +454,7 @@ class InputPanel: SKSpriteNode {
             VECategory.getCategory(ve: variableExpression) { cate in
                 gameScene.eqRob.veCategory = cate
                 self.confirmedVE = self.variableExpression
-                
+
                 /* Reset stuffs */
                 self.variableExpression = ""
                 self.putXFlag = false
@@ -465,8 +469,13 @@ class InputPanel: SKSpriteNode {
                 self.coverOperant()
                 self.coverOK()
                 
-                EqRobController.execute(1, enemy: nil)
-                self.isHidden = true
+                if GameScene.stageLevel == 4, let _ = gameScene as? ScenarioScene {
+                    self.isHidden = true
+                } else {
+                    EqRobController.execute(1, enemy: nil)
+                    self.isHidden = true
+                }
+                
             }
         }
         

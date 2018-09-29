@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum CharacterSpeakContentType {
-    case None, PlaneExplain, LogDefenceFirstly, BootsGotFirstly, TimeBombGotFirstly, TimeBombGotFirstly2, HeartGotFirstly, WallGotFirstly, CaneGotFirstly
+    case None, PlaneExplain, PunchIntervalExplain, LogDefenceFirstly, BootsGotFirstly, TimeBombGotFirstly, TimeBombGotFirstly2, HeartGotFirstly, WallGotFirstly, CaneGotFirstly
 }
 
 struct SpeakInGameController {
@@ -47,17 +47,25 @@ struct SpeakInGameController {
                 return
             }
             break;
+        case 1:
+            if gameScene.gameState == .PlayerTurn && gameScene.countTurn == 0 {
+                guard !DAUserDefaultUtility.punchInteravalExplainFirst else { return }
+                guard lastAction != .PunchIntervalExplain else { return }
+                doAction(type: .PunchIntervalExplain)
+                return
+            }
+            break;
         default:
             break;
         }
     }
     
-    
-    
     static func nextLine() {
         if currentLineIndex < currentContent.count {
             let action = currentContent[currentLineIndex]
             if action[0] == "pause" {
+                executeAction()
+                return
             } else {
                 ScenarioController.characterSpeak(chara: action[0], line: action[1])
             }
@@ -69,6 +77,14 @@ struct SpeakInGameController {
                 gameScene.playerTurnState = .MoveState
             }
             currentLineIndex += 1
+        } else {
+            gameScene.gameState = .PlayerTurn
+            gameScene.playerTurnState = .DisplayPhase
+            gameScene.isCharactersTurn = false
+            gameScene.gridNode.isTutorial = false
+            CharacterController.retreatDoctor()
+            CharacterController.retreatMadDoctor()
+            CharacterController.retreatMainHero()
         }
     }
     
@@ -99,6 +115,9 @@ struct SpeakInGameController {
         case .PlaneExplain:
             currentContent = SpeakInGameProperty.planeExplain
             break;
+        case .PunchIntervalExplain:
+            currentContent = SpeakInGameProperty.punchIntervalExplain
+            break;
         case .LogDefenceFirstly:
             DAUserDefaultUtility.doneFirstly(name: "logDefenceFirst")
             currentContent = SpeakInGameProperty.logDefenceFirstly
@@ -108,7 +127,6 @@ struct SpeakInGameController {
             currentContent = SpeakInGameProperty.bootsGotFirstly
             break;
         case .TimeBombGotFirstly:
-            DAUserDefaultUtility.doneFirstly(name: "timeBombGotFirst")
             currentContent = SpeakInGameProperty.timeBombGotFirstly
             break;
         case .TimeBombGotFirstly2:
@@ -123,7 +141,6 @@ struct SpeakInGameController {
             currentContent = SpeakInGameProperty.wallGotFirstly
             break;
         case .CaneGotFirstly:
-            DAUserDefaultUtility.doneFirstly(name: "caneGotFirst")
             currentContent = SpeakInGameProperty.caneGotFirstly
             break;
         default:
@@ -133,7 +150,6 @@ struct SpeakInGameController {
     
     static func doAction(type: CharacterSpeakContentType) {
         lastAction = type
-        userActionDisable(type: type)
         getContent(type: type)
         currentLineIndex = 0
         currentActionIndex = 0
@@ -145,14 +161,21 @@ struct SpeakInGameController {
         } else {
             characterComeNSpeakNOut()
         }
+        userActionDisable(type: type)
     }
     
     public static func userActionDisable(type: CharacterSpeakContentType) {
         switch type {
         case .PlaneExplain:
             gameScene.gridNode.isTutorial = true
-            wait(length: 5.0) {
+            wait(length: 4.0) {
                 gameScene.gridNode.isTutorial = false
+            }
+            break;
+        case .CaneGotFirstly:
+            gameScene.tutorialState = .Action
+            wait(length: 2.0) {
+                gameScene.tutorialState = .Converstaion
             }
             break;
         default:
@@ -185,11 +208,49 @@ struct SpeakInGameController {
                     nextLine()
                     return true
                 case 3:
+                    DAUserDefaultUtility.doneFirstly(name: "timeBombGotFirst")
                     gameScene.playerTurnState = .TurnEnd
                     currentActionIndex += 1
                     CharacterController.retreatDoctor()
                     waitingUserTouch = false
                     keyTurn = gameScene.countTurn + 1
+                    return false
+                default:
+                    return true
+                }
+            case .CaneGotFirstly:
+                switch currentActionIndex {
+                case 0:
+                    guard gameScene.gameState == .PlayerTurn, name == "buttonItem" else { return false }
+                    currentActionIndex += 1
+                    gameScene.removePointing()
+                    gameScene.pointingLastGotItem()
+                    nextLine()
+                    return true
+                case 1:
+                    guard gameScene.gameState == .PlayerTurn, name == "cane" else { return false }
+                    currentActionIndex += 1
+                    gameScene.removePointing()
+                    CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctorOnPos.x, y: CharacterController.doctorOnPos.y-300), duration: 1.0)
+                    nextLine()
+                    return true
+                case 2:
+                    guard gameScene.gameState == .PlayerTurn else { return false }
+                    if name == "button1" || name == "button2" || name == "button3" {
+                        DAUserDefaultUtility.doneFirstly(name: "caneGotFirst")
+                        currentActionIndex += 1
+                        nextLine()
+                        CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctorOnPos.x, y: CharacterController.doctorOnPos.y-300), duration: 1.0)
+                        return true
+                    } else {
+                        return false
+                    }
+                case 3:
+                    guard gameScene.gameState == .PlayerTurn, name == "vButton" else { return false }
+                    gameScene.playerTurnState = .TurnEnd
+                    CharacterController.retreatDoctor()
+                    lastAction = .None
+                    waitingUserTouch = false
                     return false
                 default:
                     return true
@@ -206,6 +267,23 @@ struct SpeakInGameController {
         switch lastAction {
         case .TimeBombGotFirstly:
             gameScene.pointingItmBtn()
+            break;
+        case .CaneGotFirstly:
+            CharacterController.retreatMainHero()
+            gameScene.pointingItmBtn()
+            break;
+        default:
+            break;
+        }
+    }
+    
+    private static func executeAction() {
+        switch lastAction {
+        case .PunchIntervalExplain:
+            gameScene.showPunchIntervalLabel(active: true)
+            currentLineIndex += 1
+            nextLine()
+            DAUserDefaultUtility.doneFirstly(name: "punchInteravalExplainFirst")
             break;
         default:
             break;

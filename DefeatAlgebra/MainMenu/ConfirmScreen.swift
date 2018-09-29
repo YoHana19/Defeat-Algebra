@@ -51,16 +51,7 @@ class ConfirmScreen: SKSpriteNode {
         if nodeAtPoint.name == "yes" {
             
             /* Reset game property */
-            let ud = UserDefaults.standard
-            /* Stage level */
-            ud.set(0, forKey: "stageLevel")
-            /* Hero */
-            ud.set([1], forKey: "moveLevel")
-            /* item */
-            let itemNameArray = [String]()
-            ud.set(itemNameArray, forKey: "itemNameArray")
-            /* life */
-            ud.set(3, forKey: "life")
+            DAUserDefaultUtility.resetData()
             
             /* Grab reference to the SpriteKit view */
             let skView = mainMenu.view as SKView?

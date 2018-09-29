@@ -76,11 +76,19 @@ class Enemy: SKSpriteNode {
     var isSelectedForEqRob = false
     
     var gridNode: Grid {
-        return self.parent as! Grid
+        if let grid = self.parent as? Grid {
+            return grid
+        } else {
+            return ItemDropController.gameScene.gridNode
+        }
     }
     
     var gameScene: GameScene {
-        return gridNode.parent as! GameScene
+        if let scene = gridNode.parent as? GameScene {
+            return scene
+        } else {
+            return ItemDropController.gameScene
+        }
     }
     
     init(variableExpressionSource: [String], forEdu: Bool) {
@@ -96,7 +104,7 @@ class Enemy: SKSpriteNode {
         initializePunchIntervalLabel()
         initailizeVariableExpressionLabel()
         
-        if GameScene.stageLevel < 2 {
+        if GameScene.stageLevel < 1 {
             punchIntervalLabel.isHidden = true
         }
         
@@ -112,10 +120,7 @@ class Enemy: SKSpriteNode {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         /* Set physics property */
-        physicsBody = SKPhysicsBody(rectangleOf: enemySize)
-        physicsBody?.categoryBitMask = 2
-        physicsBody?.collisionBitMask = 0
-        physicsBody?.contactTestBitMask = 1
+        setPhysics(isActive: true)
         
         /* Set variable expression */
         EnemyVEController.setVariableExpression(enemy: self, vESource: variableExpressionSource)
@@ -155,19 +160,14 @@ class Enemy: SKSpriteNode {
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         /* Set physics property */
-        physicsBody = SKPhysicsBody(rectangleOf: enemySize)
-        physicsBody?.categoryBitMask = 2
-        physicsBody?.collisionBitMask = 0
-        physicsBody?.contactTestBitMask = 1
+        setPhysics(isActive: true)
         
-        self.variableExpressionLabel.isHidden = true
-        self.punchIntervalLabel.isHidden = true
-        
-        /* Set enemy speed according to stage level */
         if GameScene.stageLevel < 1 {
             self.moveSpeed = 0.2
             self.punchSpeed = 0.0025
             self.singleTurnDuration = 1.0
+            self.variableExpressionLabel.isHidden = true
+            self.punchIntervalLabel.isHidden = true
         }
     }
     
@@ -248,11 +248,11 @@ class Enemy: SKSpriteNode {
         /* text */
         punchIntervalLabel.text = String(self.punchIntervalForCount)
         /* font size */
-        punchIntervalLabel.fontSize = 30
+        punchIntervalLabel.fontSize = 25
         /* zPosition */
         punchIntervalLabel.zPosition = 5
         /* position */
-        punchIntervalLabel.position = CGPoint(x:0, y: -40)
+        punchIntervalLabel.position = CGPoint(x:0, y: -25)
         /* Add to Scene */
         self.addChild(punchIntervalLabel)
     }
@@ -291,7 +291,6 @@ class Enemy: SKSpriteNode {
         if variableExpressionLabel.frame.width > cellWidth {
             let scaleFactor = cellWidth / variableExpressionLabel.frame.width
             variableExpressionLabel.fontSize *= scaleFactor
-            print(variableExpressionLabel.fontSize)
         }
     }
     
@@ -347,6 +346,23 @@ class Enemy: SKSpriteNode {
         punchIntervalLabel.fontColor = color
         variableExpressionLabel.fontColor = color
     }
+    
+    public func setPhysics(isActive: Bool) {
+        if isActive {
+            physicsBody = SKPhysicsBody(rectangleOf: self.size)
+            physicsBody?.categoryBitMask = 2
+            physicsBody?.collisionBitMask = 0
+            physicsBody?.contactTestBitMask = 1
+        } else {
+            physicsBody = nil
+        }
+    }
+    
+    public func getPos() -> CGPoint {
+        guard let grid = self.parent as? Grid  else { return self.position }
+        return CGPoint(x: CGFloat((Double(self.positionX)+0.5)*grid.cellWidth), y: CGFloat((Double(self.positionY)+0.5)*grid.cellHeight))
+    }
+    
     
     /*==================*/
     /*== Enemy Action ==*/

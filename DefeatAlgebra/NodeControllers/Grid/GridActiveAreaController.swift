@@ -444,13 +444,25 @@ class GridActiveAreaController {
         }
     }
     
-    /* Teleport */
-    /* Show active area for teleport */
-    public static func showTeleportSettingArea(grid: Grid) {
-        for gridX in 0..<grid.columns {
-            for gridY in 0..<grid.rows {
-                grid.squarePurpleArray[gridX][gridY].isHidden = false
+    public static func showActiveArea(at poses: [(Int, Int)], color: String, grid: Grid) {
+        switch color {
+        case "red":
+            for pos in poses {
+                grid.squareRedArray[pos.0][pos.1].isHidden = false
             }
+            break;
+        case "blue":
+            for pos in poses {
+                grid.squareBlueArray[pos.0][pos.1].isHidden = false
+            }
+            break;
+        case "purple":
+            for pos in poses {
+                grid.squarePurpleArray[pos.0][pos.1].isHidden = false
+            }
+            break;
+        default:
+            break;
         }
     }
 }

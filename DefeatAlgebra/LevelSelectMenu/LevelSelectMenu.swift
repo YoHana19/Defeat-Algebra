@@ -22,6 +22,8 @@ class LevelSelectMenu: SKScene {
     var button9: MSButtonNode!
     var buttonBack: MSButtonNode!
     
+    let ud = UserDefaults.standard
+    
     override func didMove(to view: SKView) {
         /* Setup your scene here */
         
@@ -35,6 +37,7 @@ class LevelSelectMenu: SKScene {
         button7 = self.childNode(withName: "button7") as! MSButtonNode
         button8 = self.childNode(withName: "button8") as! MSButtonNode
         button9 = self.childNode(withName: "button9") as! MSButtonNode
+        button9.isHidden = true
         buttonBack = self.childNode(withName: "buttonBack") as! MSButtonNode
         
         /* Start tutorial */
@@ -48,12 +51,16 @@ class LevelSelectMenu: SKScene {
              }
             
             scene.selectedLevel = 0
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 0
+            self?.ud.set(0, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
         button2.selectedHandler = { [weak self] in
@@ -66,12 +73,16 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 1
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 1
+            self?.ud.set(1, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
         button3.selectedHandler = { [weak self] in
@@ -84,12 +95,16 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 2
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 2
+            self?.ud.set(2, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
         button4.selectedHandler = { [weak self] in
@@ -102,12 +117,16 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 3
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 3
+            self?.ud.set(3, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
         button5.selectedHandler = { [weak self] in
@@ -120,12 +139,16 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 4
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 4
+            self?.ud.set(4, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
         button6.selectedHandler = { [weak self] in
@@ -138,12 +161,16 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 5
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 5
+            self?.ud.set(5, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
         button7.selectedHandler = { [weak self] in
@@ -156,15 +183,18 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 6
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 6
+            self?.ud.set(6, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
-        /*
         button8.selectedHandler = { [weak self] in
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView?
@@ -175,14 +205,19 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 7
+            self?.ud.set(4, forKey: "moveLevel")
+            GameScene.stageLevel = 7
+            self?.ud.set(7, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
+            
         }
         
+        /*
         button9.selectedHandler = { [weak self] in
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView?

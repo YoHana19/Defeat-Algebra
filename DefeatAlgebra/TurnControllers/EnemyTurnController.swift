@@ -70,9 +70,6 @@ struct EnemyTurnController {
             
             /* Update enemy position */
             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
-            EnemyMoveController.moveDuplicatedEnemies(enemiesArray: gameScene.gridNode.enemyArray) { exsist in
-                gameScene.dupliExsist = exsist
-            }
             
             var logDefenceOn = false
             
@@ -80,7 +77,12 @@ struct EnemyTurnController {
             for enemy in gameScene.gridNode.enemyArray {
                 if enemy.positionY == 0 {
                     if logDefence(enemy: enemy) {
-                       logDefenceOn = true
+                        enemy.setPhysics(isActive: false)
+                        let wait = SKAction.wait(forDuration: 6.0)
+                        enemy.run(wait, completion: {
+                            enemy.setPhysics(isActive: true)
+                        })
+                        logDefenceOn = true
                     } else {
                         enemy.reachCastleFlag = true
                         enemy.punchIntervalForCount = 0
@@ -88,7 +90,15 @@ struct EnemyTurnController {
                 }
             }
             
-            if logDefenceOn {
+            if logDefenceOn && CannonController.willFireCannon.count > 0 {
+                CannonController.fire() {}
+                let wait = SKAction.wait(forDuration: 6.0)
+                gameScene.run(wait, completion: {
+                    gameScene.gameState = .AddEnemy
+                    gameScene.playerTurnState = .DisplayPhase
+                    done = false
+                })
+            } else if logDefenceOn {
                 let wait = SKAction.wait(forDuration: 6.0)
                 gameScene.run(wait, completion: {
                     gameScene.gameState = .AddEnemy

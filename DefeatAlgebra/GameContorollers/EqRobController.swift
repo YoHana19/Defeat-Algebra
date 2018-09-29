@@ -16,16 +16,18 @@ struct EqRobController {
     private static var isPerfect = false
     public static var selectedEnemies = [Enemy]()
     public static var sameVeEnemies = [Enemy]()
+    private static var enemiesToDestroy = [Enemy]()
     private static var selectedEnemyIndex: Int = 0
     private static var attackingEnemyIndex: Int = 0
     private static var instructedEnemy: Enemy?
-    private static var doctorOffPos = CGPoint(x: -200, y: 170)
-    private static var doctorOnPos: [CGPoint] = [
+    
+    public static var doctorOffPos = CGPoint(x: -200, y: 170)
+    public static var doctorOnPos: [CGPoint] = [
         CGPoint(x: 150, y: 170),
         CGPoint(x: 90, y: 100),
         CGPoint(x: 150, y: -370)
     ]
-    private static var doctorScale: [CGFloat] = [
+    public static var doctorScale: [CGFloat] = [
         0.85,
         0.6,
         0.75
@@ -115,6 +117,7 @@ struct EqRobController {
     }
     
     private static func showSelectionPanelWithDoctor() {
+        CannonController.changeZpos(zPos: 3)
         hideInputPanel()
         EqRobTouchController.state = .WillAttack
         showSelectionPanel()
@@ -173,14 +176,17 @@ struct EqRobController {
         if gameScene.eqRob.veCategory == target.vECategory {
             if attackingEnemyIndex < selectedEnemies.count-1 {
                 gameScene.eqRob.kill(target) {
+                    enemiesToDestroy.append(target)
                     gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackingEnemyIndex += 1
                     eqRobAttackNext(selectedEnemies[attackingEnemyIndex])
                 }
             } else {
                 gameScene.eqRob.kill(target) {
+                    enemiesToDestroy.append(target)
                     gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackDone()
+                    destroyEnemiesAtOnce()
                     gameScene.eqRob.go(toPos: eqRobOriginPos) {
                         let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
                         gameScene.eqRob.run(rotate)
@@ -188,6 +194,7 @@ struct EqRobController {
                 }
             }
         } else {
+            destroyEnemiesAtOnce()
             gameScene.eqRob.killed(target) {
                 eqRobDead(enemy: target)
             }
@@ -199,14 +206,17 @@ struct EqRobController {
         if gameScene.eqRob.veCategory == target.vECategory {
             if attackingEnemyIndex < selectedEnemies.count-1 {
                 gameScene.eqRob.kill(target) {
+                    enemiesToDestroy.append(target)
                     gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackingEnemyIndex += 1
                     eqRobAttackNext(selectedEnemies[attackingEnemyIndex])
                 }
             } else {
                 gameScene.eqRob.kill(target) {
+                    enemiesToDestroy.append(target)
                     gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackDone()
+                    destroyEnemiesAtOnce()
                     gameScene.eqRob.go(toPos: eqRobOriginPos) {
                         let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
                         gameScene.eqRob.run(rotate)
@@ -214,6 +224,7 @@ struct EqRobController {
                 }
             }
         } else {
+            destroyEnemiesAtOnce()
             gameScene.eqRob.killed(target) {
                 eqRobDead(enemy: target)
             }
@@ -248,7 +259,7 @@ struct EqRobController {
             gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
             CharacterController.doctor.changeBalloonTexture(index: 1)
             CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-                print(EqRobLines.curIndex)
+                //print(EqRobLines.curIndex)
                 doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
                 EqRobTouchController.state = .DeadInstruction
             }
@@ -274,6 +285,19 @@ struct EqRobController {
                 back(3)
             } else {
                 pointingMissedEnemies()
+            }
+        })
+    }
+    
+    private static func destroyEnemiesAtOnce(delay: TimeInterval = 1.0) {
+        let wait = SKAction.wait(forDuration: delay)
+        gameScene.run(wait, completion: {
+            for enemy in enemiesToDestroy {
+                EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene) {
+                    if let i = enemiesToDestroy.index(of: enemy) {
+                        enemiesToDestroy.remove(at: i)
+                    }
+                }
             }
         })
     }
@@ -360,6 +384,7 @@ struct EqRobController {
     }
     
     private static func allDone() {
+        CannonController.changeZpos(zPos: 5)
         selectedEnemyIndex = 0
         attackingEnemyIndex = 0
         selectedEnemies = [Enemy]()
@@ -432,7 +457,7 @@ struct EqRobController {
         gameScene.inputPanel.isHidden = true
     }
     
-    private static func showSelectionPanel() {
+    public static func showSelectionPanel() {
         gameScene.selectionPanel.isHidden = false
         gameScene.selectionPanel.setScale(0.55)
         gameScene.selectionPanel.position = CGPoint(x: 390, y: 294)
@@ -492,9 +517,9 @@ struct EqRobLines {
     static func getLines(state: EqRobLinesState, value: String?) -> String {
         switch state {
         case .WillInput:
-            return "エクロボに文字式を入力するのじゃ！"
+            return "エクロボに暗号を入力するのじゃ！"
         case .WillSelectEnemies:
-            return value! + "と同じ文字式を持つ敵を選ぶのじゃ！"
+            return value! + "と同じ暗号を持つ敵を選ぶのじゃ！"
         case .SelectingEnemies:
             return subLineRandom(lines: subLinesForSelecting)
         case .WarnSelection:
@@ -526,8 +551,8 @@ struct EqRobLines {
     static let subLinesForSelecting: [String] = [
         "エクロボをタッチすれば、選択した敵たちに向かって発進するぞ",
         "やり直したい時は、下のやり直しボタンを押すのじゃ",
-        "xの数に関係なく、計算したら同じになる文字式を選ぶのじゃ",
-        "見た目に騙されるでないぞ。計算して同じならば、同じ文字式なのじゃ"
+        "xの数に関係なく、同じになる暗号を選ぶのじゃ",
+        "見た目に騙されるでないぞ。xの値が違っても同じ大きさになるものは、同じ暗号なのじゃ"
     ]
     
     static var curIndex = 0
@@ -545,7 +570,7 @@ struct EqRobLines {
         switch curIndex {
         case 0:
             curIndex += 1
-            return value + "が本当に違う文字式なのか確かめるぞ"
+            return value + "が違う暗号なのか確かめるぞ"
         case 1:
             curIndex += 1
             return "例えば" + value
@@ -554,7 +579,7 @@ struct EqRobLines {
             return "他にも" + value
         case 3:
             curIndex += 1
-            return "このように、同じxの値で、計算結果が違う文字式は、異なる文字式なのじゃ"
+            return "このようにxの値が色々変わった時、異なる値になる暗号は違うものじゃ"
         case 4:
             curIndex = 0
             return "次から、間違えないように気をつけるんじゃぞ"
@@ -585,7 +610,7 @@ struct EqRobLines {
             return value + "が見逃してしまった敵じゃ"
         case 1:
             curIndex += 1
-            return value + "が本当に同じ文字式なのか確かめるぞ"
+            return value + "が同じ暗号なのか確かめるぞ"
         case 2:
             curIndex += 1
             return "例えば" + value
@@ -594,7 +619,7 @@ struct EqRobLines {
             return "他にも" + value
         case 4:
             curIndex += 1
-            return "このように、同じxの値で、計算結果が同じ文字式は、同等の文字式なのじゃ"
+            return "このようにxの値が色々変わっても、同じ値になる暗号は同じものじゃ"
         case 5:
             curIndex = 0
             return "次は、パーフェクトを目指すのじゃ！"

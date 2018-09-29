@@ -54,6 +54,8 @@ class InputVariable: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
+        guard SpeakInGameController.userTouch(on: nodeAtPoint.name) else { return }
+        
         /* Touch button 1 */
         if nodeAtPoint.name == "button1" {
             buttonTapped(value: 1)
@@ -80,7 +82,7 @@ class InputVariable: SKSpriteNode {
         gameScene.itemType = .None
         
         /* Calculate each enemy's variable expression */
-        let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
+        let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false && $0.aliveFlag == true }
         if willAttackEnemies.count > 0 {
             gameScene.xValue =  value
             gameScene.valueOfX.fontColor = UIColor.yellow
@@ -91,11 +93,12 @@ class InputVariable: SKSpriteNode {
             if let maxDistanceEnemy = willAttackEnemies.max(by: {$1.distance(to: gameScene.hero) > $0.distance(to: gameScene.hero)}) {
                 let wait = SKAction.wait(forDuration: SignalController.signalSentDurationFromHero(target: maxDistanceEnemy, heroPos: gameScene.hero.absolutePos(), xValue: gameScene.xValue)+0.2)
                 gameScene.run(wait, completion: {
+                    guard SpeakInGameController.userTouch(on: "vButton") else { return }
                     gameScene.playerTurnState = .MoveState
                 })
             }
         } else {
-            gameScene.valueOfX.text = ""
+            gameScene.valueOfX.text = String(value)
             gameScene.playerTurnState = .MoveState
         }
     }

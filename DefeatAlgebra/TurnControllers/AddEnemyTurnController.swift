@@ -11,14 +11,22 @@ import SpriteKit
 
 struct AddEnemyTurnController {
     public static var gameScene: GameScene!
-    public static var done = false
+    public static var done: Bool = false {
+        willSet {
+            if !newValue && done {
+                EnemyMoveController.moveDuplicatedEnemies(enemiesArray: gameScene.gridNode.enemyArray) { exsist in
+                    gameScene.dupliExsist = exsist
+                }
+            }
+        }
+    }
     
     public static func add() {
-        /* Make sure to call till complete adding enemy */
-        if gameScene.compAddEnemyFlag == false {
-            /* Make sure to call addEnemy once */
-            if !done {
-                done = true
+        /* Make sure to call addEnemy once */
+        if !done {
+            done = true
+            /* Make sure to call till complete adding enemy */
+            if gameScene.compAddEnemyFlag == false {
                 gameScene.countTurnForAddEnemy += 1
                 if gameScene.countTurnForAddEnemy >= EnemyProperty.addEnemyManager[GameScene.stageLevel].count {
                     gameScene.compAddEnemyFlag = true
@@ -34,7 +42,9 @@ struct AddEnemyTurnController {
                     EnemyAddController.addInitialEnemyAtGrid(enemyPosArray: EnemyProperty.initialEnemyPosArray[GameScene.stageLevel], grid: gameScene.gridNode) {
                         /* Update enemy position */
                         EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
-                            
+                        if GameScene.stageLevel == 1 {
+                            gameScene.showPunchIntervalLabel(active: false)
+                        }
                         /* Move to next state */
                         gameScene.gameState = .SignalSending
                         done = false
@@ -51,9 +61,7 @@ struct AddEnemyTurnController {
                             /* Update enemy position */
                             EnemyMoveController.resetEnemyPositon(grid: gameScene.gridNode)
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
-                            EnemyMoveController.moveDuplicatedEnemies(enemiesArray: gameScene.gridNode.enemyArray) { exsist in
-                                gameScene.dupliExsist = exsist
-                            }
+                            
                             
                             /* Move to next state */
                             gameScene.gameState = .SignalSending
@@ -66,9 +74,6 @@ struct AddEnemyTurnController {
                             /* Update enemy position */
                             EnemyMoveController.resetEnemyPositon(grid: gameScene.gridNode)
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
-                            EnemyMoveController.moveDuplicatedEnemies(enemiesArray: gameScene.gridNode.enemyArray) { exsist in
-                                gameScene.dupliExsist = exsist
-                            }
                             
                             /* Move to next state */
                             gameScene.gameState = .SignalSending
@@ -80,11 +85,11 @@ struct AddEnemyTurnController {
                     gameScene.gameState = .SignalSending
                     done = false
                 }
+            } else {
+                /* Move to next state */
+                gameScene.gameState = .SignalSending
+                done = false
             }
-        } else {
-            /* Move to next state */
-            gameScene.gameState = .SignalSending
-            done = false
         }
     }
 }

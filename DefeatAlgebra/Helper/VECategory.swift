@@ -24,16 +24,17 @@ struct VECategory {
     static let ve8 = ["2×x-1", "3×x-1", "3×x-2", "4-1×x", "7-2×x", "8-2×x", "x×2-1", "x×3-1", "x×3-2", "4-x×1", "7-x×2", "8-x×2"]
     static let ve9 = ["2x-x", "3x-x", "3x-x-x", "4x-2x", "2x-x+2", "2x+2-x", "3x-x+2", "3x+2-x"]
     // level 5 eqRob
-    static let ve10 = ["2x", "3x", "x+1", "x+2", "2x+2", "3x+1"]
+    static let ve10 = ["2x", "3x", "x+1", "2x+1"]
+    static let ve11 = ["x+x", "2×x", "x×3", "x+x+x", "1×x+1", "2x+1-x", "x+x+1", "1+x×2"]
     // level 6
-    static let ve11 = ["x+1", "2x+1", "3x+1", "2x+2"]
+    static let ve12 = ["2x", "x+1", "2x+1", "3x+1", "2x+2", "3x-1", "2x-1"]
     // level 7 cannon
-    static let ve12 = ["x+1", "2x+1", "3x+1", "2x+2"]
+    static let ve13 = ["2x", "3x", "x+3", "2x+1", "3x+1", "2x+2", "3x-2", "2x-1"]
     // level 8 last
-    static let ve13 = ["x+1", "2x+1", "3x+1", "2x+2"]
+    static let ve14 = ["x", "x+1", "x+2", "x+3", "2x", "2x+1", "2x+2", "3x", "3x+1", "3x+2", "2x-1", "3x-1", "3x-2"]
     
-    static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8, ve9, ve10, ve11, ve12, ve13]
-    static let unSFrom = 10
+    static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8, ve9, ve10, ve11, ve12, ve13, ve14]
+    static let unSFrom = 11
     
     static func getCategory(ve: String, completion: @escaping (Int) -> Void) {
         switch ve {
@@ -43,15 +44,15 @@ struct VECategory {
             return completion(1)
         case "3x", "4x-x", "2x+x", "x+2x", "3x+0", "0+3x", "3×x", "x×3", "3x+1-1", "3x+2-2", "3x+3-3", "3x-1+1", "3x-2+2", "3x-3+3", "1+3x-1", "2+3x-2", "3+3x-3", "1-1+3x", "2-2+3x", "3-3+3x", "x+x+x", "2×x+x":
             return completion(2)
-        case "x+1", "1x+1", "1+x", "1+1x", "1+1×x", "1+x×1", "1×x+1", "x×1+1", "x+2-1", "x+3-2", "x+4-3", "x-1+2", "x-2+3", "x-3+4", "2+x-1", "3+x-2", "4+x-3", "2-1+x", "3-2+x", "4-3+x", "2x-x+1", "1+3x-2x":
+        case "x+1", "1x+1", "1+x", "1+1x", "1+1×x", "1+x×1", "1×x+1", "x×1+1", "x+2-1", "x+3-2", "x+4-3", "x-1+2", "x-2+3", "x-3+4", "2+x-1", "3+x-2", "4+x-3", "2-1+x", "3-2+x", "4-3+x", "2x-x+1", "1+3x-2x", "2x+1-x":
             return completion(3)
         case "x+2", "1x+2", "2+x", "2+1x", "2+1×x", "2+x×1", "1×x+2", "x×1+2", "x+3-1", "x+4-2", "x+5-3", "x-1+3", "x-2+4", "x-3+5", "3+x-1", "4+x-2", "5+x-3", "3-1+x", "4-2+x", "5-3+x", "2x-x+2", "2+3x-2x":
             return completion(4)
         case "x+3", "1x+3", "3+x", "3+1x", "3+1×x", "3+x×1", "1×x+3", "x×1+3", "x+4-1", "x+5-2", "x+6-3", "x-1+4", "x-2+5", "x-3+6", "4+x-1", "5+x-2", "6+x-3", "4-1+x", "5-2+x", "6-3+x", "2x-x+3", "3+3x-2x":
             return completion(5)
-        case "2x+1", "1+2x", "1+2×x", "1+x×2", "2×x+1", "x×2+1", "2x+2-1", "2x+3-2", "2x+4-3", "2x-1+2", "2x-2+3", "2x-3+4", "2+2x-1", "3+2x-2", "4+2x-3", "2-1+2x", "3-2+2x", "4-3+2x", "3x-x+1", "1+4x-2x", "x+x+1", "1+x+x", "x+1+x":
+        case "2x+1", "1+2x", "1+2×x", "1+x×2", "2×x+1", "x×2+1", "2x+2-1", "2x+3-2", "2x+4-3", "2x-1+2", "2x-2+3", "2x-3+4", "2+2x-1", "3+2x-2", "4+2x-3", "2-1+2x", "3-2+2x", "4-3+2x", "3x-x+1", "1+3x-x", "1+4x-2x", "x+x+1", "1+x+x", "x+1+x":
             return completion(6)
-        case "2x+2", "2+2x", "2+2×x", "2+x×2", "2×x+2", "x×2+2", "2x+3-1", "2x+4-2", "2x+5-3", "2x-1+3", "2x-2+4", "2x-3+5", "3+2x-1", "4+2x-2", "5+2x-3", "3-1+2x", "4-2+2x", "5-3+2x", "3x-x+2", "2+4x-2x", "x+x+2", "2+x+x", "x+2+x":
+        case "2x+2", "2+2x", "2+2×x", "2+x×2", "2×x+2", "x×2+2", "2x+3-1", "2x+4-2", "2x+5-3", "2x-1+3", "2x-2+4", "2x-3+5", "3+2x-1", "4+2x-2", "5+2x-3", "3-1+2x", "4-2+2x", "5-3+2x", "3x-x+2", "2+4x-2x", "x+x+2", "2+x+x", "x+2+x", "3x+2-x":
             return completion(7)
         case "2x+3", "3+2x", "3+2×x", "3+x×2", "2×x+3", "x×2+3", "2x+4-1", "2x+5-2", "2x+6-3", "2x-1+4", "2x-2+5", "2x-3+6", "4+2x-1", "5+2x-2", "6+2x-3", "4-1+2x", "5-2+2x", "6-3+2x", "3x-x+3", "3+4x-2x", "x+x+3":
             return completion(8)
@@ -196,7 +197,7 @@ struct VECategory {
     
     static func getUnsimplified(source: [String], completion: @escaping ([String]) -> Void) {
         let dispatchGroup = DispatchGroup()
-        var ves = [String]()
+        var ves =  source
         for ve in source {
             dispatchGroup.enter()
             getCategory(ve: ve) { cate in
@@ -208,4 +209,13 @@ struct VECategory {
             return completion(ves)
         })
     }
+    
+//    static func getUnsimplified(source: [String], completion: @escaping ([String]) -> Void) {
+//        let rand = Int(arc4random_uniform(UInt32(source.count)))
+//        getCategory(ve: source[rand]) { cate in
+//            var ves = unSimplifiedVEs(veCate: cate)
+//            ves.append(source[rand])
+//            return completion(ves)
+//        }
+//    }
 }

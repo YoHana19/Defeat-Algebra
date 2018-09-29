@@ -23,7 +23,8 @@ struct StageClearTurnController {
             }
         }
         gameScene.clearLabel.isHidden = false
-        if GameScene.stageLevel < 11 {
+        
+        if GameScene.stageLevel < 7 {
             gameScene.buttonNextLevel.state = .msButtonNodeStateActive
         } else {
             if gameScene.dispClearLabelDone == false {

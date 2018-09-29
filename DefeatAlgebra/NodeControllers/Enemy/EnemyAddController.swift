@@ -38,13 +38,6 @@ class EnemyAddController {
                     /* New enemy object */
                     let enemy = Enemy(variableExpressionSource: veSource, forEdu: false)
                     
-                    /* Set enemy speed according to stage level */
-                    if GameScene.stageLevel < 1 {
-                        enemy.moveSpeed = 0.2
-                        enemy.punchSpeed = 0.0025
-                        enemy.singleTurnDuration = 1.0
-                    }
-                    
                     /* set adding enemy movement */
                     setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1], grid: grid) {
                         dispatchGroup.leave()
@@ -65,6 +58,7 @@ class EnemyAddController {
         for array in manager {
             dispatchGroup1.enter()
             let dispatchGroup2 = DispatchGroup()
+            let rand = Int(arc4random_uniform(UInt32(VECategory.ves[array[1]].count)))
             for _ in 1...array[0] {
                 dispatchGroup2.enter()
                 let veGroup = array[1]
@@ -87,7 +81,7 @@ class EnemyAddController {
                         dispatchGroup2.leave()
                     }
                 } else {
-                    VECategory.getUnsimplified(source: VECategory.ves[veGroup]) { veSource in
+                    VECategory.getUnsimplified(source: [VECategory.ves[veGroup][rand]]) { veSource in
                         /* New enemy object */
                         let enemy = Enemy(variableExpressionSource: veSource, forEdu: false)
                         

@@ -13,7 +13,7 @@ struct SignalSendingTurnController {
     public static var gameScene: GameScene!
     public static var done = false
     
-    static func sendSignal() {
+    static func sendSignal(in times: Int? = nil) {
         if !done {
             done = true
             gameScene.gridNode.numOfTurnEndEnemy = 0
@@ -21,7 +21,7 @@ struct SignalSendingTurnController {
             /* Calculate each enemy's variable expression */
             let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
             if willAttackEnemies.count > 0 {
-                gameScene.xValue =  Int(arc4random_uniform(UInt32(3)))+1
+                gameScene.xValue =  times ?? Int(arc4random_uniform(UInt32(3)))+1
                 gameScene.valueOfX.fontColor = UIColor.red
                 for enemy in willAttackEnemies {
                     enemy.calculatePunchLength(value: gameScene.xValue)
@@ -35,26 +35,28 @@ struct SignalSendingTurnController {
                     })
                 }
             } else {
-                gameScene.valueOfX.text = ""
+                gameScene.valueOfX.text = "0"
+                gameScene.valueOfX.fontColor = UIColor.red
                 gameScene.gameState = .AddItem
                 done = false
             }
         }
     }
     
-    static func invisibleSignal() {
+    static func invisibleSignal(in times: Int? = nil) {
         if !done {
             done = true
             gameScene.gridNode.numOfTurnEndEnemy = 0
             let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
             if willAttackEnemies.count > 0 {
-                gameScene.xValue =  Int(arc4random_uniform(UInt32(3)))+1
+                gameScene.xValue = times ?? Int(arc4random_uniform(UInt32(3)))+1
                 for enemy in willAttackEnemies {
                     enemy.calculatePunchLength(value: gameScene.xValue)
                     enemy.forcusForAttack(color: UIColor.red)
                 }
             }
-            gameScene.valueOfX.text = ""
+            gameScene.valueOfX.text = "？"
+            gameScene.valueOfX.fontColor = UIColor.red
             gameScene.gameState = .AddItem
             done = false
         }

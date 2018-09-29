@@ -55,20 +55,27 @@ class EqRobForInstruction: SKSpriteNode {
     }
     
     func showCalculation(value: Int) {
+        var xPos = [Int]()
+        var charaIndex = -1
         var characters = veString.map { String($0) }
         let dispatchGroup = DispatchGroup()
         for (i, c) in characters.enumerated() {
+            charaIndex += 1
             dispatchGroup.enter()
             if c == "x" {
                 if i > 0 {
                     if characters[i-1] == "+" || characters[i-1] == "-" || characters[i-1] == "×" {
+                        xPos.append(charaIndex)
                         characters[i] = String(value)
                         dispatchGroup.leave()
                     } else {
+                        charaIndex += 1
+                        xPos.append(charaIndex)
                         characters[i] = "×" + String(value)
                         dispatchGroup.leave()
                     }
                 } else {
+                    xPos.append(charaIndex)
                     characters[i] = String(value)
                     dispatchGroup.leave()
                 }
@@ -81,6 +88,15 @@ class EqRobForInstruction: SKSpriteNode {
             characters.forEach { numForm += $0 }
             let result = self.calculateValue(value: value)
             self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
+            let attrText = NSMutableAttributedString(string: self.veLabel.text!)
+            let font = UIFont(name: "GillSans-Bold", size: 50) ?? UIFont.systemFont(ofSize: 50)
+            attrText.addAttributes([.foregroundColor: UIColor.white, .font: font], range: NSMakeRange(0, self.veLabel.text!.count))
+            for pos in xPos {
+                attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(self.veString.count+1+pos, 1))
+            }
+            if #available(iOS 11.0, *) {
+                self.veLabel.attributedText = attrText
+            }
         })
     }
     

@@ -12,6 +12,7 @@ import SpriteKit
 class SelectionPanel: SKSpriteNode {
     
     var veLabel: SKLabelNode!
+    var xLabel: SKLabelNode!
     var xValueLabel: SKLabelNode!
     var againButton: SKSpriteNode!
     let leftTop = CGPoint(x: 100, y: -180)
@@ -86,13 +87,23 @@ class SelectionPanel: SKSpriteNode {
         veLabel.fontColor = UIColor.white
         self.addChild(veLabel)
         
+        xLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        xLabel.fontSize = 60
+        xLabel.position = CGPoint(x: 35, y: -180)
+        xLabel.horizontalAlignmentMode = .left
+        xLabel.text = "x="
+        xLabel.zPosition = 3
+        xLabel.fontColor = UIColor.white
+        xLabel.isHidden = true
+        self.addChild(xLabel)
+        
         xValueLabel = SKLabelNode(fontNamed: "GillSans-Bold")
         xValueLabel.fontSize = 60
-        xValueLabel.position = CGPoint(x: 35, y: -180)
+        xValueLabel.position = CGPoint(x: 120, y: -180)
         xValueLabel.horizontalAlignmentMode = .left
-        xValueLabel.text = "x="
+        xValueLabel.text = ""
         xValueLabel.zPosition = 3
-        xValueLabel.fontColor = UIColor.white
+        xValueLabel.fontColor = UIColor.red
         xValueLabel.isHidden = true
         self.addChild(xValueLabel)
     }
@@ -149,15 +160,17 @@ class SelectionPanel: SKSpriteNode {
         instructedEqRob.constantsArray = gameScene.eqRob.constantsArray
         addChild(instructedEnemy)
         addChild(instructedEqRob)
+        xLabel.isHidden = false
         xValueLabel.isHidden = false
     }
     
     func setXVlaue(value: String) {
-        xValueLabel.text = "x=" + value
+        xValueLabel.text = value
     }
     
     func resetInstruction() {
-        xValueLabel.text = "x="
+        xValueLabel.text = ""
+        xLabel.isHidden = true
         xValueLabel.isHidden = true
         instructedEnemy.removeFromParent()
         instructedEqRob.removeFromParent()

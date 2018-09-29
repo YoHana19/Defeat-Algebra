@@ -133,6 +133,10 @@ class InputPanelForCannon: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
+        if GameScene.stageLevel == 6 || GameScene.stageLevel == 7, let _ = gameScene as? ScenarioScene {
+            guard CannonTutorialController.userTouch(on: nodeAtPoint.name) else { return }
+        }
+        
         /* Touch button x */
         if nodeAtPoint.name == "buttonX" {
             
@@ -467,6 +471,9 @@ class InputPanelForCannon: SKSpriteNode {
             
             self.isHidden = true
             
+            if GameScene.stageLevel == 6 || GameScene.stageLevel == 7, let _ = gameScene as? ScenarioScene {
+                return
+            }
             CannonController.execute(1, cannon: nil)
         }
         

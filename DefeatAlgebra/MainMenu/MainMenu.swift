@@ -42,6 +42,11 @@ class MainMenu: SKScene {
         buttonContinue = self.childNode(withName: "buttonContinue") as! MSButtonNode
         buttonLevelSelect = self.childNode(withName: "LevelSelect") as! MSButtonNode
         
+        if !ud.bool(forKey: "initialScenarioFirst") {
+            buttonContinue.isHidden = true
+            buttonNewGame.position = CGPoint(x: buttonNewGame.position.x, y: buttonNewGame.position.y-100)
+        }
+        
         /* Sound */
         if MainMenu.soundOnFlag {
             sound.play()
@@ -67,37 +72,81 @@ class MainMenu: SKScene {
         
         /* New game */
         buttonNewGame.selectedHandler = { [weak self] in
-            self?.confirmScreen.isHidden = false
-            self?.confirmingNewGameFlag = true
-            
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("selectNewGame.wav", waitForCompletion: true)
-                self!.run(sound)
+            if !ud.bool(forKey: "initialScenarioFirst") {
+                /* Reset game property */
+                DAUserDefaultUtility.resetData()
+                /* Grab reference to the SpriteKit view */
+                let skView = self?.view as SKView?
+                
+                /* Load Game scene */
+                guard let scene = ScenarioScene(fileNamed: "ScenarioScene") as ScenarioScene? else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+                
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
+                    self?.run(sound)
+                }
+            } else {
+                self?.confirmScreen.isHidden = false
+                self?.confirmingNewGameFlag = true
+                
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("selectNewGame.wav", waitForCompletion: true)
+                    self!.run(sound)
+                }
             }
         }
         
         /* Continue */
         buttonContinue.selectedHandler = { [weak self] in
-            /* Grab reference to the SpriteKit view */
-            let skView = self?.view as SKView?
             
-            /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
-                return
+            GameScene.stageLevel = UserDefaults.standard.integer(forKey: "stageLevel")
+            
+            if GameScene.stageLevel == 0 || GameScene.stageLevel == 2 || GameScene.stageLevel == 4 || GameScene.stageLevel == 6 || GameScene.stageLevel == 7 {
+                
+                /* Grab reference to the SpriteKit view */
+                let skView = self?.view as SKView?
+                
+                /* Load Game scene */
+                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+            } else {
+                /* Grab reference to the SpriteKit view */
+                let skView = self?.view as SKView?
+                
+                /* Load Game scene */
+                guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
+                
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: false)
+                    scene.run(sound)
+                }
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
             }
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: false)
-                scene.run(sound)
-            }
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
         }
         
         /* Set setting screen */

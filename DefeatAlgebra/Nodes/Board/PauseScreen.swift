@@ -71,18 +71,27 @@ class PauseScreen: SKSpriteNode {
             /* Grab reference to the SpriteKit view */
             let skView = gameScene.view as SKView?
             
-            /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
-                return
-            }
-            
             ResetController.reset()
             
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
+            if let _ = self.parent as? ScenarioScene {
+                /* Load Game scene */
+                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
+                    return
+                }
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+            } else {
+                /* Load Game scene */
+                guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
+                    return
+                }
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+            }
         } else if nodeAtPoint.name == "pauseMainMenu" {
             /* EqRob */
             EqRobController.back(2)
@@ -92,6 +101,9 @@ class PauseScreen: SKSpriteNode {
             /* Sound */
             gameScene.main.stop()
             gameScene.stageClear.stop()
+            
+            gameScene.isCharactersTurn = false
+            gameScene.gridNode.isTutorial = false
             
             /* Grab reference to the SpriteKit view */
             let skView = gameScene.view as SKView?
@@ -114,6 +126,7 @@ class PauseScreen: SKSpriteNode {
             MainMenu.soundOnFlag = true
             gameScene.main.play()
             gameScene.stageClear.stop()
+            gameScene.main.numberOfLoops = -1
             let ud = UserDefaults.standard
             ud.set(true, forKey: "soundOn")
         } else if nodeAtPoint.name == "buttonSoundOn" {

@@ -73,6 +73,14 @@
 		203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A711F67BBD100DDCC03 /* MainMenu.swift */; };
 		203B2A7A1F67BBD200DDCC03 /* SettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A721F67BBD100DDCC03 /* SettingScreen.swift */; };
 		203B2A931F6917A400DDCC03 /* mainMenuHard.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */; };
+		203FB9222159F32300BD3A14 /* EqRobTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */; };
+		203FB9232159F32300BD3A14 /* EqRobTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */; };
+		20415188215CA75500595003 /* VeLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20415187215CA75500595003 /* VeLength.swift */; };
+		20415189215CA75500595003 /* VeLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20415187215CA75500595003 /* VeLength.swift */; };
+		2041518B215CBABD00595003 /* LengthArrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2041518A215CBABD00595003 /* LengthArrow.swift */; };
+		2041518C215CBABD00595003 /* LengthArrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2041518A215CBABD00595003 /* LengthArrow.swift */; };
+		2041518E215CBBF500595003 /* ShowLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2041518D215CBBF500595003 /* ShowLength.swift */; };
+		2041518F215CBBF500595003 /* ShowLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2041518D215CBBF500595003 /* ShowLength.swift */; };
 		204163A320C2653F00217F6A /* GridFlashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A220C2653F00217F6A /* GridFlashController.swift */; };
 		204163A420C2653F00217F6A /* GridFlashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A220C2653F00217F6A /* GridFlashController.swift */; };
 		204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
@@ -92,6 +100,8 @@
 		204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D8D1F074FE800F4DD11 /* Main.storyboard */; };
 		204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D901F074FE800F4DD11 /* Assets.xcassets */; };
 		204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */; };
+		204CD70F215B92DF006E8B1F /* CannonTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CD70E215B92DF006E8B1F /* CannonTutorialController.swift */; };
+		204CD710215B92DF006E8B1F /* CannonTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CD70E215B92DF006E8B1F /* CannonTutorialController.swift */; };
 		204CDDE820FEEA7C0061DCB7 /* zPosition in Resources */ = {isa = PBXBuildFile; fileRef = 204CDDE720FEEA7B0061DCB7 /* zPosition */; };
 		204CDDE920FEEA7C0061DCB7 /* zPosition in Resources */ = {isa = PBXBuildFile; fileRef = 204CDDE720FEEA7B0061DCB7 /* zPosition */; };
 		204CDDEB21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */; };
@@ -337,6 +347,10 @@
 		203B2A711F67BBD100DDCC03 /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		203B2A721F67BBD100DDCC03 /* SettingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingScreen.swift; sourceTree = "<group>"; };
 		203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainMenuHard.mp3; sourceTree = "<group>"; };
+		203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobTutorialController.swift; sourceTree = "<group>"; };
+		20415187215CA75500595003 /* VeLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VeLength.swift; sourceTree = "<group>"; };
+		2041518A215CBABD00595003 /* LengthArrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthArrow.swift; sourceTree = "<group>"; };
+		2041518D215CBBF500595003 /* ShowLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowLength.swift; sourceTree = "<group>"; };
 		204163A220C2653F00217F6A /* GridFlashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridFlashController.swift; sourceTree = "<group>"; };
 		204163A520C266AD00217F6A /* GridActiveAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridActiveAreaController.swift; sourceTree = "<group>"; };
 		204BFA03210334FC00A2AB7A /* Cannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cannon.swift; sourceTree = "<group>"; };
@@ -351,6 +365,7 @@
 		204C7D901F074FE800F4DD11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		204C7D931F074FE800F4DD11 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		204CD70E215B92DF006E8B1F /* CannonTutorialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonTutorialController.swift; sourceTree = "<group>"; };
 		204CDDE720FEEA7B0061DCB7 /* zPosition */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = zPosition; path = SupportingFIles/zPosition; sourceTree = "<group>"; };
 		204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobForInstruction.swift; sourceTree = "<group>"; };
 		204CE02820FB0C6C00D45FFE /* EqRob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRob.swift; sourceTree = "<group>"; };
@@ -486,6 +501,8 @@
 				20DACE9021298F310015D1BA /* TutorialProperty.swift */,
 				20F1A748212EE0720013FF9D /* SpeakInGameController.swift */,
 				20F1A74B212EE0F50013FF9D /* SpeakInGameProperty.swift */,
+				203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */,
+				204CD70E215B92DF006E8B1F /* CannonTutorialController.swift */,
 			);
 			path = ScenarioControllers;
 			sourceTree = "<group>";
@@ -792,6 +809,9 @@
 				201B8D19212FF3D700903468 /* Log.swift */,
 				20D0FEFE20B6C12300C547A5 /* Items */,
 				20D0FF0C20B6C12300C547A5 /* Characters */,
+				20415187215CA75500595003 /* VeLength.swift */,
+				2041518A215CBABD00595003 /* LengthArrow.swift */,
+				2041518D215CBBF500595003 /* ShowLength.swift */,
 			);
 			name = Nodes;
 			path = DefeatAlgebra/Nodes;
@@ -1329,17 +1349,22 @@
 				207A673C20D69DED0026A770 /* BalloonController.swift in Sources */,
 				2058CA8B20F88726005DF357 /* SKNode+Utility.swift in Sources */,
 				208C5D57202384FE0006ADE4 /* DAUtility.swift in Sources */,
+				204CD70F215B92DF006E8B1F /* CannonTutorialController.swift in Sources */,
 				20D0FF3320B6C12300C547A5 /* Heart.swift in Sources */,
+				20415188215CA75500595003 /* VeLength.swift in Sources */,
 				204CE03B20FB85A200D45FFE /* EqRobController.swift in Sources */,
 				205A0EDA207A0ECB006A44A6 /* User.swift in Sources */,
+				2041518E215CBBF500595003 /* ShowLength.swift in Sources */,
 				20D0FED820B6C0E300C547A5 /* GameScene.swift in Sources */,
 				2052888620FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
 				20D0FF1F20B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1B20B6C12300C547A5 /* Enemy.swift in Sources */,
+				2041518B215CBABD00595003 /* LengthArrow.swift in Sources */,
 				204CDDEB21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */,
 				20DACE8E21298F070015D1BA /* TutorialController.swift in Sources */,
 				20D0FF1520B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				204BFA132104802800A2AB7A /* EnemyTurnController.swift in Sources */,
+				203FB9222159F32300BD3A14 /* EqRobTutorialController.swift in Sources */,
 				204163A320C2653F00217F6A /* GridFlashController.swift in Sources */,
 				2016D7CB210AFE6200942460 /* Plane.swift in Sources */,
 				20DACE9121298F310015D1BA /* TutorialProperty.swift in Sources */,
@@ -1430,17 +1455,22 @@
 				20D0FF3820B6C12300C547A5 /* Wall.swift in Sources */,
 				207A673D20D69DED0026A770 /* BalloonController.swift in Sources */,
 				2058CA8C20F88726005DF357 /* SKNode+Utility.swift in Sources */,
+				204CD710215B92DF006E8B1F /* CannonTutorialController.swift in Sources */,
 				20D0FF3420B6C12300C547A5 /* Heart.swift in Sources */,
+				20415189215CA75500595003 /* VeLength.swift in Sources */,
 				204CE03C20FB85A200D45FFE /* EqRobController.swift in Sources */,
 				205A0EDB207A0ECB006A44A6 /* User.swift in Sources */,
+				2041518F215CBBF500595003 /* ShowLength.swift in Sources */,
 				20D0FED920B6C0E300C547A5 /* GameScene.swift in Sources */,
 				2052888720FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
 				20D0FF2020B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1C20B6C12300C547A5 /* Enemy.swift in Sources */,
+				2041518C215CBABD00595003 /* LengthArrow.swift in Sources */,
 				204CDDEC21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */,
 				20DACE8F21298F070015D1BA /* TutorialController.swift in Sources */,
 				20D0FF1620B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				204BFA142104802800A2AB7A /* EnemyTurnController.swift in Sources */,
+				203FB9232159F32300BD3A14 /* EqRobTutorialController.swift in Sources */,
 				204163A420C2653F00217F6A /* GridFlashController.swift in Sources */,
 				2016D7CC210AFE6200942460 /* Plane.swift in Sources */,
 				20DACE9221298F310015D1BA /* TutorialProperty.swift in Sources */,

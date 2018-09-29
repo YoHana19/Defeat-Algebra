@@ -259,6 +259,96 @@ class Grid: SKSpriteNode {
                     ScenarioController.nextLine()
                     break;
                 case .Action:
+                    if GameScene.stageLevel == 4 {
+                        let touch = touches.first!
+                        let location = touch.location(in: self)
+                        let nodeAtPoint = atPoint(location)
+                        
+                        if ScenarioController.currentActionIndex == 4 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 10 {
+                            if let enemy = nodeAtPoint as? Enemy {
+                                if enemy.positionX == 3 && enemy.positionY == 8 {
+                                    enemy.isSelectedForEqRob = true
+                                    EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
+                                    ScenarioController.controllActions()
+                                }
+                            }
+                        } else if ScenarioController.currentActionIndex == 13 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 15 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 17 {
+                            if let enemy = nodeAtPoint as? Enemy {
+                                if enemy.positionX == 5 && enemy.positionY == 8 {
+                                    enemy.isSelectedForEqRob = true
+                                    EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
+                                    ScenarioController.controllActions()
+                                }
+                            }
+                        } else if ScenarioController.currentActionIndex == 18 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 20 {
+                            if let enemy = nodeAtPoint as? Enemy {
+                                guard !enemy.isSelectedForEqRob else { return }
+                                enemy.isSelectedForEqRob = true
+                                EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
+                            }
+                        } else if ScenarioController.currentActionIndex == 23 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 25 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 26 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 27 {
+                            ScenarioController.controllActions()
+                        }
+                        
+                    } else if GameScene.stageLevel == 6 {
+                        
+                        let touch = touches.first!
+                        let location = touch.location(in: self)
+                        let nodeAtPoint = atPoint(location)
+                        
+                        if ScenarioController.currentActionIndex == 3 {
+                            if let cannon = nodeAtPoint as? Cannon {
+                                if cannon.spotPos == [1,10] {
+                                    CannonController.selectedCannon = cannon
+                                    CannonController.willFireCannon.append(cannon)
+                                    ScenarioController.controllActions()
+                                }
+                            }
+                        } else if ScenarioController.currentActionIndex == 4 {
+                            ScenarioController.controllActions()
+                        }
+                    } else if GameScene.stageLevel == 7 {
+                        
+                        let touch = touches.first!
+                        let location = touch.location(in: self)
+                        let nodeAtPoint = atPoint(location)
+                        
+                        if ScenarioController.currentActionIndex >= 4 && ScenarioController.currentActionIndex <= 16 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 19 {
+                            if let cannon = nodeAtPoint as? Cannon {
+                                if cannon.spotPos == [7,9] {
+                                    CannonController.selectedCannon = cannon
+                                    CannonController.willFireCannon.append(cannon)
+                                    ScenarioController.controllActions()
+                                }
+                            }
+                        } else if ScenarioController.currentActionIndex >= 26 && ScenarioController.currentActionIndex <= 31 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 32 {
+                            if let cannon = nodeAtPoint as? Cannon {
+                                if cannon.spotPos == [1,10] {
+                                    CannonController.selectedCannon = cannon
+                                    CannonController.willFireCannon.append(cannon)
+                                    ScenarioController.controllActions()
+                                }
+                            }
+                        }
+                    }
                     break;
                 }
                 return

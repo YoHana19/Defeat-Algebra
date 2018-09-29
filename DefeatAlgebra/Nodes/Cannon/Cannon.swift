@@ -19,6 +19,7 @@ class Cannon: Item {
     let backTexture = SKTexture(imageNamed: "cannonBack")
     var variableExpressionLabel = SKLabelNode(fontNamed: "GillSans-Bold")
     var isFront = true
+    var state: CannonState = .Ready
     
     var constantsArray = [Int]()
     var coefficientArray = [Int]()
@@ -37,6 +38,9 @@ class Cannon: Item {
         
         setName()
         setVariableExpressionLabel(type: type)
+        self.zPosition = 5
+        
+        self.physicsBody = nil
     }
     
     /* You are required to implement this for your subclass to work */
@@ -60,9 +64,9 @@ class Cannon: Item {
         variableExpressionLabel.zPosition = 5
         /* position */
         if type == 0 {
-            variableExpressionLabel.position = CGPoint(x:0, y: 30)
-        } else {
             variableExpressionLabel.position = CGPoint(x:0, y: -30)
+        } else {
+            variableExpressionLabel.position = CGPoint(x:0, y: 30)
         }
         /* Add to Scene */
         self.addChild(variableExpressionLabel)
@@ -85,6 +89,7 @@ class Cannon: Item {
         for coeffcient in coefficientArray {
             outPut += coeffcient*value
         }
+        print("x: \(value), value: \(outPut), ve: \(variableExpressionLabel.text)")
         return outPut
     }
     
@@ -102,6 +107,7 @@ extension Cannon {
             self.bombExplode(bomb: bomb) {
                 self.hitEnemy(xValue: value) {
                     self.resetInputVE()
+                    self.resetVEElementArray()
                     return completion()
                 }
             }
@@ -168,12 +174,10 @@ extension Cannon {
             } else {
                 let dispatchGroup = DispatchGroup()
                 let hitPos = [xPos, yPos-value]
-                print(hitPos)
                 /* Look for the enemy to destroy */
                 for enemy in gridNode.enemyArray {
                     dispatchGroup.enter()
                     if enemy.positionX == hitPos[0] && enemy.positionY == hitPos[1] {
-                        print("DEADEADEDEDADEADDLALDLADMMDPMD")
                         EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene) {
                             dispatchGroup.leave()
                         }

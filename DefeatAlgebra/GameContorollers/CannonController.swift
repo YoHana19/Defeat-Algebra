@@ -14,12 +14,12 @@ struct CannonController {
     public static var selectedCannon = Cannon(type: 0)
     public static var willFireCannon = [Cannon]()
     private static var doctorOffPos = CGPoint(x: -200, y: 170)
-    private static var doctorOnPos: [CGPoint] = [
+    public static var doctorOnPos: [CGPoint] = [
         CGPoint(x: 150, y: 170),
         CGPoint(x: 90, y: 100),
         CGPoint(x: 150, y: -370)
     ]
-    private static var doctorScale: [CGFloat] = [
+    public static var doctorScale: [CGFloat] = [
         0.85,
         0.6,
         0.75
@@ -71,7 +71,7 @@ struct CannonController {
     
     private static func doneInput() {
         hideInputPanel()
-        CannonTouchController.state = .WillFire
+        CannonTouchController.state = .Ready
         CharacterController.doctor.setScale(1)
         CharacterController.doctor.balloon.isHidden = true
         CharacterController.doctor.move(from: nil, to: doctorOffPos)
@@ -115,6 +115,14 @@ struct CannonController {
     public static func add(type: Int, pos: [Int]) {
         let cannon = Cannon(type: type)
         gameScene.gridNode.addObjectAtGrid(object: cannon, x: pos[0], y: pos[1])
+    }
+    
+    public static func changeZpos(zPos: CGFloat) {
+        for child in gameScene.gridNode.children {
+            if child.name == "cannon" {
+                child.zPosition = zPos
+            }
+        }
     }
     
 }

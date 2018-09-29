@@ -14,6 +14,10 @@ class EqRob: SKSpriteNode {
     
     var moveSpeed: CGFloat = 0.002
     var rotateSpeed: CGFloat = 0.1
+    var moveSpeedForNmr: CGFloat = 0.002
+    var rotateSpeedForNmr: CGFloat = 0.1
+    var moveSpeedForAtk: CGFloat = 0.0004
+    var rotateSpeedForAtk: CGFloat = 0.02
     var rotateForeverSpeed: TimeInterval = 3
     
     var veCategory: Int = 0
@@ -45,7 +49,7 @@ class EqRob: SKSpriteNode {
     
     func go(to target: SKNode, completion: @escaping () -> Void) {
         self.look(at: target) {
-            self.move(to: target, easeFunction: nil, easeType: nil) {
+            self.move(to: target, easeFunction: .curveTypeExpo, easeType: nil) {
                 return completion()
             }
         }
@@ -164,28 +168,41 @@ class EqRob: SKSpriteNode {
         }
     }
     
+//    func goAndAttack(to target: SKNode, completion: @escaping () -> Void) {
+//        goNear(to: target) {
+//            self.attack(to: target) {
+//                self.stepOff(toPos: self.nearPoint) {
+//                    return completion()
+//                }
+//            }
+//        }
+//    }
+
     func goAndAttack(to target: SKNode, completion: @escaping () -> Void) {
-        goNear(to: target) {
-            self.attack(to: target) {
-                self.stepOff(toPos: self.nearPoint) {
-                    return completion()
-                }
-            }
+        moveSpeed = moveSpeedForAtk
+        rotateSpeed = rotateSpeedForAtk
+        go(to: target) {
+            self.moveSpeed = self.moveSpeedForNmr
+            self.rotateSpeed = self.rotateSpeedForNmr
+            return completion()
         }
     }
     
     func kill(_ target: Enemy, completion: @escaping () -> Void) {
         goAndAttack(to: target) {
-            EnemyDeadController.hitEnemy(enemy: target, gameScene: self.parent! as! GameScene) {
+            let wait = SKAction.wait(forDuration: 0.2)
+            self.run(wait, completion: {
                 return completion()
-            }
+            })
         }
     }
     
     func killed(_ target: Enemy, completion: @escaping () -> Void) {
         goAndAttack(to: target) {
-            self.destroyed {
-                return completion()
+            self.stepOff(toPos: self.nearPoint) {
+                self.destroyed {
+                    return completion()
+                }
             }
         }
     }

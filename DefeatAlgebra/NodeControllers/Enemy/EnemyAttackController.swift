@@ -37,7 +37,7 @@ extension Enemy {
         /* Make sure to call once */
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
-        
+        print("FUGAFUAGUFGUAGFUA")
         /* Enemy punch beyond edge of grid */
         if self.positionY < self.valueOfEnemy {
             /* Do punch */
@@ -313,8 +313,6 @@ extension Enemy {
     public func punchToWall(wall: Wall) {
         /* Make sure not to call if it's not my turn */
         guard myTurnFlag else { return }
-        
-        print(self.wallHitFlag)
         guard wallHitFlag == false else { return }
         wallHitFlag = true
         

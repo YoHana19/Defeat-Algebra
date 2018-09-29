@@ -20,6 +20,7 @@ class ScenarioScene: GameScene {
     
     var signalHolder: SKSpriteNode!
     var xEqLabel: SKLabelNode!
+    var skipButton: MSButtonNode!
     
     override func didMove(to view: SKView) {
         /* Connect scene objects */
@@ -31,6 +32,8 @@ class ScenarioScene: GameScene {
         eqRob = childNode(withName: "eqRob") as! EqRob
         buttonAttack = childNode(withName: "buttonAttack")
         buttonItem = childNode(withName: "buttonItem")
+        skipButton = childNode(withName: "skipButton")  as! MSButtonNode
+        skipButton.isHidden = true
         buttonAttack.isHidden = true
         buttonItem.isHidden = true
         plane = Plane(gameScene: self)
@@ -90,6 +93,26 @@ class ScenarioScene: GameScene {
         buttonRetry.state = .msButtonNodeStateHidden
         buttonNextLevel.state = .msButtonNodeStateHidden
         
+        skipButton.selectedHandler = { [weak self] in
+            CharacterController.retreatMainHero()
+            CharacterController.retreatMadDoctor()
+            CharacterController.retreatDoctor()
+            
+            /* Grab reference to the SpriteKit view */
+            let skView = self?.view as SKView?
+            
+            /* Load Game scene */
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
+                return
+            }
+            
+            /* Ensure correct aspect mode */
+            scene.scaleMode = .aspectFit
+            
+            /* Restart GameScene */
+            skView?.presentScene(scene)
+        }
+        
         /* Pause button */
         buttonPause.selectedHandler = { [weak self] in
             self?.pauseFlag = true
@@ -143,9 +166,6 @@ class ScenarioScene: GameScene {
         /* Set item area */
         setItemAreaCover()
         
-        self.totalNumOfEnemy = 2
-        self.isCharactersTurn = true
-        
         /* Set castleWall physics property */
         castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
         castleNode.physicsBody?.categoryBitMask = 4
@@ -153,32 +173,64 @@ class ScenarioScene: GameScene {
         castleNode.physicsBody?.contactTestBitMask = 24
         
         /* Set life */
-        setLife(numOflife: maxLife)
+        setLife(numOflife: life)
         
+        // mad pos
+        if GameScene.stageLevel > 1 {
+            madScientistNode.position = CGPoint(x: 374.999, y: 1282.404)
+            SignalController.madPos = madScientistNode.absolutePos()
+        }
+        
+        // eqRob
         if GameScene.stageLevel > 3 {
             eqRob.isHidden = false
+            if GameScene.stageLevel == 4 {
+                eqRob.position = CGPoint(x: eqRob.position.x-200, y: eqRob.position.y)
+                selectionPanel.againButton.isHidden = true
+            }
         } else {
             eqRob.isHidden = true
         }
         
-        if GameScene.stageLevel > 4 {
-            CannonController.add(type: 0, pos: [2, 9])
-            signalInvisible = true
+        // cannon
+        setCanoon()
+        
+        // nunOfEnemy
+        if GameScene.stageLevel == 0 {
+            self.totalNumOfEnemy = 2
+        } else if GameScene.stageLevel == 4 {
+            self.totalNumOfEnemy = 4
+        } else {
+            self.totalNumOfEnemy = 1
         }
         
-        gridNode.isTutorial = true
-        
-        ScenarioController.currentLineIndex = 0
-        ScenarioController.currentActionIndex = 0
-        
-        GameScene.stageLevel = 0
-        ScenarioController.controllActions()
-        
+        // x label
         if GameScene.stageLevel == 0 {
             signalHolder.isHidden = true
             xEqLabel.isHidden = true
             valueOfX.isHidden = true
         }
+        
+        // skipButton
+        if GameScene.stageLevel == 0 {
+            skipButton.isHidden = !DAUserDefaultUtility.initialScenarioFirst
+        } else if GameScene.stageLevel == 2 {
+            skipButton.isHidden = !DAUserDefaultUtility.moveExplainFirst
+        } else if GameScene.stageLevel == 4 {
+            skipButton.isHidden = !DAUserDefaultUtility.eqRobExplainFirst
+        } else if GameScene.stageLevel == 6 {
+            skipButton.isHidden = !DAUserDefaultUtility.cannonExplainFirst
+        } else if GameScene.stageLevel == 7 {
+            skipButton.isHidden = !DAUserDefaultUtility.invisibleSignalFirst
+        }
+        
+        self.isCharactersTurn = true
+        gridNode.isTutorial = true
+        ScenarioController.currentLineIndex = 0
+        ScenarioController.currentActionIndex = 0
+        TutorialController.initialize()
+        
+        ScenarioController.controllActions()
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -190,10 +242,11 @@ class ScenarioScene: GameScene {
                 break;
             }
         } else {
-            //print("\(gameState), \(playerTurnState), \(itemType)")
+            print("\(gameState), \(playerTurnState), \(itemType)")
             switch gameState {
             case .AddEnemy:
                 //AddEnemyTurnController.add()
+                ScenarioController.controllActions()
                 gameState = .SignalSending
                 break;
             case .AddItem:
@@ -266,7 +319,7 @@ class ScenarioScene: GameScene {
                 ScenarioController.controllActions()
                 break;
             case .GameOver:
-                ScenarioController.controllActions()
+                GameOverTurnController.gameOver()
                 break;
             }
         }
@@ -288,6 +341,41 @@ class ScenarioScene: GameScene {
                 ScenarioController.nextLine()
                 break;
             case .Action:
+                if GameScene.stageLevel == 4 {
+                    if ScenarioController.currentActionIndex == 3 {
+                        if nodeAtPoint.name == "eqRob" {
+                            ScenarioController.controllActions()
+                        }
+                    } else if ScenarioController.currentActionIndex == 4 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 13 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 15 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 20 {
+                        if nodeAtPoint.name == "eqRob" {
+                            ScenarioController.controllActions()
+                        }
+                    } else if ScenarioController.currentActionIndex == 23 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 25 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 26 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 27 {
+                        ScenarioController.controllActions()
+                    }
+                } else if GameScene.stageLevel == 6 {
+                    if ScenarioController.currentActionIndex == 4 {
+                        ScenarioController.controllActions()
+                    }
+                } else if GameScene.stageLevel == 7 {
+                    if ScenarioController.currentActionIndex >= 4 && ScenarioController.currentActionIndex <= 16 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex >= 26 && ScenarioController.currentActionIndex <= 31 {
+                        ScenarioController.controllActions()
+                    }
+                }
                 break;
             }
         } else {
@@ -406,7 +494,7 @@ class ScenarioScene: GameScene {
                     /* Get heart */
                     } else if item.name == "heart" {
                         item.removeFromParent()
-                        maxLife += 1
+                        //maxLife += 1
                         life += 1
                         setLife(numOflife: life)
                         
@@ -442,7 +530,7 @@ class ScenarioScene: GameScene {
                     /* Get heart */
                     } else if item.name == "heart" {
                         item.removeFromParent()
-                        maxLife += 1
+                        //maxLife += 1
                         life += 1
                         setLife(numOflife: life)
                         
@@ -567,32 +655,27 @@ class ScenarioScene: GameScene {
         hero.positionY = y
         hero.position = CGPoint(x: gridNode.position.x+CGFloat(gridNode.cellWidth/2)+CGFloat(gridNode.cellWidth*Double(x)), y: 0)
         addChild(hero)
-        let move = SKAction.moveBy(x: 0, y: CGFloat(gridNode.position.y+CGFloat(gridNode.cellHeight/2)+CGFloat(gridNode.cellHeight*Double(y))), duration: 3.0)
-        print(-CGFloat(gridNode.position.y+CGFloat(gridNode.cellHeight/2)+CGFloat(gridNode.cellHeight*Double(y))))
+        let move = SKAction.moveBy(x: 0, y: CGFloat(gridNode.position.y+CGFloat(gridNode.cellHeight/2)+CGFloat(gridNode.cellHeight*Double(y))), duration: 3.0)        
         hero.run(move, completion: {
             self.hero.setSwordAnimation() {}
             return completion()
         })
     }
     
-    func enemyEnter(completion: @escaping () -> Void) {
-        
-        let enemyPos = [(2,11), (6,11)]
-        let enemyVe = ["x+1", "x"]
-        let enemyInterval = [1, 2]
+    func enemyEnter(_ enemies: [(Int, Int, String, Int)], completion: @escaping () -> Void) {
         
         let dispatchGroup = DispatchGroup()
         
-        for (i, pos) in enemyPos.enumerated() {
+        for enemyInfo in enemies {
             dispatchGroup.enter()
-            let posX = pos.0
-            let posY = pos.1
+            let posX = enemyInfo.0
+            let posY = enemyInfo.1
             
-            let enemy = Enemy(ve: enemyVe[i])
+            let enemy = Enemy(ve: enemyInfo.2)
             /* Store variable expression as origin */
             enemy.originVariableExpression = enemy.variableExpressionString
             
-            enemy.punchInterval = enemyInterval[i]
+            enemy.punchInterval = enemyInfo.3
             enemy.punchIntervalForCount = enemy.punchInterval
             
             /* Set direction of enemy */
@@ -645,6 +728,31 @@ class ScenarioScene: GameScene {
         for enemy in gridNode.enemyArray {
             enemy.variableExpressionLabel.isHidden = false
         }
+    }
+    
+    func removeShowLengths() {
+        for child in gridNode.children {
+            if child.name == "veLength" || child.name == "showLength" {
+                child.removeFromParent()
+            }
+        }
+    }
+    
+    func getCannon(pos: [Int], completion: @escaping (Cannon) -> Void) {
+        var cand = Cannon(type: 0)
+        let dispatchGroup = DispatchGroup()
+        for child in gridNode.children {
+            dispatchGroup.enter()
+            if let cannon = child as? Cannon  {
+                if cannon.spotPos == pos {
+                    cand = cannon
+                }
+            }
+            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            return completion(cand)
+        })
     }
 }
 

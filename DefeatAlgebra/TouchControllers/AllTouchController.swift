@@ -14,6 +14,7 @@ struct AllTouchController {
     
     public static func eqRobTouched() {
         guard gameScene.playerTurnState == .MoveState || gameScene.playerTurnState == .AttackState || gameScene.playerTurnState == .UsingItem else { return }
+        guard gameScene.itemType != .Cannon else { return }
         
         /* Hide attack and item buttons */
         gameScene.buttonAttack.isHidden = true
@@ -33,6 +34,7 @@ struct AllTouchController {
     
     public static func cannonTouched(node: Cannon) {
         guard gameScene.playerTurnState == .MoveState || gameScene.playerTurnState == .AttackState || gameScene.playerTurnState == .UsingItem else { return }
+        guard gameScene.itemType != .EqRob else { return }
         
         /* Hide attack and item buttons */
         gameScene.buttonAttack.isHidden = true

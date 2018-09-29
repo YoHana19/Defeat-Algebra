@@ -80,6 +80,9 @@ class Balloon: SKSpriteNode {
     
     func madDoctorTextPos(with label: SKLabelNode, numOfLines: Int) {
         switch numOfLines {
+        case 2:
+            label.position = CGPoint(x: -170, y: -30)
+            break;
         case 4:
             label.position = CGPoint(x: -170, y: -20)
             break;

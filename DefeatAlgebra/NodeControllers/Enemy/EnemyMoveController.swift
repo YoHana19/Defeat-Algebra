@@ -118,19 +118,19 @@ class EnemyMoveController {
         let dupliEnemies = enemiesArray.filter{ $0.positionX == Int(pos[0]) && $0.positionY == Int(pos[1]) }
         switch num {
         case 2:
-            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].position.x+20, y: dupliEnemies[0].position.y+20)
-            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].position.x-20, y: dupliEnemies[1].position.y-20)
+            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].getPos().x+20, y: dupliEnemies[0].getPos().y+20)
+            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].getPos().x-20, y: dupliEnemies[1].getPos().y-20)
             break;
         case 3:
-            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].position.x+15, y: dupliEnemies[0].position.y+25)
-            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].position.x-20, y: dupliEnemies[1].position.y-15)
-            dupliEnemies[2].position = CGPoint(x:dupliEnemies[2].position.x+25, y: dupliEnemies[2].position.y-25)
+            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].getPos().x+15, y: dupliEnemies[0].getPos().y+25)
+            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].getPos().x-20, y: dupliEnemies[1].getPos().y-15)
+            dupliEnemies[2].position = CGPoint(x:dupliEnemies[2].getPos().x+25, y: dupliEnemies[2].getPos().y-25)
             break;
         case 4:
-            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].position.x+20, y: dupliEnemies[0].position.y+20)
-            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].position.x-20, y: dupliEnemies[1].position.y-20)
-            dupliEnemies[2].position = CGPoint(x:dupliEnemies[2].position.x-20, y: dupliEnemies[2].position.y+20)
-            dupliEnemies[3].position = CGPoint(x:dupliEnemies[3].position.x+20, y: dupliEnemies[3].position.y-20)
+            dupliEnemies[0].position = CGPoint(x:dupliEnemies[0].getPos().x+20, y: dupliEnemies[0].getPos().y+20)
+            dupliEnemies[1].position = CGPoint(x:dupliEnemies[1].getPos().x-20, y: dupliEnemies[1].getPos().y-20)
+            dupliEnemies[2].position = CGPoint(x:dupliEnemies[2].getPos().x-20, y: dupliEnemies[2].getPos().y+20)
+            dupliEnemies[3].position = CGPoint(x:dupliEnemies[3].getPos().x+20, y: dupliEnemies[3].getPos().y-20)
             break;
         default:
             print("so many duplicated enemy !!!")

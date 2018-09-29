@@ -30,6 +30,10 @@ class EnemyDeadController {
             gameScene.run(removeEnemy)
             return completion()
         }
+        
+        if let i = gameScene.gridNode.enemyArray.index(of: enemy) {
+            gameScene.gridNode.enemyArray.remove(at: i)
+        }
     }
     
     /*== Set effect when enemy destroyed ==*/

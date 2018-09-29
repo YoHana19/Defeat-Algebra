@@ -19,8 +19,10 @@ struct ItemDropController {
         [(2, 4, 5), (1, 2, 3), (1, 6, 3), (3, 4, 1)], //2
         [(2, 1, 6), (2, 7, 6), (1, 1, 3), (4, 7, 3), (4, 2, 0), (1, 6, 0)], //3
         [(1, 2, 0), (1, 6, 0), (1, 7, 3), (4, 4, 6), (5, 4, 0), (5, 1, 3)], //4
-        [(1, 4, 0), (1, 4, 6), (1, 1, 3), (1, 7, 3), (5, 3, 4), (5, 5, 2), (5, 2, 1), (5, 6, 5)], //5
-        [(1, 4, 6), (1, 4, 0), (4, 2, 4), (4, 6, 2)], //6
+        [(1, 1, 5), (1, 7, 1), (5, 1, 1), (5, 7, 5)], //5
+        [(1, 1, 6), (3, 1, 0), (4, 3, 4), (5, 3, 2), (4, 7, 6), (5, 7, 0), (1, 5, 4), (3, 5, 2)], //6
+        [(1, 1, 3), (3, 2, 4), (4, 3, 3), (5, 2, 2), (5, 5, 3), (4, 6, 4), (3, 7, 3), (1, 6, 2)], //7
+        [(1, 1, 3), (4, 2, 3), (4, 4, 0), (5, 4, 1), (4, 4, 5), (1, 4, 6), (5, 6, 3), (4, 7, 3)] //8
     ]
     
     public static var gameScene: GameScene!
@@ -34,13 +36,17 @@ struct ItemDropController {
     static let level3Item = ["1": [1, 1, 3, 3, 4]]
     static let level4 = [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]
     static let level4Item = ["1": [1, 5]]
-    static let level5 = [0, 0, 1, 0, 0, 2, 0, 0, 1, 0, 0, 2]
-    static let level5Item = ["1": [1, 5], "2": [1, 4, 5]]
-    static let level6 = [0, 0, 0, 1, 0, 0, 1]
-    static let level6Item = ["1": [1, 1, 4, 4]]
+    static let level5 = [0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1]
+    static let level5Item = ["1": [1, 3], "2": [1, 4]]
+    static let level6 = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1]
+    static let level6Item = ["1": [1, 1, 3, 4, 5]]
+    static let level7 = [0]
+    static let level7Item = [String: [Int]]()
+    static let level8 = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1]
+    static let level8Item = ["1": [3]]
     
-    static let manager = [level1, level2, level3, level4, level5, level6]
-    static let itemManager = [level1Item, level2Item, level3Item, level4Item, level5Item, level6Item]
+    static let manager = [level1, level2, level3, level4, level5, level6, level7, level8]
+    static let itemManager = [level1Item, level2Item, level3Item, level4Item, level5Item, level6Item, level7Item, level8Item]
     
     static func getItemSpot(num: Int, completion: @escaping ([[Int]]) -> Void) {
         var fieldItemSpots = gameScene.gridNode.itemsOnField.map { $0.spotPos }
