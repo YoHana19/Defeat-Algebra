@@ -31,7 +31,15 @@ class Grid: SKSpriteNode {
     var directionJudgeDoneFlag = false
     
     /* Enemy Management */
-    var enemyArray = [Enemy]()
+    var enemyArray = [Enemy]() {
+        didSet {
+            guard let gameScene = self.parent as? GameScene else { return }
+            guard !gameScene.compAddEnemyFlag else { return }
+            if enemyArray.count == 0 {
+                gameScene.willFastForward = true
+            }
+        }
+    }
     var enemySUPairDict = [Enemy: Enemy]()
     var positionEnemyAtGrid = [[Bool]]()
     var currentPositionOfEnemies = [[Int]]()
@@ -55,6 +63,8 @@ class Grid: SKSpriteNode {
     var timeBombSetArray = [TimeBomb]()
     /* Wall */
     var wallSetArray = [Wall]()
+    
+    var touchedGridPos: (Int, Int) = (-1, -1)
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
@@ -255,18 +265,37 @@ class Grid: SKSpriteNode {
             /* Get gameScene */
             if let scenaioScene = self.parent as? ScenarioScene {
                 switch scenaioScene.tutorialState {
+                case .None:
+                    break;
                 case .Converstaion:
                     ScenarioController.nextLine()
                     break;
                 case .Action:
-                    if GameScene.stageLevel == 4 {
-                        let touch = touches.first!
-                        let location = touch.location(in: self)
-                        let nodeAtPoint = atPoint(location)
-                        
-                        if ScenarioController.currentActionIndex == 4 {
+                    let touch = touches.first!
+                    let location = touch.location(in: self)
+                    let nodeAtPoint = atPoint(location)
+                    
+                    if GameScene.stageLevel == 0 {
+                        guard TutorialController.userTouch(on: "") else { return }
+                    } else if GameScene.stageLevel == 2 {
+                        if ScenarioController.currentActionIndex == 10 {
+                            ScenarioController.currentActionIndex += 1
                             ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 10 {
+                        } else if ScenarioController.currentActionIndex == 11 {
+                            let gridX = Int(Double(location.x) / cellWidth)
+                            let gridY = Int(Double(location.y) / cellHeight)
+                            if gridX == 4 && gridY == 5 {
+                                ScenarioController.currentActionIndex += 1
+                                ScenarioController.controllActions()
+                            }
+                        } else if ScenarioController.currentActionIndex > 14 {
+                            guard TutorialController.userTouch(on: nodeAtPoint.name) else { return }
+                        }
+                    } else if GameScene.stageLevel == 5 {
+                        
+                        if ScenarioController.currentActionIndex == 14 {
+                            ScenarioController.controllActions()
+                        } else if ScenarioController.currentActionIndex == 20 {
                             if let enemy = nodeAtPoint as? Enemy {
                                 if enemy.positionX == 3 && enemy.positionY == 8 {
                                     enemy.isSelectedForEqRob = true
@@ -274,11 +303,9 @@ class Grid: SKSpriteNode {
                                     ScenarioController.controllActions()
                                 }
                             }
-                        } else if ScenarioController.currentActionIndex == 13 {
+                        } else if ScenarioController.currentActionIndex == 22 {
                             ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 15 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 17 {
+                        } else if ScenarioController.currentActionIndex == 23 {
                             if let enemy = nodeAtPoint as? Enemy {
                                 if enemy.positionX == 5 && enemy.positionY == 8 {
                                     enemy.isSelectedForEqRob = true
@@ -286,29 +313,18 @@ class Grid: SKSpriteNode {
                                     ScenarioController.controllActions()
                                 }
                             }
-                        } else if ScenarioController.currentActionIndex == 18 {
+                        } else if ScenarioController.currentActionIndex == 24 {
                             ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 20 {
+                        } else if ScenarioController.currentActionIndex == 26 {
                             if let enemy = nodeAtPoint as? Enemy {
                                 guard !enemy.isSelectedForEqRob else { return }
                                 enemy.isSelectedForEqRob = true
                                 EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
                             }
-                        } else if ScenarioController.currentActionIndex == 23 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 25 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 26 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 27 {
+                        } else if ScenarioController.currentActionIndex == 29 {
                             ScenarioController.controllActions()
                         }
-                        
-                    } else if GameScene.stageLevel == 6 {
-                        
-                        let touch = touches.first!
-                        let location = touch.location(in: self)
-                        let nodeAtPoint = atPoint(location)
+                    } else if GameScene.stageLevel == 7 {
                         
                         if ScenarioController.currentActionIndex == 3 {
                             if let cannon = nodeAtPoint as? Cannon {
@@ -321,11 +337,7 @@ class Grid: SKSpriteNode {
                         } else if ScenarioController.currentActionIndex == 4 {
                             ScenarioController.controllActions()
                         }
-                    } else if GameScene.stageLevel == 7 {
-                        
-                        let touch = touches.first!
-                        let location = touch.location(in: self)
-                        let nodeAtPoint = atPoint(location)
+                    } else if GameScene.stageLevel == 8 {
                         
                         if ScenarioController.currentActionIndex >= 4 && ScenarioController.currentActionIndex <= 16 {
                             ScenarioController.controllActions()
@@ -354,6 +366,8 @@ class Grid: SKSpriteNode {
                 return
             } else if let gameScene = self.parent as? GameScene {
                 switch gameScene.tutorialState {
+                case .None:
+                    break;
                 case .Converstaion:
                     SpeakInGameController.nextLine()
                     break;
@@ -382,8 +396,15 @@ class Grid: SKSpriteNode {
             let location = touch.location(in: self) // Find the location of that touch in this view
             let nodeAtPoint = atPoint(location)     // Find the node at that location
             
+            if GameScene.stageLevel == 0 {
+                let gridX = Int(Double(location.x) / cellWidth)
+                let gridY = Int(Double(location.y) / cellHeight)
+                touchedGridPos = (gridX, gridY)
+            }
+            
             guard TutorialController.userTouch(on: nodeAtPoint.name) else { return }
             guard SpeakInGameController.userTouch(on: nodeAtPoint.name) else { return }
+            
             
             if nodeAtPoint.name == "cannon" {
                 if let cannon = nodeAtPoint as? Cannon {

@@ -55,17 +55,8 @@ struct EnemyTurnController {
             for enemy in gameScene.gridNode.enemyArray {
                 enemy.turnDoneFlag = false
                 enemy.myTurnFlag = false
-            }
-            
-            /* remove wall */
-            if gameScene.gridNode.wallSetArray.count > 0 {
-                for (i, wall) in gameScene.gridNode.wallSetArray.enumerated() {
-                    wall.removeFromParent()
-                    if i == gameScene.gridNode.wallSetArray.count-1 {
-                        /* Reset wall array */
-                        gameScene.gridNode.wallSetArray.removeAll()
-                    }
-                }
+                enemy.direction = .front
+                enemy.setMovingAnimation()
             }
             
             /* Update enemy position */
@@ -94,6 +85,8 @@ struct EnemyTurnController {
                 CannonController.fire() {}
                 let wait = SKAction.wait(forDuration: 6.0)
                 gameScene.run(wait, completion: {
+                    /* Update enemy position */
+                    EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
                     gameScene.gameState = .AddEnemy
                     gameScene.playerTurnState = .DisplayPhase
                     done = false
@@ -101,6 +94,8 @@ struct EnemyTurnController {
             } else if logDefenceOn {
                 let wait = SKAction.wait(forDuration: 6.0)
                 gameScene.run(wait, completion: {
+                    /* Update enemy position */
+                    EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
                     gameScene.gameState = .AddEnemy
                     gameScene.playerTurnState = .DisplayPhase
                     done = false

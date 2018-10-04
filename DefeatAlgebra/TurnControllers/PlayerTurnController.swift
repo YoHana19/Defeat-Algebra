@@ -129,14 +129,22 @@ struct PlayerTurnController {
             EnemyMoveController.rePosEnemies(enemiesArray: gameScene.gridNode.enemyArray, gridNode: gameScene.gridNode)
         }
         
-        /* Display enemy phase label */
-        if gameScene.enemyPhaseLabelDoneFlag == false {
-            gameScene.enemyPhaseLabelDoneFlag = true
-            gameScene.enemyPhaseLabel.isHidden = false
-            let wait = SKAction.wait(forDuration: gameScene.phaseLabelTime)
-            let moveState = SKAction.run({ gameScene.gameState = .EnemyTurn })
-            let seq = SKAction.sequence([wait, moveState])
-            gameScene.run(seq)
+        if gameScene.willFastForward {
+            gameScene.willFastForward = false
+            AddEnemyTurnController.fastForward() {
+                gameScene.countTurnForAddEnemy -= 1
+                gameScene.gameState = .AddEnemy
+            }
+        } else {
+            /* Display enemy phase label */
+            if gameScene.enemyPhaseLabelDoneFlag == false {
+                gameScene.enemyPhaseLabelDoneFlag = true
+                gameScene.enemyPhaseLabel.isHidden = false
+                let wait = SKAction.wait(forDuration: gameScene.phaseLabelTime)
+                let moveState = SKAction.run({ gameScene.gameState = .EnemyTurn })
+                let seq = SKAction.sequence([wait, moveState])
+                gameScene.run(seq)
+            }
         }
     }
 }

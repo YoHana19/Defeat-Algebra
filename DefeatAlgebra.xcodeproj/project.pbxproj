@@ -85,6 +85,12 @@
 		204163A420C2653F00217F6A /* GridFlashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A220C2653F00217F6A /* GridFlashController.swift */; };
 		204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
 		204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
+		2044B0232163447A00E8E21C /* VEEquivalentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B0222163447A00E8E21C /* VEEquivalentController.swift */; };
+		2044B0242163447A00E8E21C /* VEEquivalentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B0222163447A00E8E21C /* VEEquivalentController.swift */; };
+		2044B026216344CB00E8E21C /* EqBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B025216344CB00E8E21C /* EqBackground.swift */; };
+		2044B027216344CB00E8E21C /* EqBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B025216344CB00E8E21C /* EqBackground.swift */; };
+		2044B029216345D700E8E21C /* EqGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B028216345D700E8E21C /* EqGrid.swift */; };
+		2044B02A216345D700E8E21C /* EqGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B028216345D700E8E21C /* EqGrid.swift */; };
 		204BFA04210334FC00A2AB7A /* Cannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204BFA03210334FC00A2AB7A /* Cannon.swift */; };
 		204BFA05210334FC00A2AB7A /* Cannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204BFA03210334FC00A2AB7A /* Cannon.swift */; };
 		204BFA07210465D000A2AB7A /* CannonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204BFA06210465D000A2AB7A /* CannonController.swift */; };
@@ -291,6 +297,12 @@
 		20F1A74A212EE0720013FF9D /* SpeakInGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1A748212EE0720013FF9D /* SpeakInGameController.swift */; };
 		20F1A74C212EE0F50013FF9D /* SpeakInGameProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1A74B212EE0F50013FF9D /* SpeakInGameProperty.swift */; };
 		20F1A74D212EE0F50013FF9D /* SpeakInGameProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1A74B212EE0F50013FF9D /* SpeakInGameProperty.swift */; };
+		20FD5F5C2160DED700A6604B /* SignalValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FD5F5B2160DED700A6604B /* SignalValueHolder.swift */; };
+		20FD5F5D2160DED700A6604B /* SignalValueHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FD5F5B2160DED700A6604B /* SignalValueHolder.swift */; };
+		20FD5F5F2160E57600A6604B /* DAFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FD5F5E2160E57600A6604B /* DAFont.swift */; };
+		20FD5F602160E57600A6604B /* DAFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FD5F5E2160E57600A6604B /* DAFont.swift */; };
+		20FD5F62216111F300A6604B /* GameStageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FD5F61216111F300A6604B /* GameStageController.swift */; };
+		20FD5F63216111F300A6604B /* GameStageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FD5F61216111F300A6604B /* GameStageController.swift */; };
 		B45DB506E38F768A8251D729 /* Pods_DefeatAlgebraJ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D74E2949A5C73D1B0461EA64 /* Pods_DefeatAlgebraJ.framework */; };
 		E7EC6569AC1C8F9D3984BF67 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */; };
 /* End PBXBuildFile section */
@@ -353,6 +365,9 @@
 		2041518D215CBBF500595003 /* ShowLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowLength.swift; sourceTree = "<group>"; };
 		204163A220C2653F00217F6A /* GridFlashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridFlashController.swift; sourceTree = "<group>"; };
 		204163A520C266AD00217F6A /* GridActiveAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridActiveAreaController.swift; sourceTree = "<group>"; };
+		2044B0222163447A00E8E21C /* VEEquivalentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEEquivalentController.swift; sourceTree = "<group>"; };
+		2044B025216344CB00E8E21C /* EqBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqBackground.swift; sourceTree = "<group>"; };
+		2044B028216345D700E8E21C /* EqGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqGrid.swift; sourceTree = "<group>"; };
 		204BFA03210334FC00A2AB7A /* Cannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cannon.swift; sourceTree = "<group>"; };
 		204BFA06210465D000A2AB7A /* CannonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonController.swift; sourceTree = "<group>"; };
 		204BFA0A2104676200A2AB7A /* InputPanleForCannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPanleForCannon.swift; sourceTree = "<group>"; };
@@ -443,6 +458,9 @@
 		20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		20F1A748212EE0720013FF9D /* SpeakInGameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakInGameController.swift; sourceTree = "<group>"; };
 		20F1A74B212EE0F50013FF9D /* SpeakInGameProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakInGameProperty.swift; sourceTree = "<group>"; };
+		20FD5F5B2160DED700A6604B /* SignalValueHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalValueHolder.swift; sourceTree = "<group>"; };
+		20FD5F5E2160E57600A6604B /* DAFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAFont.swift; sourceTree = "<group>"; };
+		20FD5F61216111F300A6604B /* GameStageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameStageController.swift; sourceTree = "<group>"; };
 		761FF09895CEBB6C0461A9E9 /* Pods_DefeatAlgebra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DefeatAlgebra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		791C414F595433E4F872989D /* Pods-DefeatAlgebraJ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebraJ.release.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ.release.xcconfig"; sourceTree = "<group>"; };
 		917C6F6080FD2DBDC763F4BB /* Pods-DefeatAlgebraJ.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DefeatAlgebraJ.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DefeatAlgebraJ/Pods-DefeatAlgebraJ.debug.xcconfig"; sourceTree = "<group>"; };
@@ -635,10 +653,10 @@
 			isa = PBXGroup;
 			children = (
 				200AC22A2107082600D70BA5 /* AddEnemyTurnController.swift */,
+				200AC2242107007500D70BA5 /* SignalSendingTurnController.swift */,
 				2016D7CD210B082E00942460 /* AddItemTurnController.swift */,
 				200AC2272107080D00D70BA5 /* PlayerTurnController.swift */,
 				204BFA122104802800A2AB7A /* EnemyTurnController.swift */,
-				200AC2242107007500D70BA5 /* SignalSendingTurnController.swift */,
 				2016D7BE2109629200942460 /* StageClearTurnController.swift */,
 				2016D7C1210962A700942460 /* GameOverTurnController.swift */,
 			);
@@ -730,6 +748,8 @@
 				20644DBA20FCABAB00745E4C /* SelectedEnemy.swift */,
 				204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */,
 				20644DBD20FCDB6A00745E4C /* Line.swift */,
+				2044B025216344CB00E8E21C /* EqBackground.swift */,
+				2044B028216345D700E8E21C /* EqGrid.swift */,
 			);
 			path = EqRob;
 			sourceTree = "<group>";
@@ -750,12 +770,14 @@
 			children = (
 				20D0FED320B6C0E300C547A5 /* GameScene.sks */,
 				20D0FED420B6C0E300C547A5 /* GameScene.swift */,
+				20FD5F61216111F300A6604B /* GameStageController.swift */,
 				20D0FED520B6C0E300C547A5 /* EnemyProperty.swift */,
 				2016D7C7210AF3C500942460 /* ItemDropController.swift */,
 				204CE03A20FB85A200D45FFE /* EqRobController.swift */,
 				204BFA06210465D000A2AB7A /* CannonController.swift */,
 				2016D7C4210AF1A900942460 /* ResetController.swift */,
 				20CD8E5B210DAE0100BD78B6 /* ContactController.swift */,
+				2044B0222163447A00E8E21C /* VEEquivalentController.swift */,
 				204CE03720FB830F00D45FFE /* test.sks */,
 			);
 			path = GameContorollers;
@@ -805,6 +827,7 @@
 				20D0FEF620B6C12300C547A5 /* Hero.swift */,
 				20D0FEFD20B6C12300C547A5 /* Grid.swift */,
 				2058CA8320F883FB005DF357 /* Signal.swift */,
+				20FD5F5B2160DED700A6604B /* SignalValueHolder.swift */,
 				2016D7CA210AFE6100942460 /* Plane.swift */,
 				201B8D19212FF3D700903468 /* Log.swift */,
 				20D0FEFE20B6C12300C547A5 /* Items */,
@@ -867,6 +890,7 @@
 				208C5D56202384FE0006ADE4 /* DAUtility.swift */,
 				20D0FF4520B6C14B00C547A5 /* DAUserDefaultUtility.swift */,
 				204CE02E20FB367A00D45FFE /* VECategory.swift */,
+				20FD5F5E2160E57600A6604B /* DAFont.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -1342,6 +1366,7 @@
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				201137922120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
 				2052888C20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
+				2044B0232163447A00E8E21C /* VEEquivalentController.swift in Sources */,
 				20E8079E20FDE7C700EED36D /* AttackTouchController.swift in Sources */,
 				20D0FF2D20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE620B6C11100C547A5 /* EnemyAddController.swift in Sources */,
@@ -1351,12 +1376,14 @@
 				208C5D57202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				204CD70F215B92DF006E8B1F /* CannonTutorialController.swift in Sources */,
 				20D0FF3320B6C12300C547A5 /* Heart.swift in Sources */,
+				20FD5F62216111F300A6604B /* GameStageController.swift in Sources */,
 				20415188215CA75500595003 /* VeLength.swift in Sources */,
 				204CE03B20FB85A200D45FFE /* EqRobController.swift in Sources */,
 				205A0EDA207A0ECB006A44A6 /* User.swift in Sources */,
 				2041518E215CBBF500595003 /* ShowLength.swift in Sources */,
 				20D0FED820B6C0E300C547A5 /* GameScene.swift in Sources */,
 				2052888620FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
+				20FD5F5F2160E57600A6604B /* DAFont.swift in Sources */,
 				20D0FF1F20B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1B20B6C12300C547A5 /* Enemy.swift in Sources */,
 				2041518B215CBABD00595003 /* LengthArrow.swift in Sources */,
@@ -1383,10 +1410,12 @@
 				204BFA0E21046E8200A2AB7A /* AllTouchController.swift in Sources */,
 				20F1A749212EE0720013FF9D /* SpeakInGameController.swift in Sources */,
 				20644DBB20FCABAB00745E4C /* SelectedEnemy.swift in Sources */,
+				20FD5F5C2160DED700A6604B /* SignalValueHolder.swift in Sources */,
 				207A673920D69D300026A770 /* Balloon.swift in Sources */,
 				20D0FEEE20B6C11100C547A5 /* CharacterLinesController.swift in Sources */,
 				20D0FF1320B6C12300C547A5 /* Hero.swift in Sources */,
 				20CD8E59210D9BC300BD78B6 /* Item.swift in Sources */,
+				2044B029216345D700E8E21C /* EqGrid.swift in Sources */,
 				20D0FF2520B6C12300C547A5 /* Boots.swift in Sources */,
 				203B2A771F67BBD200DDCC03 /* ItemList.swift in Sources */,
 				20113798212001AD00B5A138 /* ScenarioScene.swift in Sources */,
@@ -1398,6 +1427,7 @@
 				203B2A731F67BBD100DDCC03 /* ConfirmScreen.swift in Sources */,
 				20D0FF2F20B6C12300C547A5 /* Teleport.swift in Sources */,
 				2052888920FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,
+				2044B026216344CB00E8E21C /* EqBackground.swift in Sources */,
 				2016D7C2210962A700942460 /* GameOverTurnController.swift in Sources */,
 				204CE03520FB4A7000D45FFE /* InputPanel.swift in Sources */,
 				203B2A751F67BBD100DDCC03 /* Credits.swift in Sources */,
@@ -1448,6 +1478,7 @@
 				20D0FF3620B6C12300C547A5 /* Catapult.swift in Sources */,
 				201137932120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
+				2044B0242163447A00E8E21C /* VEEquivalentController.swift in Sources */,
 				2052888D20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
 				20E8079F20FDE7C700EED36D /* AttackTouchController.swift in Sources */,
 				20D0FF2E20B6C12300C547A5 /* Cane.swift in Sources */,
@@ -1457,12 +1488,14 @@
 				2058CA8C20F88726005DF357 /* SKNode+Utility.swift in Sources */,
 				204CD710215B92DF006E8B1F /* CannonTutorialController.swift in Sources */,
 				20D0FF3420B6C12300C547A5 /* Heart.swift in Sources */,
+				20FD5F63216111F300A6604B /* GameStageController.swift in Sources */,
 				20415189215CA75500595003 /* VeLength.swift in Sources */,
 				204CE03C20FB85A200D45FFE /* EqRobController.swift in Sources */,
 				205A0EDB207A0ECB006A44A6 /* User.swift in Sources */,
 				2041518F215CBBF500595003 /* ShowLength.swift in Sources */,
 				20D0FED920B6C0E300C547A5 /* GameScene.swift in Sources */,
 				2052888720FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
+				20FD5F602160E57600A6604B /* DAFont.swift in Sources */,
 				20D0FF2020B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1C20B6C12300C547A5 /* Enemy.swift in Sources */,
 				2041518C215CBABD00595003 /* LengthArrow.swift in Sources */,
@@ -1489,10 +1522,12 @@
 				204BFA0F21046E8200A2AB7A /* AllTouchController.swift in Sources */,
 				20F1A74A212EE0720013FF9D /* SpeakInGameController.swift in Sources */,
 				20644DBC20FCABAB00745E4C /* SelectedEnemy.swift in Sources */,
+				20FD5F5D2160DED700A6604B /* SignalValueHolder.swift in Sources */,
 				207A673A20D69D300026A770 /* Balloon.swift in Sources */,
 				20D0FEEF20B6C11100C547A5 /* CharacterLinesController.swift in Sources */,
 				20D0FF1420B6C12300C547A5 /* Hero.swift in Sources */,
 				20CD8E5A210D9BC300BD78B6 /* Item.swift in Sources */,
+				2044B02A216345D700E8E21C /* EqGrid.swift in Sources */,
 				20D0FF2620B6C12300C547A5 /* Boots.swift in Sources */,
 				20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */,
 				20113799212001AD00B5A138 /* ScenarioScene.swift in Sources */,
@@ -1504,6 +1539,7 @@
 				20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */,
 				20D0FF3020B6C12300C547A5 /* Teleport.swift in Sources */,
 				2052888A20FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,
+				2044B027216344CB00E8E21C /* EqBackground.swift in Sources */,
 				2016D7C3210962A700942460 /* GameOverTurnController.swift in Sources */,
 				204CE03620FB4A7000D45FFE /* InputPanel.swift in Sources */,
 				20E9E8B820223B1400D31410 /* Credits.swift in Sources */,

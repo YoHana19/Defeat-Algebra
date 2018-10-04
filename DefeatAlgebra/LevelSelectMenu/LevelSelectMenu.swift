@@ -37,7 +37,6 @@ class LevelSelectMenu: SKScene {
         button7 = self.childNode(withName: "button7") as! MSButtonNode
         button8 = self.childNode(withName: "button8") as! MSButtonNode
         button9 = self.childNode(withName: "button9") as! MSButtonNode
-        button9.isHidden = true
         buttonBack = self.childNode(withName: "buttonBack") as! MSButtonNode
         
         /* Start tutorial */
@@ -217,7 +216,6 @@ class LevelSelectMenu: SKScene {
             
         }
         
-        /*
         button9.selectedHandler = { [weak self] in
             /* Grab reference to the SpriteKit view */
             let skView = self?.view as SKView?
@@ -228,6 +226,8 @@ class LevelSelectMenu: SKScene {
             }
             
             scene.selectedLevel = 8
+            GameScene.stageLevel = 8
+            self?.ud.set(8, forKey: "stageLevel")
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
@@ -235,7 +235,6 @@ class LevelSelectMenu: SKScene {
             /* Restart GameScene */
             skView?.presentScene(scene)
         }
-        */
         
         buttonBack.selectedHandler = { [weak self] in
             let skView = self?.view as SKView?

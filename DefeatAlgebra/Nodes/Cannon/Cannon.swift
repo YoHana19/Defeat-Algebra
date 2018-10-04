@@ -17,7 +17,7 @@ class Cannon: Item {
     
     let frontTexture = SKTexture(imageNamed: "cannonFront")
     let backTexture = SKTexture(imageNamed: "cannonBack")
-    var variableExpressionLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+    var variableExpressionLabel = SKLabelNode(fontNamed: DAFont.fontName)
     var isFront = true
     var state: CannonState = .Ready
     

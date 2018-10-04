@@ -13,18 +13,18 @@ import Crashlytics
 import AVFoundation
 
 enum TutorialState {
-    case Converstaion, Action
+    case Converstaion, Action, None
 }
 
 class ScenarioScene: GameScene {
     
-    var signalHolder: SKSpriteNode!
-    var xEqLabel: SKLabelNode!
     var skipButton: MSButtonNode!
     
     override func didMove(to view: SKView) {
         /* Connect scene objects */
         gridNode = childNode(withName: "gridNode") as! Grid
+        eqGrid = childNode(withName: "eqGrid") as! EqGrid
+        eqGrid.isHidden = true
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
         itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
@@ -67,6 +67,7 @@ class ScenarioScene: GameScene {
         ScenarioController.scenarioScene = self
         TutorialController.scene = self
         SpeakInGameController.gameScene = self
+        VEEquivalentController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {
@@ -80,11 +81,11 @@ class ScenarioScene: GameScene {
         clearLabel = childNode(withName: "clearLabel")
         clearLabel.isHidden = true
         levelLabel = childNode(withName: "levelLabel") as! SKLabelNode
+        numOfTotalEnemyLabel = childNode(withName: "numOfTotalEnemyLabel") as! SKLabelNode
         playerPhaseLabel = childNode(withName: "playerPhaseLabel")
         playerPhaseLabel.isHidden = true
         enemyPhaseLabel = childNode(withName: "enemyPhaseLabel")
         enemyPhaseLabel.isHidden = true
-        xEqLabel = childNode(withName: "xEqLabel") as! SKLabelNode
         
         /* Connect game buttons */
         buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
@@ -127,6 +128,7 @@ class ScenarioScene: GameScene {
         
         /* Debug */
         //GameScene.stageLevel = 7
+        moveLevel = 3
         
         /* Stage Level */
         levelLabel.text = String(GameScene.stageLevel+1)
@@ -173,6 +175,7 @@ class ScenarioScene: GameScene {
         castleNode.physicsBody?.contactTestBitMask = 24
         
         /* Set life */
+        life = 5
         setLife(numOflife: life)
         
         // mad pos
@@ -182,9 +185,9 @@ class ScenarioScene: GameScene {
         }
         
         // eqRob
-        if GameScene.stageLevel > 3 {
+        if GameScene.stageLevel > 4 {
             eqRob.isHidden = false
-            if GameScene.stageLevel == 4 {
+            if GameScene.stageLevel == 5 {
                 eqRob.position = CGPoint(x: eqRob.position.x-200, y: eqRob.position.y)
                 selectionPanel.againButton.isHidden = true
             }
@@ -198,7 +201,9 @@ class ScenarioScene: GameScene {
         // nunOfEnemy
         if GameScene.stageLevel == 0 {
             self.totalNumOfEnemy = 2
-        } else if GameScene.stageLevel == 4 {
+        } else if GameScene.stageLevel == 2 {
+            self.totalNumOfEnemy = 3
+        } else if GameScene.stageLevel == 5 {
             self.totalNumOfEnemy = 4
         } else {
             self.totalNumOfEnemy = 1
@@ -207,20 +212,23 @@ class ScenarioScene: GameScene {
         // x label
         if GameScene.stageLevel == 0 {
             signalHolder.isHidden = true
-            xEqLabel.isHidden = true
             valueOfX.isHidden = true
         }
         
         // skipButton
         if GameScene.stageLevel == 0 {
             skipButton.isHidden = !DAUserDefaultUtility.initialScenarioFirst
+        } else if GameScene.stageLevel == 1 {
+                skipButton.isHidden = !DAUserDefaultUtility.scenario2First
         } else if GameScene.stageLevel == 2 {
-            skipButton.isHidden = !DAUserDefaultUtility.moveExplainFirst
-        } else if GameScene.stageLevel == 4 {
+            skipButton.isHidden = !DAUserDefaultUtility.timeBombExplainFirst
+        } else if GameScene.stageLevel == 3 {
+                skipButton.isHidden = !DAUserDefaultUtility.scenario3First
+        } else if GameScene.stageLevel == 5 {
             skipButton.isHidden = !DAUserDefaultUtility.eqRobExplainFirst
-        } else if GameScene.stageLevel == 6 {
-            skipButton.isHidden = !DAUserDefaultUtility.cannonExplainFirst
         } else if GameScene.stageLevel == 7 {
+            skipButton.isHidden = !DAUserDefaultUtility.cannonExplainFirst
+        } else if GameScene.stageLevel == 8 {
             skipButton.isHidden = !DAUserDefaultUtility.invisibleSignalFirst
         }
         
@@ -234,20 +242,37 @@ class ScenarioScene: GameScene {
     }
     
     override func update(_ currentTime: TimeInterval) {
+        
+        //print("\(hero.positionX), \(hero.positionY)")
+//        print("currentActionIndex: \(ScenarioController.currentActionIndex)")
+//        print("currentLineIndex: \(ScenarioController.currentLineIndex)")
+        
         if isCharactersTurn {
             switch tutorialState {
             case .Converstaion:
                 break;
             case .Action:
                 break;
+            case .None:
+                break;
             }
         } else {
-            print("\(gameState), \(playerTurnState), \(itemType)")
+            //print("\(gameState), \(playerTurnState), \(itemType)")
             switch gameState {
             case .AddEnemy:
                 //AddEnemyTurnController.add()
                 ScenarioController.controllActions()
                 gameState = .SignalSending
+                break;
+            case .SignalSending:
+                /* Cane */
+                if caneOnFlag {
+                    gameState = .PlayerTurn
+                    gridNode.numOfTurnEndEnemy = 0
+                } else {
+                    SignalSendingTurnController.sendSignal() {}
+                }
+                ScenarioController.controllActions()
                 break;
             case .AddItem:
                 //AddItemTurnController.add()
@@ -272,6 +297,25 @@ class ScenarioScene: GameScene {
                 case .MoveState:
                     TutorialController.enable()
                     TutorialController.execute()
+                    if GameScene.stageLevel == 2 {
+                        if countTurn == 0 {
+                            if itemArray.count < 1 {
+                                playerTurnState = .TurnEnd
+                                return
+                            }
+                        } else {
+                            isCharactersTurn = true
+                            gridNode.isTutorial = true
+                            tutorialState = .None
+                            if gridNode.enemyArray.count > 0 {
+                                ScenarioController.controllActions()
+                            }
+                            return
+                        }
+                        playerTurnState = .UsingItem
+                        itemAreaCover.isHidden = true
+                        return
+                    }
                     PlayerTurnController.moveState()
                     /* Wait for player touch to move */
                     break;
@@ -298,28 +342,24 @@ class ScenarioScene: GameScene {
                 
                 /* All enemies finish their actions */
                 if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
+                    if GameScene.stageLevel == 2 {
+                        gameState = .PlayerTurn
+                        playerTurnState = .ItemOn
+                        return
+                    }
                     EnemyTurnController.turnEnd()
                     countTurnDone = false
                 }
                 ScenarioController.controllActions()
                 break;
-            case .SignalSending:
-                /* Cane */
-                if caneOnFlag {
-                    gameState = .PlayerTurn
-                    gridNode.numOfTurnEndEnemy = 0
-                } else if signalInvisible {
-                    SignalSendingTurnController.invisibleSignal()
-                } else {
-                    SignalSendingTurnController.sendSignal()
+            case .StageClear:
+                if GameScene.stageLevel == 2 {
+                    ScenarioController.currentActionIndex = 20
                 }
                 ScenarioController.controllActions()
                 break;
-            case .StageClear:
-                ScenarioController.controllActions()
-                break;
             case .GameOver:
-                GameOverTurnController.gameOver()
+                ScenarioController.controllActions()
                 break;
             }
         }
@@ -337,39 +377,52 @@ class ScenarioScene: GameScene {
         
         if isCharactersTurn {
             switch tutorialState {
+            case .None:
+                break;
             case .Converstaion:
                 ScenarioController.nextLine()
                 break;
             case .Action:
-                if GameScene.stageLevel == 4 {
-                    if ScenarioController.currentActionIndex == 3 {
-                        if nodeAtPoint.name == "eqRob" {
+                if GameScene.stageLevel == 0 {
+                    guard TutorialController.userTouch(on: "") else { return }
+                } else if GameScene.stageLevel == 2 {
+                    if ScenarioController.currentActionIndex == 8 {
+                        if nodeAtPoint.name == "buttonItem" {
                             ScenarioController.controllActions()
                         }
-                    } else if ScenarioController.currentActionIndex == 4 {
-                        ScenarioController.controllActions()
-                    } else if ScenarioController.currentActionIndex == 13 {
-                        ScenarioController.controllActions()
-                    } else if ScenarioController.currentActionIndex == 15 {
-                        ScenarioController.controllActions()
-                    } else if ScenarioController.currentActionIndex == 20 {
-                        if nodeAtPoint.name == "eqRob" {
+                    } else if ScenarioController.currentActionIndex == 9 {
+                        if nodeAtPoint.name == "timeBomb" {
                             ScenarioController.controllActions()
                         }
-                    } else if ScenarioController.currentActionIndex == 23 {
+                    } else if ScenarioController.currentActionIndex == 10 {
+                        ScenarioController.currentActionIndex += 1
                         ScenarioController.controllActions()
-                    } else if ScenarioController.currentActionIndex == 25 {
-                        ScenarioController.controllActions()
-                    } else if ScenarioController.currentActionIndex == 26 {
-                        ScenarioController.controllActions()
-                    } else if ScenarioController.currentActionIndex == 27 {
-                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex > 14 {
+                        guard TutorialController.userTouch(on: "") else { return }
                     }
-                } else if GameScene.stageLevel == 6 {
-                    if ScenarioController.currentActionIndex == 4 {
+                } else if GameScene.stageLevel == 5 {
+                    if ScenarioController.currentActionIndex == 13 {
+                        if nodeAtPoint.name == "eqRob" {
+                            ScenarioController.controllActions()
+                        }
+                    } else if ScenarioController.currentActionIndex == 14 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 22 {
+                        ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 24 {
+                            ScenarioController.controllActions()
+                    } else if ScenarioController.currentActionIndex == 26 {
+                        if nodeAtPoint.name == "eqRob" {
+                            ScenarioController.controllActions()
+                        }
+                    } else if ScenarioController.currentActionIndex == 29 {
                         ScenarioController.controllActions()
                     }
                 } else if GameScene.stageLevel == 7 {
+                    if ScenarioController.currentActionIndex == 4 {
+                        ScenarioController.controllActions()
+                    }
+                } else if GameScene.stageLevel == 8 {
                     if ScenarioController.currentActionIndex >= 4 && ScenarioController.currentActionIndex <= 16 {
                         ScenarioController.controllActions()
                     } else if ScenarioController.currentActionIndex >= 26 && ScenarioController.currentActionIndex <= 31 {
@@ -484,15 +537,9 @@ class ScenarioScene: GameScene {
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)
                     }
-                    /* Get boots */
-                    if item.name == "boots" {
-                        item.removeFromParent()
-                        if hero.moveLevel < 4 {
-                            self.hero.moveLevel += 1
-                        }
                     
                     /* Get heart */
-                    } else if item.name == "heart" {
+                    if item.name == "heart" {
                         item.removeFromParent()
                         //maxLife += 1
                         life += 1
@@ -521,14 +568,9 @@ class ScenarioScene: GameScene {
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)
                     }
-                    /* Get boots */
-                    if item.name == "boots" {
-                        item.removeFromParent()
-                        if hero.moveLevel < 4 {
-                            self.hero.moveLevel += 1
-                        }
+                    
                     /* Get heart */
-                    } else if item.name == "heart" {
+                    if item.name == "heart" {
                         item.removeFromParent()
                         //maxLife += 1
                         life += 1
@@ -551,12 +593,24 @@ class ScenarioScene: GameScene {
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! Hero
-                    hero.removeFromParent()
-                    self.gameState = .GameOver
+                    if GameScene.stageLevel == 0 {
+                        hero.isHidden = true
+                        ScenarioController.currentActionIndex = 24
+                        ScenarioController.controllActions()
+                    } else {
+                        hero.removeFromParent()
+                        self.gameState = .GameOver
+                    }
                 } else if contactB.categoryBitMask == 1 {
                     let hero = contactB.node as! Hero
-                    hero.removeFromParent()
-                    self.gameState = .GameOver
+                    if GameScene.stageLevel == 0 {
+                        hero.isHidden = true
+                        ScenarioController.currentActionIndex = 24
+                        ScenarioController.controllActions()
+                    } else {
+                        hero.removeFromParent()
+                        self.gameState = .GameOver
+                    }
                 }
             }
         }
@@ -588,57 +642,6 @@ class ScenarioScene: GameScene {
                 
                 /* Stop arm and fist */
                 nodeA.removeAllActions()
-            }
-        }
-        
-        /* Items set hit enemy */
-        if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
-            
-            if contactA.categoryBitMask == 32 {
-                /* Wall stop enemy punch or move */
-                if contactA.node?.name == "wall" {
-                    /* Get wall */
-                    let wall = contactA.node as! Wall
-                    /* Enemy hits wall by moving */
-                    if contactB.categoryBitMask == 2 {
-                        /* Get enemy */
-                        let enemy = contactB.node as! Enemy
-                        ContactController.enemyMoveToWall(wall: wall, enemy: enemy)
-                    /* Enemy hits wall by punching */
-                    } else {
-                        /* Get enemy arm or fist */
-                        let nodeB = contactB.node as! SKSpriteNode
-                        /* Stop arm and fist */
-                        nodeB.removeAllActions()
-                        if let enemy = nodeB.parent as? Enemy {
-                            ContactController.enemyPunchToWall(wall: wall, enemy: enemy)
-                        }
-                    }
-                }
-            }
-            
-            if contactB.categoryBitMask == 32 {
-                
-                /* Wall stop enemy punch or move */
-                if contactB.node?.name == "wall" {
-                    /* Get wall */
-                    let wall = contactB.node as! Wall
-                    /* Enemy hits wall by moving */
-                    if contactA.categoryBitMask == 2 {
-                        /* Get enemy */
-                        let enemy = contactA.node as! Enemy
-                        ContactController.enemyMoveToWall(wall: wall, enemy: enemy)
-                    /* Enemy hits wall by punching */
-                    } else {
-                        /* Get enemy arm or fist */
-                        let nodeA = contactA.node as! SKSpriteNode
-                        /* Stop arm and fist */
-                        nodeA.removeAllActions()
-                        if let enemy = nodeA.parent as? Enemy {
-                            ContactController.enemyPunchToWall(wall: wall, enemy: enemy)
-                        }
-                    }
-                }
             }
         }
     }
@@ -692,6 +695,7 @@ class ScenarioScene: GameScene {
                 enemy.moveSpeed = 0.2
                 enemy.punchSpeed = 0.0025
                 enemy.singleTurnDuration = 1.0
+                enemy.xValueLabel.isHidden = true
             }
             
             /* Calculate gap between top of grid and gameScene */
@@ -722,9 +726,6 @@ class ScenarioScene: GameScene {
     }
     
     func showX() {
-        signalHolder.isHidden = false
-        xEqLabel.isHidden = false
-        valueOfX.isHidden = false
         for enemy in gridNode.enemyArray {
             enemy.variableExpressionLabel.isHidden = false
         }
@@ -753,6 +754,61 @@ class ScenarioScene: GameScene {
         dispatchGroup.notify(queue: .main, execute: {
             return completion(cand)
         })
+    }
+    
+    func getSignal(completion: @escaping (SignalValueHolder) -> Void) {
+        var cand = SignalValueHolder(value: 1)
+        let dispatchGroup = DispatchGroup()
+        for child in self.children {
+            dispatchGroup.enter()
+            if let signal = child as? SignalValueHolder  {
+                cand = signal
+            }
+            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            return completion(cand)
+        })
+    }
+    
+    func pointingSignal() {
+        getSignal() { signal in
+            let pos = CGPoint(x: signal.position.x + 50, y: signal.position.y + 50)
+            self.pointing(pos: pos)
+        }
+    }
+    
+    func resetEnemies() {
+        guard GameScene.stageLevel == 0 else { return }
+        guard gridNode.enemyArray.count > 0 else { return }
+        self.enemyTurnDoneFlag = true
+        self.gridNode.turnIndex = 0
+        self.gridNode.numOfTurnEndEnemy = 0
+        if gridNode.enemyArray.count == 1 {
+            let enemy = gridNode.enemyArray[0]
+            resetEnemy(enemy: enemy)
+            enemy.positionX = 4
+            enemy.positionY = 10
+            let gridPosition = CGPoint(x: (Double(enemy.positionX)+0.5)*gridNode.cellWidth, y: (Double(enemy.positionY)+0.5)*gridNode.cellHeight)
+            enemy.position = gridPosition
+            enemy.myTurnFlag = true
+        } else {
+            let enemy0 = gridNode.enemyArray[0]
+            let enemy1 = gridNode.enemyArray[1]
+            resetEnemy(enemy: enemy0)
+            resetEnemy(enemy: enemy1)
+            resetEnemyPos(enemy: enemy0, x: 2, y: 10, punchInterval: nil)
+            resetEnemyPos(enemy: enemy1, x: 6, y: 10, punchInterval: nil)
+            enemy0.myTurnFlag = true
+        }
+    }
+    
+    func resetEnemy(enemy: Enemy) {
+        enemy.turnDoneFlag = false
+        enemy.myTurnFlag = false
+        enemy.reachCastleFlag = false
+        enemy.punchIntervalForCount = enemy.punchInterval
+        enemy.posRecord.removeAll()
     }
 }
 

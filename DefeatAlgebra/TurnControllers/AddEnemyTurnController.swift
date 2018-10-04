@@ -92,4 +92,13 @@ struct AddEnemyTurnController {
             }
         }
     }
+    
+    public static func fastForward(completion: @escaping () -> Void) {
+        guard gameScene.countTurnForAddEnemy < EnemyProperty.addEnemyManager[GameScene.stageLevel].count else { return completion() }
+        while EnemyProperty.addEnemyManager[GameScene.stageLevel][gameScene.countTurnForAddEnemy] == 0 {
+            gameScene.countTurnForAddEnemy += 1
+        }
+        return completion()
+        
+    }
 }

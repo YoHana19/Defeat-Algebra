@@ -131,7 +131,7 @@ class InputPanel: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if GameScene.stageLevel == 4, let _ = gameScene as? ScenarioScene {
+        if GameScene.stageLevel == 5, let _ = gameScene as? ScenarioScene {
             guard EqRobTutorialController.userTouch(on: nodeAtPoint.name) else { return }
         }
         
@@ -454,7 +454,8 @@ class InputPanel: SKSpriteNode {
             VECategory.getCategory(ve: variableExpression) { cate in
                 gameScene.eqRob.veCategory = cate
                 self.confirmedVE = self.variableExpression
-
+                gameScene.eqRob.variableExpressionString = self.variableExpression
+                
                 /* Reset stuffs */
                 self.variableExpression = ""
                 self.putXFlag = false
@@ -579,10 +580,10 @@ class InputPanel: SKSpriteNode {
     }
     
     func makeLabels(completion: @escaping ([SKLabelNode]) -> Void) {
-        veLabel1 = SKLabelNode(fontNamed: "GillSans-Bold")
-        veLabel2 = SKLabelNode(fontNamed: "GillSans-Bold")
-        veLabel3 = SKLabelNode(fontNamed: "GillSans-Bold")
-        veLabel4 = SKLabelNode(fontNamed: "GillSans-Bold")
+        veLabel1 = SKLabelNode(fontNamed: DAFont.fontName)
+        veLabel2 = SKLabelNode(fontNamed: DAFont.fontName)
+        veLabel3 = SKLabelNode(fontNamed: DAFont.fontName)
+        veLabel4 = SKLabelNode(fontNamed: DAFont.fontName)
         return completion([veLabel1, veLabel2, veLabel3, veLabel4])
     }
     

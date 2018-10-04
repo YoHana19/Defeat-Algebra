@@ -37,7 +37,6 @@ extension Enemy {
         /* Make sure to call once */
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
-        print("FUGAFUAGUFGUAGFUA")
         /* Enemy punch beyond edge of grid */
         if self.positionY < self.valueOfEnemy {
             /* Do punch */
@@ -52,9 +51,9 @@ extension Enemy {
                         arm.removeFromParent()
                     }
                     self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.positionY) {
-                        self.turnEnd()
                         /* Set enemy position to edge */
                         self.positionY = 0
+                        self.turnEnd()
                     }
                 }
             }
@@ -66,9 +65,9 @@ extension Enemy {
                         arm.removeFromParent()
                     }
                     self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
-                        self.turnEnd()
                         /* Keep track enemy position */
                         self.positionY -= self.valueOfEnemy
+                        self.turnEnd()
                     }
                 }
             }
@@ -248,7 +247,7 @@ extension Enemy {
         
         self.setMovingAnimation()
         self.myTurnFlag = false
-        if self.positionY >= self.valueOfEnemy {
+        if self.positionY > 0 {
             /* Reset count down punchInterval */
             self.punchIntervalForCount = self.punchInterval
         }
@@ -261,9 +260,9 @@ extension Enemy {
         /* To check all enemy turn done */
         self.gridNode.numOfTurnEndEnemy += 1
         
-        /* Reset flag */
-        self.wallHitFlag = false
         self.gameScene.hitCastleWallSoundDone = false
+        
+        self.xValueLabel.text = ""
     }
     
     public func removeArmNFist() {

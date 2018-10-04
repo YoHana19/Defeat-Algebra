@@ -11,11 +11,19 @@ import SpriteKit
 
 class EqRobForInstruction: SKSpriteNode {
     
-    var veString: String = ""
+    var veString: String = "" {
+        didSet {
+            variableExpressionLabel.text = veString
+        }
+    }
     var veLabel: SKLabelNode!
     
     var constantsArray = [Int]()
     var coefficientArray = [Int]()
+    
+    var variableExpressionLabel = SKLabelNode(fontNamed: DAFont.fontName)
+    var eqPosX = 0
+    var eqPosY = 11
     
     init() {
         /* Initialize with enemy asset */
@@ -44,7 +52,7 @@ class EqRobForInstruction: SKSpriteNode {
     
     
     func setLabel() {
-        veLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        veLabel = SKLabelNode(fontNamed: DAFont.fontName)
         veLabel.fontSize = 50
         veLabel.verticalAlignmentMode = .center
         veLabel.horizontalAlignmentMode = .left
@@ -89,7 +97,7 @@ class EqRobForInstruction: SKSpriteNode {
             let result = self.calculateValue(value: value)
             self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
             let attrText = NSMutableAttributedString(string: self.veLabel.text!)
-            let font = UIFont(name: "GillSans-Bold", size: 50) ?? UIFont.systemFont(ofSize: 50)
+            let font = UIFont(name: DAFont.fontName, size: 50) ?? UIFont.systemFont(ofSize: 50)
             attrText.addAttributes([.foregroundColor: UIColor.white, .font: font], range: NSMakeRange(0, self.veLabel.text!.count))
             for pos in xPos {
                 attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(self.veString.count+1+pos, 1))
@@ -110,5 +118,28 @@ class EqRobForInstruction: SKSpriteNode {
             outPut += coeffcient*value
         }
         return outPut
+    }
+    
+    func initailizeVariableExpressionLabel() {
+        /* text */
+        variableExpressionLabel.text = ""
+        /* name */
+        variableExpressionLabel.name = "variableExpressionLabel"
+        /* font size */
+        variableExpressionLabel.fontSize = 35
+        /* zPosition */
+        variableExpressionLabel.zPosition = 3
+        /* position */
+        variableExpressionLabel.position = CGPoint(x: 45, y: 0)
+        variableExpressionLabel.zRotation = .pi * -1/2
+        variableExpressionLabel.verticalAlignmentMode = .center
+        variableExpressionLabel.horizontalAlignmentMode = .center
+        variableExpressionLabel.isHidden = true
+        /* Add to Scene */
+        self.addChild(variableExpressionLabel)
+    }
+    
+    public func forcus() {
+        variableExpressionLabel.fontColor = UIColor.red
     }
 }

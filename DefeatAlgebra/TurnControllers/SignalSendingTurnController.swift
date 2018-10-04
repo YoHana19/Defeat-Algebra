@@ -13,7 +13,7 @@ struct SignalSendingTurnController {
     public static var gameScene: GameScene!
     public static var done = false
     
-    static func sendSignal(in times: Int? = nil) {
+    static func sendSignal(in times: Int? = nil, completion: @escaping() -> Void) {
         if !done {
             done = true
             gameScene.gridNode.numOfTurnEndEnemy = 0
@@ -21,24 +21,30 @@ struct SignalSendingTurnController {
             /* Calculate each enemy's variable expression */
             let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
             if willAttackEnemies.count > 0 {
-                gameScene.xValue =  times ?? Int(arc4random_uniform(UInt32(3)))+1
+                var max = 3
+                if GameScene.stageLevel < 2 {
+                    max = 2
+                }
+                gameScene.xValue =  times ?? Int(arc4random_uniform(UInt32(max)))+1
                 gameScene.valueOfX.fontColor = UIColor.red
                 for enemy in willAttackEnemies {
                     enemy.calculatePunchLength(value: gameScene.xValue)
-                    SignalController.send(target: enemy, num: gameScene.xValue)
+                    SignalController.send(target: enemy, num: gameScene.xValue) {}
                 }
                 if let maxDistanceEnemy = willAttackEnemies.max(by: {$1.distance(to: gameScene.madScientistNode) > $0.distance(to: gameScene.madScientistNode)}) {
                     let wait = SKAction.wait(forDuration: SignalController.signalSentDuration(target: maxDistanceEnemy, xValue: gameScene.xValue)+0.2)
                     gameScene.run(wait, completion: {
                         gameScene.gameState = .AddItem
                         done = false
+                        return completion()
                     })
                 }
             } else {
-                gameScene.valueOfX.text = "0"
+                gameScene.xValue = 0
                 gameScene.valueOfX.fontColor = UIColor.red
                 gameScene.gameState = .AddItem
                 done = false
+                return completion()
             }
         }
     }
@@ -52,10 +58,11 @@ struct SignalSendingTurnController {
                 gameScene.xValue = times ?? Int(arc4random_uniform(UInt32(3)))+1
                 for enemy in willAttackEnemies {
                     enemy.calculatePunchLength(value: gameScene.xValue)
-                    enemy.forcusForAttack(color: UIColor.red)
+                    let num = times ?? 0
+                    enemy.forcusForAttack(color: UIColor.red, value: num)
                 }
             }
-            gameScene.valueOfX.text = "？"
+            gameScene.valueOfX.text = "x = ？"
             gameScene.valueOfX.fontColor = UIColor.red
             gameScene.gameState = .AddItem
             done = false

@@ -80,14 +80,14 @@ class SelectionPanel: SKSpriteNode {
     }
     
     func setLabel() {
-        veLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        veLabel = SKLabelNode(fontNamed: DAFont.fontName)
         veLabel.fontSize = 70
         veLabel.position = CGPoint(x: 335, y: -100)
         veLabel.zPosition = 3
         veLabel.fontColor = UIColor.white
         self.addChild(veLabel)
         
-        xLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        xLabel = SKLabelNode(fontNamed: DAFont.fontName)
         xLabel.fontSize = 60
         xLabel.position = CGPoint(x: 35, y: -180)
         xLabel.horizontalAlignmentMode = .left
@@ -97,7 +97,7 @@ class SelectionPanel: SKSpriteNode {
         xLabel.isHidden = true
         self.addChild(xLabel)
         
-        xValueLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        xValueLabel = SKLabelNode(fontNamed: DAFont.fontName)
         xValueLabel.fontSize = 60
         xValueLabel.position = CGPoint(x: 120, y: -180)
         xValueLabel.horizontalAlignmentMode = .left

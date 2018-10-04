@@ -12,7 +12,7 @@ import SpriteKit
 class ShowLength: SKLabelNode {
     
     init(pos: CGPoint, text: String, arrowHeight: CGFloat?) {
-        super.init(fontNamed: "GillSans-Bold")
+        super.init(fontNamed: DAFont.fontName)
         
         /* Set Z-Position, ensure ontop of grid */
         zPosition = 12
@@ -30,7 +30,7 @@ class ShowLength: SKLabelNode {
     }
     
     init(grid: Grid, gridAt: (Int, Double), text: String, arrowHeight: CGFloat?) {
-        super.init(fontNamed: "GillSans-Bold")
+        super.init(fontNamed: DAFont.fontName)
         
         /* Set Z-Position, ensure ontop of grid */
         zPosition = 12

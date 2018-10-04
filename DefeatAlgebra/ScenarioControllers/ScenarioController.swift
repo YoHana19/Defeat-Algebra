@@ -13,7 +13,7 @@ struct ScenarioController {
     static var currentLineIndex = 0
     static var currentActionIndex = 0
     static var scenarioScene: ScenarioScene!
-    static var duringGameActionsActive = false
+    static var keyTouchPos: (Int, Int) = (100, 100)
 
     static func nextLine() {
         let currentScenario = getScenario()
@@ -22,11 +22,12 @@ struct ScenarioController {
             if action[0] == "pause" {
                 scenarioScene.tutorialState = .Action
                 currentActionIndex += 1
+                currentLineIndex += 1
                 controllActions()
             } else {
                 characterSpeak(chara: action[0], line: action[1])
+                currentLineIndex += 1
             }
-            currentLineIndex += 1
         }
     }
     
@@ -102,36 +103,47 @@ struct ScenarioController {
         switch GameScene.stageLevel {
         case 0:
             return ScenarioProperty.scenario0
+        case 1:
+            return ScenarioProperty.scenario1
         case 2:
             return ScenarioProperty.scenario2
-        case 4:
-            return ScenarioProperty.scenario4
-        case 6:
-            return ScenarioProperty.scenario6
+        case 3:
+            return ScenarioProperty.scenario3
+        case 5:
+            return ScenarioProperty.scenario5
         case 7:
             return ScenarioProperty.scenario7
+        case 8:
+            return ScenarioProperty.scenario8
         default:
             return [[String]]()
         }
     }
     
     static func controllActions() {
-        //print("currentActionIndex: \(currentActionIndex)")
+        print("currentActionIndex: \(currentActionIndex)")
+        print("currentLineIndex: \(currentLineIndex)")
         switch GameScene.stageLevel {
         case 0:
             excute0()
             break;
+        case 1:
+            excute1()
+            break;
         case 2:
             excute2()
             break;
-        case 4:
-            excute4()
+        case 3:
+            excute3()
             break;
-        case 6:
-            excute6()
+        case 5:
+            excute5()
             break;
         case 7:
             excute7()
+            break;
+        case 8:
+            excute8()
             break;
         default:
             break;
@@ -241,7 +253,7 @@ struct ScenarioController {
             break;
         case 10:
             guard !scenarioScene.isCharactersTurn else { return }
-            guard scenarioScene.gameState == .AddItem else { return }
+            guard scenarioScene.gameState == .AddEnemy else { return }
             guard scenarioScene.countTurn == 3 else { return }
             scenarioScene.isCharactersTurn = true
             scenarioScene.gridNode.isTutorial = true
@@ -264,46 +276,160 @@ struct ScenarioController {
             break;
         case 13:
             guard scenarioScene.isCharactersTurn else { return }
-            CharacterController.retreatDoctor()
-            CharacterController.retreatMainHero()
-            scenarioScene.isCharactersTurn = false
-            scenarioScene.gridNode.isTutorial = false
-            scenarioScene.gameState = .PlayerTurn
-            scenarioScene.playerTurnState = .DisplayPhase
-            CharacterController.showMiniMainHero()
-            CharacterLinesController.miniMainHeroSayLoop()
-            currentActionIndex += 1
+            SignalController.sendHalf(target: scenarioScene.gridNode.enemyArray[0], num: 2) {
+                scenarioScene.pointingSignal()
+                scenarioScene.tutorialState = .Converstaion
+                nextLine()
+            }
             break;
         case 14:
-            guard !scenarioScene.isCharactersTurn else { return }
-            if scenarioScene.gameState == .StageClear {
-                currentActionIndex = 16
-                scenarioScene.isCharactersTurn = true
-                scenarioScene.gridNode.isTutorial = true
-                CharacterLinesController.stopMiniMainHeroSayLoop()
-                CharacterController.retreatMiniMainHero()
-                controllActions()
-            } else if scenarioScene.gameState == .GameOver {
-                print("gameover")
-            } else {
-                return
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.getSignal() { signal in
+                signal.xValue.isHidden = false
+                charaSpeak(at: currentLineIndex)
+                scenarioScene.tutorialState = .Converstaion
+                currentActionIndex -= 1
             }
             break;
         case 15:
             guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.tutorialState = .Converstaion
+            scenarioScene.removePointing()
+            scenarioScene.getSignal() { signal in
+                SignalController.sendHalf2(signal: signal, target: scenarioScene.gridNode.enemyArray[0], num: 2) {
+                    scenarioScene.xValue = 2
+                    scenarioScene.valueOfX.fontColor = UIColor.red
+                    scenarioScene.gridNode.enemyArray[0].calculatePunchLength(value: scenarioScene.xValue)
+                    scenarioScene.gridNode.numOfTurnEndEnemy = 0
+                    scenarioScene.gridNode.enemyArray[0].xValueLabel.isHidden = false
+                    scenarioScene.gridNode.enemyArray[1].xValueLabel.isHidden = false
+                    scenarioScene.signalHolder.isHidden = false
+                    scenarioScene.valueOfX.isHidden = false
+                    charaSpeak(at: currentLineIndex)
+                    scenarioScene.tutorialState = .Converstaion
+                }
+            }
             break;
         case 16:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLine()
+            break;
+        case 17:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.retreatDoctor()
+            CharacterController.retreatMainHero()
+            TutorialController.currentIndex += 1
+            TutorialController.enable()
+            TutorialController.execute()
+            currentActionIndex += 1
+            break;
+        case 18:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.gameState = .PlayerTurn
+            scenarioScene.playerTurnState = .DisplayPhase
+            scenarioScene.isCharactersTurn = false
+            scenarioScene.gridNode.isTutorial = false
+            //CharacterController.showMiniMainHero()
+            //CharacterLinesController.miniMainHeroSayLoop()
+            currentActionIndex += 1
+            break;
+        case 19:
+            guard !scenarioScene.isCharactersTurn else { return }
+            if scenarioScene.gameState == .StageClear {
+                currentActionIndex += 1
+                scenarioScene.isCharactersTurn = true
+                scenarioScene.gridNode.isTutorial = true
+                //CharacterLinesController.stopMiniMainHeroSayLoop()
+                //CharacterController.retreatMiniMainHero()
+                controllActions()
+            } else if scenarioScene.gameState == .GameOver {
+                currentActionIndex += 3
+                scenarioScene.isCharactersTurn = true
+                scenarioScene.gridNode.isTutorial = true
+                //CharacterLinesController.stopMiniMainHeroSayLoop()
+                //CharacterController.retreatMiniMainHero()
+                controllActions()
+            } else {
+                return
+            }
+            break;
+        case 20: // clear
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.tutorialState = .Converstaion
             wait(length: 1.0) {
                 nextLine()
             }
             break;
-        case 17:
+        case 21:
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.resetCharacter()
             DAUserDefaultUtility.doneFirstly(name: "initialScenarioFirst")
+            loadGameScene()
+            break;
+        case 22: // Game Over
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.tutorialState = .None
+            TutorialController.currentIndex += 1
+            TutorialController.enable()
+            TutorialController.execute()
+            currentActionIndex += 1
+            wait(length: 1.0) {
+                scenarioScene.tutorialState = .Action
+            }
+            break;
+        case 23:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.resetEnemies()
+            scenarioScene.resetHeroPos(x: 4, y: 2)
+            scenarioScene.life = 5
+            scenarioScene.setLife(numOflife: 5)
+            currentActionIndex = 18
+            controllActions()
+            break;
+        case 24: // Hero bumpped enemy
+            guard !scenarioScene.isCharactersTurn else { return }
+            scenarioScene.tutorialState = .None
+            scenarioScene.isCharactersTurn = true
+            scenarioScene.gridNode.isTutorial = true
+            //CharacterLinesController.stopMiniMainHeroSayLoop()
+            //CharacterController.retreatMiniMainHero()
+            TutorialController.currentIndex = 13
+            TutorialController.enable()
+            TutorialController.execute()
+            currentActionIndex += 1
+            wait(length: 1.0) {
+                scenarioScene.tutorialState = .Action
+            }
+            break;
+        case 25:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.hero.isHidden = false
+            scenarioScene.unDo() {
+                currentActionIndex = 18
+                controllActions()
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    
+    static func excute1 () {
+        switch currentActionIndex {
+        case 0:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.tutorialState = .None
+            wait(length: 0.5) {
+                nextLine()
+            }
+            wait(length: 2.0) {
+                scenarioScene.tutorialState = .Converstaion
+            }
+            break;
+        case 1:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.retreatMainHero()
+            CharacterController.retreatMadDoctor()
+            DAUserDefaultUtility.doneFirstly(name: "scenario2First")
             loadGameScene()
             break;
         default:
@@ -316,27 +442,227 @@ struct ScenarioController {
         case 0:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.setHero()
-            scenarioScene.tutorialState = .Action
-            wait(length: 1.0) {
+            scenarioScene.tutorialState = .None
+            scenarioScene.enemyEnter([(1, 10, "2x+1", 0), (4, 10, "x+1", 0), (7, 10, "2×x", 0)]) {
                 nextLine()
-            }
-            wait(length: 3.0) {
-                scenarioScene.tutorialState = .Converstaion
+                wait(length: 2.0) {
+                    scenarioScene.tutorialState = .Converstaion
+                }
             }
             break;
         case 1:
             guard scenarioScene.isCharactersTurn else { return }
-            CharacterController.retreatMainHero()
-            CharacterController.retreatMadDoctor()
-            scenarioScene.isCharactersTurn = false
-            scenarioScene.gridNode.isTutorial = false
-            scenarioScene.gameState = .PlayerTurn
-            scenarioScene.playerTurnState = .MoveState
-            scenarioScene.movingPointing()
+            scenarioScene.pointingGridAt(x: 4, y: 10)
+            charaSpeak(at: currentLineIndex)
+            scenarioScene.tutorialState = .Converstaion
+            currentActionIndex -= 1
             break;
         case 2:
             guard scenarioScene.isCharactersTurn else { return }
-            DAUserDefaultUtility.doneFirstly(name: "moveExplainFirst")
+            SignalController.send(target: scenarioScene.gridNode.enemyArray[1], num: 2) {
+                charaSpeak(at: currentLineIndex)
+                currentActionIndex -= 1
+                scenarioScene.tutorialState = .Converstaion
+                scenarioScene.xValue = 2
+                scenarioScene.gridNode.enemyArray[1].calculatePunchLength(value: 2)
+            }
+            break;
+        case 3:
+            guard scenarioScene.isCharactersTurn else { return }
+            GridActiveAreaController.showActiveArea(at: [(4,9),(4,8),(4,7)], color: "red", grid: scenarioScene.gridNode)
+            charaSpeak(at: currentLineIndex)
+            scenarioScene.tutorialState = .Converstaion
+            currentActionIndex -= 1
+            break;
+        case 4:
+            guard scenarioScene.isCharactersTurn else { return }
+            let enemy = scenarioScene.gridNode.enemyArray[1]
+            enemy.punch() { armAndFist in
+                enemy.subSetArm(arms: armAndFist.arm) { (newArms) in
+                    for arm in armAndFist.arm {
+                        arm.removeFromParent()
+                    }
+                    enemy.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: enemy.valueOfEnemy) {
+                        /* Keep track enemy position */
+                        enemy.positionY -= enemy.valueOfEnemy
+                        enemy.removeArmNFist()
+                        enemy.xValueLabel.text = ""
+                        enemy.setMovingAnimation()
+                        enemy.variableExpressionLabel.fontColor = UIColor.white
+                        GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.gridNode)
+                        scenarioScene.removePointing()
+                        currentActionIndex += 1
+                        controllActions()
+                    }
+                }
+            }
+            break;
+        case 5:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLine()
+            scenarioScene.tutorialState = .Converstaion
+            break;
+        case 6:
+            guard scenarioScene.isCharactersTurn else { return }
+            SignalController.send(target: scenarioScene.gridNode.enemyArray[1], num: 1) {
+                scenarioScene.xValue = 1
+                scenarioScene.gridNode.enemyArray[1].calculatePunchLength(value: 1)
+                currentActionIndex += 1
+                controllActions()
+                CharacterController.retreatMainHero()
+            }
+            for _ in 0..<3 {
+                scenarioScene.displayitem(name: "timeBomb")
+            }
+            break;
+        case 7:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.buttonItem.isHidden = false
+            scenarioScene.buttonAttack.isHidden = false
+            scenarioScene.pointingItmBtn()
+            scenarioScene.tutorialState = .Action
+            charaSpeak(at: currentLineIndex)
+            break;
+        case 8:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingLastGotItem()
+            charaSpeak(at: currentLineIndex)
+            scenarioScene.itemAreaCover.isHidden = true
+            break;
+        case 9:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.usingItemIndex = Int((scenarioScene.itemArray.last!.position.x-56.5)/91)
+            CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctor.position.x, y: CharacterController.doctor.position.y-300), duration: 1.0)
+            scenarioScene.removePointing()
+            GridActiveAreaController.showtimeBombSettingArea(grid: scenarioScene.gridNode)
+            charaSpeak(at: currentLineIndex)
+            currentActionIndex -= 1
+            scenarioScene.tutorialState = .Converstaion
+            break;
+        case 10:
+            guard scenarioScene.isCharactersTurn else { return }
+            GridActiveAreaController.resetSquareArray(color: "purple", grid: scenarioScene.gridNode)
+            nextLineWithoutMoving()
+            scenarioScene.pointingGridAt(x: 4, y: 7)
+            scenarioScene.pointingGridAt(x: 4, y: 5)
+            GridActiveAreaController.showActiveArea(at: [(4,6),(4,5)], color: "red", grid: scenarioScene.gridNode)
+            break;
+        case 11:
+            guard scenarioScene.isCharactersTurn else { return }
+            GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.gridNode)
+            nextLineWithoutMoving()
+            scenarioScene.removePointing()
+            GridActiveAreaController.showtimeBombSettingArea(grid: scenarioScene.gridNode)
+            break;
+        case 12:
+            ItemTouchController.AAForTimeBombTapped(gridX: 4, gridY: 5)
+            scenarioScene.removePointing()
+            wait(length: 1.0) {
+                currentActionIndex += 1
+                controllActions()
+            }
+            break;
+        case 13:
+            guard scenarioScene.isCharactersTurn else { return }
+            let enemy = scenarioScene.gridNode.enemyArray[1]
+            enemy.punch() { armAndFist in
+                enemy.subSetArm(arms: armAndFist.arm) { (newArms) in
+                    for arm in armAndFist.arm {
+                        arm.removeFromParent()
+                    }
+                    enemy.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: enemy.valueOfEnemy) {
+                        /* Keep track enemy position */
+                        enemy.positionY -= enemy.valueOfEnemy
+                        enemy.removeArmNFist()
+                        enemy.xValueLabel.text = ""
+                        enemy.setMovingAnimation()
+                        enemy.variableExpressionLabel.fontColor = UIColor.white
+                        GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.gridNode)
+                        scenarioScene.removePointing()
+                        currentActionIndex += 1
+                        controllActions()
+                    }
+                }
+            }
+            break;
+        case 14:
+            if MainMenu.soundOnFlag {
+                let explode = SKAction.playSoundFileNamed("timeBombExplosion.mp3", waitForCompletion: true)
+                scenarioScene.run(explode)
+            }
+            let timeBomb = scenarioScene.gridNode.timeBombSetArray[0]
+            scenarioScene.timeBombEffect(timeBomb: timeBomb)
+            timeBomb.removeFromParent()
+            EnemyDeadController.hitEnemy(enemy: scenarioScene.gridNode.enemyArray[1], gameScene: scenarioScene) {
+                nextLine()
+                scenarioScene.tutorialState = .Converstaion
+            }
+            scenarioScene.gridNode.timeBombSetArray.removeAll()
+            break;
+        case 15:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.retreatMainHero()
+            CharacterController.retreatDoctor()
+            TutorialController.enable()
+            TutorialController.execute()
+            currentActionIndex += 1
+            break;
+        case 16:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.gameState = .SignalSending
+            scenarioScene.isCharactersTurn = false
+            scenarioScene.gridNode.isTutorial = false
+            currentActionIndex += 1
+            break;
+        case 17:
+            guard scenarioScene.isCharactersTurn else { return }
+            TutorialController.enable()
+            TutorialController.execute()
+            currentActionIndex += 1
+            scenarioScene.tutorialState = .Action
+            break;
+        case 18:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.unDoTimeBomb(num: scenarioScene.gridNode.enemyArray.count) {
+                for enemy in scenarioScene.gridNode.enemyArray {
+                    for i in 1...enemy.valueOfEnemy {
+                        GridActiveAreaController.showActiveArea(at: [(enemy.positionX, enemy.positionY-i)], color: "red", grid: scenarioScene.gridNode)
+                    }
+                    scenarioScene.pointingGridAt(x: enemy.positionX, y: enemy.positionY-enemy.valueOfEnemy)
+                }
+            }
+            currentActionIndex += 1
+            break;
+        case 19:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.tutorialState = .None
+            wait(length: 1.0) {
+                scenarioScene.tutorialState = .Action
+            }
+            GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.gridNode)
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            for enemy in scenarioScene.gridNode.enemyArray {
+                enemy.xValueLabel.text = ""
+                enemy.variableExpressionLabel.color = UIColor.white
+            }
+            scenarioScene.countTurnDone = false
+            scenarioScene.countTurn = 0
+            currentActionIndex = 16
+            break;
+        case 20: // clear
+            guard !scenarioScene.isCharactersTurn && scenarioScene.gameState == .StageClear else { return }
+            scenarioScene.isCharactersTurn = true
+            scenarioScene.gridNode.isTutorial = true
+            scenarioScene.tutorialState = .Converstaion
+            wait(length: 1.0) {
+                nextLine()
+            }
+            break;
+        case 21:
+            guard scenarioScene.isCharactersTurn else { return }
+            DAUserDefaultUtility.doneFirstly(name: "timeBombExplainFirst")
             loadGameScene()
             break;
         default:
@@ -344,7 +670,31 @@ struct ScenarioController {
         }
     }
     
-    static func excute4() {
+    static func excute3 () {
+        switch currentActionIndex {
+        case 0:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.tutorialState = .None
+            wait(length: 0.5) {
+                nextLine()
+            }
+            wait(length: 2.0) {
+                scenarioScene.tutorialState = .Converstaion
+            }
+            break;
+        case 1:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.retreatMainHero()
+            CharacterController.retreatMadDoctor()
+            DAUserDefaultUtility.doneFirstly(name: "scenario3First")
+            loadGameScene()
+            break;
+        default:
+            break;
+        }
+    }
+    
+    static func excute5() {
         switch currentActionIndex {
         case 0:
             guard scenarioScene.isCharactersTurn else { return }
@@ -359,6 +709,129 @@ struct ScenarioController {
             break;
         case 1:
             guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.pointingGridAt(x: 3, y: 8)
+            scenarioScene.pointingGridAt(x: 5, y: 8)
+            charaSpeak(at: currentLineIndex)
+            currentActionIndex -= 1
+            scenarioScene.tutorialState = .Converstaion
+            break;
+        case 2:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            VEEquivalentController.showEqGrid(enemies: [scenarioScene.gridNode.enemyArray[1], scenarioScene.gridNode.enemyArray[2]])
+            CharacterController.retreatMainHero()
+            currentActionIndex += 1
+            controllActions()
+            break;
+        case 3:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctor.position.x, y: CharacterController.doctor.position.y-300), duration: 1.0)
+            nextLineWithoutMoving()
+            scenarioScene.pointingEqSignal()
+            currentActionIndex += 1
+            break;
+        case 4:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            CharacterController.doctor.changeBalloonTexture(index: 1)
+            nextLine()
+            scenarioScene.tutorialState = .Converstaion
+            break;
+        case 5:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.retreatMainHero()
+            CharacterController.doctor.changeBalloonTexture(index: 0)
+            CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctor.position.x, y: CharacterController.doctor.position.y-300), duration: 1.0)
+            GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.eqGrid)
+            scenarioScene.valueOfX.text = "x=1"
+            let enemy1 = scenarioScene.gridNode.enemyArray[1]
+            let enemy2 = scenarioScene.gridNode.enemyArray[2]
+            enemy1.calculatePunchLength(value: 1)
+            enemy1.xValueLabel.text = "x=1"
+            for i in 1...enemy1.valueOfEnemy {
+                GridActiveAreaController.showActiveArea(at: [(enemy1.eqPosX, enemy1.eqPosY-i)], color: "red", grid: scenarioScene.eqGrid)
+            }
+            enemy2.calculatePunchLength(value: 1)
+            enemy2.xValueLabel.text = "x=1"
+            for i in 1...enemy2.valueOfEnemy {
+                GridActiveAreaController.showActiveArea(at: [(enemy2.eqPosX, enemy2.eqPosY-i)], color: "red", grid: scenarioScene.eqGrid)
+            }
+            nextLineWithoutMoving()
+            scenarioScene.pointingGridAt(x: 4, y: 11)
+            scenarioScene.pointingEqSignal1()
+            currentActionIndex += 1
+            scenarioScene.eqGrid.createLabel(text: "2x+1", posX: 1, posY: 7, redLetterPos: [1])
+            scenarioScene.eqGrid.createLabel(text: "2×1+1=3", posX: 1, posY: 5, redLetterPos: [2])
+            break;
+        case 6:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLineWithoutMoving()
+            scenarioScene.removePointing()
+            scenarioScene.pointingGridAt(x: 7, y: 11)
+            currentActionIndex += 1
+            scenarioScene.eqGrid.removeLabel()
+            scenarioScene.eqGrid.createLabel(text: "x+1+x", posX: 1, posY: 7, redLetterPos: [0,4])
+            scenarioScene.eqGrid.createLabel(text: "1+1+1=3", posX: 1, posY: 5, redLetterPos: [0,4])
+            break;
+        case 7:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.eqGrid)
+            scenarioScene.valueOfX.text = "x=2"
+            let enemy1 = scenarioScene.gridNode.enemyArray[1]
+            let enemy2 = scenarioScene.gridNode.enemyArray[2]
+            enemy1.calculatePunchLength(value: 2)
+            enemy1.xValueLabel.text = "x=2"
+            for i in 1...enemy1.valueOfEnemy {
+                GridActiveAreaController.showActiveArea(at: [(enemy1.eqPosX, enemy1.eqPosY-i)], color: "red", grid: scenarioScene.eqGrid)
+            }
+            enemy2.calculatePunchLength(value: 2)
+            enemy2.xValueLabel.text = "x=2"
+            for i in 1...enemy2.valueOfEnemy {
+                GridActiveAreaController.showActiveArea(at: [(enemy2.eqPosX, enemy2.eqPosY-i)], color: "red", grid: scenarioScene.eqGrid)
+            }
+            nextLineWithoutMoving()
+            scenarioScene.eqGrid.removeLabel()
+            scenarioScene.eqGrid.createLabel(text: "2x+1", posX: 1, posY: 7, redLetterPos: [1])
+            scenarioScene.eqGrid.createLabel(text: "2×2+1=5", posX: 1, posY: 5, redLetterPos: [2])
+            scenarioScene.pointingGridAt(x: 4, y: 11)
+            scenarioScene.pointingEqSignal2()
+            currentActionIndex += 1
+            break;
+        case 8:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLineWithoutMoving()
+            scenarioScene.eqGrid.removeLabel()
+            scenarioScene.eqGrid.createLabel(text: "x+1+x", posX: 1, posY: 7, redLetterPos: [0,4])
+            scenarioScene.eqGrid.createLabel(text: "2+1+2=5", posX: 1, posY: 5, redLetterPos: [0,4])
+            scenarioScene.removePointing()
+            scenarioScene.pointingGridAt(x: 7, y: 11)
+            currentActionIndex += 1
+            break;
+        case 9:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLine()
+            scenarioScene.eqGrid.removeLabel()
+            scenarioScene.eqGrid.createLabel(text: "2x+1", posX: 1, posY: 7, redLetterPos: [0,1])
+            scenarioScene.eqGrid.createLabel(text: "x+1+x", posX: 1, posY: 6, redLetterPos: [0,4])
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            CharacterController.doctor.changeBalloonTexture(index: 1)
+            scenarioScene.tutorialState = .Converstaion
+            break;
+        case 10:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.eqGrid.removeLabel()
+            GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.eqGrid)
+            VEEquivalentController.hideEqGrid()
+            scenarioScene.tutorialState = .Converstaion
+            break;
+        case 11: // eqRob show up
+            guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.eqRob.go(toPos: EqRobController.eqRobOriginPos) {
                 let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
                 scenarioScene.eqRob.run(rotate, completion: {
@@ -367,12 +840,12 @@ struct ScenarioController {
                 })
             }
             break;
-        case 2:
+        case 12:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.pointingEqRob()
-            charaSpeak(at: 12)
+            charaSpeak(at: currentLineIndex)
             break;
-        case 3:
+        case 13:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             CharacterController.retreatMainHero()
@@ -380,14 +853,14 @@ struct ScenarioController {
             nextLineWithoutMoving()
             currentActionIndex += 1
             break;
-        case 4:
+        case 14:
             guard scenarioScene.isCharactersTurn else { return }
             nextLineWithoutMoving()
             scenarioScene.pointingGridAt(x: 3, y: 8)
             scenarioScene.pointingInputButton(name: "2")
             currentActionIndex += 1
             break;
-        case 5:
+        case 15:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             scenarioScene.removePointing()
@@ -395,7 +868,7 @@ struct ScenarioController {
             scenarioScene.pointingInputButton(name: "x")
             currentActionIndex += 1
             break;
-        case 6:
+        case 16:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             scenarioScene.removePointing()
@@ -403,7 +876,7 @@ struct ScenarioController {
             scenarioScene.pointingInputButton(name: "+")
             currentActionIndex += 1
             break;
-        case 7:
+        case 17:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             scenarioScene.removePointing()
@@ -411,7 +884,7 @@ struct ScenarioController {
             scenarioScene.pointingInputButton(name: "1")
             currentActionIndex += 1
             break;
-        case 8:
+        case 18:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             scenarioScene.removePointing()
@@ -419,119 +892,107 @@ struct ScenarioController {
             scenarioScene.pointingGridAt(x: 3, y: 8)
             currentActionIndex += 1
             break;
-        case 9:
+        case 19:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             EqRobTutorialController.showSelectionPanel()
             nextLine()
             currentActionIndex += 1
             break;
-        case 10:
+        case 20:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
-            nextLine()
-            scenarioScene.tutorialState = .Converstaion
-            currentActionIndex += 1
-            break;
-        case 11:
-            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.doctor.setScale(0.8)
             nextLine()
             scenarioScene.tutorialState = .Converstaion
             break;
-        case 12:
-            guard scenarioScene.isCharactersTurn else { return }
-            CharacterController.mainHero.moveWithScaling(to: CGPoint(x: 630, y: 500), value: 0.75) {
-                nextLineWithoutMoving()
-            }
-            currentActionIndex += 1
-            break;
-        case 13:
-            guard scenarioScene.isCharactersTurn else { return }
-            nextLineWithoutMoving()
-            break;
-        case 14:
+        case 21:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.pointingGridAt(x: 5, y: 8)
-            charaSpeak(at: 25)
+            CharacterController.mainHero.moveWithScaling(to: CGPoint(x: 630, y: 500), value: 0.75) {
+                nextLineWithoutMoving()
+                currentActionIndex += 1
+            }
             break;
-        case 15:
+        case 22:
             guard scenarioScene.isCharactersTurn else { return }
             nextLineWithoutMoving()
+            currentActionIndex += 1
             break;
-        case 16:
-            guard scenarioScene.isCharactersTurn else { return }
-            charaSpeak(at: 37)
-            break;
-        case 17:
+        case 23:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             nextLineWithoutMoving()
             currentActionIndex += 1
             break;
-        case 18:
+        case 24:
             guard scenarioScene.isCharactersTurn else { return }
             nextLineWithoutMoving()
             break;
-        case 19:
+        case 25:
             guard scenarioScene.isCharactersTurn else { return }
+            TutorialController.enable()
+            TutorialController.execute()
+            CharacterController.doctor.setScale(1.0)
+            CharacterController.mainHero.setScale(1.0)
             CharacterController.retreatMainHero()
             CharacterController.retreatDoctor()
             currentActionIndex += 1
             break;
-        case 20:
+        case 26:
             guard scenarioScene.isCharactersTurn else { return }
+            let _ = TutorialController.userTouch(on: "")
             EqRobTutorialController.isPerfect = EqRobTutorialController.eqRobGoToAttack()
             currentActionIndex += 1
             break;
-        case 21:
+        case 27:
             guard scenarioScene.isCharactersTurn else { return }
             if EqRobTutorialController.isPerfect {
                 nextLine()
                 scenarioScene.tutorialState = .Converstaion
             } else {
                 EqRobTutorialController.pointingMissedEnemies()
-                currentActionIndex = 23
-                currentLineIndex = 47
-                nextLine()
+                currentActionIndex = 29
+                currentLineIndex = 53
             }
             break;
-        case 22:
+        case 28: // clear
             guard scenarioScene.isCharactersTurn else { return }
             DAUserDefaultUtility.doneFirstly(name: "eqRobExplainFirst")
             loadGameScene()
             break;
-        case 23:
+        case 29: // miss
             guard scenarioScene.isCharactersTurn else { return }
             EqRobTutorialController.makeInsturctionForMiss()
+            EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+            scenarioScene.tutorialState = .Action
             currentActionIndex += 1
             break;
-        case 24:
+        case 30:
             guard scenarioScene.isCharactersTurn else { return }
-            nextLineWithoutMoving()
+            guard VEEquivalentController.numOfCheck > 4 else { return }
+            CharacterController.doctor.balloon.isHidden = false
+            EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
             currentActionIndex += 1
             break;
-        case 25:
+        case 31:
             guard scenarioScene.isCharactersTurn else { return }
-            EqRobTutorialController.setDemoCalculation(value: 1)
-            let line = "x=1のとき、2x+1は3、\(EqRobTutorialController.instructedEnemy!.variableExpressionString)は3で同じ値になるじゃろ"
-            CharacterLinesController.doctorSay(line: line)
-            currentActionIndex += 1
+            guard VEEquivalentController.numOfCheck > 4 else { return }
+            VEEquivalentController.getBG() { bg in
+                guard let backGround = bg else { return }
+                guard !backGround.isEnable else { return }
+                EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+                currentActionIndex += 1
+            }
             break;
-        case 26:
+        case 32:
             guard scenarioScene.isCharactersTurn else { return }
-            EqRobTutorialController.setDemoCalculation(value: 3)
-            let line = "x=3のとき、2x+1は7、\(EqRobTutorialController.instructedEnemy!.variableExpressionString)は7で同じ値になるじゃろ"
-            CharacterLinesController.doctorSay(line: line)
-            currentActionIndex += 1
-            break;
-        case 27:
-            guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.removePointing()
-            scenarioScene.selectionPanel.isHidden = true
+            VEEquivalentController.hideEqGrid()
+            EqRobTutorialController.allDone()
             scenarioScene.tutorialState = .Converstaion
             nextLine()
             break;
-        case 28:
+        case 33:
             guard scenarioScene.isCharactersTurn else { return }
             DAUserDefaultUtility.doneFirstly(name: "eqRobExplainFirst")
             loadGameScene()
@@ -541,13 +1002,13 @@ struct ScenarioController {
         }
     }
     
-    static func excute6() {
+    static func excute7() {
         switch currentActionIndex {
         case 0:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.setHero()
             scenarioScene.enemyEnter([(1,8,"x+2", 0)]) {
-                SignalSendingTurnController.sendSignal(in: 2)
+                SignalSendingTurnController.sendSignal(in: 2) {}
                 currentActionIndex += 1
                 wait(length: 2.5) {
                     controllActions()
@@ -640,17 +1101,14 @@ struct ScenarioController {
         }
     }
     
-    static func excute7() {
+    static func excute8() {
         switch currentActionIndex {
         case 0:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.setHero()
             scenarioScene.enemyEnter([(1,11,"3x-x-1", 0), (7,11,"x+1", 0)]) {
-                SignalSendingTurnController.invisibleSignal(in: 3)
                 currentActionIndex += 1
-                wait(length: 0.5) {
-                    controllActions()
-                }
+                controllActions()
             }
             break;
         case 1:
@@ -666,10 +1124,12 @@ struct ScenarioController {
         case 2:
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.retreatMadDoctor()
-            scenarioScene.isCharactersTurn = false
-            scenarioScene.gridNode.enemyArray[0].myTurnFlag = true
-            scenarioScene.gameState = .EnemyTurn
-            currentActionIndex += 1
+            SignalSendingTurnController.sendSignal(in: 3) {
+                scenarioScene.gridNode.enemyArray[0].myTurnFlag = true
+                scenarioScene.gameState = .EnemyTurn
+                scenarioScene.isCharactersTurn = false
+                currentActionIndex += 1
+            }
             break;
         case 3:
             guard !scenarioScene.isCharactersTurn else { return }
@@ -937,8 +1397,7 @@ struct ScenarioController {
                 enemy.turnDoneFlag = false
                 enemy.myTurnFlag = false
             }
-            SignalSendingTurnController.invisibleSignal(in: 2)
-            wait(length: 0.1) {
+            SignalSendingTurnController.sendSignal(in: 2) {
                 scenarioScene.gridNode.enemyArray[0].myTurnFlag = true
                 scenarioScene.gameState = .EnemyTurn
                 scenarioScene.isCharactersTurn = false

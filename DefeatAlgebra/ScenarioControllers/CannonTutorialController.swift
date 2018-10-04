@@ -13,7 +13,7 @@ struct CannonTutorialController {
     
     static func userTouch(on name: String?) -> Bool {
         switch GameScene.stageLevel {
-        case 6:
+        case 7:
             if let name = name {
                 switch ScenarioController.currentActionIndex {
                 case 3:
@@ -56,7 +56,7 @@ struct CannonTutorialController {
             } else {
                 return true
             }
-        case 7:
+        case 8:
             if let name = name {
                 switch ScenarioController.currentActionIndex {
                 case 21:

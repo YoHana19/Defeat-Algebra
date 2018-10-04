@@ -379,7 +379,7 @@ class SimplificationBoard: SKSpriteNode {
         addChild(backButton)
         
         /* label of variable expresion */
-        createdLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        createdLabel = SKLabelNode(fontNamed:DAFont.fontName)
         createdLabel.text = ""
         createdLabel.fontSize = 96
         createdLabel.position = CGPoint(x: 0, y: 55)
@@ -398,7 +398,7 @@ class SimplificationBoard: SKSpriteNode {
     
     func setOriginalVE() {
         /* Set original variable expression label */
-        originLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        originLabel = SKLabelNode(fontNamed: DAFont.fontName)
         originLabel.text = ""
         originLabel.fontSize = 96
         originLabel.position = CGPoint(x: 0, y: 180)

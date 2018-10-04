@@ -15,22 +15,24 @@ struct VECategory {
     static let ve1 = ["x", "x+1", "x+2", "x+3", "1+x", "2+x", "3+x"]
     static let ve2 = ["2x", "3x"]
     static let ve3 = ["1×x", "2×x", "x×1", "x×2"]
-    // level 3 cane
-    static let ve4 = ["x+1", "x+2", "x+3", "1+x", "2+x", "3+x", "2x+1", "2x+2", "1+2x", "2+2x", "x", "2x", "3x",]
+    // level 3 bomb
+    static let ve4 = ["x+1", "x+2", "x+3", "1+x", "2+x", "3+x", "2x+1", "2x+2", "1+2x", "2+2x", "x", "2x", "3x"]
+    // level 4
+    // + ve4
     static let ve5 = ["1×x+1", "2×x+1", "x×1+1", "x×2+1", "1+1×x", "1+2×x", "1+x×1", "1+x×2", "1×x+2", "2×x+2", "x×1+2", "x×2+2", "2+1×x", "2+2×x", "2+x×1", "2+x×2", "1×x+3", "x×1+3", "3+1×x", "3+x×1", "1×x+3"]
     static let ve6 = ["x+x", "x+x+1", "x+x+2", "x+1+x", "x+2+x", "1+x+x", "2+x+x", "x+x+x", "2x+x"]
-    // level 4 wall
+    // level 5
     static let ve7 = ["2x-1", "3x-1", "3x-2", "4-x", "7-2x", "8-2x"]
     static let ve8 = ["2×x-1", "3×x-1", "3×x-2", "4-1×x", "7-2×x", "8-2×x", "x×2-1", "x×3-1", "x×3-2", "4-x×1", "7-x×2", "8-x×2"]
     static let ve9 = ["2x-x", "3x-x", "3x-x-x", "4x-2x", "2x-x+2", "2x+2-x", "3x-x+2", "3x+2-x"]
-    // level 5 eqRob
+    // level 6 eqRob
     static let ve10 = ["2x", "3x", "x+1", "2x+1"]
     static let ve11 = ["x+x", "2×x", "x×3", "x+x+x", "1×x+1", "2x+1-x", "x+x+1", "1+x×2"]
-    // level 6
+    // level 7
     static let ve12 = ["2x", "x+1", "2x+1", "3x+1", "2x+2", "3x-1", "2x-1"]
-    // level 7 cannon
+    // level 8 cannon
     static let ve13 = ["2x", "3x", "x+3", "2x+1", "3x+1", "2x+2", "3x-2", "2x-1"]
-    // level 8 last
+    // level 9 last
     static let ve14 = ["x", "x+1", "x+2", "x+3", "2x", "2x+1", "2x+2", "3x", "3x+1", "3x+2", "2x-1", "3x-1", "3x-2"]
     
     static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8, ve9, ve10, ve11, ve12, ve13, ve14]

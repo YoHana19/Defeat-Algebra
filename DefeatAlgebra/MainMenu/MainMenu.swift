@@ -111,22 +111,7 @@ class MainMenu: SKScene {
             
             GameScene.stageLevel = UserDefaults.standard.integer(forKey: "stageLevel")
             
-            if GameScene.stageLevel == 0 || GameScene.stageLevel == 2 || GameScene.stageLevel == 4 || GameScene.stageLevel == 6 || GameScene.stageLevel == 7 {
-                
-                /* Grab reference to the SpriteKit view */
-                let skView = self?.view as SKView?
-                
-                /* Load Game scene */
-                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
-                    return
-                }
-                
-                /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFit
-                
-                /* Restart GameScene */
-                skView?.presentScene(scene)
-            } else {
+            if GameScene.stageLevel == 4 || GameScene.stageLevel == 6 {
                 /* Grab reference to the SpriteKit view */
                 let skView = self?.view as SKView?
                 
@@ -143,6 +128,21 @@ class MainMenu: SKScene {
                     let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: false)
                     scene.run(sound)
                 }
+                
+                /* Restart GameScene */
+                skView?.presentScene(scene)
+                
+            } else {
+                /* Grab reference to the SpriteKit view */
+                let skView = self?.view as SKView?
+                
+                /* Load Game scene */
+                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
+                    return
+                }
+                
+                /* Ensure correct aspect mode */
+                scene.scaleMode = .aspectFit
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)

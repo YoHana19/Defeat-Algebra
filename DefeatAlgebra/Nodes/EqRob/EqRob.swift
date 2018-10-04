@@ -36,8 +36,18 @@ class EqRob: SKSpriteNode {
         }
     }
     
+    var eqPosX = 0
+    var eqPosY = 11
+    
     var constantsArray = [Int]()
     var coefficientArray = [Int]()
+    
+    var variableExpressionLabel = SKLabelNode(fontNamed: DAFont.fontName)
+    var variableExpressionString = "" {
+        didSet {
+            variableExpressionLabel.text = variableExpressionString
+        }
+    }
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
@@ -45,6 +55,7 @@ class EqRob: SKSpriteNode {
         
         self.name = "eqRob"
         self.zPosition = 11
+        initailizeVariableExpressionLabel()
     }
     
     func go(to target: SKNode, completion: @escaping () -> Void) {
@@ -228,7 +239,6 @@ class EqRob: SKSpriteNode {
         })
     }
     
-    /* Calculate the distance to throw bomb */
     func calculateValue(value: Int) -> Int {
         var outPut = 0
         for constant in constantsArray {
@@ -244,4 +254,28 @@ class EqRob: SKSpriteNode {
         constantsArray.removeAll()
         coefficientArray.removeAll()
     }
+    
+    func initailizeVariableExpressionLabel() {
+        /* text */
+        variableExpressionLabel.text = ""
+        /* name */
+        variableExpressionLabel.name = "variableExpressionLabel"
+        /* font size */
+        variableExpressionLabel.fontSize = 35
+        /* zPosition */
+        variableExpressionLabel.zPosition = 3
+        /* position */
+        variableExpressionLabel.position = CGPoint(x: 50, y: 0)
+        variableExpressionLabel.zRotation = .pi * -1/2
+        variableExpressionLabel.verticalAlignmentMode = .center
+        variableExpressionLabel.horizontalAlignmentMode = .center
+        variableExpressionLabel.isHidden = true
+        /* Add to Scene */
+        self.addChild(variableExpressionLabel)
+    }
+    
+    public func forcus() {
+        variableExpressionLabel.fontColor = UIColor.red
+    }
+    
 }

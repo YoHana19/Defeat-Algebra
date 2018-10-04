@@ -24,12 +24,20 @@ class Hero: SKSpriteNode {
     
     /* Flags */
     var attackDoneFlag = false
-    var moveDoneFlag = false
+    var moveDoneFlag: Bool = false {
+        willSet {
+            if !moveDoneFlag && newValue {
+                posRecord.append((positionX, positionY))
+            }
+        }
+    }
     var aliveFlag = true
     
     /* Position at grid */
     var positionX: Int = 4
     var positionY: Int = 3
+    
+    var posRecord = [(Int, Int)]()
     
     init() {
         /* Initialize with enemy asset */
@@ -506,7 +514,7 @@ class Hero: SKSpriteNode {
     /* Display variable expression you attack when using magic sword */
     func setMagicSwordVE(vE: String) {
         /* label of variable expresion */
-        let vELabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        let vELabel = SKLabelNode(fontNamed: DAFont.fontName)
         vELabel.text = vE
         vELabel.fontColor = UIColor.purple
         vELabel.name = "vElabel"

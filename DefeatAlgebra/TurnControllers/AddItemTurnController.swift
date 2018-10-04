@@ -12,6 +12,7 @@ import SpriteKit
 struct AddItemTurnController {
     public static var gameScene: GameScene!
     public static var done = false
+    public static var itemPos = [(Int, Int, Int)]()
     
     public static func add() {
         /* Make sure to call till complete adding enemy */
@@ -32,6 +33,11 @@ struct AddItemTurnController {
                 if gameScene.initialAddItemFlag {
                     gameScene.initialAddItemFlag = false
                     let items = ItemDropController.initialItemPosArray[GameScene.stageLevel]
+                    guard items.count > 0 else {
+                        gameScene.gameState = .PlayerTurn
+                        done = false
+                        return
+                    }
                     gameScene.plane.fly(items: items) {
                         /* Move to next state */
                         gameScene.gameState = .PlayerTurn
@@ -40,6 +46,7 @@ struct AddItemTurnController {
                 } else if addingIndex != 0 {
                     let items = ItemDropController.itemManager[GameScene.stageLevel][String(addingIndex)]
                     ItemDropController.makeItemPosArray(items: items!) { itemPosArray in
+                        itemPos = itemPosArray
                         gameScene.plane.fly(items: itemPosArray) {
                             /* Move to next state */
                             gameScene.gameState = .PlayerTurn

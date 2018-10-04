@@ -41,8 +41,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /*== Game objects ==*/
     var gridNode: Grid!
+    var eqGrid: EqGrid!
     var castleNode: SKSpriteNode!
     var itemAreaNode: SKSpriteNode!
+    var signalHolder: SKSpriteNode!
     var buttonAttack: SKNode!
     var buttonItem: SKNode!
     var pauseScreen: PauseScreen!
@@ -53,11 +55,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var selectionPanel: SelectionPanel!
     var inputPanelForCannon: InputPanelForCannon!
     var plane: Plane!
+    var stageHolder: SKNode?
     
     /*== Game labels ==*/
     var gameOverLabel: SKNode!
     var clearLabel: SKNode!
     var levelLabel: SKLabelNode!
+    var numOfTotalEnemyLabel: SKLabelNode!
     var playerPhaseLabel: SKNode!
     var enemyPhaseLabel: SKNode!
     
@@ -86,7 +90,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var selectedLevel: Int?
     var moveLevel: Int = 1
     var handedItemNameArray: [String] = []
-    var totalNumOfEnemy: Int = 0
+    var totalNumOfEnemy: Int = 0 {
+        didSet {
+            numOfTotalEnemyLabel.text = String(totalNumOfEnemy)
+        }
+    }
     var dispClearLabelDone = false
     
     var isCharactersTurn = false
@@ -121,6 +129,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var compAddEnemyFlag = false
     var countTurnForAddEnemy: Int = -1
     var dupliExsist = false
+    var willFastForward = false
     
     /*== Enemy Turn management ==*/
     var enemyTurnDoneFlag = false
@@ -159,7 +168,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var valueOfX: SKLabelNode!
     var xValue: Int = 0 {
         didSet {
-            valueOfX.text = String(xValue)
+            if GameScene.stageLevel < 8 {
+                if xValue == 0 {
+                    valueOfX.text = ""
+                } else {
+                    valueOfX.text = "x = \(xValue)"
+                }
+            }
         }
     }
     var signalInvisible = false
@@ -169,7 +184,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*=================*/
     
     //var maxLife = 3
-    var life: Int = 3
+    var life: Int = 5
     
     var log0: Log!
     var log1: Log!
@@ -185,8 +200,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Connect scene objects */
         gridNode = childNode(withName: "gridNode") as! Grid
+        eqGrid = childNode(withName: "eqGrid") as! EqGrid
+        eqGrid.isHidden = true
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
         itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
+        signalHolder = childNode(withName: "signalHolder") as! SKSpriteNode
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
         eqRob = childNode(withName: "eqRob") as! EqRob
         SignalController.madPos = madScientistNode.absolutePos()
@@ -195,6 +213,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         buttonAttack.isHidden = true
         buttonItem.isHidden = true
         plane = Plane(gameScene: self)
+        stageHolder = childNode(withName: "stageHolder")
         log0 = childNode(withName: "log0") as! Log
         log1 = childNode(withName: "log1") as! Log
         log2 = childNode(withName: "log2") as! Log
@@ -222,7 +241,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameOverTurnController.gameScene = self
         ItemDropController.gameScene = self
         ContactController.gameScene = self
+        TutorialController.scene = self
         SpeakInGameController.gameScene = self
+        VEEquivalentController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {
@@ -235,7 +256,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOverLabel.isHidden = true
         clearLabel = childNode(withName: "clearLabel")
         clearLabel.isHidden = true
-        levelLabel = childNode(withName: "levelLabel") as! SKLabelNode
+        levelLabel = stageHolder?.childNode(withName: "levelLabel") as! SKLabelNode
+        numOfTotalEnemyLabel = childNode(withName: "numOfTotalEnemyLabel") as! SKLabelNode
         playerPhaseLabel = childNode(withName: "playerPhaseLabel")
         playerPhaseLabel.isHidden = true
         enemyPhaseLabel = childNode(withName: "enemyPhaseLabel")
@@ -285,13 +307,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             /* Store game property */
             DAUserDefaultUtility.SetData(gameScene: self)
             
-            if GameScene.stageLevel == 2 || GameScene.stageLevel == 4 || GameScene.stageLevel == 6 || GameScene.stageLevel == 7 {
-                
+            if GameScene.stageLevel == 4 || GameScene.stageLevel == 6 {
                 /* Grab reference to the SpriteKit view */
                 let skView = self?.view as SKView?
                 
                 /* Load Game scene */
-                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
+                guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
                     return
                 }
                 
@@ -300,12 +321,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
+                
             } else {
                 /* Grab reference to the SpriteKit view */
                 let skView = self?.view as SKView?
                 
                 /* Load Game scene */
-                guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
+                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
                     return
                 }
                 
@@ -331,13 +353,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Debug */
         //GameScene.stageLevel = 7
-        //moveLevel = 4
+//        moveLevel = 4
         //let handedItemNameArray = ["catapult", "magicSword", "cane", "timeBomb"]
-        //let handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
+        
+        if GameScene.stageLevel == 2 || GameScene.stageLevel == 3 {
+            handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
+        }
+        
+        if GameScene.stageLevel < 1 {
+            moveLevel = 3
+        } else {
+            moveLevel = 4
+        }
         
         /* Stage Level */
         levelLabel.text = String(GameScene.stageLevel+1)
-        if GameScene.stageLevel == 7 {
+        if GameScene.stageLevel == 8 {
             levelLabel.text = "F"
             //levelLabel.fontSize = 30
         }
@@ -389,9 +420,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         castleNode.physicsBody?.contactTestBitMask = 24
         
         /* Set life */
+        life = 5
         setLife(numOflife: life)
         
-        if GameScene.stageLevel > 3 {
+        if GameScene.stageLevel > 4 {
             eqRob.isHidden = false
             EqRobTouchController.state = .Ready
         } else {
@@ -405,8 +437,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         /* For debug */
-        print("\(gameState), \(playerTurnState), \(itemType)")
-        
+        //print("\(gameState), \(playerTurnState), \(itemType)")
+
         SpeakInGameController.controlAction()
         
         if isCharactersTurn {
@@ -416,7 +448,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             case .AddEnemy:
                 AddEnemyTurnController.add()
                 break;
+            case .SignalSending:
+                /* Cane */
+                if caneOnFlag {
+                    gameState = .PlayerTurn
+                    gridNode.numOfTurnEndEnemy = 0
+                } else {
+                    SignalSendingTurnController.sendSignal() {}
+                }
+                break;
             case .AddItem:
+                countTurnDone = false
                 AddItemTurnController.add()
                 break;
             case .PlayerTurn:
@@ -449,6 +491,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         countTurnDone = true
                         countTurn += 1
                     }
+                    
                     PlayerTurnController.turnEnd()
                     break;
                 }
@@ -459,17 +502,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* All enemies finish their actions */
                 if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
                     EnemyTurnController.turnEnd()
-                }
-                break;
-            case .SignalSending:
-                /* Cane */
-                if caneOnFlag {
-                    gameState = .PlayerTurn
-                    gridNode.numOfTurnEndEnemy = 0
-                } else if signalInvisible {
-                    SignalSendingTurnController.invisibleSignal()
-                } else {
-                    SignalSendingTurnController.sendSignal()
                 }
                 break;
             case .StageClear:
@@ -494,6 +526,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         if isCharactersTurn {
             switch tutorialState {
+            case .None:
+                break;
             case .Converstaion:
                 SpeakInGameController.nextLine()
                 break;
@@ -607,17 +641,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)
                     }
-                    /* Get boots */
-                    if item.name == "boots" {
-                        item.removeFromParent()
-                        if hero.moveLevel < 4 {
-                            self.hero.moveLevel += 1
-                        }
-                        if !DAUserDefaultUtility.bootsGotFirst {
-                            SpeakInGameController.doAction(type: .BootsGotFirstly)
-                        }
+                    
                     /* Get heart */
-                    } else if item.name == "heart" {
+                    if item.name == "heart" {
                         item.removeFromParent()
                         //maxLife += 1
                         life += 1
@@ -629,13 +655,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     } else {
                         item.removeFromParent()
                         /* Make sure to have items up tp 8 */
-                        if itemArray.count >= 8 {
+                        if itemArray.count >= 7 {
                             self.resetDisplayItem(index: 0)
                             displayitem(name: item.name!)
                         } else {
                             displayitem(name: item.name!)
                         }
-                        checkItemGotFirstly(name: item.name!)
                     }
                 }
                 /* B is hero */
@@ -649,17 +674,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)
                     }
-                    /* Get boots */
-                    if item.name == "boots" {
-                        item.removeFromParent()
-                        if hero.moveLevel < 4 {
-                            self.hero.moveLevel += 1
-                        }
-                        if !DAUserDefaultUtility.bootsGotFirst {
-                            SpeakInGameController.doAction(type: .BootsGotFirstly)
-                        }
+
                     /* Get heart */
-                    } else if item.name == "heart" {
+                    if item.name == "heart" {
                         item.removeFromParent()
                         //maxLife += 1
                         life += 1
@@ -671,13 +688,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     } else {
                         item.removeFromParent()
                         /* Make sure to have items up tp 8 */
-                        if itemArray.count >= 8 {
+                        if itemArray.count >= 7 {
                             self.resetDisplayItem(index: 0)
                             displayitem(name: item.name!)
                         } else {
                             displayitem(name: item.name!)
                         }
-                        checkItemGotFirstly(name: item.name!)
                     }
                 }
                 
@@ -828,32 +844,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(itemAreaCover)
     }
     
-    func checkItemGotFirstly(name: String) {
-        switch name {
-        case "timeBomb":
-            if !DAUserDefaultUtility.timeBombGotFirst {
-                SpeakInGameController.doAction(type: .TimeBombGotFirstly)
-            }
-            break;
-        case "cane":
-            if !DAUserDefaultUtility.caneGotFirst {
-                let willAttackEnemies = gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
-                if willAttackEnemies.count > 0 {
-                    SpeakInGameController.doAction(type: .CaneGotFirstly)
-                }
-            }
-            break;
-        case "wall":
-            if !DAUserDefaultUtility.wallGotFirst {
-                SpeakInGameController.doAction(type: .WallGotFirstly)
-            }
-            break;
-        default:
-            break;
-        }
-    }
-    
-    
     /*== Time bomb ==*/
     /* Effect */
     func timeBombEffect(timeBomb: TimeBomb) {
@@ -907,12 +897,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setCanoon() {
-        if GameScene.stageLevel == 6 {
+        if GameScene.stageLevel == 7 {
             CannonController.add(type: 0, pos: [1, 10])
             CannonController.add(type: 0, pos: [3, 9])
             CannonController.add(type: 0, pos: [5, 10])
             CannonController.add(type: 0, pos: [7, 9])
-        } else if GameScene.stageLevel == 7 {
+        } else if GameScene.stageLevel == 8 {
             CannonController.add(type: 0, pos: [1, 10])
             CannonController.add(type: 0, pos: [3, 9])
             CannonController.add(type: 0, pos: [5, 10])
@@ -1011,7 +1001,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Create label for tutorial */
     func createTutorialLabel(text: String, posY: CGFloat, size: CGFloat) {
         /* Set label with font */
-        let label = SKLabelNode(fontNamed: "GillSans-Bold")
+        let label = SKLabelNode(fontNamed: DAFont.fontName)
         /* Set text */
         label.text = text
         /* Set font size */
@@ -1051,10 +1041,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pointing(pos: pos)
     }
     
+    func pointingHeart() {
+        let pos = CGPoint(x: 150, y: 250)
+        pointing(pos: pos)
+    }
+    
+    func pointingHero() {
+        let pos = CGPoint(x: hero.position.x + 50, y: hero.position.y + 50)
+        pointing(pos: pos)
+    }
+    
     func pointingGridAt(x: Int, y: Int) {
         let gridPos = CGPoint(x: gridNode.position.x+CGFloat(self.gridNode.cellWidth/2)+CGFloat(self.gridNode.cellWidth*Double(x)), y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*Double(y)))
         let pos = CGPoint(x: gridPos.x + 70, y: gridPos.y + 80)
         pointing(pos: pos)
+    }
+    
+    func pointingEqSignal() {
+        pointingEqSignal1()
+        pointingEqSignal2()
+        pointingEqSignal3()
+    }
+    
+    func pointingEqSignal1() {
+        let pos1 = CGPoint(x: 510, y: 220)
+        pointing(pos: pos1)
+    }
+    
+    func pointingEqSignal2() {
+        let pos2 = CGPoint(x: 630, y: 220)
+        pointing(pos: pos2)
+    }
+    
+    func pointingEqSignal3() {
+        let pos3 = CGPoint(x: 740, y: 220)
+        pointing(pos: pos3)
     }
     
     func pointingInputButton(name: String) {
@@ -1083,7 +1104,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     /* Set pointing icon */
-    private func pointing(pos: CGPoint) {
+    func pointing(pos: CGPoint) {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.name = "pointing"
         icon.size = CGSize(width: 50, height: 50)
@@ -1101,18 +1122,128 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         icon.size = CGSize(width: 50, height: 50)
         icon.position = hero.position
         icon.zPosition = 7
-        let moveHorizontal = SKAction.moveBy(x: CGFloat(-gridNode.cellWidth*2+10), y: 0, duration: 1.0)
-        let moveVertical = SKAction.moveBy(x: 0, y: CGFloat(gridNode.cellHeight*1), duration: 1.0)
-        let resetPos = SKAction.run({ icon.position = self.hero.position })
-        let seq = SKAction.sequence([moveHorizontal, moveVertical, resetPos])
-        let repeatAction = SKAction.repeatForever(seq)
-        icon.run(repeatAction)
-        addChild(icon)
+        if hero.positionY < 3 {
+            if hero.positionX < 4 {
+                ScenarioController.keyTouchPos = (hero.positionX+2, hero.positionY+1)
+                let moveHorizontal = SKAction.moveBy(x: CGFloat(gridNode.cellWidth*2+10), y: 0, duration: 1.0)
+                let moveVertical = SKAction.moveBy(x: 0, y: CGFloat(gridNode.cellHeight*1), duration: 1.0)
+                let resetPos = SKAction.run({ icon.position = self.hero.position })
+                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
+                let repeatAction = SKAction.repeatForever(seq)
+                icon.run(repeatAction)
+                addChild(icon)
+            } else {
+                ScenarioController.keyTouchPos = (hero.positionX-2, hero.positionY+1)
+                let moveHorizontal = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth*2+10), y: 0, duration: 1.0)
+                let moveVertical = SKAction.moveBy(x: 0, y: CGFloat(gridNode.cellHeight*1), duration: 1.0)
+                let resetPos = SKAction.run({ icon.position = self.hero.position })
+                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
+                let repeatAction = SKAction.repeatForever(seq)
+                icon.run(repeatAction)
+                addChild(icon)
+            }
+        } else {
+            if hero.positionX < 4 {
+                ScenarioController.keyTouchPos = (hero.positionX+1, hero.positionY-2)
+                let moveHorizontal = SKAction.moveBy(x: CGFloat(gridNode.cellWidth*1+10), y: 0, duration: 1.0)
+                let moveVertical = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight*2), duration: 1.0)
+                let resetPos = SKAction.run({ icon.position = self.hero.position })
+                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
+                let repeatAction = SKAction.repeatForever(seq)
+                icon.run(repeatAction)
+                addChild(icon)
+            } else {
+                ScenarioController.keyTouchPos = (hero.positionX-1, hero.positionY-2)
+                let moveHorizontal = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth*1+10), y: 0, duration: 1.0)
+                let moveVertical = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight*2), duration: 1.0)
+                let resetPos = SKAction.run({ icon.position = self.hero.position })
+                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
+                let repeatAction = SKAction.repeatForever(seq)
+                icon.run(repeatAction)
+                addChild(icon)
+            }
+        }
     }
     
     func removePointing() {
         if let icon = childNode(withName: "pointing") {
             icon.removeFromParent()
+        }
+    }
+    
+    func unDo(completion: @escaping () -> Void) {
+        guard hero.posRecord.count > 0 else { return }
+        gridNode.numOfTurnEndEnemy = 0
+        gridNode.turnIndex = 0
+        let heroLastPos = hero.posRecord[hero.posRecord.count-1]
+        resetHeroPos(x: heroLastPos.0, y: heroLastPos.1)
+        if gameState == .EnemyTurn {
+            let dispatchGroup = DispatchGroup()
+            let doneEnemies = gridNode.enemyArray.filter({ $0.turnDoneFlag })
+            for enemy in doneEnemies {
+                dispatchGroup.enter()
+                let enemyLastPos = enemy.posRecord[enemy.posRecord.count-1]
+                resetEnemyPos(enemy: enemy, x: enemyLastPos.0, y: enemyLastPos.1, punchInterval: enemyLastPos.2)
+                dispatchGroup.leave()
+            }
+            dispatchGroup.notify(queue: .main, execute: {
+                if self.gridNode.enemyArray.count > doneEnemies.count {
+                    self.gridNode.enemyArray[doneEnemies.count].myTurnFlag = false
+                }
+                EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
+                return completion()
+            })
+        } else {
+            return completion()
+        }
+    }
+    
+    func unDoTimeBomb(num: Int, completion: @escaping () -> Void) {
+        guard gridNode.enemyArray.count > 0 else { return }
+        gridNode.numOfTurnEndEnemy = 0
+        gridNode.turnIndex = 0
+        for _ in 0..<num {
+            displayitem(name: "timeBomb")
+        }
+        let dispatchGroup = DispatchGroup()
+        for enemy in gridNode.enemyArray {
+            dispatchGroup.enter()
+            let enemyLastPos = enemy.posRecord[enemy.posRecord.count-1]
+            resetEnemyPos(enemy: enemy, x: enemyLastPos.0, y: enemyLastPos.1, punchInterval: enemyLastPos.2)
+            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
+            return completion()
+        })
+    }
+    
+    func resetHeroPos(x: Int, y: Int) {
+        hero.positionX = x
+        hero.positionY = y
+        let xPos = gridNode.position.x+CGFloat(gridNode.cellWidth*(Double(x)+0.5))
+        let yPos = gridNode.position.y+CGFloat(gridNode.cellHeight*(Double(y)+0.5))
+        hero.position = CGPoint(x: xPos, y: yPos)
+        hero.moveDoneFlag = false
+        hero.aliveFlag = true
+    }
+    
+    func resetEnemyPos(enemy: Enemy, x: Int, y: Int, punchInterval: Int?) {
+        enemy.positionX = x
+        enemy.positionY = y
+        let gridPosition = CGPoint(x: (Double(enemy.positionX)+0.5)*gridNode.cellWidth, y: (Double(enemy.positionY)+0.5)*gridNode.cellHeight)
+        enemy.position = gridPosition
+        enemy.punchIntervalForCount = punchInterval ?? enemy.punchIntervalForCount
+        if enemy.punchIntervalForCount == 0 {
+            enemy.forcusForAttack(color: UIColor.red, value: xValue)
+            valueOfX.text = "x = \(xValue)"
+        }
+        enemy.turnDoneFlag = false
+        enemy.myTurnFlag = false
+        if enemy.positionY == 0 {
+            enemy.reachCastleFlag = true
+        } else {
+            enemy.reachCastleFlag = false
         }
     }
 }

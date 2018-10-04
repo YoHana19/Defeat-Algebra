@@ -74,7 +74,7 @@ class Catapult: SKSpriteNode {
     
     func setCatapultVELabel(vE: String) {
         /* Set label with font */
-        let label = SKLabelNode(fontNamed: "GillSans-Bold")
+        let label = SKLabelNode(fontNamed: DAFont.fontName)
         /* Set text */
         label.text = vE
         /* Set font size */

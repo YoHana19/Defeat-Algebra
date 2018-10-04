@@ -15,17 +15,14 @@ enum GameProperty {
 class DAUserDefaultUtility {
     static let ud = UserDefaults.standard
     static var initialScenarioFirst = false
-    static var punchInteravalExplainFirst = false
-    static var moveExplainFirst = false
+    static var scenario2First = false
+    static var timeBombExplainFirst = false
+    static var scenario3First = false
     static var eqRobExplainFirst = false
     static var cannonExplainFirst = false
     static var invisibleSignalFirst = false
     static var logDefenceFirst = false
-    static var bootsGotFirst = false
-    static var timeBombGotFirst = false
     static var heartGotFirst = false
-    static var caneGotFirst = false
-    static var wallGotFirst = false
     
     public static func DrawData(gameScene: GameScene) {
         /* Stage Level */
@@ -35,20 +32,17 @@ class DAUserDefaultUtility {
         /* Items */
         gameScene.handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
         /* Life */
-        gameScene.life = ud.integer(forKey: "life") < 4 ? 3 : ud.integer(forKey: "life")
+        gameScene.life = ud.integer(forKey: "life") < 6 ? 5 : ud.integer(forKey: "life")
         
         initialScenarioFirst = ud.bool(forKey: "initialScenarioFirst")
-        punchInteravalExplainFirst = ud.bool(forKey: "punchInteravalExplainFirst")
-        moveExplainFirst = ud.bool(forKey: "moveExplainFirst")
+        scenario2First = ud.bool(forKey: "scenario2First")
+        timeBombExplainFirst = ud.bool(forKey: "timeBombExplainFirst")
+        scenario3First = ud.bool(forKey: "scenario3First")
         eqRobExplainFirst = ud.bool(forKey: "eqRobExplainFirst")
         cannonExplainFirst = ud.bool(forKey: "cannonExplainFirst")
         invisibleSignalFirst = ud.bool(forKey: "invisibleSignalFirst")
         logDefenceFirst = ud.bool(forKey: "logDefenceFirst")
-        bootsGotFirst = ud.bool(forKey: "bootsGotFirst")
-        timeBombGotFirst = ud.bool(forKey: "timeBombGotFirst")
         heartGotFirst = ud.bool(forKey: "heartGotFirst")
-        caneGotFirst = ud.bool(forKey: "caneGotFirst")
-        wallGotFirst = ud.bool(forKey: "wallGotFirst")
     }
     
     public static func SetData(gameScene: GameScene?) {
@@ -56,7 +50,7 @@ class DAUserDefaultUtility {
         /* Stage level */
         ud.set(GameScene.stageLevel, forKey: "stageLevel")
         /* Hero */
-        ud.set(gameScene.hero!.moveLevel, forKey: "moveLevel")
+        //ud.set(gameScene.hero!.moveLevel, forKey: "moveLevel")
         /* Items */
         var itemNameArray = [String]()
         for (i, item) in (gameScene.itemArray.enumerated()) {
@@ -74,38 +68,32 @@ class DAUserDefaultUtility {
         /* Stage level */
         ud.set(0, forKey: "stageLevel")
         /* Hero */
-        ud.set([1], forKey: "moveLevel")
+        //ud.set([1], forKey: "moveLevel")
         /* item */
         let itemNameArray = [String]()
         ud.set(itemNameArray, forKey: "itemNameArray")
         /* life */
-        ud.set(3, forKey: "life")
+        ud.set(5, forKey: "life")
         
         ud.set(false, forKey: "initialScenarioFirst")
-        ud.set(false, forKey: "punchInteravalExplainFirst")
-        ud.set(false, forKey: "moveExplainFirst")
+        ud.set(false, forKey: "scenario2First")
+        ud.set(false, forKey: "timeBombExplainFirst")
+        ud.set(false, forKey: "scenario3First")
         ud.set(false, forKey: "eqRobExplainFirst")
         ud.set(false, forKey: "cannonExplainFirst")
         ud.set(false, forKey: "invisibleSignalFirst")
         ud.set(false, forKey: "logDefenceFirst")
-        ud.set(false, forKey: "bootsGotFirst")
-        ud.set(false, forKey: "timeBombGotFirst")
         ud.set(false, forKey: "heartGotFirst")
-        ud.set(false, forKey: "caneGotFirst")
-        ud.set(false, forKey: "wallGotFirst")
         
         initialScenarioFirst = false
-        punchInteravalExplainFirst = false
-        moveExplainFirst = false
+        scenario2First = false
+        timeBombExplainFirst = false
+        scenario3First = false
         eqRobExplainFirst = false
         cannonExplainFirst = false
         invisibleSignalFirst = false
         logDefenceFirst = false
-        bootsGotFirst = false
-        timeBombGotFirst = false
         heartGotFirst = false
-        caneGotFirst = false
-        wallGotFirst = false
     }
     
     public static func doneFirstly(name: String) {
@@ -114,11 +102,14 @@ class DAUserDefaultUtility {
         case "initialScenarioFirst":
             initialScenarioFirst = true
             break;
-        case "punchInteravalExplainFirst":
-            punchInteravalExplainFirst = true
+        case "scenario2First":
+            scenario2First = true
             break;
-        case "moveExplainFirst":
-            moveExplainFirst = true
+        case "timeBombExplainFirst":
+            timeBombExplainFirst = true
+            break;
+        case "scenario3First":
+            scenario3First = true
             break;
         case "eqRobExplainFirst":
             eqRobExplainFirst = true
@@ -132,20 +123,8 @@ class DAUserDefaultUtility {
         case "logDefenceFirst":
             logDefenceFirst = true
             break;
-        case "bootsGotFirst":
-            bootsGotFirst = true
-            break;
-        case "timeBombGotFirst":
-            timeBombGotFirst = true
-            break;
         case "heartGotFirst":
             heartGotFirst = true
-            break;
-        case "caneGotFirst":
-            caneGotFirst = true
-            break;
-        case "wallGotFirst":
-            wallGotFirst = true
             break;
         default:
             break;

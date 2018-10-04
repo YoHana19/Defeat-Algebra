@@ -96,7 +96,7 @@ class Credits: SKScene {
     /* Create label for tutorial */
     func createTutorialLabel(text: String, posY: CGFloat) {
         /* Set label with font */
-        let label = SKLabelNode(fontNamed: "GillSans-Bold")
+        let label = SKLabelNode(fontNamed: DAFont.fontNameForTutorial)
         /* Set text */
         label.text = text
         /* Set font size */

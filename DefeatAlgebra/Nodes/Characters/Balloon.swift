@@ -38,7 +38,7 @@ class Balloon: SKSpriteNode {
             label.removeFromParent()
         }
         
-        let singleLineMessage = SKLabelNode(fontNamed: "GillSans-Bold")
+        let singleLineMessage = SKLabelNode(fontNamed: DAFont.fontNameForCharacter)
         singleLineMessage.fontSize = fontSize
         singleLineMessage.verticalAlignmentMode = .center // Keep the origin in the center
         singleLineMessage.horizontalAlignmentMode = .left

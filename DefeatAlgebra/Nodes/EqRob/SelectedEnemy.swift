@@ -43,7 +43,7 @@ class SelectedEnemy: SKSpriteNode {
     
     
     func setLabel() {
-        veLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+        veLabel = SKLabelNode(fontNamed: DAFont.fontName)
         veLabel.fontSize = 50
         veLabel.verticalAlignmentMode = .center
         veLabel.horizontalAlignmentMode = .left
@@ -117,7 +117,7 @@ class SelectedEnemy: SKSpriteNode {
                 let result = VECategory.calculateValue(veCategory: cate, value: value)
                 self.veLabel.text = self.veString + "=" + numForm + "=" + String(result)
                 let attrText = NSMutableAttributedString(string: self.veLabel.text!)
-                let font = UIFont(name: "GillSans-Bold", size: 50) ?? UIFont.systemFont(ofSize: 50)
+                let font = UIFont(name: DAFont.fontName, size: 50) ?? UIFont.systemFont(ofSize: 50)
                 attrText.addAttributes([.foregroundColor: UIColor.white, .font: font], range: NSMakeRange(0, self.veLabel.text!.count))
                 for pos in xPos {
                     attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(self.veString.count+1+pos, 1))

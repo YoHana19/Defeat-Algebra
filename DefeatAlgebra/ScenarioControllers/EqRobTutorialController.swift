@@ -18,45 +18,45 @@ class EqRobTutorialController {
     private static var enemiesToDestroy = [Enemy]()
     private static var selectedEnemyIndex: Int = 0
     private static var attackingEnemyIndex: Int = 0
-    public static var instructedEnemy: Enemy?
+    private static var missedEnemies = [Enemy]()
     
     static func userTouch(on name: String?) -> Bool {
         switch GameScene.stageLevel {
-        case 4:
+        case 5:
             if let name = name {
                 switch ScenarioController.currentActionIndex {
-                case 4:
+                case 14:
                     ScenarioController.controllActions()
                     return false
-                case 5:
+                case 15:
                     if name == "button2" {
                         ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 6:
+                case 16:
                     if name == "buttonX" {
                         ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 7:
+                case 17:
                     if name == "button+" {
                         ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 8:
+                case 18:
                     if name == "button1" {
                         ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 9:
+                case 19:
                     if name == "buttonOK" {
                         ScenarioController.controllActions()
                         return true
@@ -198,33 +198,30 @@ class EqRobTutorialController {
         })
     }
     
-    static func pointingMissedEnemies() {
-        var missedEnemies = sameVeEnemies.filter { !self.selectedEnemies.contains($0) }
+    public static func pointingMissedEnemies() {
+        missedEnemies = sameVeEnemies.filter { !self.selectedEnemies.contains($0) }
         missedEnemies.forEach { $0.pointing() }
-        if missedEnemies.count < 2 {
-            instructedEnemy = missedEnemies[0]
-        } else {
-            instructedEnemy = missedEnemies[0]
-        }
+        CharacterController.doctor.balloon.isHidden = false
+        EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+        CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctorOnPos.x, y: CharacterController.doctorOnPos.y-200))
+        EqRobTouchController.state = .AliveInstruction
     }
     
-    static func makeInsturctionForMiss() {
-        let enemyPos = instructedEnemy!.absolutePos()
-        EqRobController.gameScene.gridNode.enemyArray.forEach { $0.removePointing() }
-        instructedEnemy?.pointing()
-        let panelPos = CGPoint(x: EqRobController.gameScene.size.width/2-EqRobController.gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
-        let doctorPos = CGPoint(x: EqRobController.doctorOnPos[2].x, y: panelPos.y+EqRobController.doctorOnPos[2].y)
-        EqRobController.gameScene.selectionPanel.setInstruction(enemyVe: instructedEnemy!.variableExpressionString)
-        EqRobController.gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-        CharacterController.doctor.changeBalloonTexture(index: 1)
-        CharacterController.doctor.moveWithScaling(to: doctorPos, value: EqRobController.doctorScale[2], duration: 2.0) {
-            ScenarioController.controllActions()
-        }
+    public static func makeInsturctionForMiss() {
+        missedEnemies.forEach { $0.removePointing() }
+        VEEquivalentController.showEqGrid(enemies: missedEnemies, eqRob: EqRobController.gameScene.eqRob)
+        EqRobController.gameScene.selectionPanel.resetInstruction()
+        EqRobController.gameScene.selectionPanel.resetAllEnemies()
     }
     
-    static func setDemoCalculation(value: Int) {
-        EqRobController.gameScene.selectionPanel.setXVlaue(value: String(value))
-        EqRobController.gameScene.selectionPanel.instructedEnemy.showCalculation(value: value)
-        EqRobController.gameScene.selectionPanel.instructedEqRob.showCalculation(value: value)
+    public static func allDone() {
+        selectedEnemyIndex = 0
+        attackingEnemyIndex = 0
+        selectedEnemies = [Enemy]()
+        lines = [SKShapeNode]()
+        isPerfect = false
+        EqRobController.gameScene.selectionPanel.resetInstruction()
+        CharacterController.doctor.setScale(1)
+        CharacterController.doctor.changeBalloonTexture(index: 0)
     }
 }

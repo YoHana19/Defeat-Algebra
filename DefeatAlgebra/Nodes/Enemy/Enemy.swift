@@ -22,13 +22,17 @@ class Enemy: SKSpriteNode {
     /* Enemy position */
     var positionX = 0
     var positionY = 0
+    var eqPosX = 0
+    var eqPosY = 0
+    
+    var posRecord = [(Int, Int, Int)]()
     
     /* Enemy property */
     var moveSpeed = 0.1
     var punchSpeed: CGFloat = 0.002
     var direction: Direction = .front
     var punchInterval: Int!
-    var punchIntervalLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+    var punchIntervalLabel = SKLabelNode(fontNamed: DAFont.fontName)
     var punchIntervalForCount: Int = 0 {
         didSet {
             if punchIntervalForCount == 0 {
@@ -49,7 +53,7 @@ class Enemy: SKSpriteNode {
     var firstPunchLength: CGFloat = 78
     var singlePunchLength: CGFloat = 78
     var punchLength: CGFloat! = 0
-    var variableExpressionLabel = SKLabelNode(fontNamed: "GillSans-Bold")
+    var variableExpressionLabel = SKLabelNode(fontNamed: DAFont.fontName)
     var variableExpressionString = "" {
         didSet {
             variableExpressionLabel.text = variableExpressionString
@@ -64,9 +68,17 @@ class Enemy: SKSpriteNode {
         }
     }
     
+    var xValueLabel = SKLabelNode(fontNamed: DAFont.fontName)
+    
     /* Flags */
-    var myTurnFlag = false
-    var turnDoneFlag = false
+    var myTurnFlag: Bool = false
+    var turnDoneFlag: Bool = false {
+        willSet {
+            if !turnDoneFlag && newValue {
+                posRecord.append((positionX, positionY, punchIntervalForCount))
+            }
+        }
+    }
     var reachCastleFlag = false
     var wallHitFlag = false
     var aliveFlag = true
@@ -103,10 +115,9 @@ class Enemy: SKSpriteNode {
         /* Initialize Labels */
         initializePunchIntervalLabel()
         initailizeVariableExpressionLabel()
+        initializeXValueLabel()
         
-        if GameScene.stageLevel < 1 {
-            punchIntervalLabel.isHidden = true
-        }
+        punchIntervalLabel.isHidden = true
         
         /* Set punch interval */
         if forEdu == false {
@@ -135,6 +146,7 @@ class Enemy: SKSpriteNode {
         if GameScene.stageLevel > 1 {
             variableExpressionLabel.fontSize = 24.5
         }
+
     }
     
     init(ve: String) {
@@ -152,6 +164,7 @@ class Enemy: SKSpriteNode {
         /* Initialize Labels */
         initializePunchIntervalLabel()
         initailizeVariableExpressionLabel()
+        initializeXValueLabel()
         
         /* Set Z-Position, ensure ontop of grid */
         zPosition = 4
@@ -167,8 +180,9 @@ class Enemy: SKSpriteNode {
             self.punchSpeed = 0.0025
             self.singleTurnDuration = 1.0
             self.variableExpressionLabel.isHidden = true
-            self.punchIntervalLabel.isHidden = true
         }
+        
+        self.punchIntervalLabel.isHidden = true
     }
     
     /* You are required to implement this for your subclass to work */
@@ -257,6 +271,24 @@ class Enemy: SKSpriteNode {
         self.addChild(punchIntervalLabel)
     }
     
+    func initializeXValueLabel() {
+        /* name */
+        xValueLabel.name = "xValueLabel"
+        /* text */
+        xValueLabel.text = ""
+        /* font size */
+        xValueLabel.fontSize = 30
+        /* zPosition */
+        xValueLabel.zPosition = 2
+        xValueLabel.fontColor = UIColor.red
+        /* position */
+        xValueLabel.verticalAlignmentMode = .center
+        xValueLabel.horizontalAlignmentMode = .center
+        xValueLabel.position = CGPoint(x:0, y: -10)
+        /* Add to Scene */
+        self.addChild(xValueLabel)
+    }
+    
     func initailizeVariableExpressionLabel() {
         /* text */
         variableExpressionLabel.text = variableExpressionString
@@ -265,7 +297,7 @@ class Enemy: SKSpriteNode {
         /* font size */
         variableExpressionLabel.fontSize = 35
         /* zPosition */
-        variableExpressionLabel.zPosition = 5
+        variableExpressionLabel.zPosition = 3
         /* position */
         variableExpressionLabel.position = CGPoint(x:0, y: 35)
         /* Add to Scene */
@@ -342,9 +374,10 @@ class Enemy: SKSpriteNode {
         }
     }
     
-    public func forcusForAttack(color: UIColor) {
-        punchIntervalLabel.fontColor = color
+    public func forcusForAttack(color: UIColor, value: Int) {
         variableExpressionLabel.fontColor = color
+        guard value != 0 else { return }
+        xValueLabel.text = "x=\(value)"
     }
     
     public func setPhysics(isActive: Bool) {

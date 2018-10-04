@@ -115,7 +115,6 @@ struct ItemTouchController {
     }
     
     public static func othersTouched() {
-        
         if gameScene.itemType == .EqRob {
             if EqRobTouchController.state == .Pending {
                 EqRobController.back(0)

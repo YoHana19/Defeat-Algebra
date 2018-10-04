@@ -19,6 +19,7 @@ struct EqRobController {
     private static var enemiesToDestroy = [Enemy]()
     private static var selectedEnemyIndex: Int = 0
     private static var attackingEnemyIndex: Int = 0
+    private static var missedEnemies = [Enemy]()
     private static var instructedEnemy: Enemy?
     
     public static var doctorOffPos = CGPoint(x: -200, y: 170)
@@ -234,36 +235,53 @@ struct EqRobController {
     private static func eqRobDead(enemy: Enemy) {
         lines.forEach { $0.removeFromParent() }
         doctorSays(in: .EqRobDestroyed, value: nil)
-        makeInsturctionForKilled(enemy: enemy)
         instructedEnemy = enemy
+        let wait = SKAction.wait(forDuration: 2.0)
+        gameScene.run(wait, completion: {
+            pointingKillerEnemy()
+        })
     }
     
-    private static func makeInsturctionForKilled(enemy: Enemy) {
-        let enemyPos = enemy.absolutePos()
-        if enemy.positionY < 6 {
-            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y+gameScene.selectionPanel.texture!.size().height+90)
-            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-            enemy.pointing()
-            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-            CharacterController.doctor.changeBalloonTexture(index: 1)
-            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-                EqRobTouchController.state = .DeadInstruction
-            }
-        } else {
-            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
-            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-            enemy.pointing()
-            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-            CharacterController.doctor.changeBalloonTexture(index: 1)
-            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-                //print(EqRobLines.curIndex)
-                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-                EqRobTouchController.state = .DeadInstruction
-            }
-        }
+    private static func pointingKillerEnemy() {
+        instructedEnemy?.pointing()
+        doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
+        EqRobTouchController.state = .DeadInstruction
+    }
+    
+//    private static func makeInsturctionForKilled(enemy: Enemy) {
+//        let enemyPos = enemy.absolutePos()
+//        if enemy.positionY < 6 {
+//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y+gameScene.selectionPanel.texture!.size().height+90)
+//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
+//            enemy.pointing()
+//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
+//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
+//            CharacterController.doctor.changeBalloonTexture(index: 1)
+//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
+//                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+//                EqRobTouchController.state = .DeadInstruction
+//            }
+//        } else {
+//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
+//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
+//            enemy.pointing()
+//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
+//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
+//            CharacterController.doctor.changeBalloonTexture(index: 1)
+//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
+//                //print(EqRobLines.curIndex)
+//                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+//                EqRobTouchController.state = .DeadInstruction
+//            }
+//        }
+//    }
+
+    private static func makeInsturctionForKilled() {
+        instructedEnemy?.removePointing()
+        //doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
+        VEEquivalentController.showEqGrid(enemies: [instructedEnemy!], eqRob: gameScene.eqRob)
+        gameScene.selectionPanel.resetInstruction()
+        gameScene.selectionPanel.resetAllEnemies()
     }
     
     private static func setDemoCalculation() {
@@ -303,69 +321,99 @@ struct EqRobController {
     }
     
     private static func pointingMissedEnemies() {
-        var missedEnemies = sameVeEnemies.filter { !self.selectedEnemies.contains($0) }
+        missedEnemies = sameVeEnemies.filter { !self.selectedEnemies.contains($0) }
         missedEnemies.forEach { $0.pointing() }
-        if missedEnemies.count < 2 {
-            instructedEnemy = missedEnemies[0]
-            doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: instructedEnemy!, eqRob: gameScene.eqRob, eqRobVe: "この敵"))
-        } else {
-            missedEnemies.sort { $0.variableExpressionString.count > $1.variableExpressionString.count }
-            instructedEnemy = missedEnemies[0]
-            doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: instructedEnemy!, eqRob: gameScene.eqRob, eqRobVe: "これらの敵"))
-        }
+        doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
         EqRobTouchController.state = .AliveInstruction
     }
     
-    private static func makeInsturctionForMiss(enemy: Enemy) {
-        let enemyPos = enemy.absolutePos()
-        gameScene.gridNode.enemyArray.forEach { $0.removePointing() }
-        instructedEnemy?.pointing()
-        if enemy.positionY < 6 {
-            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y+gameScene.selectionPanel.texture!.size().height+90)
-            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-            CharacterController.doctor.changeBalloonTexture(index: 1)
-            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-                EqRobTouchController.state = .AliveInstruction
-            }
-        } else {
-            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
-            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-            CharacterController.doctor.changeBalloonTexture(index: 1)
-            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-                EqRobTouchController.state = .AliveInstruction
-            }
-        }
+//    private static func makeInsturctionForMiss(enemy: Enemy) {
+//        let enemyPos = enemy.absolutePos()
+//        gameScene.gridNode.enemyArray.forEach { $0.removePointing() }
+//        instructedEnemy?.pointing()
+//        if enemy.positionY < 6 {
+//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y+gameScene.selectionPanel.texture!.size().height+90)
+//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
+//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
+//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
+//            CharacterController.doctor.changeBalloonTexture(index: 1)
+//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
+//                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+//                EqRobTouchController.state = .AliveInstruction
+//            }
+//        } else {
+//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
+//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
+//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
+//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
+//            CharacterController.doctor.changeBalloonTexture(index: 1)
+//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
+//                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+//                EqRobTouchController.state = .AliveInstruction
+//            }
+//        }
+//    }
+
+    private static func makeInsturctionForMiss() {
+        //EqRobTouchController.state = .Dead // just for disabel touching
+        missedEnemies.forEach { $0.removePointing() }
+        VEEquivalentController.showEqGrid(enemies: missedEnemies, eqRob: gameScene.eqRob)
+        gameScene.selectionPanel.resetInstruction()
+        gameScene.selectionPanel.resetAllEnemies()
     }
     
     private static func instruction() {
         switch EqRobTouchController.state {
         case .DeadInstruction:
-            if EqRobLines.curIndex == 0 {
+            switch EqRobLines.curIndex {
+            case 0:
+                VEEquivalentController.hideEqGrid()
                 back(3)
-            } else if EqRobLines.curIndex == 1 || EqRobLines.curIndex == 2 {
-                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: instructedEnemy!, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-                setDemoCalculation()
-            } else {
-                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: instructedEnemy!, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+                break;
+            case 1:
+                makeInsturctionForKilled()
+                doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
+                break;
+            case 2:
+                guard VEEquivalentController.numOfCheck > 3 else { return }
+                doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
+                break;
+            case 3:
+                guard VEEquivalentController.numOfCheck > 3 else { return }
+                VEEquivalentController.getBG() { bg in
+                    guard let backGround = bg else { return }
+                    guard backGround.isEnable, !backGround.isUserInteractionEnabled else { return }
+                    doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
+                }
+                break;
+            default:
+                break;
             }
             break;
         case .AliveInstruction:
-            if EqRobLines.curIndex == 0 {
+            switch EqRobLines.curIndex {
+            case 0:
+                VEEquivalentController.hideEqGrid()
                 back(3)
-            } else if EqRobLines.curIndex == 1 {
-                EqRobTouchController.state = .Dead // just for disabel touching
-                makeInsturctionForMiss(enemy: instructedEnemy!)
-            } else if EqRobLines.curIndex == 2 || EqRobLines.curIndex == 3 {
-                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: instructedEnemy!, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-                setDemoCalculation()
-            } else {
-                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: instructedEnemy!, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
+                break;
+            case 1:
+                makeInsturctionForMiss()
+                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+                break;
+            case 2:
+                guard VEEquivalentController.numOfCheck > 3 else { return }
+                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+                break;
+            case 3:
+                guard VEEquivalentController.numOfCheck > 3 else { return }
+                VEEquivalentController.getBG() { bg in
+                    guard let backGround = bg else { return }
+                    guard backGround.isEnable, !backGround.isUserInteractionEnabled else { return }
+                    doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+                }
+                break;
+            default:
+                break;
             }
             break;
         default:
@@ -405,7 +453,7 @@ struct EqRobController {
         CharacterController.doctor.setScale(1)
         CharacterController.doctor.balloon.isHidden = true
         CharacterController.doctor.move(from: nil, to: doctorOffPos)
-        gameScene.eqRob.position = eqRobOriginPos
+        //gameScene.eqRob.position = eqRobOriginPos
         gameScene.itemType = .None
         CharacterController.doctor.changeBalloonTexture(index: 0)
         ItemTouchController.othersTouched()
@@ -467,7 +515,7 @@ struct EqRobController {
         gameScene.selectionPanel.isHidden = true
     }
     
-    private static func doctorSays(in state: EqRobLinesState, value: String?) {
+    public static func doctorSays(in state: EqRobLinesState, value: String?) {
         EqRobLines.getLines(state: state, value: value).DAMultilined() { line in
             CharacterController.doctor.balloon.setLines(with: line, pos: 0)
         }
@@ -588,6 +636,25 @@ struct EqRobLines {
         }
     }
     
+    static func subLinesForDestroyedInstruction2() -> String {
+        switch curIndex {
+        case 0:
+            curIndex += 1
+            return "この敵を間違えてしまったようじゃな"
+        case 1:
+            curIndex += 1
+            return "違う文字式なのか確かめるぞ"
+        case 2:
+            curIndex += 1
+            return "xの数によって文字式の計算結果が違うことがわかったかな"
+        case 3:
+            curIndex = 0
+            return "次は、間違えないように気をつけるんじゃぞ"
+        default:
+            return ""
+        }
+    }
+    
     static func setSubLineForMissEnemiesInstruction(enemy: Enemy, eqRob: EqRob, eqRobVe: String) -> String {
         if curIndex == 0 {
             let value = eqRobVe
@@ -621,6 +688,25 @@ struct EqRobLines {
             curIndex += 1
             return "このようにxの値が色々変わっても、同じ値になる暗号は同じものじゃ"
         case 5:
+            curIndex = 0
+            return "次は、パーフェクトを目指すのじゃ！"
+        default:
+            return ""
+        }
+    }
+    
+    static func subLinesForMissEnemiesInstruction2() -> String {
+        switch curIndex {
+        case 0:
+            curIndex += 1
+            return "この敵を見逃してしまったようじゃな"
+        case 1:
+            curIndex += 1
+            return "同じ文字式なのか確かめるぞ"
+        case 2:
+            curIndex += 1
+            return "xがどんな数でも文字式の計算結果が同じになることがわかったかな"
+        case 3:
             curIndex = 0
             return "次は、パーフェクトを目指すのじゃ！"
         default:

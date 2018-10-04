@@ -22,7 +22,7 @@ class CharacterController {
     static let mainHeroOnPos = CGPoint(x: 630, y: 230)
     static let mainHeroOffPos = CGPoint(x: 1000, y: 230)
     
-    static let miniMainHeroOnPos = CGPoint(x: 250, y: 190)
+    static let miniMainHeroOnPos = CGPoint(x: 250, y: 120)
     static let miniMainHeroOffPos = CGPoint(x: 250, y: -300)
     
     static var doctor: Doctor = Doctor()
@@ -72,7 +72,7 @@ class CharacterController {
         if let _ = miniMainHero.parent {
             miniMainHero.removeFromParent()
         }
-        miniMainHero.setScale(0.45)
+        miniMainHero.setScale(0.5)
         miniMainHero.balloon.texture = miniMainHero.balloon.texture1
         miniMainHero.balloon.position = miniMainHero.balloon1Pos
         miniMainHero.balloon.isHidden = false
