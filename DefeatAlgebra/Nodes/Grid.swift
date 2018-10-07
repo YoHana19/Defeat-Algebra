@@ -372,6 +372,17 @@ class Grid: SKSpriteNode {
                     SpeakInGameController.nextLine()
                     break;
                 case .Action:
+                    if gameScene.playerTurnState == .UsingItem && gameScene.itemType == .Cannon && CannonTouchController.state == .Trying {
+                        let touch = touches.first!
+                        let location = touch.location(in: self)
+                        let nodeAtPoint = atPoint(location)
+                        guard let enemy = nodeAtPoint as? Enemy else { return }
+                        if enemy.positionX == CannonController.selectedCannon.spotPos[0] {
+                            if enemy.state == .Attack {
+                                CannonTouchController.onEvent(cannon: nil, enemy: enemy)
+                            }
+                        }
+                    }
                     break;
                 }
                 return

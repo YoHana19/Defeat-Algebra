@@ -74,6 +74,25 @@ struct SignalController {
         })
     }
     
+    public static func sendToCannon(target: Cannon, num: Int, from: CGPoint, completion: @escaping () -> Void) {
+        guard let gameScene = gameScene else { return }
+        let origin = from
+        let dx = origin.x - target.absolutePos().x
+        let dy = origin.y - target.absolutePos().y
+        let distance = sqrt(pow(dx, 2) + pow(dy, 2))
+        
+        let signal = SignalValueHolder(value: num)
+        signal.position = from
+        signal.zPosition = 10
+        gameScene.addChild(signal)
+        
+        let move = SKAction.move(to: target.absolutePos(), duration: TimeInterval(speed*distance))
+        signal.run(move, completion: {
+            signal.removeFromParent()
+            return completion()
+        })
+    }
+    
     public static func sendToEqRobForInstruction(target: EqRobForInstruction, num: Int, from: CGPoint, completion: @escaping () -> Void) {
         guard let gameScene = gameScene else { return }
         let origin = from

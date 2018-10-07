@@ -244,6 +244,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         TutorialController.scene = self
         SpeakInGameController.gameScene = self
         VEEquivalentController.gameScene = self
+        CannonTryController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {
@@ -897,11 +898,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func setCanoon() {
-        if GameScene.stageLevel == 7 {
+        if GameScene.stageLevel == 6 {
             CannonController.add(type: 0, pos: [1, 10])
             CannonController.add(type: 0, pos: [3, 9])
             CannonController.add(type: 0, pos: [5, 10])
             CannonController.add(type: 0, pos: [7, 9])
+        } else if GameScene.stageLevel == 7 {
+            CannonController.add(type: 0, pos: [0, 9])
+            CannonController.add(type: 0, pos: [1, 10])
+            CannonController.add(type: 0, pos: [2, 9])
+            CannonController.add(type: 0, pos: [3, 10])
+            CannonController.add(type: 0, pos: [4, 9])
+            CannonController.add(type: 0, pos: [5, 10])
+            CannonController.add(type: 0, pos: [6, 9])
+            CannonController.add(type: 0, pos: [7, 10])
+            CannonController.add(type: 0, pos: [8, 9])
         } else if GameScene.stageLevel == 8 {
             CannonController.add(type: 0, pos: [1, 10])
             CannonController.add(type: 0, pos: [3, 9])

@@ -130,6 +130,14 @@
 		2052888A20FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */; };
 		2052888C20FC91CB00B011D2 /* MoveTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* MoveTouchController.swift */; };
 		2052888D20FC91CB00B011D2 /* MoveTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888B20FC91CB00B011D2 /* MoveTouchController.swift */; };
+		2054BF6021688CB300876E99 /* CannonBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF5F21688CB300876E99 /* CannonBackground.swift */; };
+		2054BF6121688CB300876E99 /* CannonBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF5F21688CB300876E99 /* CannonBackground.swift */; };
+		2054BF6321688E4C00876E99 /* CannonTryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF6221688E4C00876E99 /* CannonTryController.swift */; };
+		2054BF6421688E4C00876E99 /* CannonTryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF6221688E4C00876E99 /* CannonTryController.swift */; };
+		2054BF66216899A300876E99 /* EnemyControllerForCannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF65216899A300876E99 /* EnemyControllerForCannon.swift */; };
+		2054BF67216899A300876E99 /* EnemyControllerForCannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF65216899A300876E99 /* EnemyControllerForCannon.swift */; };
+		2054BF6921689B5000876E99 /* CannonForTry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF6821689B5000876E99 /* CannonForTry.swift */; };
+		2054BF6A21689B5000876E99 /* CannonForTry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2054BF6821689B5000876E99 /* CannonForTry.swift */; };
 		2058CA8420F883FB005DF357 /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8320F883FB005DF357 /* Signal.swift */; };
 		2058CA8520F883FB005DF357 /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8320F883FB005DF357 /* Signal.swift */; };
 		2058CA8720F885A6005DF357 /* SignalController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8620F885A6005DF357 /* SignalController.swift */; };
@@ -138,10 +146,6 @@
 		2058CA8C20F88726005DF357 /* SKNode+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8A20F88726005DF357 /* SKNode+Utility.swift */; };
 		2058CA8E20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */; };
 		2058CA8F20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */; };
-		205A0ECF2079EDBC006A44A6 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205A0ECE2079EDBC006A44A6 /* Login.storyboard */; };
-		205A0ED02079EDBC006A44A6 /* Login.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 205A0ECE2079EDBC006A44A6 /* Login.storyboard */; };
-		205A0ED22079EE0D006A44A6 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED12079EE0D006A44A6 /* LoginViewController.swift */; };
-		205A0ED32079EE0D006A44A6 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED12079EE0D006A44A6 /* LoginViewController.swift */; };
 		205A0ED6207A0D58006A44A6 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED5207A0D58006A44A6 /* LoginService.swift */; };
 		205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED5207A0D58006A44A6 /* LoginService.swift */; };
 		205A0EDA207A0ECB006A44A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED9207A0ECB006A44A6 /* User.swift */; };
@@ -392,12 +396,14 @@
 		2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKLabelNode+MultiLines.swift"; sourceTree = "<group>"; };
 		2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+DAMultiLines.swift"; sourceTree = "<group>"; };
 		2052888B20FC91CB00B011D2 /* MoveTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveTouchController.swift; sourceTree = "<group>"; };
+		2054BF5F21688CB300876E99 /* CannonBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonBackground.swift; sourceTree = "<group>"; };
+		2054BF6221688E4C00876E99 /* CannonTryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonTryController.swift; sourceTree = "<group>"; };
+		2054BF65216899A300876E99 /* EnemyControllerForCannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyControllerForCannon.swift; sourceTree = "<group>"; };
+		2054BF6821689B5000876E99 /* CannonForTry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonForTry.swift; sourceTree = "<group>"; };
 		2058CA8320F883FB005DF357 /* Signal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
 		2058CA8620F885A6005DF357 /* SignalController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalController.swift; sourceTree = "<group>"; };
 		2058CA8A20F88726005DF357 /* SKNode+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKNode+Utility.swift"; sourceTree = "<group>"; };
 		2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyAttackController.swift; sourceTree = "<group>"; };
-		205A0ECE2079EDBC006A44A6 /* Login.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Login.storyboard; sourceTree = "<group>"; };
-		205A0ED12079EE0D006A44A6 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		205A0ED5207A0D58006A44A6 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		205A0ED9207A0ECB006A44A6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		20644DB720FC9CB300745E4C /* SelectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionPanel.swift; sourceTree = "<group>"; };
@@ -633,7 +639,9 @@
 			isa = PBXGroup;
 			children = (
 				204BFA03210334FC00A2AB7A /* Cannon.swift */,
+				2054BF6821689B5000876E99 /* CannonForTry.swift */,
 				204BFA0A2104676200A2AB7A /* InputPanleForCannon.swift */,
+				2054BF5F21688CB300876E99 /* CannonBackground.swift */,
 			);
 			path = Cannon;
 			sourceTree = "<group>";
@@ -687,7 +695,6 @@
 			children = (
 				204C7D831F074FE800F4DD11 /* AppDelegate.swift */,
 				204C7D8B1F074FE800F4DD11 /* GameViewController.swift */,
-				205A0ED12079EE0D006A44A6 /* LoginViewController.swift */,
 				203B2A6A1F67BBD100DDCC03 /* MainMenu */,
 				20D0FEC820B6C0B000C547A5 /* LevelSelectMenu */,
 				20D0FED220B6C0E300C547A5 /* GameContorollers */,
@@ -774,10 +781,11 @@
 				20D0FED520B6C0E300C547A5 /* EnemyProperty.swift */,
 				2016D7C7210AF3C500942460 /* ItemDropController.swift */,
 				204CE03A20FB85A200D45FFE /* EqRobController.swift */,
-				204BFA06210465D000A2AB7A /* CannonController.swift */,
 				2016D7C4210AF1A900942460 /* ResetController.swift */,
 				20CD8E5B210DAE0100BD78B6 /* ContactController.swift */,
 				2044B0222163447A00E8E21C /* VEEquivalentController.swift */,
+				204BFA06210465D000A2AB7A /* CannonController.swift */,
+				2054BF6221688E4C00876E99 /* CannonTryController.swift */,
 				204CE03720FB830F00D45FFE /* test.sks */,
 			);
 			path = GameContorollers;
@@ -803,6 +811,7 @@
 				20D0FEE020B6C11100C547A5 /* EnemyDeadController.swift */,
 				20D0FEE120B6C11100C547A5 /* EnemyVEController.swift */,
 				2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */,
+				2054BF65216899A300876E99 /* EnemyControllerForCannon.swift */,
 			);
 			path = Enemy;
 			sourceTree = "<group>";
@@ -909,7 +918,6 @@
 			children = (
 				204C7D921F074FE800F4DD11 /* LaunchScreen.storyboard */,
 				204C7D8D1F074FE800F4DD11 /* Main.storyboard */,
-				205A0ECE2079EDBC006A44A6 /* Login.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -1045,7 +1053,6 @@
 				201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */,
 				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
 				203B2A761F67BBD100DDCC03 /* ItemList.sks in Resources */,
-				205A0ECF2079EDBC006A44A6 /* Login.storyboard in Resources */,
 				201B8C571F3A365700E91301 /* hitWall.wav in Resources */,
 				201B8C531F3A326000E91301 /* enemyKilled.mp3 in Resources */,
 				203B2A741F67BBD100DDCC03 /* Credits.sks in Resources */,
@@ -1092,7 +1099,6 @@
 				20E9E8CF20223B1400D31410 /* mainBGM.mp3 in Resources */,
 				20E9E8D020223B1400D31410 /* buttonBack.wav in Resources */,
 				20E9E8D120223B1400D31410 /* ItemList.sks in Resources */,
-				205A0ED02079EDBC006A44A6 /* Login.storyboard in Resources */,
 				20E9E8D220223B1400D31410 /* hitWall.wav in Resources */,
 				20E9E8D320223B1400D31410 /* enemyKilled.mp3 in Resources */,
 				20E9E8D520223B1400D31410 /* Credits.sks in Resources */,
@@ -1332,6 +1338,7 @@
 				20644DB820FC9CB300745E4C /* SelectionPanel.swift in Sources */,
 				2058CA8E20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */,
 				20D0FF3D20B6C12300C547A5 /* MadDoctor.swift in Sources */,
+				2054BF66216899A300876E99 /* EnemyControllerForCannon.swift in Sources */,
 				204BFA07210465D000A2AB7A /* CannonController.swift in Sources */,
 				204CE02920FB0C6C00D45FFE /* EqRob.swift in Sources */,
 				20D0FEE820B6C11100C547A5 /* EnemyMoveController.swift in Sources */,
@@ -1346,6 +1353,7 @@
 				201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */,
 				200AC22B2107082600D70BA5 /* AddEnemyTurnController.swift in Sources */,
 				20D0FF3920B6C12300C547A5 /* TimeBomb.swift in Sources */,
+				2054BF6921689B5000876E99 /* CannonForTry.swift in Sources */,
 				200AC2252107007500D70BA5 /* SignalSendingTurnController.swift in Sources */,
 				201B8C671F3A67F200E91301 /* BGM.swift in Sources */,
 				20D0FEEC20B6C11100C547A5 /* EnemyVEController.swift in Sources */,
@@ -1397,6 +1405,7 @@
 				20DACE9121298F310015D1BA /* TutorialProperty.swift in Sources */,
 				204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */,
 				20D0FF4620B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */,
+				2054BF6321688E4C00876E99 /* CannonTryController.swift in Sources */,
 				204BFA0B2104676200A2AB7A /* InputPanleForCannon.swift in Sources */,
 				205A0ED6207A0D58006A44A6 /* LoginService.swift in Sources */,
 				2058CA8720F885A6005DF357 /* SignalController.swift in Sources */,
@@ -1409,6 +1418,7 @@
 				2016D7BF2109629200942460 /* StageClearTurnController.swift in Sources */,
 				204BFA0E21046E8200A2AB7A /* AllTouchController.swift in Sources */,
 				20F1A749212EE0720013FF9D /* SpeakInGameController.swift in Sources */,
+				2054BF6021688CB300876E99 /* CannonBackground.swift in Sources */,
 				20644DBB20FCABAB00745E4C /* SelectedEnemy.swift in Sources */,
 				20FD5F5C2160DED700A6604B /* SignalValueHolder.swift in Sources */,
 				207A673920D69D300026A770 /* Balloon.swift in Sources */,
@@ -1421,7 +1431,6 @@
 				20113798212001AD00B5A138 /* ScenarioScene.swift in Sources */,
 				20D0FF1D20B6C12300C547A5 /* EnemyFist.swift in Sources */,
 				20D0FF1920B6C12300C547A5 /* EnemyArm.swift in Sources */,
-				205A0ED22079EE0D006A44A6 /* LoginViewController.swift in Sources */,
 				20D0FF2120B6C12300C547A5 /* Grid.swift in Sources */,
 				203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */,
 				203B2A731F67BBD100DDCC03 /* ConfirmScreen.swift in Sources */,
@@ -1444,6 +1453,7 @@
 				20644DB920FC9CB300745E4C /* SelectionPanel.swift in Sources */,
 				2058CA8F20F8C5EE005DF357 /* EnemyAttackController.swift in Sources */,
 				20D0FF3E20B6C12300C547A5 /* MadDoctor.swift in Sources */,
+				2054BF67216899A300876E99 /* EnemyControllerForCannon.swift in Sources */,
 				204BFA08210465D000A2AB7A /* CannonController.swift in Sources */,
 				204CE02A20FB0C6C00D45FFE /* EqRob.swift in Sources */,
 				20D0FEE920B6C11100C547A5 /* EnemyMoveController.swift in Sources */,
@@ -1458,6 +1468,7 @@
 				20E9E88B20223B1400D31410 /* MSButtonNode.swift in Sources */,
 				200AC22C2107082600D70BA5 /* AddEnemyTurnController.swift in Sources */,
 				20D0FF3A20B6C12300C547A5 /* TimeBomb.swift in Sources */,
+				2054BF6A21689B5000876E99 /* CannonForTry.swift in Sources */,
 				200AC2262107007500D70BA5 /* SignalSendingTurnController.swift in Sources */,
 				20E9E88F20223B1400D31410 /* BGM.swift in Sources */,
 				20D0FECD20B6C0B000C547A5 /* LevelSelectMenu.swift in Sources */,
@@ -1509,6 +1520,7 @@
 				20DACE9221298F310015D1BA /* TutorialProperty.swift in Sources */,
 				204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */,
 				20D0FF4720B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */,
+				2054BF6421688E4C00876E99 /* CannonTryController.swift in Sources */,
 				204BFA0C2104676200A2AB7A /* InputPanleForCannon.swift in Sources */,
 				205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */,
 				2058CA8820F885A6005DF357 /* SignalController.swift in Sources */,
@@ -1521,6 +1533,7 @@
 				2016D7C02109629200942460 /* StageClearTurnController.swift in Sources */,
 				204BFA0F21046E8200A2AB7A /* AllTouchController.swift in Sources */,
 				20F1A74A212EE0720013FF9D /* SpeakInGameController.swift in Sources */,
+				2054BF6121688CB300876E99 /* CannonBackground.swift in Sources */,
 				20644DBC20FCABAB00745E4C /* SelectedEnemy.swift in Sources */,
 				20FD5F5D2160DED700A6604B /* SignalValueHolder.swift in Sources */,
 				207A673A20D69D300026A770 /* Balloon.swift in Sources */,
@@ -1532,7 +1545,6 @@
 				20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */,
 				20113799212001AD00B5A138 /* ScenarioScene.swift in Sources */,
 				20D0FF1E20B6C12300C547A5 /* EnemyFist.swift in Sources */,
-				205A0ED32079EE0D006A44A6 /* LoginViewController.swift in Sources */,
 				20D0FF1A20B6C12300C547A5 /* EnemyArm.swift in Sources */,
 				20D0FF2220B6C12300C547A5 /* Grid.swift in Sources */,
 				20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */,

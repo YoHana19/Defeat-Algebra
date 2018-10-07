@@ -18,16 +18,27 @@ class InputPanelForCannon: SKSpriteNode {
     let centerY: CGFloat = -20
     let merginX: CGFloat = 30
     let merginY: CGFloat = 15
-    let clearButtonPos = CGPoint(x: 250, y: -50)
+    let clearButtonPos = CGPoint(x: 150, y: -150)
     let okButtonPos = CGPoint(x: 250, y: -150)
+    let tryButtonPos = CGPoint(x: 200, y: -40)
     let bigButtonSize = CGSize(width: 82, height: 82)
+    let tryButtonSize = CGSize(width: 180, height: 90)
     let labelPos = CGPoint(x: -140, y: 57)
     let labelMergin: CGFloat = 93
     
     var isActive: Bool = false {
         didSet {
-            /* Visibility */
             self.isHidden = !isActive
+            if (isActive) {
+                CannonController.selectedCannon.resetVEElementArray()
+                if CannonTouchController.state == .Trying {
+                    buttonTry.isHidden = true
+                    coverTryBtn.isHidden = true
+                } else {
+                    buttonTry.isHidden = false
+                    coverTryBtn.isHidden = false
+                }
+            }
         }
     }
     
@@ -63,27 +74,10 @@ class InputPanelForCannon: SKSpriteNode {
     var coefficientFlag = false
     var tempSpot = 0
     
-    /* Set buttons */
-    var buttonX: SKSpriteNode!
-    var button0: SKSpriteNode!
-    var button1: SKSpriteNode!
-    var button2: SKSpriteNode!
-    var button3: SKSpriteNode!
-    var button4: SKSpriteNode!
-    var button5: SKSpriteNode!
-    var button6: SKSpriteNode!
-    var button7: SKSpriteNode!
-    var button8: SKSpriteNode!
-    var button9: SKSpriteNode!
-    var buttonPlus: SKSpriteNode!
-    var buttonMinus: SKSpriteNode!
-    
-    var buttonClear: SKSpriteNode!
-    var buttonOK: SKSpriteNode!
-    
     var coverXBtn = SKShapeNode()
     var coverOKBtn = SKShapeNode()
-    var cover0Btn = SKShapeNode()
+    var coverTryBtn = SKShapeNode()
+    var buttonTry = SKSpriteNode()
     var coverNumArray = [SKShapeNode]()
     var coverOpeArray = [SKShapeNode]()
     var eqRobPoint = SKShapeNode(circleOfRadius: 10)
@@ -179,7 +173,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -200,7 +193,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -221,7 +213,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -241,7 +232,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -261,7 +251,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -282,7 +271,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -303,7 +291,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -324,7 +311,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -344,7 +330,6 @@ class InputPanelForCannon: SKSpriteNode {
             
             /* Valid x, +- */
             uncoverOperant()
-            uncover0()
             
             /* Make sure to put at least one x */
             if putXFlag {
@@ -438,7 +423,6 @@ class InputPanelForCannon: SKSpriteNode {
             /* Invalid +-, ok, 0 */
             coverOperant()
             coverOK()
-            cover0()
             
             /* Reset elemnts of variable expression of cannon */
             CannonController.selectedCannon.resetVEElementArray()
@@ -464,8 +448,7 @@ class InputPanelForCannon: SKSpriteNode {
             /* Valid x, num */
             self.uncoverNumber()
             self.uncoverX()
-            /* Invalid +-, 0, ok */
-            self.cover0()
+            /* Invalid +-, ok */
             self.coverOperant()
             self.coverOK()
             
@@ -474,13 +457,45 @@ class InputPanelForCannon: SKSpriteNode {
             if GameScene.stageLevel == 6 || GameScene.stageLevel == 7, let _ = gameScene as? ScenarioScene {
                 return
             }
-            CannonController.execute(1, cannon: nil)
+            
+            if CannonTouchController.state == .Trying {
+                CannonController.execute(3, cannon: nil)
+            } else {
+                CannonController.execute(1, cannon: nil)
+            }
+        }
+        
+        /* Touch button ok */
+        if nodeAtPoint.name == "buttonTry" {
+            if operant == 0 {
+                CannonController.selectedCannon.constantsArray.append(tempSpot)
+            } else {
+                CannonController.selectedCannon.constantsArray.append(-tempSpot)
+            }
+            
+            CannonController.selectedCannon.setInputVE(value: variableExpression)
+            
+            /* Reset stuffs */
+            self.variableExpression = ""
+            self.putXFlag = false
+            self.operant = 0
+            self.coefficientFlag = false
+            self.tempSpot = 0
+            /* Valid x, num */
+            self.uncoverNumber()
+            self.uncoverX()
+            /* Invalid +-, ok */
+            self.coverOperant()
+            self.coverOK()
+            
+            self.isHidden = true
+            CannonController.execute(2, cannon: nil)
         }
         
     }
     
     func makeButtons(completion: @escaping ([SKSpriteNode]) -> Void) {
-        let button0 = SKSpriteNode(imageNamed: "input0")
+        //let button0 = SKSpriteNode(imageNamed: "input0")
         let button1 = SKSpriteNode(imageNamed: "input1")
         let button2 = SKSpriteNode(imageNamed: "input2")
         let button3 = SKSpriteNode(imageNamed: "input3")
@@ -493,7 +508,7 @@ class InputPanelForCannon: SKSpriteNode {
         let buttonMinus = SKSpriteNode(imageNamed: "input-")
         let buttonPlus = SKSpriteNode(imageNamed: "input+")
         let buttonX = SKSpriteNode(imageNamed: "inputX")
-        button0.name = "button0"
+        //button0.name = "button0"
         button1.name = "button1"
         button2.name = "button2"
         button3.name = "button3"
@@ -506,7 +521,7 @@ class InputPanelForCannon: SKSpriteNode {
         buttonMinus.name = "button-"
         buttonPlus.name = "button+"
         buttonX.name = "buttonX"
-        return completion([button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, buttonMinus, buttonPlus, buttonX])
+        return completion([button1, button2, button3, button4, button5, button6, button7, button8, button9, buttonMinus, buttonPlus, buttonX])
     }
     
     func setButtons() {
@@ -522,28 +537,26 @@ class InputPanelForCannon: SKSpriteNode {
                 button.size = self.buttonSize
                 button.zPosition = 3
                 button.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-                if i < 5 {
+                if i < 4 {
                     let pos = CGPoint(x: leadingPosX+(rMerginX)*CGFloat(i), y: self.centerY)
                     button.position = pos
-                    if i == 0 {
-                        self.cover0Btn = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
-                        self.cover0Btn.isHidden = false
-                        self.coverNumArray.append(self.cover0Btn)
-                    } else {
-                        let cover = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
-                        cover.isHidden = true
-                        self.coverNumArray.append(cover)
-                    }
-                } else if i < 10 {
-                    let pos = CGPoint(x: leadingPosX+(rMerginX)*CGFloat(i-5), y: secondLayerPosY)
+                    let cover = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
+                    cover.isHidden = true
+                    self.coverNumArray.append(cover)
+                } else if i < 8 {
+                    let pos = CGPoint(x: leadingPosX+(rMerginX)*CGFloat(i-4), y: secondLayerPosY)
                     button.position = pos
                     let cover = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
                     cover.isHidden = true
                     self.coverNumArray.append(cover)
                 } else {
-                    let pos = CGPoint(x: leadingPosX+(rMerginX)*CGFloat(i-10), y: thirdLayerPosY)
+                    let pos = CGPoint(x: leadingPosX+(rMerginX)*CGFloat(i-8), y: thirdLayerPosY)
                     button.position = pos
-                    if button.name == "buttonX" {
+                    if button.name == "button9" {
+                        let cover = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
+                        cover.isHidden = true
+                        self.coverNumArray.append(cover)
+                    } else if button.name == "buttonX" {
                         self.coverXBtn = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
                         self.coverXBtn.isHidden = true
                     } else {
@@ -574,6 +587,20 @@ class InputPanelForCannon: SKSpriteNode {
         coverOKBtn = setCoverButtons(buttonSize: bigButtonSize.width/2, buttonPosition: okButtonPos)
         coverOKBtn.isHidden = false
         
+        /* button try */
+        buttonTry = SKSpriteNode(imageNamed: "tryButton")
+        buttonTry.size = tryButtonSize
+        buttonTry.position = tryButtonPos
+        buttonTry.name = "buttonTry"
+        buttonTry.zPosition = 3
+        addChild(buttonTry)
+        coverTryBtn = SKShapeNode(rect: CGRect(x: tryButtonPos.x-tryButtonSize.width/2, y: tryButtonPos.y-tryButtonSize.height/2, width: tryButtonSize.width, height: tryButtonSize.height))
+        
+        coverTryBtn.fillColor = UIColor.black
+        coverTryBtn.alpha = 0.4
+        coverTryBtn.zPosition = 5
+        addChild(coverTryBtn)
+        coverTryBtn.isHidden = false
     }
     
     func makeLabels(completion: @escaping ([SKLabelNode]) -> Void) {
@@ -621,14 +648,6 @@ class InputPanelForCannon: SKSpriteNode {
         }
     }
     
-    /* Toggle 0 buttons */
-    func cover0() {
-        cover0Btn.isHidden = false
-    }
-    func uncover0() {
-        cover0Btn.isHidden = true
-    }
-    
     /* Toggle x buttons */
     func coverX() {
         coverXBtn.isHidden = false
@@ -652,9 +671,13 @@ class InputPanelForCannon: SKSpriteNode {
     /* Toggle ok buttons */
     func coverOK() {
         coverOKBtn.isHidden = false
+        guard CannonTouchController.state != .Trying else { return }
+        coverTryBtn.isHidden = false
     }
     func uncoverOK() {
         coverOKBtn.isHidden = true
+        guard CannonTouchController.state != .Trying else { return }
+        coverTryBtn.isHidden = true
     }
     
 }

@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum CannonState {
-    case Ready, Pending, WillFire, Miss, Instruction, Dead, Charging
+    case Ready, Pending, WillFire, Miss, Instruction, Dead, Charging, Trying
 }
 
 class Cannon: Item {
@@ -23,6 +23,8 @@ class Cannon: Item {
     
     var constantsArray = [Int]()
     var coefficientArray = [Int]()
+    var lastConstantsArray = [Int]()
+    var lastCoefficientArray = [Int]()
     
     let bombSpan: TimeInterval = 3.0
     
@@ -89,13 +91,20 @@ class Cannon: Item {
         for coeffcient in coefficientArray {
             outPut += coeffcient*value
         }
-        print("x: \(value), value: \(outPut), ve: \(variableExpressionLabel.text)")
+        //print("x: \(value), value: \(outPut), ve: \(variableExpressionLabel.text)")
         return outPut
     }
     
     func resetVEElementArray() {
+        lastConstantsArray = constantsArray
+        lastCoefficientArray = coefficientArray
         constantsArray.removeAll()
         coefficientArray.removeAll()
+    }
+    
+    func recoverVEElementArray() {
+        constantsArray = lastConstantsArray
+        coefficientArray = lastCoefficientArray 
     }
     
 }

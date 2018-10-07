@@ -24,6 +24,7 @@ class Enemy: SKSpriteNode {
     var positionY = 0
     var eqPosX = 0
     var eqPosY = 0
+    var cannonPosY = 0
     
     var posRecord = [(Int, Int, Int)]()
     

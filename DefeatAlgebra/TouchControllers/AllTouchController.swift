@@ -35,6 +35,12 @@ struct AllTouchController {
     public static func cannonTouched(node: Cannon) {
         guard gameScene.playerTurnState == .MoveState || gameScene.playerTurnState == .AttackState || gameScene.playerTurnState == .UsingItem else { return }
         guard gameScene.itemType != .EqRob else { return }
+        let cands = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == node.spotPos[0] })
+        guard cands.count > 0 else {
+            CannonController.execute(4, cannon: nil)
+            return
+        }
+        
         
         /* Hide attack and item buttons */
         gameScene.buttonAttack.isHidden = true
@@ -49,6 +55,6 @@ struct AllTouchController {
         gameScene.playerTurnState = .UsingItem
         gameScene.itemType = .Cannon
         
-        CannonTouchController.onEvent(cannon: node)
+        CannonTouchController.onEvent(cannon: node, enemy: nil)
     }
 }

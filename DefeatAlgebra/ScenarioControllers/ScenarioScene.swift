@@ -68,6 +68,7 @@ class ScenarioScene: GameScene {
         TutorialController.scene = self
         SpeakInGameController.gameScene = self
         VEEquivalentController.gameScene = self
+        CannonTryController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {

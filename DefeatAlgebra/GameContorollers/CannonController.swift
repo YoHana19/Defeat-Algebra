@@ -28,12 +28,26 @@ struct CannonController {
     public static func execute(_ index: Int, cannon: Cannon?) {
         switch index {
         case 0:
-            showInputPanelWithDoctor()
             selectedCannon = cannon!
             willFireCannon.append(cannon!)
+            showInputPanelWithDoctor()
             break;
         case 1:
             doneInput()
+            break;
+        case 2:
+            startSelectEnemyForTry()
+            break;
+        case 3:
+            doctorSays(in: .Trying, value: "3")
+            break;
+        case 4:
+            CharacterController.showDoctor()
+            doctorSays(in: .NotAvilable, value: nil)
+            let wait = SKAction.wait(forDuration: 2.5)
+            gameScene.run(wait, completion: {
+                CharacterController.retreatDoctor()
+            })
             break;
         default:
             break;
@@ -45,6 +59,7 @@ struct CannonController {
         case 0:
             hideInputPanelWithDoctor()
             willFireCannon.removeLast()
+            selectedCannon.recoverVEElementArray()
             break;
         default:
             break;
@@ -78,6 +93,38 @@ struct CannonController {
         ItemTouchController.othersTouched()
     }
     
+    private static func startSelectEnemyForTry() {
+        hideInputPanel()
+        doctorSays(in: .WillTry, value: nil)
+        let cand = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == selectedCannon.spotPos[0] })
+        for enemy in cand {
+            enemy.pointing()
+            if enemy.positionX == selectedCannon.spotPos[0] && enemy.positionY == selectedCannon.spotPos[1] {
+                enemy.zPosition = 6
+            }
+        }
+        gameScene.isCharactersTurn = true
+        gameScene.tutorialState = .Action
+        gameScene.gridNode.isTutorial = true
+        CannonTouchController.state = .Trying
+    }
+    
+    public static func startTry(enemy: Enemy) {
+        doctorSays(in: .Trying, value: "3")
+        hideInputPanel()
+        for enemy in gameScene.gridNode.enemyArray {
+            enemy.removePointing()
+        }
+        gameScene.isCharactersTurn = true
+        gameScene.tutorialState = .Action
+        gameScene.gridNode.isTutorial = true
+        CannonTryController.showEqGrid(enemy: enemy, cannon: selectedCannon)
+    }
+    
+    public static func showInputPanelInTrying() {
+        showInputPanel()
+    }
+    
     public static func fire(completion: @escaping () -> Void) {
         let dispatchGroup = DispatchGroup()
         for cannon in willFireCannon {
@@ -98,18 +145,19 @@ struct CannonController {
         CannonTouchController.state = .Ready
     }
     
-    private static func doctorSays(in state: CannonLinesState, value: String?) {
+    public static func doctorSays(in state: CannonLinesState, value: String?) {
+        CharacterController.doctor.balloon.isHidden = false
         CannonLines.getLines(state: state, value: value).DAMultilined() { line in
             CharacterController.doctor.balloon.setLines(with: line, pos: 0)
         }
     }
     
     private static func showInputPanel() {
-        gameScene.inputPanelForCannon.isHidden = false
+        gameScene.inputPanelForCannon.isActive = true
     }
     
     private static func hideInputPanel() {
-        gameScene.inputPanelForCannon.isHidden = true
+        gameScene.inputPanelForCannon.isActive = false
     }
     
     public static func add(type: Int, pos: [Int]) {
@@ -131,12 +179,16 @@ struct CannonTouchController {
     
     public static var state: CannonState = .Ready
     
-    public static func onEvent(cannon: Cannon?) {
+    public static func onEvent(cannon: Cannon?, enemy: Enemy?) {
         switch state {
         case .Ready:
             CannonController.execute(0, cannon: cannon!)
             break;
         case .Charging:
+            break;
+        case .Trying:
+            guard let enemy = enemy else { return }
+            CannonController.startTry(enemy: enemy)
             break;
         default:
             break;
@@ -145,7 +197,7 @@ struct CannonTouchController {
 }
 
 enum CannonLinesState {
-    case WillInput, Inputing, InputDone
+    case WillInput, Inputing, WillTry, Trying, InputDone, NotAvilable
 }
 
 struct CannonLines {
@@ -153,6 +205,57 @@ struct CannonLines {
         switch state {
         case .WillInput:
             return "砲撃の飛距離を入力するのじゃ！"
+        case .Inputing:
+            return setSubLineForInputing()
+        case .WillTry:
+            return "どの敵で試すのか選択するのじゃ"
+        case .Trying:
+            guard let val = value else { return "" }
+            return setSubLineForTrying(index: val)
+        case .NotAvilable:
+            return "攻撃モードに入った敵が同じ列にいる時だけ砲撃できるんじゃ"
+        default:
+            return ""
+        }
+    }
+    
+    static var selectedLine = ""
+    static let subLinesForInputing: [String] = [
+        "わからなかったら、ためし撃ちもできるぞ！",
+        "砲撃の飛距離を入力するのじゃ！"
+    ]
+    
+    static var curIndex = 0
+    static func setSubLineForInputing() -> String {
+        switch curIndex {
+        case 0:
+            curIndex = 1
+            return subLinesForInputing[0]
+        case 1:
+            curIndex = 0
+            return subLinesForInputing[1]
+        default:
+            curIndex = 0
+            return ""
+        }
+    }
+    
+    static func setSubLineForTrying(index: String) -> String {
+        switch index {
+        case "0":
+            return "どうやら、グリッドを超えてしまったようじゃな..."
+        case "1":
+            return "ジャストミートじゃ！xが他の数でも当たるか確かめるのじゃ！"
+        case "2":
+            return "うーむ当たらないのう。確実に当てるにはどうしたらよいじゃろうか"
+        case "3":
+            return "xに入る数を選んで、試し撃ちしてみよう！"
+        case "4":
+            return "砲撃の飛距離を変えることもできるぞ"
+        case "5":
+            return "アルジェブラ砲と敵との距離に注目してみたらどうじゃろうか"
+        case "6":
+            return ""
         default:
             return ""
         }

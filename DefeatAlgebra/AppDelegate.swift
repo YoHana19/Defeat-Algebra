@@ -9,7 +9,6 @@
 import UIKit
 import Fabric
 import Crashlytics
-import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -19,7 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         Fabric.with([Crashlytics.self])
-        FirebaseApp.configure()
         
         //AppDelegate.configureInitialRootViewController(for: window)
         
@@ -46,33 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-}
-
-extension AppDelegate {
-    static func configureInitialRootViewController(for window: UIWindow?) {
-        Auth.auth().signInAnonymously() { (_, error) in
-            if let error = error {
-                assertionFailure("Error signing in: \(error.localizedDescription)")
-                return
-            }
-            if let userData = UserDefaults.standard.object(forKey: "currentUser") as? Data {
-                if let user = NSKeyedUnarchiver.unarchiveObject(with: userData) as? User {
-                    User.setCurrent(user)
-                    let storyboard = UIStoryboard(name: "Main", bundle: .main)
-                    if let initialViewController = storyboard.instantiateInitialViewController() {
-                        window?.rootViewController = initialViewController
-                        window?.makeKeyAndVisible()
-                    }
-                }
-            } else {
-                let storyboard = UIStoryboard(name: "Login", bundle: .main)
-                if let initialViewController = storyboard.instantiateInitialViewController() {
-                    window?.rootViewController = initialViewController
-                    window?.makeKeyAndVisible()
-                }
-            }
-        }
     }
 }
 
