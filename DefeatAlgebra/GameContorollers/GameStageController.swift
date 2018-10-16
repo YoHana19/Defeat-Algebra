@@ -47,25 +47,19 @@ struct GameStageController {
         case 8:
             loadGameScene(scene: scene)
             break;
-        case MainMenu.secondDayStartTurn: //9
-            loadGameScene(scene: scene)
+        case MainMenu.cannonStartTurn:
+            loadScenarioScene(scene: scene)
             break;
         case 10:
             loadGameScene(scene: scene)
             break;
-        case MainMenu.cannonStartTurn:
-            loadScenarioScene(scene: scene)
-            break;
-        case 12:
-            loadGameScene(scene: scene)
-            break;
-        case 13:
+        case 11:
             loadGameScene(scene: scene)
             break;
         case MainMenu.invisivleStartTurn: //14
             loadScenarioScene(scene: scene)
             break;
-        case 15:
+        case 13:
             loadGameScene(scene: scene)
             break;
         case MainMenu.lastTurn: //16
@@ -276,7 +270,7 @@ struct GameStageController {
     }
     
     public static func adjustGameSceneLevel() -> Int {
-        if GameScene.stageLevel < 11 {
+        if GameScene.stageLevel < MainMenu.cannonStartTurn {
             return GameScene.stageLevel - 2
         } else {
             return GameScene.stageLevel - 3

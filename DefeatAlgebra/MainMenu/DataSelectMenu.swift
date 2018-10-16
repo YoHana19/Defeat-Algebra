@@ -99,14 +99,6 @@ class DataSelectMenu: SKScene {
             self?.loadScene(level: 15)
         }
         
-        button16.selectedHandler = { [weak self] in
-            self?.loadScene(level: 16)
-        }
-        
-        button17.selectedHandler = { [weak self] in
-            self?.loadScene(level: 17)
-        }
-        
         buttonBack.selectedHandler = { [weak self] in
             let skView = self?.view as SKView?
             
