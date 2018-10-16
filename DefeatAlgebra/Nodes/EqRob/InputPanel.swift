@@ -131,7 +131,7 @@ class InputPanel: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if GameScene.stageLevel == 5, let _ = gameScene as? ScenarioScene {
+        if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = gameScene as? ScenarioScene {
             guard EqRobTutorialController.userTouch(on: nodeAtPoint.name) else { return }
         }
         
@@ -470,7 +470,7 @@ class InputPanel: SKSpriteNode {
                 self.coverOperant()
                 self.coverOK()
                 
-                if GameScene.stageLevel == 4, let _ = gameScene as? ScenarioScene {
+                if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = gameScene as? ScenarioScene {
                     self.isHidden = true
                 } else {
                     EqRobController.execute(1, enemy: nil)

@@ -1,0 +1,27 @@
+continue : level=ud → stageManager
+stageclear : stageManager +1
+skip : moveSpan,timeBomb,moveExplain,unsimplified,eqRob,invisible,last → loadGameScene / stageManager +1
+scenario : timeBomb, moveExplain, unsimplified, eqRob, invisible, last
+
+stageLevel-stage
+
+0-1 scenario
+1-2 scenario (uncoverSignal)
+2-3 scenario / game (moveSpan)
+3-4 scenario / game (timeBomb)
+4-5 game
+5-6 scenario / game (moveExplain)
+6-7 scenario / game (unsimplified)
+7-8 scenario / game (eqRob)
+8-9 game
+9-10 game (secondDay)
+10-11 game
+11-12 scenario (cannon)
+12-13 game
+13-14 game
+14-15 scenario / game (invisible)
+15-16 game
+16-17 scenario / game (last)
+
+
+bombDeliver 5-6

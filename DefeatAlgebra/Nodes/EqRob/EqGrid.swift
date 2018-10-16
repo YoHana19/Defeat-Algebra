@@ -11,10 +11,13 @@ import SpriteKit
 
 class EqGrid: Grid {
     
+    public var demoCalcLabel = SKLabelNode(fontNamed: DAFont.fontName)
+    
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         isUserInteractionEnabled = true
+        setEqRobDemoCalcLabel()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -28,61 +31,23 @@ class EqGrid: Grid {
                 ScenarioController.nextLine()
                 break;
             case .Action:
-                if GameScene.stageLevel == 5, let _ = self.parent as? ScenarioScene {
-                    if VEEquivalentController.numOfCheck > 3 {
-                        VEEquivalentController.getBG() { bg in
-                            bg?.isEnable = false
+                if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
+                    if ScenarioController.currentActionIndex < 11 {
+                        if VEEquivalentController.numOfCheck > 3 {
+                            VEEquivalentController.getBG() { bg in
+                                bg?.isEnable = false
+                            }
+                            ScenarioController.controllActions()
+                            return
                         }
-                        ScenarioController.controllActions()
-                        return
-                    } else {
-                        CharacterController.doctor.balloon.isHidden = true
                     }
                 }
                 break;
             }
-        } else {
-            guard gameScene.pauseFlag == false else { return }
-            guard gameScene.gameState == .PlayerTurn else { return }
-            guard gameScene.playerTurnState == .UsingItem else { return }
-            guard gameScene.itemType == .EqRob else { return }
-            
-            ItemTouchController.othersTouched()
         }
     }
     
-    public func createCalucalationLabel(text: String, posX: Int, posY: Int, redLetterPos: [Int]) {
-        /* Set label with font */
-        let label = SKLabelNode(fontNamed: DAFont.fontNameForTutorial)
-        /* Set text */
-        label.text = text
-        /* Set name */
-        label.name = "label"
-        /* Set font size */
-        label.fontSize = 35
-        /* Set zPosition */
-        label.zPosition = 5
-        /* Set position */
-        label.horizontalAlignmentMode = .center
-        label.verticalAlignmentMode = .center
-        let pos = CGPoint(x: CGFloat((Double(posX)+1/2)*cellWidth), y: CGFloat((Double(posY)+1/2)*cellHeight))
-        label.position = pos
-        
-        let attrText = NSMutableAttributedString(string: label.text!)
-        let font = UIFont(name: DAFont.fontName, size: label.fontSize) ?? UIFont.systemFont(ofSize: label.fontSize)
-        attrText.addAttributes([.foregroundColor: UIColor.white, .font: font], range: NSMakeRange(0, label.text!.count))
-        for pos in redLetterPos {
-            attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(pos, 1))
-        }
-        if #available(iOS 11.0, *) {
-            label.attributedText = attrText
-        }
-        
-        /* Add to Scene */
-        addChild(label)
-    }
-    
-    public func createLabel(text: String, posX: Int, posY: Int, redLetterPos: [Int]) {
+    public func createLabel(text: String, posX: Int, posY: Int, redLetterPos: [Int], greenLetterPos: [Int]) {
         /* Set label with font */
         let label = SKLabelNode(fontNamed: DAFont.fontNameForTutorial)
         /* Set text */
@@ -105,6 +70,9 @@ class EqGrid: Grid {
         for pos in redLetterPos {
             attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(pos, 1))
         }
+        for pos in greenLetterPos {
+            attrText.addAttribute(.foregroundColor, value: UIColor.green, range: NSMakeRange(pos, 1))
+        }
         if #available(iOS 11.0, *) {
             label.attributedText = attrText
         }
@@ -119,5 +87,82 @@ class EqGrid: Grid {
                 child.removeFromParent()
             }
         }
+    }
+    
+    func setEqRobDemoCalcLabel() {
+        demoCalcLabel.fontSize = 30
+        demoCalcLabel.verticalAlignmentMode = .center
+        demoCalcLabel.horizontalAlignmentMode = .center
+        demoCalcLabel.position = CGPoint(x: 0, y: 0)
+        demoCalcLabel.zPosition = 3
+        demoCalcLabel.fontColor = UIColor.white
+        self.addChild(demoCalcLabel)
+        demoCalcLabel.isHidden = true
+    }
+    
+    public func showEqRobDemoCalcLabel(pos: CGPoint, value: Int, eqRob: EqRob) {
+        demoCalcLabel.isHidden = false
+        demoCalcLabel.position = pos
+        demoCalculation(value: value, eqRob: eqRob)
+    }
+    
+    private func demoCalculation(value: Int, eqRob: EqRob) {
+        var xPos = [Int]()
+        var xPosOrigin = [Int]()
+        var charaIndex = -1
+        var characters = eqRob.variableExpressionString.map { String($0) }
+        let dispatchGroup = DispatchGroup()
+        for (i, c) in characters.enumerated() {
+            charaIndex += 1
+            dispatchGroup.enter()
+            if c == "x" {
+                xPosOrigin.append(i)
+                if i > 0 {
+                    if characters[i-1] == "+" || characters[i-1] == "-" || characters[i-1] == "×" {
+                        xPos.append(charaIndex)
+                        characters[i] = String(value)
+                        dispatchGroup.leave()
+                    } else {
+                        charaIndex += 1
+                        xPos.append(charaIndex)
+                        characters[i] = "×" + String(value)
+                        dispatchGroup.leave()
+                    }
+                } else {
+                    xPos.append(charaIndex)
+                    characters[i] = String(value)
+                    dispatchGroup.leave()
+                }
+            } else {
+                dispatchGroup.leave()
+            }
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            var numForm = ""
+            characters.forEach { numForm += $0 }
+            let result = eqRob.calculateValue(value: value)
+            self.demoCalcLabel.text = eqRob.variableExpressionString + "=" + numForm + "=" + String(result)
+            let attrText = NSMutableAttributedString(string: self.demoCalcLabel.text!)
+            let font = UIFont(name: DAFont.fontName, size: 30) ?? UIFont.systemFont(ofSize: 30)
+            attrText.addAttributes([.foregroundColor: UIColor.white, .font: font], range: NSMakeRange(0, self.demoCalcLabel.text!.count))
+            for pos in xPos {
+                attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(eqRob.variableExpressionString.count+1+pos, 1))
+            }
+            for pos in xPosOrigin {
+                attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(pos, 1))
+            }
+            if result < -9 {
+                attrText.addAttribute(.foregroundColor, value: UIColor.yellow, range: NSMakeRange(self.demoCalcLabel.text!.count-3, 3))
+            } else if result < 0 {
+                attrText.addAttribute(.foregroundColor, value: UIColor.yellow, range: NSMakeRange(self.demoCalcLabel.text!.count-2, 2))
+            } else if result > 9 {
+                attrText.addAttribute(.foregroundColor, value: UIColor.yellow, range: NSMakeRange(self.demoCalcLabel.text!.count-2, 2))
+            } else {
+                attrText.addAttribute(.foregroundColor, value: UIColor.yellow, range: NSMakeRange(self.demoCalcLabel.text!.count-1, 1))
+            }
+            if #available(iOS 11.0, *) {
+                self.demoCalcLabel.attributedText = attrText
+            }
+        })
     }
 }

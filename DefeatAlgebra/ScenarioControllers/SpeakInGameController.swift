@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum CharacterSpeakContentType {
-    case None, PlaneExplain, Scenario2Firstly, LogDefenceFirstly, TimeBombGotFirstly, HeartGotFirstly
+    case None, PlaneExplain, EqRobFirstly, LogDefenceFirstly, TimeBombGotFirstly, MoveExplain
 }
 
 struct SpeakInGameController {
@@ -30,20 +30,29 @@ struct SpeakInGameController {
     
     public static func controlAction() {
         switch GameScene.stageLevel {
-        case 1:
+        case MainMenu.timeBombStartTurn:
             if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
-                guard lastAction != .Scenario2Firstly else { return }
+                guard lastAction != .TimeBombGotFirstly else { return }
                 wait(length: 1.0) {
-                    doAction(type: .Scenario2Firstly)
+                    doAction(type: .TimeBombGotFirstly)
                 }
                 return
             }
             break;
-        case 2:
-            if gameScene.gameState == .AddItem && gameScene.countTurn == 3 {
+        case MainMenu.moveExplainStartTurn:
+            if gameScene.gameState == .AddItem && gameScene.countTurn == 4 {
                 guard lastAction != .PlaneExplain else { return }
                 wait(length: 1.0) {
                     doAction(type: .PlaneExplain)
+                }
+                return
+            }
+            break;
+        case MainMenu.eqRobStartTurn:
+            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
+                guard lastAction != .EqRobFirstly else { return }
+                wait(length: 1.0) {
+                    doAction(type: .EqRobFirstly)
                 }
                 return
             }
@@ -109,16 +118,15 @@ struct SpeakInGameController {
             currentContent = SpeakInGameProperty.planeExplain
             DAUserDefaultUtility.doneFirstly(name: "PlaneExplainFirst")
             break;
-        case .Scenario2Firstly:
-            currentContent = SpeakInGameProperty.scenario2Firstly
+        case .TimeBombGotFirstly:
+            currentContent = SpeakInGameProperty.timeBombGotFirstly
             break;
         case .LogDefenceFirstly:
             DAUserDefaultUtility.doneFirstly(name: "logDefenceFirst")
             currentContent = SpeakInGameProperty.logDefenceFirstly
             break;
-        case .HeartGotFirstly:
-            DAUserDefaultUtility.doneFirstly(name: "heartGotFirst")
-            currentContent = SpeakInGameProperty.heartGotFirstly
+        case .EqRobFirstly:
+            currentContent = SpeakInGameProperty.eqRobFirstly
             break;
         default:
             break;
@@ -175,9 +183,8 @@ struct SpeakInGameController {
         case .PlaneExplain:
             switch currentActionIndex {
             case 0:
-                print("HOEGOHEOG")
                 CharacterController.retreatDoctor()
-                TutorialController.currentIndex = 3
+                TutorialController.currentIndex = 4
                 TutorialController.enable()
                 TutorialController.execute()
                 break;
@@ -185,6 +192,12 @@ struct SpeakInGameController {
                 break;
             }
             break;
+//        case .Scenario8Firstly:
+//            CharacterController.retreatDoctor()
+//            CharacterController.retreatMainHero()
+//            gameScene.isCharactersTurn = false
+//            gameScene.gridNode.isTutorial = false
+//            break;
         default:
             break;
         }

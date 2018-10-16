@@ -93,7 +93,7 @@ class SettingScreen: SKSpriteNode {
             let skView = mainMenu.view as SKView?
             
             /* Load Game scene */
-            guard let scene = ItemList(fileNamed:"ItemList") as ItemList? else {
+            guard let scene = DataSelectMenu(fileNamed:"DataSelectMenu") as DataSelectMenu? else {
                 return
             }
             

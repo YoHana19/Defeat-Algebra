@@ -25,6 +25,7 @@ class Enemy: SKSpriteNode {
     var eqPosX = 0
     var eqPosY = 0
     var cannonPosY = 0
+    var demoCalcLabel = SKLabelNode(fontNamed: DAFont.fontName)
     
     var posRecord = [(Int, Int, Int)]()
     
@@ -41,9 +42,7 @@ class Enemy: SKSpriteNode {
             } else {
                 state = .Move
             }
-            punchIntervalLabel.fontColor = UIColor.white
             variableExpressionLabel.fontColor = UIColor.white
-            punchIntervalLabel.text = String(punchIntervalForCount)
         }
     }
     var singleTurnDuration: TimeInterval = 0.2
@@ -55,10 +54,11 @@ class Enemy: SKSpriteNode {
     var singlePunchLength: CGFloat = 78
     var punchLength: CGFloat! = 0
     var variableExpressionLabel = SKLabelNode(fontNamed: DAFont.fontName)
+    var veLabelSize: CGFloat = 35
+    var isLabelLargeSize = true
     var variableExpressionString = "" {
         didSet {
             variableExpressionLabel.text = variableExpressionString
-            //adjustLabelSize()
         }
     }
     var originVariableExpression = "" {
@@ -114,11 +114,8 @@ class Enemy: SKSpriteNode {
         setName()
         
         /* Initialize Labels */
-        initializePunchIntervalLabel()
         initailizeVariableExpressionLabel()
         initializeXValueLabel()
-        
-        punchIntervalLabel.isHidden = true
         
         /* Set punch interval */
         if forEdu == false {
@@ -126,7 +123,7 @@ class Enemy: SKSpriteNode {
         }
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 4
+        zPosition = 5
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -137,16 +134,9 @@ class Enemy: SKSpriteNode {
         /* Set variable expression */
         EnemyVEController.setVariableExpression(enemy: self, vESource: variableExpressionSource)
         
-        /* Set enemy speed according to stage level */
-        if GameScene.stageLevel < 1 {
-            self.moveSpeed = 0.2
-            self.punchSpeed = 0.0025
-            self.singleTurnDuration = 1.0
-        }
+        GameStageController.enemyProperty(enemy: self)
         
-        if GameScene.stageLevel > 1 {
-            variableExpressionLabel.fontSize = 24.5
-        }
+        setDemoCalcLabel()
 
     }
     
@@ -163,12 +153,11 @@ class Enemy: SKSpriteNode {
         self.variableExpressionString = ve
         
         /* Initialize Labels */
-        initializePunchIntervalLabel()
         initailizeVariableExpressionLabel()
         initializeXValueLabel()
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 4
+        zPosition = 5
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -176,14 +165,9 @@ class Enemy: SKSpriteNode {
         /* Set physics property */
         setPhysics(isActive: true)
         
-        if GameScene.stageLevel < 1 {
-            self.moveSpeed = 0.2
-            self.punchSpeed = 0.0025
-            self.singleTurnDuration = 1.0
-            self.variableExpressionLabel.isHidden = true
-        }
+        GameStageController.enemyProperty(enemy: self)
         
-        self.punchIntervalLabel.isHidden = true
+        setDemoCalcLabel()
     }
     
     /* You are required to implement this for your subclass to work */
@@ -298,7 +282,7 @@ class Enemy: SKSpriteNode {
         /* font size */
         variableExpressionLabel.fontSize = 35
         /* zPosition */
-        variableExpressionLabel.zPosition = 3
+        variableExpressionLabel.zPosition = 2
         /* position */
         variableExpressionLabel.position = CGPoint(x:0, y: 35)
         /* Add to Scene */
@@ -378,6 +362,7 @@ class Enemy: SKSpriteNode {
     public func forcusForAttack(color: UIColor, value: Int) {
         variableExpressionLabel.fontColor = color
         guard value != 0 else { return }
+        guard GameScene.stageLevel < MainMenu.invisivleStartTurn else { return }
         xValueLabel.text = "x=\(value)"
     }
     
@@ -396,7 +381,6 @@ class Enemy: SKSpriteNode {
         guard let grid = self.parent as? Grid  else { return self.position }
         return CGPoint(x: CGFloat((Double(self.positionX)+0.5)*grid.cellWidth), y: CGFloat((Double(self.positionY)+0.5)*grid.cellHeight))
     }
-    
     
     /*==================*/
     /*== Enemy Action ==*/

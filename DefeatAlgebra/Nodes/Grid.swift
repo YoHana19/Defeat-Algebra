@@ -54,6 +54,8 @@ class Grid: SKSpriteNode {
     var squareRedArray = [[SKShapeNode]]() /* for attack */
     var squareBlueArray = [[SKShapeNode]]() /* for move */
     var squarePurpleArray = [[SKShapeNode]]() /* for item */
+    var squareYellowArray = [[SKShapeNode]]() /* for item */
+    var squareGreenArray = [[SKShapeNode]]() /* for item */
     
     /*== Items ==*/
     var itemsOnField = [Item]()
@@ -273,95 +275,8 @@ class Grid: SKSpriteNode {
                 case .Action:
                     let touch = touches.first!
                     let location = touch.location(in: self)
-                    let nodeAtPoint = atPoint(location)
-                    
-                    if GameScene.stageLevel == 0 {
-                        guard TutorialController.userTouch(on: "") else { return }
-                    } else if GameScene.stageLevel == 2 {
-                        if ScenarioController.currentActionIndex == 10 {
-                            ScenarioController.currentActionIndex += 1
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 11 {
-                            let gridX = Int(Double(location.x) / cellWidth)
-                            let gridY = Int(Double(location.y) / cellHeight)
-                            if gridX == 4 && gridY == 5 {
-                                ScenarioController.currentActionIndex += 1
-                                ScenarioController.controllActions()
-                            }
-                        } else if ScenarioController.currentActionIndex > 14 {
-                            guard TutorialController.userTouch(on: nodeAtPoint.name) else { return }
-                        }
-                    } else if GameScene.stageLevel == 5 {
-                        
-                        if ScenarioController.currentActionIndex == 14 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 20 {
-                            if let enemy = nodeAtPoint as? Enemy {
-                                if enemy.positionX == 3 && enemy.positionY == 8 {
-                                    enemy.isSelectedForEqRob = true
-                                    EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
-                                    ScenarioController.controllActions()
-                                }
-                            }
-                        } else if ScenarioController.currentActionIndex == 22 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 23 {
-                            if let enemy = nodeAtPoint as? Enemy {
-                                if enemy.positionX == 5 && enemy.positionY == 8 {
-                                    enemy.isSelectedForEqRob = true
-                                    EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
-                                    ScenarioController.controllActions()
-                                }
-                            }
-                        } else if ScenarioController.currentActionIndex == 24 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 26 {
-                            if let enemy = nodeAtPoint as? Enemy {
-                                guard !enemy.isSelectedForEqRob else { return }
-                                enemy.isSelectedForEqRob = true
-                                EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
-                            }
-                        } else if ScenarioController.currentActionIndex == 29 {
-                            ScenarioController.controllActions()
-                        }
-                    } else if GameScene.stageLevel == 7 {
-                        
-                        if ScenarioController.currentActionIndex == 3 {
-                            if let cannon = nodeAtPoint as? Cannon {
-                                if cannon.spotPos == [1,10] {
-                                    CannonController.selectedCannon = cannon
-                                    CannonController.willFireCannon.append(cannon)
-                                    ScenarioController.controllActions()
-                                }
-                            }
-                        } else if ScenarioController.currentActionIndex == 4 {
-                            ScenarioController.controllActions()
-                        }
-                    } else if GameScene.stageLevel == 8 {
-                        
-                        if ScenarioController.currentActionIndex >= 4 && ScenarioController.currentActionIndex <= 16 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 19 {
-                            if let cannon = nodeAtPoint as? Cannon {
-                                if cannon.spotPos == [7,9] {
-                                    CannonController.selectedCannon = cannon
-                                    CannonController.willFireCannon.append(cannon)
-                                    ScenarioController.controllActions()
-                                }
-                            }
-                        } else if ScenarioController.currentActionIndex >= 26 && ScenarioController.currentActionIndex <= 31 {
-                            ScenarioController.controllActions()
-                        } else if ScenarioController.currentActionIndex == 32 {
-                            if let cannon = nodeAtPoint as? Cannon {
-                                if cannon.spotPos == [1,10] {
-                                    CannonController.selectedCannon = cannon
-                                    CannonController.willFireCannon.append(cannon)
-                                    ScenarioController.controllActions()
-                                }
-                            }
-                        }
-                    }
-                    break;
+                    let nodeAtPoint = atPoint(location)     
+                    ScenarioTouchController.controllerForGrid(location: location, nodeAtPoint: nodeAtPoint)
                 }
                 return
             } else if let gameScene = self.parent as? GameScene {
@@ -393,6 +308,7 @@ class Grid: SKSpriteNode {
             
             guard gameScene.pauseFlag == false else { return }
             guard gameScene.gameState == .PlayerTurn else { return }
+            guard gameScene.timeBombConfirming == false else { return }
             
             /*
              /* Reset enemy position after checking variable expression */
@@ -407,7 +323,7 @@ class Grid: SKSpriteNode {
             let location = touch.location(in: self) // Find the location of that touch in this view
             let nodeAtPoint = atPoint(location)     // Find the node at that location
             
-            if GameScene.stageLevel == 0 {
+            if GameScene.stageLevel == 0 || GameScene.stageLevel == MainMenu.timeBombStartTurn+2 {
                 let gridX = Int(Double(location.x) / cellWidth)
                 let gridY = Int(Double(location.y) / cellHeight)
                 touchedGridPos = (gridX, gridY)
@@ -417,8 +333,10 @@ class Grid: SKSpriteNode {
             guard SpeakInGameController.userTouch(on: nodeAtPoint.name) else { return }
             
             
-            if nodeAtPoint.name == "cannon" {
+            if nodeAtPoint.name == "cannon" || nodeAtPoint.name == "cannonVE" {
                 if let cannon = nodeAtPoint as? Cannon {
+                    AllTouchController.cannonTouched(node: cannon)
+                } else if let cannon = nodeAtPoint.parent as? Cannon {
                     AllTouchController.cannonTouched(node: cannon)
                 }
             
@@ -466,8 +384,11 @@ class Grid: SKSpriteNode {
                     })
                     let seq = SKAction.sequence([wait, nextHero])
                     self.run(seq)
-                }
                 
+                } else if nodeAtPoint.name == "enemy" {
+                    guard let enemy = nodeAtPoint as? Enemy else { return }
+                    AllTouchController.enemyTouched(enemy: enemy)
+                }
                 
             /* Touch point to attack to */
             } else if gameScene.playerTurnState == .AttackState {
@@ -475,6 +396,10 @@ class Grid: SKSpriteNode {
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
                     AttackTouchController.activeAreaTouched(touchedPoint: location)
+                    
+                } else if nodeAtPoint.name == "enemy" {
+                    guard let enemy = nodeAtPoint as? Enemy else { return }
+                    AllTouchController.enemyTouched(enemy: enemy)
                     
                 /* If touch anywhere but activeArea, back to MoveState  */
                 } else {
@@ -494,14 +419,15 @@ class Grid: SKSpriteNode {
                     /* Use timeBomb */
                     if gameScene.itemType == .timeBomb {
                         ItemTouchController.AAForTimeBombTapped(gridX: gridX, gridY: gridY)
-                    /* Use wall */
-                    } else if gameScene.itemType == .Wall {
-                        ItemTouchController.AAForWallTapped(gridX: gridX, gridY: gridY)
                     }
-                /* Touch ends enemy for eqRob */
                 } else if nodeAtPoint.name == "enemy" {
-                    let enemy = nodeAtPoint as! Enemy
-                    ItemTouchController.enemyTapped(enemy: enemy)
+                    guard let enemy = nodeAtPoint as? Enemy else { return }
+                    /* Touch ends enemy for eqRob */
+                    if gameScene.itemType == .EqRob {
+                        ItemTouchController.enemyTapped(enemy: enemy)
+                    } else {
+                        AllTouchController.enemyTouched(enemy: enemy)
+                    }
                     
                 /* Touch ends on anywhere except active area or enemy */
                 } else {

@@ -9,10 +9,17 @@
 import Foundation
 
 struct ResetController {
+    
     static func reset() {
         AddEnemyTurnController.done = false
+        SignalSendingTurnController.done = false
+        AddItemTurnController.done = false
         PlayerTurnController.done = false
         EnemyTurnController.done = false
-        SignalSendingTurnController.done = false
+        CannonTryController.hintOn = false
+        CannonTryController.isCorrect = false
+        CannonTryController.numOfCheck = 0
+        CannonController.willFireCannon.removeAll()
+        VEEquivalentController.numOfCheck = 0
     }
 }

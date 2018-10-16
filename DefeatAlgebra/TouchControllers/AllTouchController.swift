@@ -41,7 +41,6 @@ struct AllTouchController {
             return
         }
         
-        
         /* Hide attack and item buttons */
         gameScene.buttonAttack.isHidden = true
         gameScene.buttonItem.isHidden = true
@@ -56,5 +55,14 @@ struct AllTouchController {
         gameScene.itemType = .Cannon
         
         CannonTouchController.onEvent(cannon: node, enemy: nil)
+    }
+    
+    public static func enemyTouched(enemy: Enemy) {
+        if (enemy.isLabelLargeSize) {
+            enemy.adjustLabelSize()
+        } else {
+            enemy.variableExpressionLabel.fontSize = enemy.veLabelSize
+        }
+        enemy.isLabelLargeSize = !enemy.isLabelLargeSize
     }
 }

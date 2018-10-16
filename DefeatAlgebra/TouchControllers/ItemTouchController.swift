@@ -49,61 +49,12 @@ struct ItemTouchController {
     }
     
     public static func AAForTimeBombTapped(gridX: Int, gridY: Int) {
-        let gridNode = gameScene.gridNode as Grid
         
-        /* Store position of set timeBomb */
-        gridNode.timeBombSetPosArray.append([gridX, gridY])
-        
-        /* Set timeBomb at the location you touch */
-        let timeBomb = TimeBomb()
-        timeBomb.texture = SKTexture(imageNamed: "timeBombToSet")
-        timeBomb.zPosition = 3
-        /* Make sure not to collide to hero */
-        timeBomb.physicsBody = nil
-        gridNode.timeBombSetArray.append(timeBomb)
-        gridNode.addObjectAtGrid(object: timeBomb, x: gridX, y: gridY)
-        
-        /* Remove item active areas */
-        GridActiveAreaController.resetSquareArray(color: "purple", grid: gridNode)
-        /* Reset item type */
-        gameScene.itemType = .None
-        /* Set item area cover */
-        gameScene.itemAreaCover.isHidden = false
-        
-        /* Back to MoveState */
-        gameScene.playerTurnState = .MoveState
-        
-        /* Remove used itemIcon from item array and Scene */
-        gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
-    }
-    
-    public static func AAForWallTapped(gridX: Int, gridY: Int) {
-        let gridNode = gameScene.gridNode as Grid
-        
-        /* Set wall */
-        let wall = Wall()
-        wall.texture = SKTexture(imageNamed: "wallToSet")
-        wall.size = CGSize(width:50, height: 75)
-        wall.posX = gridX
-        wall.posY = gridY
-        wall.zPosition = 3
-        wall.physicsBody?.categoryBitMask = 32
-        wall.physicsBody?.contactTestBitMask = 26
-        gridNode.wallSetArray.append(wall)
-        gridNode.addObjectAtGrid(object: wall, x: gridX, y: gridY)
-        
-        /* Remove item active areas */
-        GridActiveAreaController.resetSquareArray(color: "purple", grid: gridNode)
-        /* Reset item type */
-        gameScene.itemType = .None
-        /* Set item area cover */
-        gameScene.itemAreaCover.isHidden = false
-        
-        /* Back to MoveState */
-        gameScene.playerTurnState = .MoveState
-        
-        /* Remove used itemIcon from item array and Scene */
-        gameScene.resetDisplayItem(index: gameScene.usingItemIndex)
+        guard !gameScene.timeBombConfirming else { return }
+        gameScene.timeBombConfirming = true
+        gameScene.confirmBomb.gridX = gridX
+        gameScene.confirmBomb.gridY = gridY
+        gameScene.confirmBomb.isHidden = false
     }
     
     public static func enemyTapped(enemy: Enemy) {
@@ -118,10 +69,10 @@ struct ItemTouchController {
         if gameScene.itemType == .EqRob {
             if EqRobTouchController.state == .Pending {
                 EqRobController.back(0)
-            } else if EqRobTouchController.state == .DeadInstruction || EqRobTouchController.state == .AliveInstruction {
-                EqRobController.execute(4, enemy: nil)
+            } else if EqRobTouchController.state == .InstructionDone {
+                EqRobController.execute(7, enemy: nil)
                 return
-            } else if EqRobTouchController.state == .Charging {
+            } else if EqRobTouchController.state == .Charging || EqRobTouchController.state == .Dead {
                 EqRobController.back(4)
             } else {
                 return

@@ -25,39 +25,77 @@ struct AddEnemyTurnController {
         /* Make sure to call addEnemy once */
         if !done {
             done = true
+            let stageLevel = GameStageController.adjustGameSceneLevel()
+            DataController.setDataForEnemyKilled()
+            
             /* Make sure to call till complete adding enemy */
             if gameScene.compAddEnemyFlag == false {
+                gameScene.willFastForward = false
                 gameScene.countTurnForAddEnemy += 1
-                if gameScene.countTurnForAddEnemy >= EnemyProperty.addEnemyManager[GameScene.stageLevel].count {
+                if gameScene.countTurnForAddEnemy >= EnemyProperty.addEnemyManager[stageLevel].count {
                     gameScene.compAddEnemyFlag = true
                     done = false
                     return
                 }
                 
-                let addingIndex = EnemyProperty.addEnemyManager[GameScene.stageLevel][gameScene.countTurnForAddEnemy]
+                let addingIndex = EnemyProperty.addEnemyManager[stageLevel][gameScene.countTurnForAddEnemy]
                 
                 /* Add enemies initially */
                 if gameScene.initialAddEnemyFlag {
                     gameScene.initialAddEnemyFlag = false
-                    EnemyAddController.addInitialEnemyAtGrid(enemyPosArray: EnemyProperty.initialEnemyPosArray[GameScene.stageLevel], grid: gameScene.gridNode) {
-                        /* Update enemy position */
-                        EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
-                        if GameScene.stageLevel == 1 {
-                            gameScene.showPunchIntervalLabel(active: false)
-                        }
-                        /* Move to next state */
-                        gameScene.gameState = .SignalSending
-                        done = false
-                    }
+                    let property = EnemyProperty.initialEnemyPosArray[stageLevel]
                     
+                    switch property.0 {
+                        case 0:
+                            EnemyAddController.addInitialEnemyAtGrid0(veCate: property.1, enemyPosArray: property.2, grid: gameScene.gridNode) {
+                                /* Update enemy position */
+                                EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
+                                /* Move to next state */
+                                gameScene.gameState = .SignalSending
+                                done = false
+                            }
+                            break;
+                        case 1:
+                            EnemyAddController.addInitialEnemyAtGrid1(enemyPosArray: property.2, grid: gameScene.gridNode) {
+                                /* Update enemy position */
+                                EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
+                                /* Move to next state */
+                                gameScene.gameState = .SignalSending
+                                done = false
+                            }
+                            break;
+                        case 2:
+                            var veCate = 0
+                            var originIncluded = 0
+                            if property.1 < 100 {
+                                veCate = property.1
+                                originIncluded = 0
+                            } else if property.1 < 1000 {
+                                veCate = property.1 - 100
+                                originIncluded = 1
+                            } else {
+                                veCate = property.1 - 1000
+                                originIncluded = 2
+                            }
+                            EnemyAddController.addInitialEnemyAtGrid2(veCate: veCate, originInclude: originIncluded, enemyPosArray: property.2, grid: gameScene.gridNode) {
+                                /* Update enemy position */
+                                EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
+                                /* Move to next state */
+                                gameScene.gameState = .SignalSending
+                                done = false
+                            }
+                            break;
+                        default:
+                            break;
+                    }
                 /* Add enemy in the middle */
                 } else if addingIndex != 0 {
-                    /* Add enemy normaly */
-                    if addingIndex < 100 {
-                        EnemyAddController.addEnemyAtGrid(addIndex: addingIndex, grid: gameScene.gridNode) {
+                    if addingIndex < 10 {
+                        /* Add enemy normaly */
+                        EnemyAddController.addEnemyAtGrid1(addIndex: addingIndex, grid: gameScene.gridNode) {
                             /* Reset start enemy position array */
                             gameScene.gridNode.startPosArray = [0,1,2,3,4,5,6,7,8]
-                                
+                            
                             /* Update enemy position */
                             EnemyMoveController.resetEnemyPositon(grid: gameScene.gridNode)
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
@@ -67,13 +105,16 @@ struct AddEnemyTurnController {
                             gameScene.gameState = .SignalSending
                             done = false
                         }
-                    /* Add enemy for edu */
                     } else {
-                        EnemyAddController.addEnemyForEdu(addIndex: addingIndex, grid: gameScene.gridNode) {
+                        /* Add enemy normaly */
+                        EnemyAddController.addEnemyAtGrid2(addIndex: addingIndex, grid: gameScene.gridNode) {
+                            /* Reset start enemy position array */
+                            gameScene.gridNode.startPosArray = [0,1,2,3,4,5,6,7,8]
                             
                             /* Update enemy position */
                             EnemyMoveController.resetEnemyPositon(grid: gameScene.gridNode)
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
+                            
                             
                             /* Move to next state */
                             gameScene.gameState = .SignalSending
@@ -94,8 +135,9 @@ struct AddEnemyTurnController {
     }
     
     public static func fastForward(completion: @escaping () -> Void) {
-        guard gameScene.countTurnForAddEnemy < EnemyProperty.addEnemyManager[GameScene.stageLevel].count else { return completion() }
-        while EnemyProperty.addEnemyManager[GameScene.stageLevel][gameScene.countTurnForAddEnemy] == 0 {
+        let stageLevel = GameStageController.adjustGameSceneLevel()
+        guard gameScene.countTurnForAddEnemy < EnemyProperty.addEnemyManager[stageLevel].count else { return completion() }
+        while EnemyProperty.addEnemyManager[stageLevel][gameScene.countTurnForAddEnemy] == 0 {
             gameScene.countTurnForAddEnemy += 1
         }
         return completion()

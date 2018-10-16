@@ -49,6 +49,12 @@ struct CannonController {
                 CharacterController.retreatDoctor()
             })
             break;
+        case 5:
+            hint()
+            break;
+        case 6:
+            correct()
+            break;
         default:
             break;
         }
@@ -58,7 +64,9 @@ struct CannonController {
         switch index {
         case 0:
             hideInputPanelWithDoctor()
-            willFireCannon.removeLast()
+            if willFireCannon.count > 0 {
+                willFireCannon.removeLast()
+            }
             selectedCannon.recoverVEElementArray()
             break;
         default:
@@ -90,23 +98,42 @@ struct CannonController {
         CharacterController.doctor.setScale(1)
         CharacterController.doctor.balloon.isHidden = true
         CharacterController.doctor.move(from: nil, to: doctorOffPos)
-        ItemTouchController.othersTouched()
+        if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+            ItemTouchController.othersTouched()
+        } else {
+            let cands = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == selectedCannon.spotPos[0] })
+            let dispatchGroup = DispatchGroup()
+            for enemy in cands {
+                dispatchGroup.enter()
+                SignalController.sendToCannon(target: selectedCannon, num: gameScene.xValue, from: enemy.absolutePos()) {
+                    dispatchGroup.leave()
+                }
+            }
+            dispatchGroup.notify(queue: .main, execute: {
+                ItemTouchController.othersTouched()
+            })
+        }
     }
     
     private static func startSelectEnemyForTry() {
         hideInputPanel()
         doctorSays(in: .WillTry, value: nil)
         let cand = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == selectedCannon.spotPos[0] })
-        for enemy in cand {
-            enemy.pointing()
-            if enemy.positionX == selectedCannon.spotPos[0] && enemy.positionY == selectedCannon.spotPos[1] {
-                enemy.zPosition = 6
+        if cand.count == 1 {
+            startTry(enemy: cand[0])
+            CannonTouchController.state = .Trying
+        } else {
+            for enemy in cand {
+                enemy.pointing()
+                if enemy.positionX == selectedCannon.spotPos[0] && enemy.positionY == selectedCannon.spotPos[1] {
+                    enemy.zPosition = 6
+                }
             }
+            gameScene.isCharactersTurn = true
+            gameScene.tutorialState = .Action
+            gameScene.gridNode.isTutorial = true
+            CannonTouchController.state = .Trying
         }
-        gameScene.isCharactersTurn = true
-        gameScene.tutorialState = .Action
-        gameScene.gridNode.isTutorial = true
-        CannonTouchController.state = .Trying
     }
     
     public static func startTry(enemy: Enemy) {
@@ -123,6 +150,34 @@ struct CannonController {
     
     public static func showInputPanelInTrying() {
         showInputPanel()
+    }
+    
+    public static func hint() {
+        doctorSays(in: .Trying, value: "6")
+        CannonTryController.getBG() { bg in
+            guard let bg = bg else { return }
+            bg.isEnable = false
+            let wait = SKAction.wait(forDuration: 2.6)
+            gameScene.run(wait, completion: {
+                CannonTryController.hintOn = false
+                doctorSays(in: .Trying, value: "7")
+                bg.isEnable = true
+            })
+        }
+    }
+    
+    public static func correct() {
+        doctorSays(in: .Trying, value: "8")
+        CannonTryController.getBG() { bg in
+            guard let bg = bg else { return }
+            bg.isEnable = false
+            let wait = SKAction.wait(forDuration: 2.6)
+            gameScene.run(wait, completion: {
+                CannonTryController.isCorrect = false
+                doctorSays(in: .Trying, value: "9")
+                bg.isEnable = true
+            })
+        }
     }
     
     public static func fire(completion: @escaping () -> Void) {
@@ -213,7 +268,7 @@ struct CannonLines {
             guard let val = value else { return "" }
             return setSubLineForTrying(index: val)
         case .NotAvilable:
-            return "攻撃モードに入った敵が同じ列にいる時だけ砲撃できるんじゃ"
+            return "信号を受け取った敵が同じ列にいる時だけ砲撃できるんじゃ"
         default:
             return ""
         }
@@ -255,7 +310,13 @@ struct CannonLines {
         case "5":
             return "アルジェブラ砲と敵との距離に注目してみたらどうじゃろうか"
         case "6":
-            return ""
+            return "砲撃した所と敵との距離が常に一緒じゃな！"
+        case "7":
+            return "その数字にはどんな意味があるじゃろうか"
+        case "8":
+            return "xの数がいくつでも砲撃が必ず当たるようじゃ！"
+        case "9":
+            return "なぜその飛距離を設定したら、必ず当たるのか考えるのじゃ！"
         default:
             return ""
         }

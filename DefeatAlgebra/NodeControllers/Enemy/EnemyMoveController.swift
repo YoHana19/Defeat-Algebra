@@ -69,31 +69,31 @@ class EnemyMoveController {
         
         /* Left edge */
         if enemy.positionX <= 0 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
+            /* Go forward with 50% */
+            if directionRand < 50 {
                 return completion(.front)
-                /* Go right with 30% */
+                /* Go right with 50% */
             } else if directionRand < 100 {
                 return completion(.right)
             }
             /* Right edge */
         } else if enemy.positionX >= gridNode.columns-1 {
-            /* Go forward with 70% */
-            if directionRand < 70 {
+            /* Go forward with 50% */
+            if directionRand < 50 {
                 return completion(.front)
-                /* Go left with 30% */
+                /* Go left with 50% */
             } else if directionRand < 100 {
                 return completion(.left)
             }
             /* Middle */
         } else {
-            /* Go forward with 60% */
-            if directionRand < 60 {
+            /* Go forward with 40% */
+            if directionRand < 40 {
                 return completion(.front)
-                /* Go left with 20% */
-            } else if directionRand < 80 {
+                /* Go left with 30% */
+            } else if directionRand < 70 {
                 return completion(.left)
-                /* Go right with 20% */
+                /* Go right with 30% */
             } else if directionRand < 100 {
                 return completion(.front)
             }

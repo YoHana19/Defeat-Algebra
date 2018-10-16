@@ -10,6 +10,10 @@ import Foundation
 import SpriteKit
 
 class GridActiveAreaController {
+    
+    private static let zPos: CGFloat = 4
+    private static let zPosForRed: CGFloat = 12
+    
     /* Add area at cell */
     private static func addSquareAtGrid(x: Int, y: Int, color: UIColor, grid: Grid) {
         /* Add a new creature at grid position*/
@@ -18,7 +22,7 @@ class GridActiveAreaController {
         let square = SKShapeNode(rectOf: CGSize(width: grid.cellWidth, height: grid.cellHeight))
         square.fillColor = color
         square.alpha = 0.4
-        square.zPosition = 100
+        square.zPosition = zPos
         square.name = "activeArea"
         
         /* Calculate position on screen */
@@ -39,6 +43,10 @@ class GridActiveAreaController {
             grid.squareBlueArray[x].append(square)
         case UIColor.purple:
             grid.squarePurpleArray[x].append(square)
+        case UIColor.yellow:
+            grid.squareYellowArray[x].append(square)
+        case UIColor.green:
+            grid.squareGreenArray[x].append(square)
         default:
             break;
         }
@@ -47,7 +55,7 @@ class GridActiveAreaController {
     /* Set area on grid */
    public static func coverGrid(grid: Grid) {
         /* Populate the grid with creatures */
-        
+    
         /* Red square */
         /* Loop through columns */
         for gridX in 0..<grid.columns {
@@ -59,7 +67,7 @@ class GridActiveAreaController {
                 addSquareAtGrid(x:gridX, y:gridY, color: UIColor.red, grid: grid)
             }
         }
-        
+    
         /* Blue square */
         /* Loop through columns */
         for gridX in 0..<grid.columns {
@@ -71,7 +79,7 @@ class GridActiveAreaController {
                 addSquareAtGrid(x:gridX, y:gridY, color: UIColor.blue, grid: grid)
             }
         }
-        
+    
         /* purple square */
         /* Loop through columns */
         for gridX in 0..<grid.columns {
@@ -81,6 +89,30 @@ class GridActiveAreaController {
             for gridY in 0..<grid.rows {
                 /* Createa new creature at row / column position */
                 addSquareAtGrid(x:gridX, y:gridY, color: UIColor.purple, grid: grid)
+            }
+        }
+    
+        /* yellow square */
+        /* Loop through columns */
+        for gridX in 0..<grid.columns {
+            /* Initialize empty column */
+            grid.squareYellowArray.append([])
+            /* Loop through rows */
+            for gridY in 0..<grid.rows {
+                /* Createa new creature at row / column position */
+                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.yellow, grid: grid)
+            }
+        }
+    
+        /* green square */
+        /* Loop through columns */
+        for gridX in 0..<grid.columns {
+            /* Initialize empty column */
+            grid.squareGreenArray.append([])
+            /* Loop through rows */
+            for gridY in 0..<grid.rows {
+                /* Createa new creature at row / column position */
+                addSquareAtGrid(x:gridX, y:gridY, color: UIColor.green, grid: grid)
             }
         }
     }
@@ -93,6 +125,7 @@ class GridActiveAreaController {
                 /* Loop through rows */
                 for y in 0..<grid.rows {
                     grid.squareRedArray[x][y].isHidden = true
+                    grid.squareRedArray[x][y].zPosition = zPosForRed
                 }
             }
         case "blue":
@@ -100,6 +133,7 @@ class GridActiveAreaController {
                 /* Loop through rows */
                 for y in 0..<grid.rows {
                     grid.squareBlueArray[x][y].isHidden = true
+                    grid.squareBlueArray[x][y].zPosition = zPos
                 }
             }
         case "purple":
@@ -107,6 +141,23 @@ class GridActiveAreaController {
                 /* Loop through rows */
                 for y in 0..<grid.rows {
                     grid.squarePurpleArray[x][y].isHidden = true
+                    grid.squarePurpleArray[x][y].zPosition = zPos
+                }
+            }
+        case "yellow":
+            for x in 0..<grid.columns {
+                /* Loop through rows */
+                for y in 0..<grid.rows {
+                    grid.squareYellowArray[x][y].isHidden = true
+                    grid.squareYellowArray[x][y].zPosition = zPos
+                }
+            }
+        case "green":
+            for x in 0..<grid.columns {
+                /* Loop through rows */
+                for y in 0..<grid.rows {
+                    grid.squareGreenArray[x][y].isHidden = true
+                    grid.squareYellowArray[x][y].zPosition = zPos
                 }
             }
         default:
@@ -161,13 +212,21 @@ class GridActiveAreaController {
             for gridX in posX-3...posX+3 {
                 /* Make sure inside the grid */
                 if gridX >= 0 && gridX <= grid.columns-1 {
-                    grid.squareBlueArray[gridX][posY].isHidden = false
+                    checkEnemyIsNotThere(x: gridX, y: posY, grid: grid) { no in
+                        if no {
+                            grid.squareBlueArray[gridX][posY].isHidden = false
+                        }
+                    }
                 }
             }
             for gridY in posY-3...posY+3 {
                 /* Make sure inside the grid */
                 if gridY >= 0 && gridY <= grid.rows-1 {
-                    grid.squareBlueArray[posX][gridY].isHidden = false
+                    checkEnemyIsNotThere(x: posX, y: gridY, grid: grid) { no in
+                        if no {
+                            grid.squareBlueArray[posX][gridY].isHidden = false
+                        }
+                    }
                 }
             }
             for gridX in posX-2...posX+2 {
@@ -186,7 +245,11 @@ class GridActiveAreaController {
                             } else if gridX == posX+2 && gridY == posY+2 {
                                 grid.squareBlueArray[gridX][gridY].isHidden = true
                             } else {
-                                grid.squareBlueArray[gridX][gridY].isHidden = false
+                                checkEnemyIsNotThere(x: gridX, y: gridY, grid: grid) { no in
+                                    if no {
+                                        grid.squareBlueArray[gridX][gridY].isHidden = false
+                                    }
+                                }
                             }
                             
                         }
@@ -197,13 +260,21 @@ class GridActiveAreaController {
             for gridX in posX-4...posX+4 {
                 /* Make sure inside the grid */
                 if gridX >= 0 && gridX <= grid.columns-1 {
-                    grid.squareBlueArray[gridX][posY].isHidden = false
+                    checkEnemyIsNotThere(x: gridX, y: posY, grid: grid) { no in
+                        if no {
+                            grid.squareBlueArray[gridX][posY].isHidden = false
+                        }
+                    }
                 }
             }
             for gridY in posY-4...posY+4 {
                 /* Make sure inside the grid */
                 if gridY >= 0 && gridY <= grid.rows-1 {
-                    grid.squareBlueArray[posX][gridY].isHidden = false
+                    checkEnemyIsNotThere(x: posX, y: gridY, grid: grid) { no in
+                        if no {
+                            grid.squareBlueArray[posX][gridY].isHidden = false
+                        }
+                    }
                 }
             }
             for gridX in posX-3...posX+3 {
@@ -222,7 +293,11 @@ class GridActiveAreaController {
                             } else if gridX == posX+3 && gridY == posY+3 {
                                 grid.squareBlueArray[gridX][gridY].isHidden = true
                             } else {
-                                grid.squareBlueArray[gridX][gridY].isHidden = false
+                                checkEnemyIsNotThere(x: gridX, y: gridY, grid: grid) { no in
+                                    if no {
+                                        grid.squareBlueArray[gridX][gridY].isHidden = false
+                                    }
+                                }
                             }
                             
                         }
@@ -232,6 +307,23 @@ class GridActiveAreaController {
         default:
             break;
         }
+    }
+    
+    public static func checkEnemyIsNotThere(x: Int, y: Int, grid: Grid, completion: @escaping (Bool) -> Void) {
+        var cand = [Enemy]()
+        let dispatchGroup = DispatchGroup()
+        for enemy in grid.enemyArray {
+            dispatchGroup.enter()
+            if enemy.positionX == x && enemy.positionY == y && enemy.aliveFlag {
+                cand.append(enemy)
+                dispatchGroup.leave()
+            } else {
+                dispatchGroup.leave()
+            }
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            return completion(cand.count == 0)
+        })
     }
     
     /* Swiping Move */
@@ -403,6 +495,7 @@ class GridActiveAreaController {
                 /* Remove hero position */
                 if gridX != posX {
                     grid.squareRedArray[gridX][posY].isHidden = false
+                    grid.squareRedArray[gridX][posY].zPosition = zPosForRed
                 }
             }
         }
@@ -412,6 +505,7 @@ class GridActiveAreaController {
                 /* Remove hero position */
                 if gridY != posY {
                     grid.squareRedArray[posX][gridY].isHidden = false
+                    grid.squareRedArray[posX][gridY].zPosition = zPosForRed
                 }
             }
         }
@@ -444,21 +538,36 @@ class GridActiveAreaController {
         }
     }
     
-    public static func showActiveArea(at poses: [(Int, Int)], color: String, grid: Grid) {
+    public static func showActiveArea(at poses: [(Int, Int)], color: String, grid: Grid, zPosition: CGFloat = zPos) {
         switch color {
         case "red":
             for pos in poses {
                 grid.squareRedArray[pos.0][pos.1].isHidden = false
+                grid.squareRedArray[pos.0][pos.1].zPosition = zPosition
             }
             break;
         case "blue":
             for pos in poses {
                 grid.squareBlueArray[pos.0][pos.1].isHidden = false
+                grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
             }
             break;
         case "purple":
             for pos in poses {
                 grid.squarePurpleArray[pos.0][pos.1].isHidden = false
+                grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
+            }
+            break;
+        case "yellow":
+            for pos in poses {
+                grid.squareYellowArray[pos.0][pos.1].isHidden = false
+                grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
+            }
+            break;
+        case "green":
+            for pos in poses {
+                grid.squareGreenArray[pos.0][pos.1].isHidden = false
+                grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
             }
             break;
         default:

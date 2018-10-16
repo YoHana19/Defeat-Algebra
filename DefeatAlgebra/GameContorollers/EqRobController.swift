@@ -61,6 +61,12 @@ struct EqRobController {
                 tellChargeDone()
             }
             break;
+        case 7:
+            instructionDone()
+            break;
+        case 8:
+            tellReparing()
+            break;
         default:
             break;
         }
@@ -244,51 +250,22 @@ struct EqRobController {
     
     private static func pointingKillerEnemy() {
         instructedEnemy?.pointing()
-        doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
+        doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForDestroyedInstruction())
         EqRobTouchController.state = .DeadInstruction
+        gameScene.eqRob.state = .Dead
+        let wait = SKAction.wait(forDuration: 1.5)
+        gameScene.run(wait, completion: {
+            instruction()
+        })
     }
-    
-//    private static func makeInsturctionForKilled(enemy: Enemy) {
-//        let enemyPos = enemy.absolutePos()
-//        if enemy.positionY < 6 {
-//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y+gameScene.selectionPanel.texture!.size().height+90)
-//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-//            enemy.pointing()
-//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-//            CharacterController.doctor.changeBalloonTexture(index: 1)
-//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-//                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-//                EqRobTouchController.state = .DeadInstruction
-//            }
-//        } else {
-//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
-//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-//            enemy.pointing()
-//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-//            CharacterController.doctor.changeBalloonTexture(index: 1)
-//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-//                //print(EqRobLines.curIndex)
-//                doctorSays(in: .DestroyedInstruction, value: EqRobLines.setSubLineForDestroyedInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-//                EqRobTouchController.state = .DeadInstruction
-//            }
-//        }
-//    }
 
     private static func makeInsturctionForKilled() {
         instructedEnemy?.removePointing()
-        //doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
         VEEquivalentController.showEqGrid(enemies: [instructedEnemy!], eqRob: gameScene.eqRob)
         gameScene.selectionPanel.resetInstruction()
         gameScene.selectionPanel.resetAllEnemies()
     }
     
-    private static func setDemoCalculation() {
-        gameScene.selectionPanel.setXVlaue(value: String(EqRobLines.selectedRand))
-        gameScene.selectionPanel.instructedEnemy.showCalculation(value: EqRobLines.selectedRand)
-        gameScene.selectionPanel.instructedEqRob.showCalculation(value: EqRobLines.selectedRand)
-    }
     
     private static func attackDone() {
         if isPerfect {
@@ -308,6 +285,7 @@ struct EqRobController {
     }
     
     private static func destroyEnemiesAtOnce(delay: TimeInterval = 1.0) {
+        DataController.countForEnemyKilledByEqRob(num: enemiesToDestroy.count)
         let wait = SKAction.wait(forDuration: delay)
         gameScene.run(wait, completion: {
             for enemy in enemiesToDestroy {
@@ -323,39 +301,16 @@ struct EqRobController {
     private static func pointingMissedEnemies() {
         missedEnemies = sameVeEnemies.filter { !self.selectedEnemies.contains($0) }
         missedEnemies.forEach { $0.pointing() }
-        doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+        doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction())
         EqRobTouchController.state = .AliveInstruction
+        gameScene.eqRob.state = .Charging
+        let wait = SKAction.wait(forDuration: 1.5)
+        gameScene.run(wait, completion: {
+            instruction()
+        })
     }
-    
-//    private static func makeInsturctionForMiss(enemy: Enemy) {
-//        let enemyPos = enemy.absolutePos()
-//        gameScene.gridNode.enemyArray.forEach { $0.removePointing() }
-//        instructedEnemy?.pointing()
-//        if enemy.positionY < 6 {
-//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y+gameScene.selectionPanel.texture!.size().height+90)
-//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-//            CharacterController.doctor.changeBalloonTexture(index: 1)
-//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-//                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-//                EqRobTouchController.state = .AliveInstruction
-//            }
-//        } else {
-//            let panelPos = CGPoint(x: gameScene.size.width/2-gameScene.selectionPanel.texture!.size().width/2, y: enemyPos.y-65)
-//            let doctorPos = CGPoint(x: doctorOnPos[2].x, y: panelPos.y+doctorOnPos[2].y)
-//            gameScene.selectionPanel.setInstruction(enemyVe: enemy.variableExpressionString)
-//            gameScene.selectionPanel.moveWithScaling(to: panelPos, value: 1) {}
-//            CharacterController.doctor.changeBalloonTexture(index: 1)
-//            CharacterController.doctor.moveWithScaling(to: doctorPos, value: doctorScale[2], duration: 2.0) {
-//                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.setSubLineForMissEnemiesInstruction(enemy: enemy, eqRob: gameScene.eqRob, eqRobVe: gameScene.selectionPanel.veLabel.text!))
-//                EqRobTouchController.state = .AliveInstruction
-//            }
-//        }
-//    }
 
     private static func makeInsturctionForMiss() {
-        //EqRobTouchController.state = .Dead // just for disabel touching
         missedEnemies.forEach { $0.removePointing() }
         VEEquivalentController.showEqGrid(enemies: missedEnemies, eqRob: gameScene.eqRob)
         gameScene.selectionPanel.resetInstruction()
@@ -367,24 +322,10 @@ struct EqRobController {
         case .DeadInstruction:
             switch EqRobLines.curIndex {
             case 0:
-                VEEquivalentController.hideEqGrid()
-                back(3)
                 break;
             case 1:
                 makeInsturctionForKilled()
-                doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
-                break;
-            case 2:
-                guard VEEquivalentController.numOfCheck > 3 else { return }
-                doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
-                break;
-            case 3:
-                guard VEEquivalentController.numOfCheck > 3 else { return }
-                VEEquivalentController.getBG() { bg in
-                    guard let backGround = bg else { return }
-                    guard backGround.isEnable, !backGround.isUserInteractionEnabled else { return }
-                    doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction2())
-                }
+                doctorSays(in: .DestroyedInstruction, value: EqRobLines.subLinesForDestroyedInstruction())
                 break;
             default:
                 break;
@@ -393,29 +334,60 @@ struct EqRobController {
         case .AliveInstruction:
             switch EqRobLines.curIndex {
             case 0:
-                VEEquivalentController.hideEqGrid()
-                back(3)
                 break;
             case 1:
                 makeInsturctionForMiss()
-                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
-                break;
-            case 2:
-                guard VEEquivalentController.numOfCheck > 3 else { return }
-                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
-                break;
-            case 3:
-                guard VEEquivalentController.numOfCheck > 3 else { return }
-                VEEquivalentController.getBG() { bg in
-                    guard let backGround = bg else { return }
-                    guard backGround.isEnable, !backGround.isUserInteractionEnabled else { return }
-                    doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
-                }
+                doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction())
                 break;
             default:
                 break;
             }
             break;
+        default:
+            break;
+        }
+    }
+    
+    private static func instructionDone() {
+        switch gameScene.eqRob.state {
+        case .Dead:
+            switch EqRobLines.curIndex {
+            case 0:
+                VEEquivalentController.hideEqGrid()
+                CharacterController.doctor.setScale(1.0)
+                CharacterController.showDoctor()
+                doctorSays(in: .DestroyedInstructionDone, value: EqRobLines.subLinesForDestroyedInstructionDone())
+                EqRobTouchController.state = .InstructionDone
+                break;
+            case 1:
+                doctorSays(in: .DestroyedInstructionDone, value: EqRobLines.subLinesForDestroyedInstructionDone())
+                break;
+            case 2:
+                EqRobLines.curIndex = 0
+                back(3)
+                break;
+            default:
+                break;
+            }
+        case .Charging:
+            switch EqRobLines.curIndex {
+            case 0:
+                VEEquivalentController.hideEqGrid()
+                CharacterController.doctor.setScale(1.0)
+                CharacterController.showDoctor()
+                doctorSays(in: .MissEnemiesInstructionDone, value: EqRobLines.subLinesForMissEnemiesInstructionDone())
+                EqRobTouchController.state = .InstructionDone
+                break;
+            case 1:
+                doctorSays(in: .MissEnemiesInstructionDone, value: EqRobLines.subLinesForMissEnemiesInstructionDone())
+                break;
+            case 2:
+                EqRobLines.curIndex = 0
+                back(3)
+                break;
+            default:
+                break;
+            }
         default:
             break;
         }
@@ -437,15 +409,24 @@ struct EqRobController {
         attackingEnemyIndex = 0
         selectedEnemies = [Enemy]()
         lines = [SKShapeNode]()
-        if EqRobTouchController.state == .DeadInstruction {
+        if gameScene.eqRob.state == .Dead {
+            gameScene.eqRob.isHidden = false
             EqRobTouchController.state = .Dead
             gameScene.eqRob.turn = gameScene.eqRob.deadTurnIndex
             gameScene.eqRob.wasDead = true
+            DataController.setDataForEqRob(isPerfect: false, isMiss: false)
         } else  {
-            EqRobTouchController.state = .Charging
-            gameScene.eqRob.turn = gameScene.eqRob.chargingTurnIndex
+            DataController.setDataForEqRob(isPerfect: isPerfect, isMiss: true)
+            if isPerfect {
+                EqRobTouchController.state = .Charging
+                gameScene.eqRob.turn = gameScene.eqRob.chargingTurnIndex
+            } else {
+                EqRobTouchController.state = .Dead
+                gameScene.eqRob.turn = gameScene.eqRob.deadTurnIndex
+            }
             gameScene.eqRob.wasDead = false
         }
+        gameScene.eqRob.state = .Pending
         gameScene.eqRob.resetVEElementArray()
         isPerfect = false
         instructedEnemy?.removePointing()
@@ -464,10 +445,15 @@ struct EqRobController {
         doctorSays(in: .Charging, value: nil)
     }
     
+    private static func tellReparing() {
+        comeAndTell()
+        doctorSays(in: .Dead, value: nil)
+    }
+    
     private static func tellChargeDone() {
         comeAndTell()
         doctorSays(in: .ChargeDone, value: nil)
-        let wait = SKAction.wait(forDuration: 3.0)
+        let wait = SKAction.wait(forDuration: 2.0)
         gameScene.run(wait, completion: {
             EqRobTouchController.state = .Ready
             goBack()
@@ -478,7 +464,7 @@ struct EqRobController {
         comeAndTell()
         doctorSays(in: .Reborn, value: nil)
         gameScene.eqRob.isHidden = false
-        let wait = SKAction.wait(forDuration: 3.0)
+        let wait = SKAction.wait(forDuration: 2.0)
         gameScene.run(wait, completion: {
             EqRobTouchController.state = .Ready
             goBack()
@@ -516,6 +502,7 @@ struct EqRobController {
     }
     
     public static func doctorSays(in state: EqRobLinesState, value: String?) {
+        CharacterController.doctor.balloon.isHidden = false
         EqRobLines.getLines(state: state, value: value).DAMultilined() { line in
             CharacterController.doctor.balloon.setLines(with: line, pos: 0)
         }
@@ -530,12 +517,29 @@ struct EqRobController {
 }
 
 enum EqRobState {
-    case Ready, Pending, WillAttack, Attack, Attacking, DeadInstruction, AliveInstruction, Dead, Charging
+    case Ready, Pending, WillAttack, Attack, Attacking, DeadInstruction, AliveInstruction, InstructionDone, Dead, Charging
 }
 
 struct EqRobTouchController {
     
-    public static var state: EqRobState = .Ready
+    public static var state: EqRobState = .Ready {
+        didSet {
+            switch state {
+            case .Ready:
+                EqRobController.gameScene.eqRob.chargingSign.isHidden = true
+                EqRobController.gameScene.eqRob.repairingSign.isHidden = true
+                break;
+            case .Charging:
+                EqRobController.gameScene.eqRob.chargingSign.isHidden = false
+                break;
+            case .Dead:
+                EqRobController.gameScene.eqRob.repairingSign.isHidden = false
+                break;
+            default:
+                break;
+            }
+        }
+    }
     
     public static func onEvent() {
         switch state {
@@ -551,6 +555,9 @@ struct EqRobTouchController {
         case .Charging:
             EqRobController.execute(5, enemy: nil)
             break;
+        case .Dead:
+            EqRobController.execute(8, enemy: nil)
+            break;
         default:
             break;
         }
@@ -558,7 +565,7 @@ struct EqRobTouchController {
 }
 
 enum EqRobLinesState {
-    case WillInput, WillSelectEnemies, SelectingEnemies, WarnSelection, EqRobGo, EqRobDestroyed, DestroyedInstruction, MissEnemies, MissEnemiesInstruction, PerfectKill, Charging, ChargeDone, Reborn
+    case WillInput, WillSelectEnemies, SelectingEnemies, WarnSelection, EqRobGo, EqRobDestroyed, DestroyedInstruction, DestroyedInstructionDone, MissEnemies, MissEnemiesInstruction, MissEnemiesInstructionDone, PerfectKill, Charging, Dead, ChargeDone, Reborn
 }
 
 struct EqRobLines {
@@ -578,20 +585,24 @@ struct EqRobLines {
             return "むむぅ...\nどうやら選択ミスしてしまったようじゃの"
         case .DestroyedInstruction:
             return value!
+        case .DestroyedInstructionDone:
+            return value!
         case .MissEnemies:
             return "よくやったぞ！\nじゃが、まだ倒せた敵はいたようじゃのぅ"
         case .MissEnemiesInstruction:
+            return value!
+        case .MissEnemiesInstructionDone:
             return value!
         case .PerfectKill:
             return "パーフェクトじゃ！！\nさすがじゃのう"
         case .Charging:
             return "エクロボは、まだチャージ中じゃ"
+        case .Dead:
+            return "エクロボは、まだ修理中じゃ"
         case .ChargeDone:
             return "チャージ完了じゃ！！"
         case .Reborn:
             return "修理完了じゃ\nもう壊さないように頼むぞ！"
-        default:
-            return ""
         }
     }
     
@@ -604,129 +615,56 @@ struct EqRobLines {
     ]
     
     static var curIndex = 0
-    static func setSubLineForDestroyedInstruction(enemy: Enemy, eqRob: EqRob, eqRobVe: String) -> String {
-        if curIndex == 1 || curIndex == 2 {
-            let value = demo(enemy: enemy, eqRob: eqRob, eqRobVe: eqRobVe)
-            return subLinesForDestroyedInstruction(value: value)
-        } else {
-            let value = "\(eqRobVe)と\(enemy.variableExpressionString)"
-            return subLinesForDestroyedInstruction(value: value)
-        }
-    }
     
-    static func subLinesForDestroyedInstruction(value: String) -> String {
-        switch curIndex {
-        case 0:
-            curIndex += 1
-            return value + "が違う暗号なのか確かめるぞ"
-        case 1:
-            curIndex += 1
-            return "例えば" + value
-        case 2:
-            curIndex += 1
-            return "他にも" + value
-        case 3:
-            curIndex += 1
-            return "このようにxの値が色々変わった時、異なる値になる暗号は違うものじゃ"
-        case 4:
-            curIndex = 0
-            return "次から、間違えないように気をつけるんじゃぞ"
-        default:
-            return ""
-        }
-    }
-    
-    static func subLinesForDestroyedInstruction2() -> String {
+    static func subLinesForDestroyedInstruction() -> String {
         switch curIndex {
         case 0:
             curIndex += 1
             return "この敵を間違えてしまったようじゃな"
         case 1:
-            curIndex += 1
-            return "違う文字式なのか確かめるぞ"
-        case 2:
+            curIndex = 0
+            return "xに数を入れてみて、違う文字式なのか確かめるぞ"
+        default:
+            return ""
+        }
+    }
+    
+    static func subLinesForDestroyedInstructionDone() -> String {
+        switch curIndex {
+        case 0:
             curIndex += 1
             return "xの数によって文字式の計算結果が違うことがわかったかな"
-        case 3:
-            curIndex = 0
+        case 1:
+            curIndex += 1
             return "次は、間違えないように気をつけるんじゃぞ"
         default:
             return ""
         }
     }
     
-    static func setSubLineForMissEnemiesInstruction(enemy: Enemy, eqRob: EqRob, eqRobVe: String) -> String {
-        if curIndex == 0 {
-            let value = eqRobVe
-            return subLinesForMissEnemiesInstruction(value: value)
-        } else if curIndex == 1 {
-            let value = "\(eqRobVe)と\(enemy.variableExpressionString)"
-            return subLinesForMissEnemiesInstruction(value: value)
-        } else if curIndex == 2 || curIndex == 3 {
-            let value = demo(enemy: enemy, eqRob: eqRob, eqRobVe: eqRobVe)
-            return subLinesForMissEnemiesInstruction(value: value)
-        } else {
-            return subLinesForMissEnemiesInstruction(value: "")
-        }
-    }
-    
-    static func subLinesForMissEnemiesInstruction(value: String) -> String {
-        switch curIndex {
-        case 0:
-            curIndex += 1
-            return value + "が見逃してしまった敵じゃ"
-        case 1:
-            curIndex += 1
-            return value + "が同じ暗号なのか確かめるぞ"
-        case 2:
-            curIndex += 1
-            return "例えば" + value
-        case 3:
-            curIndex += 1
-            return "他にも" + value
-        case 4:
-            curIndex += 1
-            return "このようにxの値が色々変わっても、同じ値になる暗号は同じものじゃ"
-        case 5:
-            curIndex = 0
-            return "次は、パーフェクトを目指すのじゃ！"
-        default:
-            return ""
-        }
-    }
-    
-    static func subLinesForMissEnemiesInstruction2() -> String {
+    static func subLinesForMissEnemiesInstruction() -> String {
         switch curIndex {
         case 0:
             curIndex += 1
             return "この敵を見逃してしまったようじゃな"
         case 1:
-            curIndex += 1
-            return "同じ文字式なのか確かめるぞ"
-        case 2:
-            curIndex += 1
-            return "xがどんな数でも文字式の計算結果が同じになることがわかったかな"
-        case 3:
             curIndex = 0
-            return "次は、パーフェクトを目指すのじゃ！"
+            return "xに数を入れてみて、同じ文字式なのか確かめるぞ"
         default:
             return ""
         }
     }
     
-    static var selectedRand = 0
-    static let randArray = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    static func demo(enemy: Enemy, eqRob: EqRob, eqRobVe: String) -> String {
-        let cand = randArray.filter { $0 != selectedRand }
-        let rand = arc4random_uniform(UInt32(cand.count))
-        selectedRand = cand[Int(rand)]
-        let valueOfEnemy = VECategory.calculateValue(veCategory: enemy.vECategory, value: selectedRand)
-        let valueOfEqRob = eqRob.calculateValue(value: selectedRand)
-        print("\(selectedRand), \(valueOfEqRob), \(valueOfEnemy)")
-        if valueOfEnemy == valueOfEqRob {
-            return "x=\(selectedRand)のとき、\(eqRobVe)は\(valueOfEqRob)、\(enemy.variableExpressionString)は\(valueOfEnemy)で同じ値になるじゃろ"
-        } else {
-            return "x=\(selectedRand)のとき、\(eqRobVe)は\(valueOfEqRob)、\(enemy.variableExpressionString)は\(valueOfEnemy)で違う値になるじゃろ"
+    static func subLinesForMissEnemiesInstructionDone() -> String {
+        switch curIndex {
+        case 0:
+            curIndex += 1
+            return "xがどんな数でも文字式の計算結果が同じになることがわかったかな"
+        case 1:
+            curIndex += 1
+            return "次は、パーフェクトを目指すのじゃ！"
+        default:
+            return ""
         }
     }
     

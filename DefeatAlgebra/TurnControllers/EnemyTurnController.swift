@@ -44,7 +44,6 @@ struct EnemyTurnController {
         }
     }
     
-    
     public static func turnEnd() {
         if !done {
             done = true
@@ -62,57 +61,89 @@ struct EnemyTurnController {
             /* Update enemy position */
             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
             
-            var logDefenceOn = false
+            let dispatchGroup = DispatchGroup()
             
-            /* Check if enemy reach to castle */
-            for enemy in gameScene.gridNode.enemyArray {
-                if enemy.positionY == 0 {
-                    if logDefence(enemy: enemy) {
-                        enemy.setPhysics(isActive: false)
-                        let wait = SKAction.wait(forDuration: 6.0)
-                        enemy.run(wait, completion: {
-                            enemy.setPhysics(isActive: true)
-                        })
-                        logDefenceOn = true
-                    } else {
-                        enemy.reachCastleFlag = true
-                        enemy.punchIntervalForCount = 0
-                    }
-                }
+            dispatchGroup.enter()
+            timeBombOn() {
+                dispatchGroup.leave()
             }
             
-            if logDefenceOn && CannonController.willFireCannon.count > 0 {
-                CannonController.fire() {}
-                let wait = SKAction.wait(forDuration: 6.0)
-                gameScene.run(wait, completion: {
-                    /* Update enemy position */
-                    EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
-                    gameScene.gameState = .AddEnemy
-                    gameScene.playerTurnState = .DisplayPhase
-                    done = false
-                })
-            } else if logDefenceOn {
-                let wait = SKAction.wait(forDuration: 6.0)
-                gameScene.run(wait, completion: {
-                    /* Update enemy position */
-                    EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
-                    gameScene.gameState = .AddEnemy
-                    gameScene.playerTurnState = .DisplayPhase
-                    done = false
-                })
-            } else if CannonController.willFireCannon.count > 0 {
+            dispatchGroup.enter()
+            if CannonController.willFireCannon.count > 0 {
+                DataController.setDataForFiredCannon(num: CannonController.willFireCannon.count)
                 CannonController.fire() {
-                    gameScene.gameState = .AddEnemy
-                    gameScene.playerTurnState = .DisplayPhase
-                    done = false
+                    logdifenceOn() {
+                        dispatchGroup.leave()
+                    }
                 }
             } else {
+                logdifenceOn() {
+                    dispatchGroup.leave()
+                }
+            }
+            dispatchGroup.notify(queue: .main, execute: {
                 gameScene.gameState = .AddEnemy
                 gameScene.playerTurnState = .DisplayPhase
                 done = false
-            }
+            })
         }
     }
+    
+    public static func timeBombOn(completion: @escaping () -> Void) {
+        if gameScene.gridNode.timeBombSetArray.count > 0 {
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                let explode = SKAction.playSoundFileNamed("timeBombExplosion.mp3", waitForCompletion: true)
+                gameScene.run(explode)
+            }
+            let dispatchGroup = DispatchGroup()
+            for timeBomb in gameScene.gridNode.timeBombSetArray {
+                dispatchGroup.enter()
+                timeBomb.explode() {
+                    timeBomb.removeFromParent()
+                    dispatchGroup.leave()
+                }
+            }
+            dispatchGroup.notify(queue: .main, execute: {
+                gameScene.gridNode.timeBombSetArray.removeAll()
+                return completion()
+            })
+        } else {
+            return completion()
+        }
+    }
+    
+    private static func logdifenceOn(completion: @escaping () -> Void) {
+        let reachedEnemy = gameScene.gridNode.enemyArray.filter({ $0.positionY == 0 })
+        
+        if reachedEnemy.count > 0 {
+            let dispatchGroup = DispatchGroup()
+            for enemy in reachedEnemy {
+                dispatchGroup.enter()
+                if logDefence(enemy: enemy) {
+                    enemy.setPhysics(isActive: false)
+                    let wait = SKAction.wait(forDuration: 6.0)
+                    enemy.run(wait, completion: {
+                        dispatchGroup.leave()
+                        enemy.setPhysics(isActive: true)
+                    })
+                } else {
+                    dispatchGroup.leave()
+                    enemy.reachCastleFlag = true
+                    enemy.punchIntervalForCount = 0
+                }
+            }
+            dispatchGroup.notify(queue: .main, execute: {
+                /* Update enemy position */
+                EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
+                return completion()
+            })
+        } else {
+            return completion()
+        }
+    }
+    
+    
     
     private static func logDefence(enemy: Enemy) -> Bool {
         switch enemy.positionX {

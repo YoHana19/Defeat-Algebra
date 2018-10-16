@@ -25,8 +25,8 @@ class EqRob: SKSpriteNode {
     let waitingSpace: CGFloat = 60
     var nearPoint = CGPoint(x: 0, y: 0)
     
-    let chargingTurnIndex = 2
-    let deadTurnIndex = 5
+    let chargingTurnIndex = 1
+    let deadTurnIndex = 2
     var wasDead = false
     var turn = 0 {
         didSet {
@@ -49,6 +49,11 @@ class EqRob: SKSpriteNode {
         }
     }
     
+    var state: EqRobState = .Pending
+    
+    let chargingSign = SKSpriteNode(texture: SKTexture(imageNamed: "eqRobCharging"), color: UIColor.clear, size: CGSize(width: 80, height: 40))
+    let repairingSign = SKSpriteNode(texture: SKTexture(imageNamed: "eqRobReparing"), color: UIColor.clear, size: CGSize(width: 80, height: 40))
+    
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -56,6 +61,22 @@ class EqRob: SKSpriteNode {
         self.name = "eqRob"
         self.zPosition = 11
         initailizeVariableExpressionLabel()
+        setSign()
+    }
+    
+    private func setSign() {
+        chargingSign.name = "eqRobCS"
+        repairingSign.name = "eqRobRS"
+        chargingSign.position = CGPoint(x: 0, y: 0)
+        repairingSign.position = CGPoint(x: 0, y: 0)
+        chargingSign.zRotation = .pi * 1/2
+        repairingSign.zRotation = .pi * 1/2
+        chargingSign.zPosition = 1
+        repairingSign.zPosition = 1
+        addChild(chargingSign)
+        addChild(repairingSign)
+        chargingSign.isHidden = true
+        repairingSign.isHidden = true
     }
     
     func go(to target: SKNode, completion: @escaping () -> Void) {

@@ -21,10 +21,7 @@ struct SignalSendingTurnController {
             /* Calculate each enemy's variable expression */
             let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
             if willAttackEnemies.count > 0 {
-                var max = 3
-                if GameScene.stageLevel < 2 {
-                    max = 2
-                }
+                let max = GameStageController.signalVale()
                 gameScene.xValue =  times ?? Int(arc4random_uniform(UInt32(max)))+1
                 gameScene.valueOfX.fontColor = UIColor.red
                 for enemy in willAttackEnemies {

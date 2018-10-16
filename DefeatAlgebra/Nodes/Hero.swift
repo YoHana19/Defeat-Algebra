@@ -237,6 +237,31 @@ class Hero: SKSpriteNode {
         self.position = CGPoint(x: gameScene.gridNode.position.x+CGFloat(gameScene.gridNode.cellWidth/2)+CGFloat(gameScene.gridNode.cellWidth*Double(self.positionX)), y: gameScene.gridNode.position.y+CGFloat(gameScene.gridNode.cellHeight/2)+CGFloat(gameScene.gridNode.cellHeight*Double(self.positionY)))
     }
     
+    public func checkEnemyAround(completion: @escaping (Enemy?) -> Void) {
+        guard let gameScene = self.parent as? GameScene else { return }
+        guard gameScene.gridNode.enemyArray.count == 1 else { return }
+        let x = self.positionX
+        let y = self.positionY
+        let enemy = gameScene.gridNode.enemyArray[0]
+        if (enemy.positionX == x-1 && enemy.positionY == y) || (enemy.positionX == x+1 && enemy.positionY == y) || (enemy.positionX == x && enemy.positionY == y+1) || (enemy.positionX == x && enemy.positionY == y-1) {
+            return completion(enemy)
+        } else {
+            return completion(nil)
+        }
+    }
+    
+    public func setPhysics(isActive: Bool) {
+        if isActive {
+            physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: 20, height: 20))
+            physicsBody?.categoryBitMask = 1
+            physicsBody?.collisionBitMask = 0
+            physicsBody?.contactTestBitMask = 4294967258
+        } else {
+            physicsBody = nil
+        }
+    }
+    
+    
     /*===============*/
     /*== Hero Move ==*/
     /*===============*/

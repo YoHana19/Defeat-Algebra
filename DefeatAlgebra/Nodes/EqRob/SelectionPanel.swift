@@ -21,7 +21,6 @@ class SelectionPanel: SKSpriteNode {
     var enemiesOnPanel = [SelectedEnemy]()
     let moveSpan: TimeInterval = 1.0
     var instructedEnemy = SelectedEnemy()
-    var instructedEqRob = EqRobForInstruction()
     
     init() {
         /* Initialize with enemy asset */
@@ -143,27 +142,6 @@ class SelectionPanel: SKSpriteNode {
         enemiesOnPanel[index].showCrossNode()
     }
     
-    func setInstruction(enemyVe: String) {
-        let gameScene = self.parent as! GameScene
-        resetAllEnemies()
-        instructedEnemy = SelectedEnemy()
-        instructedEqRob = EqRobForInstruction()
-        instructedEnemy.veString = enemyVe
-        instructedEnemy.veLabel.text = enemyVe
-        instructedEqRob.veString = veLabel.text!
-        instructedEqRob.veLabel.text = veLabel.text!
-        instructedEnemy.setScale(0.8)
-        instructedEqRob.setScale(0.8)
-        instructedEnemy.position = CGPoint(x: 230, y: -280)
-        instructedEqRob.position = CGPoint(x: 230, y: -180)
-        instructedEqRob.coefficientArray = gameScene.eqRob.coefficientArray
-        instructedEqRob.constantsArray = gameScene.eqRob.constantsArray
-        addChild(instructedEnemy)
-        addChild(instructedEqRob)
-        xLabel.isHidden = false
-        xValueLabel.isHidden = false
-    }
-    
     func setXVlaue(value: String) {
         xValueLabel.text = value
     }
@@ -173,7 +151,6 @@ class SelectionPanel: SKSpriteNode {
         xLabel.isHidden = true
         xValueLabel.isHidden = true
         instructedEnemy.removeFromParent()
-        instructedEqRob.removeFromParent()
         self.isHidden = true
         againButton.isHidden = false
     }

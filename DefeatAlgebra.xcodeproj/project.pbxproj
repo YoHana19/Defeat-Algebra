@@ -67,8 +67,8 @@
 		203B2A731F67BBD100DDCC03 /* ConfirmScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6B1F67BBD100DDCC03 /* ConfirmScreen.swift */; };
 		203B2A741F67BBD100DDCC03 /* Credits.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6C1F67BBD100DDCC03 /* Credits.sks */; };
 		203B2A751F67BBD100DDCC03 /* Credits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6D1F67BBD100DDCC03 /* Credits.swift */; };
-		203B2A761F67BBD100DDCC03 /* ItemList.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6E1F67BBD100DDCC03 /* ItemList.sks */; };
-		203B2A771F67BBD200DDCC03 /* ItemList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6F1F67BBD100DDCC03 /* ItemList.swift */; };
+		203B2A761F67BBD100DDCC03 /* DataList.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6E1F67BBD100DDCC03 /* DataList.sks */; };
+		203B2A771F67BBD200DDCC03 /* DataList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6F1F67BBD100DDCC03 /* DataList.swift */; };
 		203B2A781F67BBD200DDCC03 /* MainMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A701F67BBD100DDCC03 /* MainMenu.sks */; };
 		203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A711F67BBD100DDCC03 /* MainMenu.swift */; };
 		203B2A7A1F67BBD200DDCC03 /* SettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A721F67BBD100DDCC03 /* SettingScreen.swift */; };
@@ -110,8 +110,6 @@
 		204CD710215B92DF006E8B1F /* CannonTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CD70E215B92DF006E8B1F /* CannonTutorialController.swift */; };
 		204CDDE820FEEA7C0061DCB7 /* zPosition in Resources */ = {isa = PBXBuildFile; fileRef = 204CDDE720FEEA7B0061DCB7 /* zPosition */; };
 		204CDDE920FEEA7C0061DCB7 /* zPosition in Resources */ = {isa = PBXBuildFile; fileRef = 204CDDE720FEEA7B0061DCB7 /* zPosition */; };
-		204CDDEB21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */; };
-		204CDDEC21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */; };
 		204CE02920FB0C6C00D45FFE /* EqRob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE02820FB0C6C00D45FFE /* EqRob.swift */; };
 		204CE02A20FB0C6C00D45FFE /* EqRob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE02820FB0C6C00D45FFE /* EqRob.swift */; };
 		204CE02F20FB367A00D45FFE /* VECategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE02E20FB367A00D45FFE /* VECategory.swift */; };
@@ -124,6 +122,14 @@
 		204CE03C20FB85A200D45FFE /* EqRobController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE03A20FB85A200D45FFE /* EqRobController.swift */; };
 		204CE03E20FB94FE00D45FFE /* DACharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE03D20FB94FE00D45FFE /* DACharacter.swift */; };
 		204CE03F20FB94FE00D45FFE /* DACharacter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204CE03D20FB94FE00D45FFE /* DACharacter.swift */; };
+		204D5939216B091D00BC776C /* CannonRecordBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5938216B091D00BC776C /* CannonRecordBoard.swift */; };
+		204D593A216B091D00BC776C /* CannonRecordBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5938216B091D00BC776C /* CannonRecordBoard.swift */; };
+		204D5BBB2171BC390061CC35 /* ConfirmBomb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5BBA2171BC390061CC35 /* ConfirmBomb.swift */; };
+		204D5BBC2171BC390061CC35 /* ConfirmBomb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5BBA2171BC390061CC35 /* ConfirmBomb.swift */; };
+		204D5BBE2171D8DC0061CC35 /* Array+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5BBD2171D8DC0061CC35 /* Array+Utility.swift */; };
+		204D5BBF2171D8DC0061CC35 /* Array+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5BBD2171D8DC0061CC35 /* Array+Utility.swift */; };
+		204D5BC12171E9080061CC35 /* ScenarioTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5BC02171E9080061CC35 /* ScenarioTouchController.swift */; };
+		204D5BC22171E9080061CC35 /* ScenarioTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204D5BC02171E9080061CC35 /* ScenarioTouchController.swift */; };
 		2052888620FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */; };
 		2052888720FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */; };
 		2052888920FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */; };
@@ -162,6 +168,8 @@
 		207A673D20D69DED0026A770 /* BalloonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207A673B20D69DED0026A770 /* BalloonController.swift */; };
 		208C5D57202384FE0006ADE4 /* DAUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D56202384FE0006ADE4 /* DAUtility.swift */; };
 		208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C5D56202384FE0006ADE4 /* DAUtility.swift */; };
+		2099C7252169BA0B00540B3C /* EnemyEqDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2099C7242169BA0B00540B3C /* EnemyEqDemo.swift */; };
+		2099C7262169BA0B00540B3C /* EnemyEqDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2099C7242169BA0B00540B3C /* EnemyEqDemo.swift */; };
 		20A202B22040162000EAA753 /* Pods_DefeatAlgebra.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 20A202B12040100200EAA753 /* Pods_DefeatAlgebra.framework */; };
 		20CD8E59210D9BC300BD78B6 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD8E58210D9BC300BD78B6 /* Item.swift */; };
 		20CD8E5A210D9BC300BD78B6 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CD8E58210D9BC300BD78B6 /* Item.swift */; };
@@ -245,8 +253,6 @@
 		20D0FF4720B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FF4520B6C14B00C547A5 /* DAUserDefaultUtility.swift */; };
 		20DACE8E21298F070015D1BA /* TutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DACE8D21298F070015D1BA /* TutorialController.swift */; };
 		20DACE8F21298F070015D1BA /* TutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DACE8D21298F070015D1BA /* TutorialController.swift */; };
-		20DACE9121298F310015D1BA /* TutorialProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DACE9021298F310015D1BA /* TutorialProperty.swift */; };
-		20DACE9221298F310015D1BA /* TutorialProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20DACE9021298F310015D1BA /* TutorialProperty.swift */; };
 		20DF7CE92021C097006BFBB0 /* gameOver.wav in Resources */ = {isa = PBXBuildFile; fileRef = 20DF7CE82021C096006BFBB0 /* gameOver.wav */; };
 		20E8079E20FDE7C700EED36D /* AttackTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E8079D20FDE7C700EED36D /* AttackTouchController.swift */; };
 		20E8079F20FDE7C700EED36D /* AttackTouchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E8079D20FDE7C700EED36D /* AttackTouchController.swift */; };
@@ -257,7 +263,7 @@
 		20E9E88F20223B1400D31410 /* BGM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 201B8C661F3A67F100E91301 /* BGM.swift */; };
 		20E9E89620223B1400D31410 /* SettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A721F67BBD100DDCC03 /* SettingScreen.swift */; };
 		20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204C7D831F074FE800F4DD11 /* AppDelegate.swift */; };
-		20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6F1F67BBD100DDCC03 /* ItemList.swift */; };
+		20E9E8AA20223B1400D31410 /* DataList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6F1F67BBD100DDCC03 /* DataList.swift */; };
 		20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A711F67BBD100DDCC03 /* MainMenu.swift */; };
 		20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6B1F67BBD100DDCC03 /* ConfirmScreen.swift */; };
 		20E9E8B820223B1400D31410 /* Credits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A6D1F67BBD100DDCC03 /* Credits.swift */; };
@@ -278,7 +284,7 @@
 		20E9E8CE20223B1400D31410 /* buttonMove.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C761F3AEA4F00E91301 /* buttonMove.wav */; };
 		20E9E8CF20223B1400D31410 /* mainBGM.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C681F3A682700E91301 /* mainBGM.mp3 */; };
 		20E9E8D020223B1400D31410 /* buttonBack.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C781F3AEA7E00E91301 /* buttonBack.wav */; };
-		20E9E8D120223B1400D31410 /* ItemList.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6E1F67BBD100DDCC03 /* ItemList.sks */; };
+		20E9E8D120223B1400D31410 /* DataList.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6E1F67BBD100DDCC03 /* DataList.sks */; };
 		20E9E8D220223B1400D31410 /* hitWall.wav in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C561F3A365700E91301 /* hitWall.wav */; };
 		20E9E8D320223B1400D31410 /* enemyKilled.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 201B8C521F3A326000E91301 /* enemyKilled.mp3 */; };
 		20E9E8D520223B1400D31410 /* Credits.sks in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A6C1F67BBD100DDCC03 /* Credits.sks */; };
@@ -297,6 +303,14 @@
 		20E9E8E220223B1400D31410 /* CatapultFire.sks in Resources */ = {isa = PBXBuildFile; fileRef = 200829D71F32CA860038AEC0 /* CatapultFire.sks */; };
 		20E9E8FB2022404E00D31410 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */; };
 		20E9E8FD2022439C00D31410 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */; };
+		20F0D5102175A49500E76641 /* stage in Resources */ = {isa = PBXBuildFile; fileRef = 20F0D50F2175A49500E76641 /* stage */; };
+		20F0D5112175A49500E76641 /* stage in Resources */ = {isa = PBXBuildFile; fileRef = 20F0D50F2175A49500E76641 /* stage */; };
+		20F0D5132175EF0D00E76641 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F0D5122175EF0D00E76641 /* DataController.swift */; };
+		20F0D5142175EF0D00E76641 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F0D5122175EF0D00E76641 /* DataController.swift */; };
+		20F0D5162176006B00E76641 /* DataSelectMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F0D5152176006B00E76641 /* DataSelectMenu.sks */; };
+		20F0D5172176006B00E76641 /* DataSelectMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20F0D5152176006B00E76641 /* DataSelectMenu.sks */; };
+		20F0D5192176007A00E76641 /* DataSelectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F0D5182176007A00E76641 /* DataSelectMenu.swift */; };
+		20F0D51A2176007A00E76641 /* DataSelectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F0D5182176007A00E76641 /* DataSelectMenu.swift */; };
 		20F1A749212EE0720013FF9D /* SpeakInGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1A748212EE0720013FF9D /* SpeakInGameController.swift */; };
 		20F1A74A212EE0720013FF9D /* SpeakInGameController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1A748212EE0720013FF9D /* SpeakInGameController.swift */; };
 		20F1A74C212EE0F50013FF9D /* SpeakInGameProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F1A74B212EE0F50013FF9D /* SpeakInGameProperty.swift */; };
@@ -357,8 +371,8 @@
 		203B2A6B1F67BBD100DDCC03 /* ConfirmScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfirmScreen.swift; sourceTree = "<group>"; };
 		203B2A6C1F67BBD100DDCC03 /* Credits.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Credits.sks; sourceTree = "<group>"; };
 		203B2A6D1F67BBD100DDCC03 /* Credits.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Credits.swift; sourceTree = "<group>"; };
-		203B2A6E1F67BBD100DDCC03 /* ItemList.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = ItemList.sks; sourceTree = "<group>"; };
-		203B2A6F1F67BBD100DDCC03 /* ItemList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemList.swift; sourceTree = "<group>"; };
+		203B2A6E1F67BBD100DDCC03 /* DataList.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DataList.sks; sourceTree = "<group>"; };
+		203B2A6F1F67BBD100DDCC03 /* DataList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataList.swift; sourceTree = "<group>"; };
 		203B2A701F67BBD100DDCC03 /* MainMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MainMenu.sks; sourceTree = "<group>"; };
 		203B2A711F67BBD100DDCC03 /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		203B2A721F67BBD100DDCC03 /* SettingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingScreen.swift; sourceTree = "<group>"; };
@@ -386,13 +400,16 @@
 		204C7D951F074FE800F4DD11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		204CD70E215B92DF006E8B1F /* CannonTutorialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonTutorialController.swift; sourceTree = "<group>"; };
 		204CDDE720FEEA7B0061DCB7 /* zPosition */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = zPosition; path = SupportingFIles/zPosition; sourceTree = "<group>"; };
-		204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobForInstruction.swift; sourceTree = "<group>"; };
 		204CE02820FB0C6C00D45FFE /* EqRob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRob.swift; sourceTree = "<group>"; };
 		204CE02E20FB367A00D45FFE /* VECategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VECategory.swift; sourceTree = "<group>"; };
 		204CE03420FB4A7000D45FFE /* InputPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPanel.swift; sourceTree = "<group>"; };
 		204CE03720FB830F00D45FFE /* test.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = test.sks; sourceTree = "<group>"; };
 		204CE03A20FB85A200D45FFE /* EqRobController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobController.swift; sourceTree = "<group>"; };
 		204CE03D20FB94FE00D45FFE /* DACharacter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DACharacter.swift; sourceTree = "<group>"; };
+		204D5938216B091D00BC776C /* CannonRecordBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonRecordBoard.swift; sourceTree = "<group>"; };
+		204D5BBA2171BC390061CC35 /* ConfirmBomb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmBomb.swift; sourceTree = "<group>"; };
+		204D5BBD2171D8DC0061CC35 /* Array+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Utility.swift"; sourceTree = "<group>"; };
+		204D5BC02171E9080061CC35 /* ScenarioTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioTouchController.swift; sourceTree = "<group>"; };
 		2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKLabelNode+MultiLines.swift"; sourceTree = "<group>"; };
 		2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+DAMultiLines.swift"; sourceTree = "<group>"; };
 		2052888B20FC91CB00B011D2 /* MoveTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveTouchController.swift; sourceTree = "<group>"; };
@@ -412,6 +429,7 @@
 		207A673820D69D300026A770 /* Balloon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Balloon.swift; sourceTree = "<group>"; };
 		207A673B20D69DED0026A770 /* BalloonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalloonController.swift; sourceTree = "<group>"; };
 		208C5D56202384FE0006ADE4 /* DAUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAUtility.swift; sourceTree = "<group>"; };
+		2099C7242169BA0B00540B3C /* EnemyEqDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyEqDemo.swift; sourceTree = "<group>"; };
 		20A202B12040100200EAA753 /* Pods_DefeatAlgebra.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_DefeatAlgebra.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		20CD8E58210D9BC300BD78B6 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		20CD8E5B210DAE0100BD78B6 /* ContactController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactController.swift; sourceTree = "<group>"; };
@@ -454,7 +472,6 @@
 		20D0FF1020B6C12300C547A5 /* MainHero.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainHero.swift; sourceTree = "<group>"; };
 		20D0FF4520B6C14B00C547A5 /* DAUserDefaultUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAUserDefaultUtility.swift; sourceTree = "<group>"; };
 		20DACE8D21298F070015D1BA /* TutorialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialController.swift; sourceTree = "<group>"; };
-		20DACE9021298F310015D1BA /* TutorialProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialProperty.swift; sourceTree = "<group>"; };
 		20DF7CE82021C096006BFBB0 /* gameOver.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = gameOver.wav; sourceTree = "<group>"; };
 		20E8079D20FDE7C700EED36D /* AttackTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackTouchController.swift; sourceTree = "<group>"; };
 		20E807A020FDE7F400EED36D /* ItemTouchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTouchController.swift; sourceTree = "<group>"; };
@@ -462,6 +479,10 @@
 		20E9E8EB20223B1900D31410 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/yohanashima/Desktop/Make School Project/Defeat-Algebra/DefeatAlgebra/SupportingFIles/DefeatAlgebraJ/Info.plist"; sourceTree = "<absolute>"; };
 		20E9E8FA2022404E00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		20E9E8FC2022439C00D31410 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		20F0D50F2175A49500E76641 /* stage */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = stage; path = SupportingFIles/stage; sourceTree = "<group>"; };
+		20F0D5122175EF0D00E76641 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		20F0D5152176006B00E76641 /* DataSelectMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = DataSelectMenu.sks; sourceTree = "<group>"; };
+		20F0D5182176007A00E76641 /* DataSelectMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataSelectMenu.swift; sourceTree = "<group>"; };
 		20F1A748212EE0720013FF9D /* SpeakInGameController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakInGameController.swift; sourceTree = "<group>"; };
 		20F1A74B212EE0F50013FF9D /* SpeakInGameProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakInGameProperty.swift; sourceTree = "<group>"; };
 		20FD5F5B2160DED700A6604B /* SignalValueHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignalValueHolder.swift; sourceTree = "<group>"; };
@@ -521,8 +542,8 @@
 				20113797212001AC00B5A138 /* ScenarioScene.swift */,
 				2011378E212000CD00B5A138 /* ScenarioController.swift */,
 				201137912120011E00B5A138 /* ScenarioProrerty.swift */,
+				204D5BC02171E9080061CC35 /* ScenarioTouchController.swift */,
 				20DACE8D21298F070015D1BA /* TutorialController.swift */,
-				20DACE9021298F310015D1BA /* TutorialProperty.swift */,
 				20F1A748212EE0720013FF9D /* SpeakInGameController.swift */,
 				20F1A74B212EE0F50013FF9D /* SpeakInGameProperty.swift */,
 				203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */,
@@ -605,8 +626,11 @@
 				203B2A721F67BBD100DDCC03 /* SettingScreen.swift */,
 				203B2A6C1F67BBD100DDCC03 /* Credits.sks */,
 				203B2A6D1F67BBD100DDCC03 /* Credits.swift */,
-				203B2A6E1F67BBD100DDCC03 /* ItemList.sks */,
-				203B2A6F1F67BBD100DDCC03 /* ItemList.swift */,
+				203B2A6E1F67BBD100DDCC03 /* DataList.sks */,
+				203B2A6F1F67BBD100DDCC03 /* DataList.swift */,
+				20F0D5152176006B00E76641 /* DataSelectMenu.sks */,
+				20F0D5182176007A00E76641 /* DataSelectMenu.swift */,
+				20F0D5122175EF0D00E76641 /* DataController.swift */,
 			);
 			path = MainMenu;
 			sourceTree = "<group>";
@@ -642,6 +666,7 @@
 				2054BF6821689B5000876E99 /* CannonForTry.swift */,
 				204BFA0A2104676200A2AB7A /* InputPanleForCannon.swift */,
 				2054BF5F21688CB300876E99 /* CannonBackground.swift */,
+				204D5938216B091D00BC776C /* CannonRecordBoard.swift */,
 			);
 			path = Cannon;
 			sourceTree = "<group>";
@@ -712,6 +737,7 @@
 				2058CA8920F886F0005DF357 /* Extensions */,
 				20E9E8EC20223B8300D31410 /* SupportingFIles */,
 				204CDDE720FEEA7B0061DCB7 /* zPosition */,
+				20F0D50F2175A49500E76641 /* stage */,
 				20E9E8ED20223BD500D31410 /* Storyboards */,
 				204C7D901F074FE800F4DD11 /* Assets.xcassets */,
 				201ECBAA1F351AED00FB833A /* Fabric.framework */,
@@ -726,6 +752,7 @@
 				2058CA8A20F88726005DF357 /* SKNode+Utility.swift */,
 				2052888520FC603800B011D2 /* SKLabelNode+MultiLines.swift */,
 				2052888820FC6EF100B011D2 /* String+DAMultiLines.swift */,
+				204D5BBD2171D8DC0061CC35 /* Array+Utility.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -753,7 +780,6 @@
 				204CE03420FB4A7000D45FFE /* InputPanel.swift */,
 				20644DB720FC9CB300745E4C /* SelectionPanel.swift */,
 				20644DBA20FCABAB00745E4C /* SelectedEnemy.swift */,
-				204CDDEA21005EB90061DCB7 /* EqRobForInstruction.swift */,
 				20644DBD20FCDB6A00745E4C /* Line.swift */,
 				2044B025216344CB00E8E21C /* EqBackground.swift */,
 				2044B028216345D700E8E21C /* EqGrid.swift */,
@@ -812,6 +838,7 @@
 				20D0FEE120B6C11100C547A5 /* EnemyVEController.swift */,
 				2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */,
 				2054BF65216899A300876E99 /* EnemyControllerForCannon.swift */,
+				2099C7242169BA0B00540B3C /* EnemyEqDemo.swift */,
 			);
 			path = Enemy;
 			sourceTree = "<group>";
@@ -859,6 +886,7 @@
 				20D0FF0720B6C12300C547A5 /* Heart.swift */,
 				20D0FF0920B6C12300C547A5 /* Wall.swift */,
 				20D0FF0A20B6C12300C547A5 /* TimeBomb.swift */,
+				204D5BBA2171BC390061CC35 /* ConfirmBomb.swift */,
 			);
 			path = Items;
 			sourceTree = "<group>";
@@ -1044,6 +1072,7 @@
 				201B8C5D1F3A47BA00E91301 /* cane.mp3 in Resources */,
 				201B8C651F3A5C6E00E91301 /* ItemGet.wav in Resources */,
 				201B8C4F1F3A307B00E91301 /* swordSound.wav in Resources */,
+				20F0D5102175A49500E76641 /* stage in Resources */,
 				204C7D8F1F074FE800F4DD11 /* Main.storyboard in Resources */,
 				204C7D911F074FE800F4DD11 /* Assets.xcassets in Resources */,
 				200829E21F32CA860038AEC0 /* TimeBombSmoke.sks in Resources */,
@@ -1052,7 +1081,8 @@
 				201B8C771F3AEA4F00E91301 /* buttonMove.wav in Resources */,
 				201B8C691F3A682700E91301 /* mainBGM.mp3 in Resources */,
 				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
-				203B2A761F67BBD100DDCC03 /* ItemList.sks in Resources */,
+				203B2A761F67BBD100DDCC03 /* DataList.sks in Resources */,
+				20F0D5162176006B00E76641 /* DataSelectMenu.sks in Resources */,
 				201B8C571F3A365700E91301 /* hitWall.wav in Resources */,
 				201B8C531F3A326000E91301 /* enemyKilled.mp3 in Resources */,
 				203B2A741F67BBD100DDCC03 /* Credits.sks in Resources */,
@@ -1090,6 +1120,7 @@
 				20E9E8C420223B1400D31410 /* cane.mp3 in Resources */,
 				20E9E8C520223B1400D31410 /* ItemGet.wav in Resources */,
 				20E9E8C820223B1400D31410 /* swordSound.wav in Resources */,
+				20F0D5112175A49500E76641 /* stage in Resources */,
 				20E9E8C920223B1400D31410 /* Main.storyboard in Resources */,
 				20E9E8CB20223B1400D31410 /* Assets.xcassets in Resources */,
 				20E9E8CC20223B1400D31410 /* TimeBombSmoke.sks in Resources */,
@@ -1098,7 +1129,8 @@
 				20E9E8FD2022439C00D31410 /* GoogleService-Info.plist in Resources */,
 				20E9E8CF20223B1400D31410 /* mainBGM.mp3 in Resources */,
 				20E9E8D020223B1400D31410 /* buttonBack.wav in Resources */,
-				20E9E8D120223B1400D31410 /* ItemList.sks in Resources */,
+				20E9E8D120223B1400D31410 /* DataList.sks in Resources */,
+				20F0D5172176006B00E76641 /* DataSelectMenu.sks in Resources */,
 				20E9E8D220223B1400D31410 /* hitWall.wav in Resources */,
 				20E9E8D320223B1400D31410 /* enemyKilled.mp3 in Resources */,
 				20E9E8D520223B1400D31410 /* Credits.sks in Resources */,
@@ -1354,6 +1386,7 @@
 				200AC22B2107082600D70BA5 /* AddEnemyTurnController.swift in Sources */,
 				20D0FF3920B6C12300C547A5 /* TimeBomb.swift in Sources */,
 				2054BF6921689B5000876E99 /* CannonForTry.swift in Sources */,
+				204D5BC12171E9080061CC35 /* ScenarioTouchController.swift in Sources */,
 				200AC2252107007500D70BA5 /* SignalSendingTurnController.swift in Sources */,
 				201B8C671F3A67F200E91301 /* BGM.swift in Sources */,
 				20D0FEEC20B6C11100C547A5 /* EnemyVEController.swift in Sources */,
@@ -1361,7 +1394,9 @@
 				20D0FF1720B6C12300C547A5 /* SimplificationBoard.swift in Sources */,
 				20D0FEEA20B6C11100C547A5 /* EnemyDeadController.swift in Sources */,
 				20CD8E5C210DAE0100BD78B6 /* ContactController.swift in Sources */,
+				20F0D5192176007A00E76641 /* DataSelectMenu.swift in Sources */,
 				20D0FECC20B6C0B000C547A5 /* LevelSelectMenu.swift in Sources */,
+				204D5BBE2171D8DC0061CC35 /* Array+Utility.swift in Sources */,
 				20D0FF4320B6C12300C547A5 /* MainHero.swift in Sources */,
 				20D0FEF020B6C11200C547A5 /* CharacterController.swift in Sources */,
 				20D0FF2320B6C12300C547A5 /* ResetCatapult.swift in Sources */,
@@ -1373,9 +1408,11 @@
 				20D0FF3520B6C12300C547A5 /* Catapult.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				201137922120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
+				204D5939216B091D00BC776C /* CannonRecordBoard.swift in Sources */,
 				2052888C20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
 				2044B0232163447A00E8E21C /* VEEquivalentController.swift in Sources */,
 				20E8079E20FDE7C700EED36D /* AttackTouchController.swift in Sources */,
+				204D5BBB2171BC390061CC35 /* ConfirmBomb.swift in Sources */,
 				20D0FF2D20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE620B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3720B6C12300C547A5 /* Wall.swift in Sources */,
@@ -1395,19 +1432,18 @@
 				20D0FF1F20B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1B20B6C12300C547A5 /* Enemy.swift in Sources */,
 				2041518B215CBABD00595003 /* LengthArrow.swift in Sources */,
-				204CDDEB21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */,
 				20DACE8E21298F070015D1BA /* TutorialController.swift in Sources */,
 				20D0FF1520B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				204BFA132104802800A2AB7A /* EnemyTurnController.swift in Sources */,
 				203FB9222159F32300BD3A14 /* EqRobTutorialController.swift in Sources */,
 				204163A320C2653F00217F6A /* GridFlashController.swift in Sources */,
 				2016D7CB210AFE6200942460 /* Plane.swift in Sources */,
-				20DACE9121298F310015D1BA /* TutorialProperty.swift in Sources */,
 				204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */,
 				20D0FF4620B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */,
 				2054BF6321688E4C00876E99 /* CannonTryController.swift in Sources */,
 				204BFA0B2104676200A2AB7A /* InputPanleForCannon.swift in Sources */,
 				205A0ED6207A0D58006A44A6 /* LoginService.swift in Sources */,
+				20F0D5132175EF0D00E76641 /* DataController.swift in Sources */,
 				2058CA8720F885A6005DF357 /* SignalController.swift in Sources */,
 				20D0FF1120B6C12300C547A5 /* InputVariable.swift in Sources */,
 				2011378F212000CD00B5A138 /* ScenarioController.swift in Sources */,
@@ -1427,12 +1463,13 @@
 				20CD8E59210D9BC300BD78B6 /* Item.swift in Sources */,
 				2044B029216345D700E8E21C /* EqGrid.swift in Sources */,
 				20D0FF2520B6C12300C547A5 /* Boots.swift in Sources */,
-				203B2A771F67BBD200DDCC03 /* ItemList.swift in Sources */,
+				203B2A771F67BBD200DDCC03 /* DataList.swift in Sources */,
 				20113798212001AD00B5A138 /* ScenarioScene.swift in Sources */,
 				20D0FF1D20B6C12300C547A5 /* EnemyFist.swift in Sources */,
 				20D0FF1920B6C12300C547A5 /* EnemyArm.swift in Sources */,
 				20D0FF2120B6C12300C547A5 /* Grid.swift in Sources */,
 				203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */,
+				2099C7252169BA0B00540B3C /* EnemyEqDemo.swift in Sources */,
 				203B2A731F67BBD100DDCC03 /* ConfirmScreen.swift in Sources */,
 				20D0FF2F20B6C12300C547A5 /* Teleport.swift in Sources */,
 				2052888920FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,
@@ -1469,6 +1506,7 @@
 				200AC22C2107082600D70BA5 /* AddEnemyTurnController.swift in Sources */,
 				20D0FF3A20B6C12300C547A5 /* TimeBomb.swift in Sources */,
 				2054BF6A21689B5000876E99 /* CannonForTry.swift in Sources */,
+				204D5BC22171E9080061CC35 /* ScenarioTouchController.swift in Sources */,
 				200AC2262107007500D70BA5 /* SignalSendingTurnController.swift in Sources */,
 				20E9E88F20223B1400D31410 /* BGM.swift in Sources */,
 				20D0FECD20B6C0B000C547A5 /* LevelSelectMenu.swift in Sources */,
@@ -1476,7 +1514,9 @@
 				20D0FEED20B6C11100C547A5 /* EnemyVEController.swift in Sources */,
 				20D0FF1820B6C12300C547A5 /* SimplificationBoard.swift in Sources */,
 				20CD8E5D210DAE0100BD78B6 /* ContactController.swift in Sources */,
+				20F0D51A2176007A00E76641 /* DataSelectMenu.swift in Sources */,
 				20D0FEEB20B6C11100C547A5 /* EnemyDeadController.swift in Sources */,
+				204D5BBF2171D8DC0061CC35 /* Array+Utility.swift in Sources */,
 				20E9E89620223B1400D31410 /* SettingScreen.swift in Sources */,
 				20D0FF4420B6C12300C547A5 /* MainHero.swift in Sources */,
 				20D0FEF120B6C11200C547A5 /* CharacterController.swift in Sources */,
@@ -1488,9 +1528,11 @@
 				20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */,
 				20D0FF3620B6C12300C547A5 /* Catapult.swift in Sources */,
 				201137932120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
+				204D593A216B091D00BC776C /* CannonRecordBoard.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				2044B0242163447A00E8E21C /* VEEquivalentController.swift in Sources */,
 				2052888D20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
+				204D5BBC2171BC390061CC35 /* ConfirmBomb.swift in Sources */,
 				20E8079F20FDE7C700EED36D /* AttackTouchController.swift in Sources */,
 				20D0FF2E20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE720B6C11100C547A5 /* EnemyAddController.swift in Sources */,
@@ -1510,19 +1552,18 @@
 				20D0FF2020B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1C20B6C12300C547A5 /* Enemy.swift in Sources */,
 				2041518C215CBABD00595003 /* LengthArrow.swift in Sources */,
-				204CDDEC21005EB90061DCB7 /* EqRobForInstruction.swift in Sources */,
 				20DACE8F21298F070015D1BA /* TutorialController.swift in Sources */,
 				20D0FF1620B6C12300C547A5 /* InputVariableExpression.swift in Sources */,
 				204BFA142104802800A2AB7A /* EnemyTurnController.swift in Sources */,
 				203FB9232159F32300BD3A14 /* EqRobTutorialController.swift in Sources */,
 				204163A420C2653F00217F6A /* GridFlashController.swift in Sources */,
 				2016D7CC210AFE6200942460 /* Plane.swift in Sources */,
-				20DACE9221298F310015D1BA /* TutorialProperty.swift in Sources */,
 				204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */,
 				20D0FF4720B6C14B00C547A5 /* DAUserDefaultUtility.swift in Sources */,
 				2054BF6421688E4C00876E99 /* CannonTryController.swift in Sources */,
 				204BFA0C2104676200A2AB7A /* InputPanleForCannon.swift in Sources */,
 				205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */,
+				20F0D5142175EF0D00E76641 /* DataController.swift in Sources */,
 				2058CA8820F885A6005DF357 /* SignalController.swift in Sources */,
 				20D0FF1220B6C12300C547A5 /* InputVariable.swift in Sources */,
 				20113790212000CD00B5A138 /* ScenarioController.swift in Sources */,
@@ -1542,12 +1583,13 @@
 				20CD8E5A210D9BC300BD78B6 /* Item.swift in Sources */,
 				2044B02A216345D700E8E21C /* EqGrid.swift in Sources */,
 				20D0FF2620B6C12300C547A5 /* Boots.swift in Sources */,
-				20E9E8AA20223B1400D31410 /* ItemList.swift in Sources */,
+				20E9E8AA20223B1400D31410 /* DataList.swift in Sources */,
 				20113799212001AD00B5A138 /* ScenarioScene.swift in Sources */,
 				20D0FF1E20B6C12300C547A5 /* EnemyFist.swift in Sources */,
 				20D0FF1A20B6C12300C547A5 /* EnemyArm.swift in Sources */,
 				20D0FF2220B6C12300C547A5 /* Grid.swift in Sources */,
 				20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */,
+				2099C7262169BA0B00540B3C /* EnemyEqDemo.swift in Sources */,
 				20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */,
 				20D0FF3020B6C12300C547A5 /* Teleport.swift in Sources */,
 				2052888A20FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,

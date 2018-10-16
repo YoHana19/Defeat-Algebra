@@ -14,60 +14,22 @@ struct PlayerTurnController {
     public static var done = false
     
     public static func displayPhase() {
+        gameScene.buttonRetry.state = .msButtonNodeStateHidden
         gameScene.playerPhaseLabel.isHidden = false
         let wait = SKAction.wait(forDuration: gameScene.phaseLabelTime)
         let moveState = SKAction.run({ gameScene.playerTurnState = .ItemOn })
         let seq = SKAction.sequence([wait, moveState])
         gameScene.run(seq)
-        /* For used cane */
-        gameScene.caneOnFlag = false
     }
     
     public static func itemOn() {
         gameScene.playerPhaseLabel.isHidden = true
+        gameScene.playerTurnState = .MoveState
         
-        /* timeBomb */
-        if gameScene.gridNode.timeBombSetArray.count > 0 {
-            if gameScene.bombExplodeDoneFlag == false {
-                gameScene.bombExplodeDoneFlag = true
-                /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let explode = SKAction.playSoundFileNamed("timeBombExplosion.mp3", waitForCompletion: true)
-                    gameScene.run(explode)
-                }
-                for (i, timeBombPos) in gameScene.gridNode.timeBombSetPosArray.enumerated() {
-                    /* Look for the enemy to destroy  if any */
-                    for enemy in gameScene.gridNode.enemyArray {
-                        /* Hit enemy! */
-                        if enemy.positionX == timeBombPos[0] && enemy.positionY == timeBombPos[1] {
-                            EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene) {}
-                        }
-                    }
-                    if i == gameScene.gridNode.timeBombSetArray.count-1 {
-                        /* Reset timeBomb array */
-                        gameScene.gridNode.timeBombSetPosArray.removeAll()
-                        for timeBomb in gameScene.gridNode.timeBombSetArray {
-                            /* time bomb effect */
-                            gameScene.timeBombEffect(timeBomb: timeBomb)
-                            timeBomb.removeFromParent()
-                        }
-                    }
-                }
-            }
-        } else {
-            gameScene.timeBombDoneFlag = true
-        }
-        
-        if gameScene.timeBombDoneFlag {
-            gameScene.playerTurnState = .MoveState
-            gameScene.timeBombDoneFlag = false
-            gameScene.bombExplodeDoneFlag = false
-            
-            if !gameScene.eqRobTurnCountingDone {
-                gameScene.eqRobTurnCountingDone = true
-                if gameScene.eqRob.turn > 0 {
-                    gameScene.eqRob.turn -= 1
-                }
+        if !gameScene.eqRobTurnCountingDone {
+            gameScene.eqRobTurnCountingDone = true
+            if gameScene.eqRob.turn > 0 {
+                gameScene.eqRob.turn -= 1
             }
         }
     }
@@ -128,6 +90,7 @@ struct PlayerTurnController {
             gameScene.dupliExsist = false
             EnemyMoveController.rePosEnemies(enemiesArray: gameScene.gridNode.enemyArray, gridNode: gameScene.gridNode)
         }
+        
         
         if gameScene.willFastForward {
             gameScene.willFastForward = false

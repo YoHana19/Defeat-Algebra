@@ -54,6 +54,7 @@ struct AttackTouchController {
                 /* Look for the enemy to destroy */
                 for enemy in gridNode.enemyArray {
                     if enemy.positionX == gridX && enemy.positionY == gridY {
+                        DataController.countForEnemyKilledByDA(enemy: enemy)
                         EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene) {}
                     }
                 }

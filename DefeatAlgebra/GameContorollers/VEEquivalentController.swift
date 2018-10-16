@@ -114,7 +114,7 @@ struct VEEquivalentController {
         enemy.run(move)
     }
     
-    private static func getPosOnGrid(x: Int, y: Int) -> CGPoint {
+    public static func getPosOnGrid(x: Int, y: Int) -> CGPoint {
         let xPos = (Double(x)+0.5)*gameScene.eqGrid.cellWidth
         let yPos = (Double(y)+0.5)*gameScene.eqGrid.cellHeight
         return CGPoint(x: xPos, y: yPos)
@@ -127,18 +127,23 @@ struct VEEquivalentController {
     }
     
     public static func hideEqGrid() {
-        GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.eqGrid)
-        GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.eqGrid)
+        GridActiveAreaController.resetSquareArray(color: "yellow", grid: gameScene.eqGrid)
+        GridActiveAreaController.resetSquareArray(color: "green", grid: gameScene.eqGrid)
         gameScene.eqGrid.isHidden = false
         gameScene.eqGrid.zPosition = -1
+        gameScene.eqGrid.demoCalcLabel.isHidden = true
         SignalController.speed = 0.006
         CharacterController.doctor.changeBalloonTexture(index: 0)
         gameScene.signalHolder.zPosition = 0
         gameScene.valueOfX.zPosition = 1
         numOfCheck = 0
         gameScene.xValue = gameScene.xValue
+        if GameScene.stageLevel == 8 {
+            gameScene.valueOfX.text = ""
+        }
         backEnemies()
         getBG(completion: { bg in
+            bg?.removeExcessArea()
             bg?.removeFromParent()
         })
         gameScene.eqRob.setScale(1.0)
@@ -174,12 +179,14 @@ struct VEEquivalentController {
     public static func backEnemies() {
         for enemy in checkingEnemies {
             enemy.xValueLabel.text = ""
+            enemy.demoCalcLabel.isHidden = true
             enemy.variableExpressionLabel.fontColor = UIColor.white
             if enemy.punchIntervalForCount == 0 {
                 enemy.forcusForAttack(color: UIColor.red, value: gameScene.xValue)
             }
             let pos = getPosOnGrid(x: enemy.positionX, y: enemy.positionY)
             enemy.zPosition = 4
+            enemy.calculatePunchLength(value: gameScene.xValue)
             let move = SKAction.move(to: pos, duration: 1.0)
             enemy.run(move)
         }

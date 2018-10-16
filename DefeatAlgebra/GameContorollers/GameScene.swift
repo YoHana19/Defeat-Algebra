@@ -55,7 +55,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var selectionPanel: SelectionPanel!
     var inputPanelForCannon: InputPanelForCannon!
     var plane: Plane!
-    var stageHolder: SKNode?
+    var stageHolder: SKNode!
+    var confirmBomb = ConfirmBomb()
     
     /*== Game labels ==*/
     var gameOverLabel: SKNode!
@@ -67,6 +68,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     /*== Game buttons ==*/
     var buttonRetry: MSButtonNode!
+    var buttonRetryFromTop: MSButtonNode!
     var buttonNextLevel: MSButtonNode!
     var buttonPause: MSButtonNode!
     
@@ -82,8 +84,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let turnEndWait: TimeInterval = 1.0
     let phaseLabelTime: TimeInterval = 0.3
     /* State cotrol */
-    var gameState: GameSceneState = .AddEnemy
-    var playerTurnState: PlayerTurnState = .DisplayPhase
+    public var gameState: GameSceneState = .AddEnemy
+    var playerTurnState: PlayerTurnState = .DisplayPhase {
+        didSet {
+            if (oldValue != .MoveState && playerTurnState == .MoveState) {
+                PlayerTurnController.moveState()
+            }
+        }
+    }
     var itemType: ItemType = .None
     /* Game level */
     static var stageLevel: Int = 0
@@ -118,7 +126,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var heroMovingFlag = false
     /* Hero turn */
     var playerTurnDoneFlag = false
-    
+    var lastGameState: GameSceneState = .EnemyTurn
+    var heroKilled: Bool = false
     
     /*===========*/
     /*== Enemy ==*/
@@ -155,6 +164,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Time bomb */
     var bombExplodeDoneFlag = false
     var timeBombDoneFlag = false
+    var timeBombConfirming = false
     /* cane */
     var inputBoardForCane: InputVariable!
     var caneOnFlag = false
@@ -168,7 +178,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var valueOfX: SKLabelNode!
     var xValue: Int = 0 {
         didSet {
-            if GameScene.stageLevel < 8 {
+            if GameScene.stageLevel < MainMenu.invisivleStartTurn {
                 if xValue == 0 {
                     valueOfX.text = ""
                 } else {
@@ -223,6 +233,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         log6 = childNode(withName: "log6") as! Log
         log7 = childNode(withName: "log7") as! Log
         log8 = childNode(withName: "log8") as! Log
+        addChild(confirmBomb)
         
         EqRobController.gameScene = self
         EqRobController.eqRobOriginPos = self.eqRob.absolutePos()
@@ -245,6 +256,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         SpeakInGameController.gameScene = self
         VEEquivalentController.gameScene = self
         CannonTryController.gameScene = self
+        GameStageController.gameScene = self
+        ScenarioTouchController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {
@@ -257,7 +270,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         gameOverLabel.isHidden = true
         clearLabel = childNode(withName: "clearLabel")
         clearLabel.isHidden = true
-        levelLabel = stageHolder?.childNode(withName: "levelLabel") as! SKLabelNode
+        levelLabel = stageHolder.childNode(withName: "levelLabel") as! SKLabelNode
         numOfTotalEnemyLabel = childNode(withName: "numOfTotalEnemyLabel") as! SKLabelNode
         playerPhaseLabel = childNode(withName: "playerPhaseLabel")
         playerPhaseLabel.isHidden = true
@@ -266,49 +279,27 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Connect game buttons */
         buttonRetry = childNode(withName: "buttonRetry") as! MSButtonNode
+        buttonRetryFromTop = childNode(withName: "buttonRetryFromTop") as! MSButtonNode
         buttonNextLevel = childNode(withName: "buttonNextLevel") as! MSButtonNode
         buttonPause = childNode(withName: "buttonPause") as! MSButtonNode
         buttonRetry.state = .msButtonNodeStateHidden
+        buttonRetryFromTop.state = .msButtonNodeStateHidden
         buttonNextLevel.state = .msButtonNodeStateHidden
+        
+        ResetController.reset()
         
         /* Retry button */
         buttonRetry.selectedHandler = { [weak self] in
             
-            /* Grab reference to the SpriteKit view */
-            let skView = self?.view as SKView?
-            
-            /* Load Game scene */
-            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
-                return
-            }
-            
-            ResetController.reset()
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
-        }
-        
-        /* Next Level button */
-        buttonNextLevel.selectedHandler = { [weak self] in
-            
-            /* Analytics */
-            Answers.logLevelEnd("Easy Level \(GameScene.stageLevel+1)",
-                score: nil,
-                success: true
-            )
-            
-            ResetController.reset()
-            
-            /* To next stage level */
-            GameScene.stageLevel += 1
-            
-            /* Store game property */
-            DAUserDefaultUtility.SetData(gameScene: self)
-            
-            if GameScene.stageLevel == 4 || GameScene.stageLevel == 6 {
+            guard let flag = self?.heroKilled else { return }
+            if flag {
+                self?.heroKilled = false
+                GameOverTurnController.done = false
+                self?.unDo(inGame: true) {
+                    self?.gameState = .AddItem
+                    GameOverTurnController.gameOverReset()
+                }
+            } else {
                 /* Grab reference to the SpriteKit view */
                 let skView = self?.view as SKView?
                 
@@ -322,22 +313,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 /* Restart GameScene */
                 skView?.presentScene(scene)
-                
-            } else {
-                /* Grab reference to the SpriteKit view */
-                let skView = self?.view as SKView?
-                
-                /* Load Game scene */
-                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
-                    return
-                }
-                
-                /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFit
-                
-                /* Restart GameScene */
-                skView?.presentScene(scene)
             }
+        }
+        
+        /* Retry button */
+        buttonRetryFromTop.selectedHandler = { [weak self] in
+            
+            /* Grab reference to the SpriteKit view */
+            let skView = self?.view as SKView?
+            
+            /* Load Game scene */
+            guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
+                return
+            }
+            
+            /* Ensure correct aspect mode */
+            scene.scaleMode = .aspectFit
+            
+            /* Restart GameScene */
+            skView?.presentScene(scene)
+            
+        }
+        
+        /* Next Level button */
+        buttonNextLevel.selectedHandler = { [weak self] in
+            GameStageController.stageManager(scene: self, next: 1)
         }
         
         /* Pause button */
@@ -352,27 +352,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         DAUserDefaultUtility.DrawData(gameScene: self)
         
-        /* Debug */
-        //GameScene.stageLevel = 7
-//        moveLevel = 4
-        //let handedItemNameArray = ["catapult", "magicSword", "cane", "timeBomb"]
-        
-        if GameScene.stageLevel == 2 || GameScene.stageLevel == 3 {
-            handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
-        }
-        
-        if GameScene.stageLevel < 1 {
-            moveLevel = 3
-        } else {
-            moveLevel = 4
-        }
-        
         /* Stage Level */
         levelLabel.text = String(GameScene.stageLevel+1)
-        if GameScene.stageLevel == 8 {
-            levelLabel.text = "F"
-            //levelLabel.fontSize = 30
-        }
+        
+        GameStageController.initialize()
+        
         /* Set hero */
         setHero()
         /* Items */
@@ -410,7 +394,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set item area */
         setItemAreaCover()
         
-        EnemyProperty.getNumOfAllEnemy(stageLevel: GameScene.stageLevel) { num in
+        EnemyProperty.getNumOfAllEnemy(stageLevel: GameStageController.adjustGameSceneLevel()) { num in
             self.totalNumOfEnemy = num
         }
         
@@ -424,22 +408,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         life = 5
         setLife(numOflife: life)
         
-        if GameScene.stageLevel > 4 {
-            eqRob.isHidden = false
-            EqRobTouchController.state = .Ready
-        } else {
-            eqRob.isHidden = true
-        }
-        
-        setCanoon()
         SignalSendingTurnController.done = false
+        StageClearTurnController.done = false
+        GameOverTurnController.done = false
         gridNode.isTutorial = false
+        DataController.isGameScene = true
     }
     
     override func update(_ currentTime: TimeInterval) {
         /* For debug */
         //print("\(gameState), \(playerTurnState), \(itemType)")
-
+        
+//        print(GameScene.stageLevel)
+//        print(GameStageController.adjustGameSceneLevel())
+        
         SpeakInGameController.controlAction()
         
         if isCharactersTurn {
@@ -450,13 +432,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 AddEnemyTurnController.add()
                 break;
             case .SignalSending:
-                /* Cane */
-                if caneOnFlag {
-                    gameState = .PlayerTurn
-                    gridNode.numOfTurnEndEnemy = 0
-                } else {
-                    SignalSendingTurnController.sendSignal() {}
-                }
+                SignalSendingTurnController.sendSignal() {}
                 break;
             case .AddItem:
                 countTurnDone = false
@@ -477,7 +453,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     PlayerTurnController.itemOn()
                     break;
                 case .MoveState:
-                    PlayerTurnController.moveState()
                     /* Wait for player touch to move */
                     break;
                 case .AttackState:
@@ -519,6 +494,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         guard pauseFlag == false else { return }
         guard boardActiveFlag == false else { return }
+        guard timeBombConfirming == false else { return }
         
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
@@ -539,7 +515,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             guard gameState == .PlayerTurn else { return }
             guard SpeakInGameController.userTouch(on: nodeAtPoint.name) else { return }
             
-            if nodeAtPoint.name == "eqRob" {
+            if nodeAtPoint.name == "eqRob" || nodeAtPoint.name == "eqRobCS" || nodeAtPoint.name == "eqRobRS" {
                 
                 AllTouchController.eqRobTouched()
                 
@@ -569,39 +545,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 if nodeAtPoint.name == "buttonAttack" {
                     ItemTouchController.buttonAttackTapped()
                     
-                    /* Use timeBomb */
+                /* Use timeBomb */
                 } else if nodeAtPoint.name == "timeBomb" {
                     ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                     
-                    /* wall */
-                } else if nodeAtPoint.name == "wall" {
-                    /* Remove activeArea */
-                    GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
-                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
-                    /* Remove triangle except the one of selected catapult */
-                    
-                    /* Remove input board for cane */
-                    inputBoardForCane.isHidden = true
-                    
-                    /* Set timeBomb using state */
-                    itemType = .Wall
-                    
-                    /* Get index of game using */
-                    usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                    
-                    /* cane */
-                } else if nodeAtPoint.name == "cane" {
-                    /* Remove activeArea */
-                    GridActiveAreaController.resetSquareArray(color: "red", grid: self.gridNode)
-                    GridActiveAreaController.resetSquareArray(color: "purple", grid: self.gridNode)
-                    
-                    /* Set timeBomb using state */
-                    itemType = .Cane
-                    
-                    /* Get index of game using */
-                    usingItemIndex = Int((nodeAtPoint.position.x-56.5)/91)
-                    
-                    /* If player touch other place than item icons, back to MoveState */
+                /* If player touch other place than item icons, back to MoveState */
                 } else {
                     ItemTouchController.othersTouched()
                 }
@@ -649,9 +597,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         //maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if !DAUserDefaultUtility.heartGotFirst {
-                            SpeakInGameController.doAction(type: .HeartGotFirstly)
-                        }
                     /* Other items */
                     } else {
                         item.removeFromParent()
@@ -682,9 +627,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                         //maxLife += 1
                         life += 1
                         setLife(numOflife: life)
-                        if !DAUserDefaultUtility.heartGotFirst {
-                            SpeakInGameController.doAction(type: .HeartGotFirstly)
-                        }
                     /* Other items */
                     } else {
                         item.removeFromParent()
@@ -702,11 +644,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! Hero
-                    hero.removeFromParent()
+                    hero.isHidden = true
+                    heroKilled = true
+                    self.lastGameState = self.gameState
                     self.gameState = .GameOver
                 } else if contactB.categoryBitMask == 1 {
                     let hero = contactB.node as! Hero
-                    hero.removeFromParent()
+                    hero.isHidden = true
+                    heroKilled = true
+                    self.lastGameState = self.gameState
                     self.gameState = .GameOver
                 }
             }
@@ -845,31 +791,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(itemAreaCover)
     }
     
-    /*== Time bomb ==*/
-    /* Effect */
-    func timeBombEffect(timeBomb: TimeBomb) {
-        /* Load our particle effect */
-        let particles = SKEmitterNode(fileNamed: "TimeBombExplode")!
-        let particles2 = SKEmitterNode(fileNamed: "TimeBombSmoke")!
-        particles.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
-        particles2.position = CGPoint(x: timeBomb.position.x+gridNode.position.x, y: timeBomb.position.y+gridNode.position.y)
-        /* Add particles to scene */
-        self.addChild(particles)
-        self.addChild(particles2)
-        let waitRemoveExplode = SKAction.wait(forDuration: 0.5)
-        let waitRemoveSmoke = SKAction.wait(forDuration: 3.0)
-        let removeParticles = SKAction.removeFromParent()
-        let onFlag = SKAction.run({
-            self.timeBombDoneFlag = true
-            /* Reset itemSet arrays */
-            self.gridNode.timeBombSetArray.removeAll()
-        })
-        let seqEffect = SKAction.sequence([waitRemoveExplode, removeParticles])
-        let seqEffect2 = SKAction.sequence([waitRemoveSmoke, removeParticles, onFlag])
-        particles.run(seqEffect)
-        particles2.run(seqEffect2)
-    }
-    
     /* Set simplification board */
     func setSimplificationBoard() {
         simplificationBoard = SimplificationBoard()
@@ -893,35 +814,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /* Set input panel for cannon */
     func setInputPanelForCannon() {
         inputPanelForCannon = InputPanelForCannon()
-        inputPanelForCannon.isHidden = true
+        inputPanelForCannon.isActive = false
         addChild(inputPanelForCannon)
     }
-    
-    func setCanoon() {
-        if GameScene.stageLevel == 6 {
-            CannonController.add(type: 0, pos: [1, 10])
-            CannonController.add(type: 0, pos: [3, 9])
-            CannonController.add(type: 0, pos: [5, 10])
-            CannonController.add(type: 0, pos: [7, 9])
-        } else if GameScene.stageLevel == 7 {
-            CannonController.add(type: 0, pos: [0, 9])
-            CannonController.add(type: 0, pos: [1, 10])
-            CannonController.add(type: 0, pos: [2, 9])
-            CannonController.add(type: 0, pos: [3, 10])
-            CannonController.add(type: 0, pos: [4, 9])
-            CannonController.add(type: 0, pos: [5, 10])
-            CannonController.add(type: 0, pos: [6, 9])
-            CannonController.add(type: 0, pos: [7, 10])
-            CannonController.add(type: 0, pos: [8, 9])
-        } else if GameScene.stageLevel == 8 {
-            CannonController.add(type: 0, pos: [1, 10])
-            CannonController.add(type: 0, pos: [3, 9])
-            CannonController.add(type: 0, pos: [5, 10])
-            CannonController.add(type: 0, pos: [7, 9])
-            signalInvisible = true
-        }
-    }
-    
     
     /* Check within grid for catapult */
     func checkWithinGrid() -> (Int, Int, Int, Int) {
@@ -1047,6 +942,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pointing(pos: pos)
     }
     
+    func pointingAllGotItems() {
+        for item in itemArray {
+            let icon = SKSpriteNode(imageNamed: "pointing")
+            icon.size = CGSize(width: 50, height: 50)
+            icon.position = CGPoint(x: 50, y: 50)
+            icon.zPosition = 12
+            let shakePoint = SKAction(named: "shakePoint")
+            let repeatAction = SKAction.repeatForever(shakePoint!)
+            icon.run(repeatAction)
+            item.addChild(icon)
+        }
+    }
+    
     func pointingEqRob() {
         let pos = CGPoint(x: eqRob.position.x + 50, y: eqRob.position.y + 50)
         pointing(pos: pos)
@@ -1054,6 +962,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func pointingHeart() {
         let pos = CGPoint(x: 150, y: 250)
+        pointing(pos: pos)
+    }
+    
+    func pointingYes() {
+        let pos = CGPoint(x: 650, y: 700)
         pointing(pos: pos)
     }
     
@@ -1089,6 +1002,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pointing(pos: pos3)
     }
     
+    func pointingChangeVeButton() {
+        let pos3 = CGPoint(x: 570, y: 1310)
+        pointing(pos: pos3)
+    }
+    
     func pointingInputButton(name: String) {
         if name == "1" {
             let pos = CGPoint(x: 300, y: 720)
@@ -1114,13 +1032,38 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func pointingInputButtonForCannon(name: String) {
+        if name == "1" {
+            let pos = CGPoint(x: 210, y: 720)
+            pointing(pos: pos)
+        } else if name == "4" {
+            let pos = CGPoint(x: 490, y: 720)
+            pointing(pos: pos)
+        } else if name == "6" {
+            let pos = CGPoint(x: 390, y: 635)
+            pointing(pos: pos)
+        } else if name == "x" {
+            let pos = CGPoint(x: 490, y: 550)
+            pointing(pos: pos)
+        } else if name == "+" {
+            let pos = CGPoint(x: 390, y: 550)
+            pointing(pos: pos)
+        } else if name == "OK" {
+            let pos = CGPoint(x: 700, y: 600)
+            pointing(pos: pos)
+        } else if name == "Try" {
+            let pos = CGPoint(x: 700, y: 720)
+            pointing(pos: pos)
+        }
+    }
+    
     /* Set pointing icon */
     func pointing(pos: CGPoint) {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.name = "pointing"
         icon.size = CGSize(width: 50, height: 50)
         icon.position = pos
-        icon.zPosition = 12
+        icon.zPosition = 100
         let shakePoint = SKAction(named: "shakePoint")
         let repeatAction = SKAction.repeatForever(shakePoint!)
         icon.run(repeatAction)
@@ -1131,49 +1074,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.name = "pointing"
         icon.size = CGSize(width: 50, height: 50)
+        icon.anchorPoint = CGPoint(x: 0, y: 0)
         icon.position = hero.position
         icon.zPosition = 7
-        if hero.positionY < 3 {
-            if hero.positionX < 4 {
-                ScenarioController.keyTouchPos = (hero.positionX+2, hero.positionY+1)
-                let moveHorizontal = SKAction.moveBy(x: CGFloat(gridNode.cellWidth*2+10), y: 0, duration: 1.0)
-                let moveVertical = SKAction.moveBy(x: 0, y: CGFloat(gridNode.cellHeight*1), duration: 1.0)
-                let resetPos = SKAction.run({ icon.position = self.hero.position })
-                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
-                let repeatAction = SKAction.repeatForever(seq)
-                icon.run(repeatAction)
-                addChild(icon)
-            } else {
-                ScenarioController.keyTouchPos = (hero.positionX-2, hero.positionY+1)
-                let moveHorizontal = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth*2+10), y: 0, duration: 1.0)
-                let moveVertical = SKAction.moveBy(x: 0, y: CGFloat(gridNode.cellHeight*1), duration: 1.0)
-                let resetPos = SKAction.run({ icon.position = self.hero.position })
-                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
-                let repeatAction = SKAction.repeatForever(seq)
-                icon.run(repeatAction)
-                addChild(icon)
-            }
-        } else {
-            if hero.positionX < 4 {
-                ScenarioController.keyTouchPos = (hero.positionX+1, hero.positionY-2)
-                let moveHorizontal = SKAction.moveBy(x: CGFloat(gridNode.cellWidth*1+10), y: 0, duration: 1.0)
-                let moveVertical = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight*2), duration: 1.0)
-                let resetPos = SKAction.run({ icon.position = self.hero.position })
-                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
-                let repeatAction = SKAction.repeatForever(seq)
-                icon.run(repeatAction)
-                addChild(icon)
-            } else {
-                ScenarioController.keyTouchPos = (hero.positionX-1, hero.positionY-2)
-                let moveHorizontal = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth*1+10), y: 0, duration: 1.0)
-                let moveVertical = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight*2), duration: 1.0)
-                let resetPos = SKAction.run({ icon.position = self.hero.position })
-                let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
-                let repeatAction = SKAction.repeatForever(seq)
-                icon.run(repeatAction)
-                addChild(icon)
-            }
-        }
+        ScenarioController.keyTouchPos = (2, 1)
+        let moveHorizontal = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth*2), y: 0, duration: 1.0)
+        let moveVertical = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight*2), duration: 1.0)
+        let resetPos = SKAction.run({ icon.position = self.hero.position })
+        let seq = SKAction.sequence([moveVertical, moveHorizontal, resetPos])
+        let repeatAction = SKAction.repeatForever(seq)
+        icon.run(repeatAction)
+        addChild(icon)
     }
     
     func removePointing() {
@@ -1182,30 +1093,62 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func unDo(completion: @escaping () -> Void) {
+    func unDo(inGame: Bool = false, completion: @escaping () -> Void) {
         guard hero.posRecord.count > 0 else { return }
         gridNode.numOfTurnEndEnemy = 0
         gridNode.turnIndex = 0
+        adjustItemCount()
         let heroLastPos = hero.posRecord[hero.posRecord.count-1]
         resetHeroPos(x: heroLastPos.0, y: heroLastPos.1)
-        if gameState == .EnemyTurn {
-            let dispatchGroup = DispatchGroup()
-            let doneEnemies = gridNode.enemyArray.filter({ $0.turnDoneFlag })
-            for enemy in doneEnemies {
-                dispatchGroup.enter()
-                let enemyLastPos = enemy.posRecord[enemy.posRecord.count-1]
-                resetEnemyPos(enemy: enemy, x: enemyLastPos.0, y: enemyLastPos.1, punchInterval: enemyLastPos.2)
-                dispatchGroup.leave()
-            }
-            dispatchGroup.notify(queue: .main, execute: {
-                if self.gridNode.enemyArray.count > doneEnemies.count {
-                    self.gridNode.enemyArray[doneEnemies.count].myTurnFlag = false
+        if inGame {
+            if lastGameState == .EnemyTurn {
+                let dispatchGroup = DispatchGroup()
+                let doneEnemies = gridNode.enemyArray.filter({ $0.turnDoneFlag })
+                for enemy in doneEnemies {
+                    dispatchGroup.enter()
+                    let enemyLastPos = enemy.posRecord[enemy.posRecord.count-1]
+                    resetEnemyPos(enemy: enemy, x: enemyLastPos.0, y: enemyLastPos.1, punchInterval: enemyLastPos.2)
+                    dispatchGroup.leave()
                 }
-                EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
+                dispatchGroup.notify(queue: .main, execute: {
+                    if self.gridNode.enemyArray.count > doneEnemies.count {
+                        self.gridNode.enemyArray[doneEnemies.count].myTurnFlag = false
+                    }
+                    EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
+                    return completion()
+                })
+            } else {
                 return completion()
-            })
+            }
         } else {
-            return completion()
+            if gameState == .EnemyTurn {
+                let dispatchGroup = DispatchGroup()
+                let doneEnemies = gridNode.enemyArray.filter({ $0.turnDoneFlag })
+                for enemy in doneEnemies {
+                    dispatchGroup.enter()
+                    let enemyLastPos = enemy.posRecord[enemy.posRecord.count-1]
+                    resetEnemyPos(enemy: enemy, x: enemyLastPos.0, y: enemyLastPos.1, punchInterval: enemyLastPos.2)
+                    dispatchGroup.leave()
+                }
+                dispatchGroup.notify(queue: .main, execute: {
+                    if self.gridNode.enemyArray.count > doneEnemies.count {
+                        self.gridNode.enemyArray[doneEnemies.count].myTurnFlag = false
+                    }
+                    EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
+                    return completion()
+                })
+            } else {
+                return completion()
+            }
+        }
+    }
+    
+    func adjustItemCount() {
+        if !compAddItemFlag {
+            let stageLevel = GameStageController.adjustGameSceneLevel()
+            if ItemDropController.manager[stageLevel][countTurnForAddItem-1] == 0 {
+                countTurnForAddItem -= 1
+            }
         }
     }
     
@@ -1230,8 +1173,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func resetHeroPos(x: Int, y: Int) {
+        gridNode.removeAllActions()
         hero.positionX = x
         hero.positionY = y
+        hero.isHidden = false
         let xPos = gridNode.position.x+CGFloat(gridNode.cellWidth*(Double(x)+0.5))
         let yPos = gridNode.position.y+CGFloat(gridNode.cellHeight*(Double(y)+0.5))
         hero.position = CGPoint(x: xPos, y: yPos)

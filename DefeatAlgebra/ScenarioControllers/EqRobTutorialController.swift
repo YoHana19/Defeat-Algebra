@@ -22,12 +22,9 @@ class EqRobTutorialController {
     
     static func userTouch(on name: String?) -> Bool {
         switch GameScene.stageLevel {
-        case 5:
+        case MainMenu.eqRobStartTurn:
             if let name = name {
                 switch ScenarioController.currentActionIndex {
-                case 14:
-                    ScenarioController.controllActions()
-                    return false
                 case 15:
                     if name == "button2" {
                         ScenarioController.controllActions()
@@ -202,7 +199,7 @@ class EqRobTutorialController {
         missedEnemies = sameVeEnemies.filter { !self.selectedEnemies.contains($0) }
         missedEnemies.forEach { $0.pointing() }
         CharacterController.doctor.balloon.isHidden = false
-        EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction2())
+        EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction())
         CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctorOnPos.x, y: CharacterController.doctorOnPos.y-200))
         EqRobTouchController.state = .AliveInstruction
     }

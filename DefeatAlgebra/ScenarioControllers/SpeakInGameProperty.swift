@@ -14,15 +14,25 @@ struct SpeakInGameProperty {
         ["pause"]
     ]
     
-    static let scenario2Firstly: [[String]] = [
-        ["2", "ん？ロボットの暗号が少し変わってようだな"]
+    static let timeBombGotFirstly: [[String]] = [
+        ["0", "爆弾を使うにはアイテムアイコンをタッチするのじゃ！"]
     ]
+    
+    static let eqRobFirstly: [[String]] = [
+        ["0", "エクロボを使いたい時は、エクロボ自身をタッチするのじゃ！"]
+    ]
+    
+//    static let scenario8Firstly: [[String]] = [
+//        ["0", "すまぬ。エクロボはしばらく充電しなければならぬ！"],
+//        ["0", "しばらくエクロボなしで戦ってくれ・・・"],
+//        ["2", "えー！こんな時に！！"],
+//        ["0", "アルジェブラ砲を上手く使って、なんとか凌いでくれ！"],
+//        ["2", "くそお！やるしかない！"],
+//        ["pause"]
+//    ]
     
     static let logDefenceFirstly: [[String]] = [
         ["0", "町の防御システムは、一度作動すると壊れてしまうぞ"]
     ]
     
-    static let heartGotFirstly: [[String]] = [
-        ["0", "街のライフが一つ増えたぞ！"]
-    ]
 }

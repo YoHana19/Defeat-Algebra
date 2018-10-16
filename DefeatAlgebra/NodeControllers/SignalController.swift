@@ -41,11 +41,7 @@ struct SignalController {
         signal.position = from ?? madPos
         signal.zPosition = zPos ?? 2
         gameScene.addChild(signal)
-        if GameScene.stageLevel < 1, ScenarioController.currentActionIndex < 14, let _ = gameScene as? ScenarioScene {
-            signal.xValue.isHidden = true
-        } else if GameScene.stageLevel == 8 {
-            signal.xValue.isHidden = true
-        }
+        GameStageController.signalVisibility(signal: signal)
         let move = SKAction.move(to: target.absolutePos(), duration: TimeInterval(speed*distance))
         signal.run(move, completion: {
             signal.removeFromParent()
@@ -86,29 +82,11 @@ struct SignalController {
         signal.zPosition = 10
         gameScene.addChild(signal)
         
-        let move = SKAction.move(to: target.absolutePos(), duration: TimeInterval(speed*distance))
-        signal.run(move, completion: {
-            signal.removeFromParent()
-            return completion()
-        })
-    }
-    
-    public static func sendToEqRobForInstruction(target: EqRobForInstruction, num: Int, from: CGPoint, completion: @escaping () -> Void) {
-        guard let gameScene = gameScene else { return }
-        let origin = from
-        let dx = origin.x - target.absolutePos().x
-        let dy = origin.y - target.absolutePos().y
-        let distance = sqrt(pow(dx, 2) + pow(dy, 2))
-        
-        let signal = SignalValueHolder(value: num)
-        signal.position = from
-        signal.zPosition = 10
-        gameScene.addChild(signal)
+        GameStageController.signalVisibilityForCannon(signal: signal)
         
         let move = SKAction.move(to: target.absolutePos(), duration: TimeInterval(speed*distance))
         signal.run(move, completion: {
             signal.removeFromParent()
-            target.forcus()
             return completion()
         })
     }

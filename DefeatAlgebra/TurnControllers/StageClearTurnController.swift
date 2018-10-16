@@ -11,6 +11,7 @@ import SpriteKit
 
 struct StageClearTurnController {
     public static var gameScene: GameScene!
+    public static var done = false
     
     public static func clear() {
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
@@ -24,7 +25,7 @@ struct StageClearTurnController {
         }
         gameScene.clearLabel.isHidden = false
         
-        if GameScene.stageLevel < 7 {
+        if GameScene.stageLevel < MainMenu.lastTurn {
             gameScene.buttonNextLevel.state = .msButtonNodeStateActive
         } else {
             if gameScene.dispClearLabelDone == false {
@@ -34,6 +35,11 @@ struct StageClearTurnController {
                 gameScene.createTutorialLabel(text: "But keep it mind!", posY: 700, size: 35)
                 gameScene.createTutorialLabel(text: "Algebra is your friend in real world!", posY: 640, size: 35)
             }
+        }
+        
+        if !done {
+            done = true
+            DataController.setDataForEnemyKilled()
         }
     }
 }

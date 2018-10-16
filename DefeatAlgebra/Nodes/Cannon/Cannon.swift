@@ -17,6 +17,15 @@ class Cannon: Item {
     
     let frontTexture = SKTexture(imageNamed: "cannonFront")
     let backTexture = SKTexture(imageNamed: "cannonBack")
+    var variableExpression: String = "" {
+        willSet {
+            variableExpressionLabel.text = newValue
+            removeBG()
+            if (newValue != "") {
+                addBGForVeLabel()
+            }
+        }
+    }
     var variableExpressionLabel = SKLabelNode(fontNamed: DAFont.fontName)
     var isFront = true
     var state: CannonState = .Ready
@@ -26,7 +35,7 @@ class Cannon: Item {
     var lastConstantsArray = [Int]()
     var lastCoefficientArray = [Int]()
     
-    let bombSpan: TimeInterval = 3.0
+    let bombSpan: TimeInterval = 1.5
     
     init(type: Int) {
         /* Initialize with enemy asset */
@@ -40,7 +49,7 @@ class Cannon: Item {
         
         setName()
         setVariableExpressionLabel(type: type)
-        self.zPosition = 5
+        self.zPosition = 6
         
         self.physicsBody = nil
     }
@@ -55,43 +64,65 @@ class Cannon: Item {
     }
     
     func setVariableExpressionLabel(type: Int) {
+        
         /* text */
-        variableExpressionLabel.text = ""
-        variableExpressionLabel.fontColor = UIColor.red
+        variableExpressionLabel.text = variableExpression
+        variableExpressionLabel.fontColor = UIColor.white
         /* name */
         variableExpressionLabel.name = "variableExpressionLabel"
         /* font size */
         variableExpressionLabel.fontSize = 35
         /* zPosition */
-        variableExpressionLabel.zPosition = 5
+        variableExpressionLabel.zPosition = 2
         /* position */
-        if type == 0 {
-            variableExpressionLabel.position = CGPoint(x:0, y: -30)
-        } else {
-            variableExpressionLabel.position = CGPoint(x:0, y: 30)
-        }
+        variableExpressionLabel.position = CGPoint(x:0, y: 0)
+        variableExpressionLabel.horizontalAlignmentMode = .center
+        variableExpressionLabel.verticalAlignmentMode = .center
+        variableExpressionLabel.name = "cannonVE"
         /* Add to Scene */
         self.addChild(variableExpressionLabel)
     }
     
+    func addBGForVeLabel() {
+        let veBG = SKShapeNode(rectOf: CGSize(width: variableExpressionLabel.frame.width+10, height: variableExpressionLabel.frame.height+10))
+        veBG.fillColor = UIColor.red
+        veBG.zPosition = -1
+        veBG.position = CGPoint(x: 0, y: 0)
+        veBG.name = "veBG"
+        variableExpressionLabel.addChild(veBG)
+    }
+    
+    func removeBG() {
+        for child in variableExpressionLabel.children {
+            if child.name == "veBG" {
+                child.removeFromParent()
+            }
+        }
+    }
+    
     func setInputVE(value: String) {
-        variableExpressionLabel.text = value
+        variableExpression = value
     }
     
     func resetInputVE() {
-        variableExpressionLabel.text = ""
+        variableExpression = ""
     }
     
     /* Calculate the distance to throw bomb */
     func calculateValue(value: Int) -> Int {
         var outPut = 0
-        for constant in constantsArray {
-            outPut += constant
+        if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+            for constant in constantsArray {
+                outPut += constant
+            }
+        } else {
+            for constant in constantsArray {
+                outPut += constant
+            }
+            for coeffcient in coefficientArray {
+                outPut += coeffcient*value
+            }
         }
-        for coeffcient in coefficientArray {
-            outPut += coeffcient*value
-        }
-        //print("x: \(value), value: \(outPut), ve: \(variableExpressionLabel.text)")
         return outPut
     }
     
@@ -187,6 +218,7 @@ extension Cannon {
                 for enemy in gridNode.enemyArray {
                     dispatchGroup.enter()
                     if enemy.positionX == hitPos[0] && enemy.positionY == hitPos[1] {
+                        DataController.countForEnemyKilledByCannon(enemy: enemy)
                         EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene) {
                             dispatchGroup.leave()
                         }

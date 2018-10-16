@@ -11,6 +11,7 @@ import SpriteKit
 
 struct GameOverTurnController {
     public static var gameScene: GameScene!
+    public static var done = false
     
     public static func gameOver() {
         gameScene.gameOverLabel.isHidden = false
@@ -23,6 +24,26 @@ struct GameOverTurnController {
                 gameScene.run(sound)
             }
         }
-        gameScene.buttonRetry.state = .msButtonNodeStateActive
+        if gameScene.heroKilled {
+            gameScene.buttonRetry.state = .msButtonNodeStateActive
+        }
+        gameScene.buttonRetryFromTop.state = .msButtonNodeStateActive
+        
+        if !done {
+            done = true
+            DataController.setDataForEnemyKilled()
+            DataController.setDataForGameOver(isHit: gameScene.heroKilled)
+        }
+    }
+    
+    public static func gameOverReset() {
+        gameScene.gameOverLabel.isHidden = true
+        gameScene.buttonRetryFromTop.state = .msButtonNodeStateHidden
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            gameScene.gameOverSoundDone = true
+            gameScene.main.play()
+            gameScene.removeAllActions()
+        }
     }
 }

@@ -11,6 +11,17 @@ import SpriteKit
 
 class MainMenu: SKScene {
     
+    public static let uncoverSignalStartTurn = 1
+    public static let changeMoveSpanStartTurn = 2
+    public static let timeBombStartTurn = 3
+    public static let moveExplainStartTurn = 5
+    public static let showUnsimplifiedStartTurn = 6
+    public static let eqRobStartTurn = 7
+    public static let secondDayStartTurn = 9
+    public static let cannonStartTurn = 11
+    public static let invisivleStartTurn = 14
+    public static let lastTurn = 16
+    
     /* UI Connections */
     var buttonNewGame: MSButtonNode!
     var buttonContinue: MSButtonNode!
@@ -108,45 +119,8 @@ class MainMenu: SKScene {
         
         /* Continue */
         buttonContinue.selectedHandler = { [weak self] in
-            
             GameScene.stageLevel = UserDefaults.standard.integer(forKey: "stageLevel")
-            
-            if GameScene.stageLevel == 4 || GameScene.stageLevel == 6 {
-                /* Grab reference to the SpriteKit view */
-                let skView = self?.view as SKView?
-                
-                /* Load Game scene */
-                guard let scene = GameScene(fileNamed:"GameScene") as GameScene? else {
-                    return
-                }
-                
-                /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFit
-                
-                /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: false)
-                    scene.run(sound)
-                }
-                
-                /* Restart GameScene */
-                skView?.presentScene(scene)
-                
-            } else {
-                /* Grab reference to the SpriteKit view */
-                let skView = self?.view as SKView?
-                
-                /* Load Game scene */
-                guard let scene = ScenarioScene(fileNamed:"ScenarioScene") as ScenarioScene? else {
-                    return
-                }
-                
-                /* Ensure correct aspect mode */
-                scene.scaleMode = .aspectFit
-                
-                /* Restart GameScene */
-                skView?.presentScene(scene)
-            }
+            GameStageController.stageManager(scene: self, next: 0)
         }
         
         /* Set setting screen */

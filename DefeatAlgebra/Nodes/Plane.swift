@@ -65,7 +65,7 @@ class Plane: SKSpriteNode {
         if let gameScene = self.parent as? GameScene {
             switch item {
             case .timeBomb:
-                let object = TimeBomb()
+                let object = TimeBomb(pos: pos)
                 gameScene.gridNode.addObjectAtGrid(object: object, x: pos.0, y: pos.1)
                 break;
             case .Boots:

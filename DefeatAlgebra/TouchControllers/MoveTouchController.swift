@@ -19,15 +19,15 @@ struct MoveTouchController {
         /* Reset item type */
         gameScene.itemType = .None
         
-        /* Reset active area */
-        GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
-        GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
-        
         /* Set item area cover */
         gameScene.itemAreaCover.isHidden = false
         
         GridActiveAreaController.showAttackArea(posX: gameScene.hero.positionX, posY: gameScene.hero.positionY, grid: gameScene.gridNode)
         gameScene.playerTurnState = .AttackState
+        
+        /* Reset active area */
+        GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
+        GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
     }
     
     public static func buttonItemTapped() {

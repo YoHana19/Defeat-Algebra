@@ -11,36 +11,26 @@ import SpriteKit
 
 extension Enemy {
     
+    func calculatePunchLengthForCannon(value: Int) {
+        /* Calculate value of variable expression of enemy */
+        self.valueOfEnemy = VECategory.calculateValue(veCategory: self.vECategory, value: value)
+        /* Calculate length of punch */
+        self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
+    }
+    
     public func punchAndMoveForCannon(completion: @escaping () -> Void) {
-        /* Enemy punch beyond edge of grid */
-        if self.positionY < self.valueOfEnemy {
-            /* Do punch */
-            punch() { armAndFist in
-                self.subSetArm(arms: armAndFist.arm) { (newArms) in
-                    for arm in armAndFist.arm {
-                        arm.removeFromParent()
-                    }
-                    self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.positionY) {
-                        /* Set enemy position to edge */
-                        self.cannonPosY = 0
-                        return completion()
-                    }
+        /* Do punch */
+        punch() { armAndFist in
+            self.subSetArm(arms: armAndFist.arm) { (newArms) in
+                for arm in armAndFist.arm {
+                    arm.removeFromParent()
                 }
-            }
-        } else {
-            /* Do punch */
-            punch() { armAndFist in
-                self.subSetArm(arms: armAndFist.arm) { (newArms) in
-                    for arm in armAndFist.arm {
-                        arm.removeFromParent()
-                    }
-                    self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
-                        /* Keep track enemy position */
-                        self.cannonPosY -= self.valueOfEnemy
-                        self.removeArmNFist()
-                        self.setMovingAnimation()
-                        return completion()
-                    }
+                self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
+                    /* Keep track enemy position */
+                    self.cannonPosY -= self.valueOfEnemy
+                    self.removeArmNFist()
+                    self.setMovingAnimation()
+                    return completion()
                 }
             }
         }

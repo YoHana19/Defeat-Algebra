@@ -13,8 +13,47 @@ struct CannonTryController {
     public static var gameScene: GameScene!
     private static var checkingEnemy = Enemy(variableExpressionSource: ["x"], forEdu: false)
     public static var numOfCheck = 0
+    public static var numOfChangeVE = 0 {
+        didSet {
+//            if numOfChangeVE >= 3 {
+//                getBG() { bg in
+//                    bg?.changeVeButton.isHidden = true
+//                }
+//            }
+        }
+    }
+    public static var hintOn: Bool = false {
+        didSet {
+            if !oldValue && hintOn {
+                if let _ = gameScene as? ScenarioScene {
+                    if GameScene.stageLevel == 7 && ScenarioController.currentActionIndex > 17 {
+                        CannonController.execute(5, cannon: nil)
+                    } else {
+                        hintOn = false
+                    }
+                } else {
+                    CannonController.execute(5, cannon: nil)
+                }
+            }
+        }
+    }
+    
+    public static var isCorrect: Bool = false {
+        didSet {
+            if !oldValue && isCorrect {
+                if let _ = gameScene as? ScenarioScene {
+                    if GameScene.stageLevel == 7 && ScenarioController.currentActionIndex > 17 {
+                        CannonController.execute(6, cannon: nil)
+                    }
+                } else {
+                    CannonController.execute(6, cannon: nil)
+                }
+            }
+        }
+    }
     
     public static func showEqGrid(enemy: Enemy, cannon: Cannon) {
+        gameScene.hero.setPhysics(isActive: false)
         gameScene.eqGrid.isHidden = false
         gameScene.eqGrid.zPosition = 9
         gameScene.inputPanelForCannon.zPosition = 12
@@ -60,6 +99,7 @@ struct CannonTryController {
     }
     
     public static func hideEqGrid() {
+        gameScene.hero.setPhysics(isActive: true)
         CannonController.selectedCannon.zPosition = 5
         gameScene.eqGrid.isHidden = true
         gameScene.eqGrid.zPosition = -1
@@ -70,6 +110,7 @@ struct CannonTryController {
         gameScene.signalHolder.zPosition = 0
         gameScene.valueOfX.zPosition = 1
         numOfCheck = 0
+        numOfChangeVE = 0
         gameScene.valueOfX.text = ""
         backEnemy()
         getBG(completion: { bg in
