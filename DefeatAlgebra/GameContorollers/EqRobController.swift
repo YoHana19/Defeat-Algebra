@@ -250,6 +250,7 @@ struct EqRobController {
     
     private static func pointingKillerEnemy() {
         instructedEnemy?.pointing()
+        instructedEnemy?.isSelectedForEqRob = false
         doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForDestroyedInstruction())
         EqRobTouchController.state = .DeadInstruction
         gameScene.eqRob.state = .Dead

@@ -1144,10 +1144,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func adjustItemCount() {
-        if !compAddItemFlag {
-            let stageLevel = GameStageController.adjustGameSceneLevel()
-            if ItemDropController.manager[stageLevel][countTurnForAddItem-1] == 0 {
-                countTurnForAddItem -= 1
+        if let _ = self as? ScenarioScene {
+            return
+        } else {
+            if !compAddItemFlag {
+                let stageLevel = GameStageController.adjustGameSceneLevel()
+                if ItemDropController.manager[stageLevel][countTurnForAddItem-1] == 0 {
+                    countTurnForAddItem -= 1
+                }
             }
         }
     }
