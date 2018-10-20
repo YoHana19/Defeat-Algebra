@@ -31,6 +31,7 @@ struct GameOverTurnController {
             gameScene.run(wait, completion: {
                 gameScene.enemyKillingHero = nil
                 if gameScene.heroKilled {
+                    gameScene.buttonRetry.isHidden = false
                     gameScene.buttonRetry.state = .msButtonNodeStateActive
                 }
                 gameScene.buttonRetryFromTop.state = .msButtonNodeStateActive
@@ -43,7 +44,6 @@ struct GameOverTurnController {
     
     public static func gameOverReset() {
         gameScene.gameOverLabel.isHidden = true
-        gameScene.buttonRetry.isHidden = false
         gameScene.buttonRetryFromTop.state = .msButtonNodeStateHidden
         /* Play Sound */
         if MainMenu.soundOnFlag {
