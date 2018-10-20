@@ -76,7 +76,7 @@ class CannonBackground: SKSpriteNode {
                 return
             case .Action:
                 if let _ = gameScene as? ScenarioScene {
-                    if GameScene.stageLevel == MainMenu.invisivleStartTurn {
+                    if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                         guard CannonTutorialController.userTouch(on: nodeAtPoint.name) else { return }
                     }
                 }
@@ -134,7 +134,7 @@ class CannonBackground: SKSpriteNode {
         if nodeAtPoint.name == "tryDoneButton" {
             guard isEnable else { return }
             if let _ = gameScene as? ScenarioScene {
-                if GameScene.stageLevel == MainMenu.invisivleStartTurn {
+                if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                     if ScenarioController.currentActionIndex > 21 {
                         CannonTryController.hideEqGrid()
                     }
@@ -208,7 +208,7 @@ class CannonBackground: SKSpriteNode {
         dispatchGroup.notify(queue: .main, execute: {
             self.enemy.punchAndMoveForCannon {
                 self.cannon.throwBombForTry(enemy: self.enemy, value: value, completion: { result in
-                    if GameScene.stageLevel == MainMenu.invisivleStartTurn && ScenarioController.currentActionIndex < 22 {
+                    if GameScene.stageLevel == MainMenu.invisibleStartTurn && ScenarioController.currentActionIndex < 22 {
                         let cannonValue = self.cannon.calculateValue(value: value)
                         let distance = (self.cannon.spotPos[1]-cannonValue) - (self.enemy.positionY-self.enemy.valueOfEnemy)
                         self.record(value: value, distance: distance, enemyValue: self.enemy.valueOfEnemy, cannonValue: cannonValue)

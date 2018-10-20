@@ -179,7 +179,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var valueOfX: SKLabelNode!
     var xValue: Int = 0 {
         didSet {
-            if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+            if GameScene.stageLevel < MainMenu.invisibleStartTurn {
                 if xValue == 0 {
                     valueOfX.text = ""
                 } else {
@@ -1160,8 +1160,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             return
         } else {
             if !compAddItemFlag {
-                let stageLevel = GameStageController.adjustGameSceneLevel()
-                if ItemDropController.manager[stageLevel][countTurnForAddItem-1] == 0 {
+                if ItemDropController.getManager()[countTurnForAddItem-1] == 0 {
                     countTurnForAddItem -= 1
                 }
             }

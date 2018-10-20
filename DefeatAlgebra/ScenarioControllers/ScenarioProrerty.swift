@@ -198,7 +198,7 @@ struct ScenarioProperty {
     
     static let scenarioCannonStartTurn: [[String]] = [
         ["0", "すまぬ、エクロボはしばらく充電しなければならないようじゃ"],
-        ["2", "そんなー！"],
+        ["2", "えー、またですか！？"],
         ["0", "じゃが、新たにアルジェ砲を開発したぞ！！"],
         ["2", "アルジェ砲！？"],
         ["0", "アルジェ砲は、攻撃モードのロボットが前後にいる時"],
@@ -219,7 +219,7 @@ struct ScenarioProperty {
         ["pause"]
     ]
     
-    static let scenarioInvisivleStartTurn: [[String]] = [
+    static let scenarioInvisibleStartTurn: [[String]] = [
         ["2", "どうやら、俺たちを甘く見ていたようだな！"],
         ["0", "ジェブラ博士よ。バカなことはやめて、もっと人のためになる研究をしたらどうじゃ"],
         ["1", "ふっふっふ。甘く見ているのはどちらかな？"],

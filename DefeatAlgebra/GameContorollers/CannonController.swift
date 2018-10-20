@@ -29,7 +29,9 @@ struct CannonController {
         switch index {
         case 0:
             selectedCannon = cannon!
-            willFireCannon.append(cannon!)
+            if !selectedCannon.isActive {
+                willFireCannon.append(cannon!)
+            }
             showInputPanelWithDoctor()
             break;
         case 1:
@@ -64,7 +66,7 @@ struct CannonController {
         switch index {
         case 0:
             hideInputPanelWithDoctor()
-            if willFireCannon.count > 0 {
+            if willFireCannon.count > 0 && !selectedCannon.isActive {
                 willFireCannon.removeLast()
             }
             selectedCannon.recoverVEElementArray()
@@ -86,6 +88,7 @@ struct CannonController {
     
     private static func hideInputPanelWithDoctor() {
         hideInputPanel()
+        gameScene.inputPanelForCannon.buttonClearTapped()
         CannonTouchController.state = .Ready
         CharacterController.doctor.setScale(1)
         CharacterController.doctor.balloon.isHidden = true
@@ -93,12 +96,13 @@ struct CannonController {
     }
     
     private static func doneInput() {
+        selectedCannon.isActive = true
         hideInputPanel()
         CannonTouchController.state = .Ready
         CharacterController.doctor.setScale(1)
         CharacterController.doctor.balloon.isHidden = true
         CharacterController.doctor.move(from: nil, to: doctorOffPos)
-        if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+        if GameScene.stageLevel < MainMenu.invisibleStartTurn {
             ItemTouchController.othersTouched()
         } else {
             let cands = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == selectedCannon.spotPos[0] })
@@ -116,6 +120,7 @@ struct CannonController {
     }
     
     private static func startSelectEnemyForTry() {
+        selectedCannon.isActive = true
         hideInputPanel()
         doctorSays(in: .WillTry, value: nil)
         let cand = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == selectedCannon.spotPos[0] })

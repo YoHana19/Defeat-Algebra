@@ -27,8 +27,8 @@ class ScenarioTouchController {
         case MainMenu.eqRobStartTurn:
             scenarioSceneEqRobStartTurn(name: name)
             break;
-        case MainMenu.invisivleStartTurn:
-            scenarioSceneInvisivleStartTurn()
+        case MainMenu.invisibleStartTurn:
+            scenarioSceneInvisibleStartTurn()
             break;
         default:
             break;
@@ -52,8 +52,8 @@ class ScenarioTouchController {
         case MainMenu.cannonStartTurn:
             gridCannonStartTurn(nodeAtPoint: nodeAtPoint)
             break;
-        case MainMenu.invisivleStartTurn:
-            gridInvisivleStartTurn(nodeAtPoint: nodeAtPoint)
+        case MainMenu.invisibleStartTurn:
+            gridInvisibleStartTurn(nodeAtPoint: nodeAtPoint)
             break;
         default:
             break;
@@ -102,7 +102,7 @@ class ScenarioTouchController {
         }
     }
     
-    private static func scenarioSceneInvisivleStartTurn() {
+    private static func scenarioSceneInvisibleStartTurn() {
         if ScenarioController.currentActionIndex == 6 || ScenarioController.currentActionIndex == 7 {
             ScenarioController.controllActions()
         } else if ScenarioController.currentActionIndex >= 12 && ScenarioController.currentActionIndex <= 14 {
@@ -184,7 +184,7 @@ class ScenarioTouchController {
         }
     }
     
-    private static func gridInvisivleStartTurn(nodeAtPoint: SKNode?) {
+    private static func gridInvisibleStartTurn(nodeAtPoint: SKNode?) {
         if ScenarioController.currentActionIndex == 5 {
             if let cannon = nodeAtPoint as? Cannon {
                 if cannon.spotPos == [6,9] {

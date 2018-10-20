@@ -131,7 +131,8 @@ class ScenarioScene: GameScene {
                 self?.main.stop()
                 self?.stageClear.stop()
             }
-            if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.moveExplainStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.invisivleStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
+            TutorialController.state = .Pending
+            if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.moveExplainStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.invisibleStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
                 ScenarioController.loadGameScene()
             } else {
                 CharacterController.retreatMainHero()

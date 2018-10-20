@@ -26,6 +26,7 @@ struct AddEnemyTurnController {
         if !done {
             done = true
             let stageLevel = GameStageController.adjustGameSceneLevel()
+
             DataController.setDataForEnemyKilled()
             
             /* Make sure to call till complete adding enemy */
@@ -48,6 +49,7 @@ struct AddEnemyTurnController {
                     switch property.0 {
                         case 0:
                             EnemyAddController.addInitialEnemyAtGrid0(veCate: property.1, enemyPosArray: property.2, grid: gameScene.gridNode) {
+                                syncPunchInterval()
                                 /* Update enemy position */
                                 EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
                                 /* Move to next state */
@@ -57,6 +59,7 @@ struct AddEnemyTurnController {
                             break;
                         case 1:
                             EnemyAddController.addInitialEnemyAtGrid1(enemyPosArray: property.2, grid: gameScene.gridNode) {
+                                syncPunchInterval()
                                 /* Update enemy position */
                                 EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
                                 /* Move to next state */
@@ -65,19 +68,14 @@ struct AddEnemyTurnController {
                             }
                             break;
                         case 2:
-                            var veCate = 0
-                            var originIncluded = 0
-                            if property.1 < 100 {
-                                veCate = property.1
-                                originIncluded = 0
-                            } else if property.1 < 1000 {
+                            var veCate = property.1
+                            var isHard = false
+                            if property.1 > 100 {
                                 veCate = property.1 - 100
-                                originIncluded = 1
-                            } else {
-                                veCate = property.1 - 1000
-                                originIncluded = 2
+                                isHard = true
                             }
-                            EnemyAddController.addInitialEnemyAtGrid2(veCate: veCate, originInclude: originIncluded, enemyPosArray: property.2, grid: gameScene.gridNode) {
+                            EnemyAddController.addInitialEnemyAtGrid2(veCate: veCate, isHard: isHard, enemyPosArray: property.2, grid: gameScene.gridNode) {
+                                syncPunchInterval()
                                 /* Update enemy position */
                                 EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
                                 /* Move to next state */
@@ -95,7 +93,7 @@ struct AddEnemyTurnController {
                         EnemyAddController.addEnemyAtGrid1(addIndex: addingIndex, grid: gameScene.gridNode) {
                             /* Reset start enemy position array */
                             gameScene.gridNode.startPosArray = [0,1,2,3,4,5,6,7,8]
-                            
+                            syncPunchInterval()
                             /* Update enemy position */
                             EnemyMoveController.resetEnemyPositon(grid: gameScene.gridNode)
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
@@ -106,11 +104,15 @@ struct AddEnemyTurnController {
                             done = false
                         }
                     } else {
-                        /* Add enemy normaly */
-                        EnemyAddController.addEnemyAtGrid2(addIndex: addingIndex, grid: gameScene.gridNode) {
+                        var isHard = false
+                        if addingIndex > 100 {
+                            isHard = true
+                        }
+                        /* Add enemy for eqRob */
+                        EnemyAddController.addEnemyAtGrid2(addIndex: addingIndex, grid: gameScene.gridNode, isHard: isHard) {
                             /* Reset start enemy position array */
                             gameScene.gridNode.startPosArray = [0,1,2,3,4,5,6,7,8]
-                            
+                            syncPunchInterval()
                             /* Update enemy position */
                             EnemyMoveController.resetEnemyPositon(grid: gameScene.gridNode)
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
@@ -134,6 +136,14 @@ struct AddEnemyTurnController {
         }
     }
     
+    private static func syncPunchInterval() {
+        if GameScene.stageLevel == MainMenu.cannonStartTurn+2 || GameScene.stageLevel == MainMenu.invisibleStartTurn+1 {
+            let rand = Int(arc4random_uniform(UInt32(3)))
+            gameScene.gridNode.enemyArray.forEach({ $0.punchInterval = rand; $0.punchIntervalForCount = rand })
+        }
+    }
+    
+    
     public static func fastForward(completion: @escaping () -> Void) {
         let stageLevel = GameStageController.adjustGameSceneLevel()
         guard gameScene.countTurnForAddEnemy < EnemyProperty.addEnemyManager[stageLevel].count else { return completion() }
@@ -141,6 +151,5 @@ struct AddEnemyTurnController {
             gameScene.countTurnForAddEnemy += 1
         }
         return completion()
-        
     }
 }

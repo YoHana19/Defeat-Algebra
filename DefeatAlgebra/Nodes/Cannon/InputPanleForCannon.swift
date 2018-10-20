@@ -31,7 +31,7 @@ class InputPanelForCannon: SKSpriteNode {
             self.isHidden = !isActive
             if (isActive) {
                 CannonController.selectedCannon.resetVEElementArray()
-                if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+                if GameScene.stageLevel < MainMenu.invisibleStartTurn {
                     buttonTry.isHidden = true
                     coverTryBtn.isHidden = true
                 } else {
@@ -123,7 +123,7 @@ class InputPanelForCannon: SKSpriteNode {
         setButtons()
         setLabels()
         
-        if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+        if GameScene.stageLevel < MainMenu.invisibleStartTurn {
             isNewVesion = false
             oldVersion()
         } else {
@@ -146,7 +146,7 @@ class InputPanelForCannon: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if GameScene.stageLevel == MainMenu.cannonStartTurn || GameScene.stageLevel == MainMenu.invisivleStartTurn, let _ = gameScene as? ScenarioScene {
+        if GameScene.stageLevel == MainMenu.cannonStartTurn || GameScene.stageLevel == MainMenu.invisibleStartTurn, let _ = gameScene as? ScenarioScene {
             guard CannonTutorialController.userTouch(on: nodeAtPoint.name) else { return }
         }
         
@@ -298,26 +298,9 @@ class InputPanelForCannon: SKSpriteNode {
         
         /* Touch button clear */
         if nodeAtPoint.name == "buttonClear" {
-            
-            /* Reset */
-            variableExpression = ""
-            putXFlag = false
-            operant = 0
-            coefficientFlag = false
-            tempSpot = 0
-            
-            /* Valid x, num */
-            uncoverNumber()
-            uncoverX()
-            
-            /* Invalid +-, ok, 0 */
-            coverOperant()
-            coverOK()
-            cover0()
-            
+            buttonClearTapped()
             /* Reset elemnts of variable expression of cannon */
             CannonController.selectedCannon.resetVEElementArray()
-            
         }
         
         /* Touch button ok */
@@ -350,7 +333,7 @@ class InputPanelForCannon: SKSpriteNode {
             if let _ = gameScene as? ScenarioScene {
                 if GameScene.stageLevel == MainMenu.cannonStartTurn {
                     return
-                } else if GameScene.stageLevel == MainMenu.invisivleStartTurn {
+                } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                     if ScenarioController.currentActionIndex < 17 {
                         return
                     }
@@ -427,6 +410,24 @@ class InputPanelForCannon: SKSpriteNode {
         coefficientFlag = true
     }
     
+    public func buttonClearTapped() {
+        /* Reset */
+        variableExpression = ""
+        putXFlag = false
+        operant = 0
+        coefficientFlag = false
+        tempSpot = 0
+        
+        /* Valid x, num */
+        uncoverNumber()
+        uncoverX()
+        
+        /* Invalid +-, ok, 0 */
+        coverOperant()
+        coverOK()
+        cover0()
+    }
+    
     func makeButtons(completion: @escaping ([SKSpriteNode]) -> Void) {
         
         let button1 = SKSpriteNode(imageNamed: "input1")
@@ -453,7 +454,7 @@ class InputPanelForCannon: SKSpriteNode {
         buttonMinus.name = "button-"
         buttonPlus.name = "button+"
         buttonX.name = "buttonX"
-        if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+        if GameScene.stageLevel < MainMenu.invisibleStartTurn {
             let button0 = SKSpriteNode(imageNamed: "input0")
             button0.name = "button0"
             return completion([button0, button1, button2, button3, button4, button5, button6, button7, button8, button9, buttonMinus, buttonPlus, buttonX])
@@ -633,14 +634,14 @@ class InputPanelForCannon: SKSpriteNode {
     /* Toggle ok buttons */
     func coverOK() {
         coverOKBtn.isHidden = false
-        guard GameScene.stageLevel >= MainMenu.invisivleStartTurn else { return }
+        guard GameScene.stageLevel >= MainMenu.invisibleStartTurn else { return }
         guard CannonTouchController.state != .Trying else { return }
         coverTryBtn.isHidden = false
     }
     
     func uncoverOK() {
         coverOKBtn.isHidden = true
-        guard GameScene.stageLevel >= MainMenu.invisivleStartTurn else { return }
+        guard GameScene.stageLevel >= MainMenu.invisibleStartTurn else { return }
         guard CannonTouchController.state != .Trying else { return }
         coverTryBtn.isHidden = true
     }

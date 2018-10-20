@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum CharacterSpeakContentType {
-    case None, PlaneExplain, EqRobFirstly, LogDefenceFirstly, TimeBombGotFirstly, MoveExplain
+    case None, PlaneExplain, EqRobFirstly, LogDefenceFirstly, TimeBombGotFirstly, MoveExplain, SecondDay, EqRobReturn
 }
 
 struct SpeakInGameController {
@@ -53,6 +53,33 @@ struct SpeakInGameController {
                 guard lastAction != .EqRobFirstly else { return }
                 wait(length: 1.0) {
                     doAction(type: .EqRobFirstly)
+                }
+                return
+            }
+            break;
+        case MainMenu.secondDayStartTurn:
+            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
+                guard lastAction != .SecondDay else { return }
+                wait(length: 1.0) {
+                    doAction(type: .SecondDay)
+                }
+                return
+            }
+            break;
+        case MainMenu.secondDayStartTurn+2:
+            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
+                guard lastAction != .EqRobReturn else { return }
+                wait(length: 1.0) {
+                    doAction(type: .EqRobReturn)
+                }
+                return
+            }
+            break;
+        case MainMenu.lastTurn:
+            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
+                guard lastAction != .EqRobReturn else { return }
+                wait(length: 1.0) {
+                    doAction(type: .EqRobReturn)
                 }
                 return
             }
@@ -128,6 +155,12 @@ struct SpeakInGameController {
         case .EqRobFirstly:
             currentContent = SpeakInGameProperty.eqRobFirstly
             break;
+        case .SecondDay:
+            currentContent = SpeakInGameProperty.secondDay
+            break;
+        case .EqRobReturn:
+            currentContent = SpeakInGameProperty.eqRobReturn
+            break;
         default:
             break;
         }
@@ -192,12 +225,12 @@ struct SpeakInGameController {
                 break;
             }
             break;
-//        case .Scenario8Firstly:
-//            CharacterController.retreatDoctor()
-//            CharacterController.retreatMainHero()
-//            gameScene.isCharactersTurn = false
-//            gameScene.gridNode.isTutorial = false
-//            break;
+        case .SecondDay:
+            CharacterController.retreatDoctor()
+            CharacterController.retreatMainHero()
+            gameScene.isCharactersTurn = false
+            gameScene.gridNode.isTutorial = false
+            break;
         default:
             break;
         }

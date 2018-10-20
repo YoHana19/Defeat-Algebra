@@ -362,7 +362,7 @@ class Enemy: SKSpriteNode {
     public func forcusForAttack(color: UIColor, value: Int) {
         variableExpressionLabel.fontColor = color
         guard value != 0 else { return }
-        guard GameScene.stageLevel < MainMenu.invisivleStartTurn else { return }
+        guard GameScene.stageLevel < MainMenu.invisibleStartTurn else { return }
         xValueLabel.text = "x=\(value)"
     }
     

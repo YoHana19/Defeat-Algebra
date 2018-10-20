@@ -71,9 +71,9 @@ class EnemyAddController {
         })
     }
     
-    static func addInitialEnemyAtGrid2(veCate: Int, originInclude: Int, enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
+    static func addInitialEnemyAtGrid2(veCate: Int, isHard: Bool, enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
         
-        getEqRobSource(veCate: veCate, numOfEnemy: enemyPosArray.count) { source in
+        getEqRobSource(isHard: isHard, veCate: veCate, numOfEnemy: enemyPosArray.count) { source in
             let dispatchGroup = DispatchGroup()
             let veSource = source.shuffled
             for (i, posArray) in enemyPosArray.enumerated() {
@@ -93,22 +93,35 @@ class EnemyAddController {
         }
     }
     
-    private static func getRatio() -> Int {
+    private static func getRatio(numOfEnmey: Int) -> Int {
         let rand = Int(arc4random_uniform(100))
-        if rand < 10 {
-            return 0
-        } else if rand < 35 {
-            return 1
-        } else if rand < 75 {
-            return 2
+        if numOfEnmey == 4 {
+            if rand < 16 {
+                return 0
+            } else if rand < 37 {
+                return 1
+            } else if rand < 79 {
+                return 2
+            } else {
+                return 3
+            }
         } else {
-            return 3
+            if rand < 16 {
+                return 0
+            } else if rand < 37 {
+                return 1
+            } else if rand < 58 {
+                return 2
+            } else if rand < 79 {
+                return 3
+            } else {
+                return 4
+            }
         }
     }
     
-    private static func getEqRobSource(veCate: Int, numOfEnemy: Int, completion: @escaping ([String]) -> Void) {
-        let rand = getRatio()
-        print(rand)
+    private static func getEqRobSource(isHard: Bool, veCate: Int, numOfEnemy: Int, completion: @escaping ([String]) -> Void) {
+        let rand = getRatio(numOfEnmey: numOfEnemy)
         let oneHalf = rand
         let secondHalf = numOfEnemy - rand
         let veSource = VECategory.ves[veCate]
@@ -118,8 +131,20 @@ class EnemyAddController {
             let rand = Int(arc4random_uniform(UInt32(veSource.count)))
             let origin = veSource[rand]
             cands.append(origin)
+            var otherNum = secondHalf-1
+            if (isHard) {
+                otherNum -= 1
+                VECategory.getCategory(ve: origin) { cate in
+                    dispatchGroup.enter()
+                    let hardCands = VECategory.unSimplifiedHardVEs(veCate: cate)
+                    let rand = Int(arc4random_uniform(UInt32(hardCands.count)))
+                    cands.append(hardCands[rand])
+                    dispatchGroup.leave()
+                }
+            }
+            
             VECategory.getUnsimplifiedSingle(source: origin) { source in
-                DAUtility.getRandomNumbers(total: source.count, times: secondHalf-1) { rands in
+                DAUtility.getRandomNumbers(total: source.count, times: otherNum) { rands in
                     for i in rands {
                         dispatchGroup.enter()
                         cands.append(source[i])
@@ -128,25 +153,34 @@ class EnemyAddController {
                 }
                 if oneHalf == 1 {
                     dispatchGroup.enter()
-                    let others = veSource.filter({ $0 != origin })
-                    let r = Int(arc4random_uniform(UInt32(others.count)))
-                    VECategory.getUnsimplifiedSingle(source: others[r]) { s in
-                        let o = Int(arc4random_uniform(UInt32(s.count)))
-                        cands.append(s[o])
-                        dispatchGroup.leave()
-                    }
+                    let wrongable = VECategory.wrongableVEs(ve: origin)
+                    let r = Int(arc4random_uniform(UInt32(wrongable.count)))
+                    cands.append(wrongable[r])
+                    dispatchGroup.leave()
                 }
                 dispatchGroup.notify(queue: .main, execute: {
                     return completion(cands)
                 })
             }
+            
         } else if secondHalf == 0 || secondHalf == 1 {
             let dispatchGroup = DispatchGroup()
             let rand = Int(arc4random_uniform(UInt32(veSource.count)))
             let origin = veSource[rand]
             cands.append(origin)
+            var otherNum = oneHalf-1
+            if (isHard) {
+                otherNum -= 1
+                VECategory.getCategory(ve: origin) { cate in
+                    dispatchGroup.enter()
+                    let hardCands = VECategory.unSimplifiedHardVEs(veCate: cate)
+                    let rand = Int(arc4random_uniform(UInt32(hardCands.count)))
+                    cands.append(hardCands[rand])
+                    dispatchGroup.leave()
+                }
+            }
             VECategory.getUnsimplifiedSingle(source: origin) { source in
-                DAUtility.getRandomNumbers(total: source.count, times: oneHalf-1) { rands in
+                DAUtility.getRandomNumbers(total: source.count, times: otherNum) { rands in
                     for i in rands {
                         dispatchGroup.enter()
                         cands.append(source[i])
@@ -155,49 +189,65 @@ class EnemyAddController {
                 }
                 if secondHalf == 1 {
                     dispatchGroup.enter()
-                    let others = source.filter({ $0 != origin })
-                    let r = Int(arc4random_uniform(UInt32(others.count)))
-                    VECategory.getUnsimplifiedSingle(source: others[r]) { s in
-                        let o = Int(arc4random_uniform(UInt32(s.count)))
-                        cands.append(s[o])
-                        dispatchGroup.leave()
-                    }
+                    let wrongable = VECategory.wrongableVEs(ve: origin)
+                    let r = Int(arc4random_uniform(UInt32(wrongable.count)))
+                    cands.append(wrongable[r])
+                    dispatchGroup.leave()
                 }
                 dispatchGroup.notify(queue: .main, execute: {
                     return completion(cands)
                 })
             }
         } else {
+            let rand = Int(arc4random_uniform(UInt32(veSource.count)))
+            let origin = veSource[rand]
+            cands.append(origin)
+            let wrongable = VECategory.wrongableVEs(ve: origin)
+            let r = Int(arc4random_uniform(UInt32(wrongable.count)))
+            let origin2 = wrongable[r]
+            cands.append(origin2)
             let dispatchGroup = DispatchGroup()
-            DAUtility.getRandomNumbers(total: veSource.count, times: 2) { rands in
-                for (i, rand) in rands.enumerated() {
-                    cands.append(veSource[rand])
-                    if i == 0 {
-                        VECategory.getUnsimplifiedSingle(source: veSource[rand]) { source in
-                            DAUtility.getRandomNumbers(total: source.count, times: oneHalf-1) { rands2 in
-                                for r in rands2 {
-                                    dispatchGroup.enter()
-                                    cands.append(source[r])
-                                    dispatchGroup.leave()
-                                }
-                            }
-                        }
-                    } else if i == 1 {
-                        VECategory.getUnsimplifiedSingle(source: veSource[rand]) { source in
-                            DAUtility.getRandomNumbers(total: source.count, times: secondHalf-1) { rands2 in
-                                for r in rands2 {
-                                    dispatchGroup.enter()
-                                    cands.append(source[r])
-                                    dispatchGroup.leave()
-                                }
-                            }
-                        }
+            var otherNum = oneHalf-1
+            var otherNum2 = secondHalf-1
+            if (isHard) {
+                otherNum -= 1
+                otherNum2 -= 1
+                VECategory.getCategory(ve: origin) { cate in
+                    dispatchGroup.enter()
+                    let hardCands = VECategory.unSimplifiedHardVEs(veCate: cate)
+                    let rand = Int(arc4random_uniform(UInt32(hardCands.count)))
+                    cands.append(hardCands[rand])
+                    dispatchGroup.leave()
+                }
+                VECategory.getCategory(ve: origin2) { cate in
+                    dispatchGroup.enter()
+                    let hardCands = VECategory.unSimplifiedHardVEs(veCate: cate)
+                    let rand = Int(arc4random_uniform(UInt32(hardCands.count)))
+                    cands.append(hardCands[rand])
+                    dispatchGroup.leave()
+                }
+            }
+            VECategory.getUnsimplifiedSingle(source: origin) { source in
+                DAUtility.getRandomNumbers(total: source.count, times: otherNum) { rands2 in
+                    for r in rands2 {
+                        dispatchGroup.enter()
+                        cands.append(source[r])
+                        dispatchGroup.leave()
                     }
                 }
-                dispatchGroup.notify(queue: .main, execute: {
-                    return completion(cands)
-                })
             }
+            VECategory.getUnsimplifiedSingle(source: origin2) { source in
+                DAUtility.getRandomNumbers(total: source.count, times: otherNum2) { rands2 in
+                    for r in rands2 {
+                        dispatchGroup.enter()
+                        cands.append(source[r])
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            dispatchGroup.notify(queue: .main, execute: {
+                return completion(cands)
+            })
         }
     }
     
@@ -208,33 +258,16 @@ class EnemyAddController {
         let dispatchGroup1 = DispatchGroup()
         for array in manager {
             dispatchGroup1.enter()
-            let dispatchGroup2 = DispatchGroup()
-            let rand = Int(arc4random_uniform(UInt32(VECategory.ves[array[1]].count)))
-            for _ in 1...array[0] {
-                dispatchGroup2.enter()
-                let veGroup = array[1]
-                if !VECategory.unSFrom.contains(veGroup) {
-                    let veSource = VECategory.ves[veGroup]
-                    /* New enemy object */
-                    let enemy = Enemy(variableExpressionSource: veSource, forEdu: false)
-                    
-                    /* x position */
-                    let randX = Int(arc4random_uniform(UInt32(grid.startPosArray.count)))
-                    let startPositionX = grid.startPosArray[randX]
-                    /* Make sure not to overlap enemies */
-                    grid.startPosArray.remove(at: randX)
-                    
-                    /* y position */
-                    let randY = Int(arc4random_uniform(UInt32(array[2])))
-                    
-                    /* set adding enemy movement */
-                    setAddEnemyMovement(enemy: enemy, posX: startPositionX, posY: 11-randY, grid: grid) {
-                        dispatchGroup2.leave()
-                    }
-                } else {
-                    VECategory.getUnsimplified(source: [VECategory.ves[veGroup][rand]]) { veSource in
+            let num = array[0]
+            let veGroup = array[1]
+            let veSource = VECategory.ves[veGroup]
+            if !VECategory.unSFrom.contains(veGroup) {
+                DAUtility.getRandomNumbers(total: veSource.count, times: num) { rands in
+                    let dispatchGroup2 = DispatchGroup()
+                    for rand in rands {
+                        dispatchGroup2.enter()
                         /* New enemy object */
-                        let enemy = Enemy(variableExpressionSource: veSource, forEdu: false)
+                        let enemy = Enemy(variableExpressionSource: [veSource[rand]], forEdu: false)
                         
                         /* x position */
                         let randX = Int(arc4random_uniform(UInt32(grid.startPosArray.count)))
@@ -250,22 +283,49 @@ class EnemyAddController {
                             dispatchGroup2.leave()
                         }
                     }
+                    dispatchGroup2.notify(queue: .main, execute: {
+                        dispatchGroup1.leave()
+                    })
                 }
-                
+            } else {
+                DAUtility.getRandomNumbers(total: veSource.count, times: num) { rands in
+                    let dispatchGroup2 = DispatchGroup()
+                    for rand in rands {
+                        dispatchGroup2.enter()
+                        VECategory.getUnsimplified(source: [VECategory.ves[veGroup][rand]]) { veSource in
+                            /* New enemy object */
+                            let enemy = Enemy(variableExpressionSource: veSource, forEdu: false)
+                            
+                            /* x position */
+                            let randX = Int(arc4random_uniform(UInt32(grid.startPosArray.count)))
+                            let startPositionX = grid.startPosArray[randX]
+                            /* Make sure not to overlap enemies */
+                            grid.startPosArray.remove(at: randX)
+                            
+                            /* y position */
+                            let randY = Int(arc4random_uniform(UInt32(array[2])))
+                            
+                            /* set adding enemy movement */
+                            setAddEnemyMovement(enemy: enemy, posX: startPositionX, posY: 11-randY, grid: grid) {
+                                dispatchGroup2.leave()
+                            }
+                        }
+                    }
+                    dispatchGroup2.notify(queue: .main, execute: {
+                        dispatchGroup1.leave()
+                    })
+                }
             }
-            dispatchGroup2.notify(queue: .main, execute: {
-                dispatchGroup1.leave()
-            })
         }
         dispatchGroup1.notify(queue: .main, execute: {
             return completion()
         })
     }
     
-    static func addEnemyAtGrid2(addIndex: Int, grid: Grid, completion: @escaping () -> Void) {
+    static func addEnemyAtGrid2(addIndex: Int, grid: Grid, isHard: Bool, completion: @escaping () -> Void) {
         let manager = EnemyProperty.addEnemyVEManager[GameStageController.adjustGameSceneLevel()][String(addIndex)]![0]
-        
-        getEqRobSource(veCate: manager[1], numOfEnemy: manager[0]) { source in
+        print(addIndex)
+        getEqRobSource(isHard: isHard, veCate: manager[1], numOfEnemy: manager[0]) { source in
             let dispatchGroup = DispatchGroup()
             let veSource = source.shuffled
             for ve in veSource {

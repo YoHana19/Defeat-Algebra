@@ -179,8 +179,6 @@
 		20D0FECD20B6C0B000C547A5 /* LevelSelectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEC920B6C0B000C547A5 /* LevelSelectMenu.swift */; };
 		20D0FECE20B6C0B000C547A5 /* LevelSelectMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20D0FECA20B6C0B000C547A5 /* LevelSelectMenu.sks */; };
 		20D0FECF20B6C0B000C547A5 /* LevelSelectMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20D0FECA20B6C0B000C547A5 /* LevelSelectMenu.sks */; };
-		20D0FED020B6C0B000C547A5 /* LevelSelect.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20D0FECB20B6C0B000C547A5 /* LevelSelect.sks */; };
-		20D0FED120B6C0B000C547A5 /* LevelSelect.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20D0FECB20B6C0B000C547A5 /* LevelSelect.sks */; };
 		20D0FED620B6C0E300C547A5 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20D0FED320B6C0E300C547A5 /* GameScene.sks */; };
 		20D0FED720B6C0E300C547A5 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 20D0FED320B6C0E300C547A5 /* GameScene.sks */; };
 		20D0FED820B6C0E300C547A5 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FED420B6C0E300C547A5 /* GameScene.swift */; };
@@ -435,7 +433,6 @@
 		20CD8E5B210DAE0100BD78B6 /* ContactController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactController.swift; sourceTree = "<group>"; };
 		20D0FEC920B6C0B000C547A5 /* LevelSelectMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelSelectMenu.swift; sourceTree = "<group>"; };
 		20D0FECA20B6C0B000C547A5 /* LevelSelectMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LevelSelectMenu.sks; sourceTree = "<group>"; };
-		20D0FECB20B6C0B000C547A5 /* LevelSelect.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LevelSelect.sks; sourceTree = "<group>"; };
 		20D0FED320B6C0E300C547A5 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		20D0FED420B6C0E300C547A5 /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		20D0FED520B6C0E300C547A5 /* EnemyProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyProperty.swift; sourceTree = "<group>"; };
@@ -792,7 +789,6 @@
 			children = (
 				20D0FEC920B6C0B000C547A5 /* LevelSelectMenu.swift */,
 				20D0FECA20B6C0B000C547A5 /* LevelSelectMenu.sks */,
-				20D0FECB20B6C0B000C547A5 /* LevelSelect.sks */,
 			);
 			name = LevelSelectMenu;
 			path = DefeatAlgebra/LevelSelectMenu;
@@ -1089,7 +1085,6 @@
 				201B8C751F3AE7E900E91301 /* flash.wav in Resources */,
 				201B8C511F3A325A00E91301 /* catapultBomb.mp3 in Resources */,
 				204C7D941F074FE800F4DD11 /* LaunchScreen.storyboard in Resources */,
-				20D0FED020B6C0B000C547A5 /* LevelSelect.sks in Resources */,
 				20113795212001A400B5A138 /* ScenarioScene.sks in Resources */,
 				201B8C5B1F3A439800E91301 /* magicSword.wav in Resources */,
 				201B8C7B1F3AEB1B00E91301 /* selectNewGame.wav in Resources */,
@@ -1137,7 +1132,6 @@
 				20E9E8D620223B1400D31410 /* flash.wav in Resources */,
 				20E9E8D720223B1400D31410 /* catapultBomb.mp3 in Resources */,
 				20E9E8D820223B1400D31410 /* LaunchScreen.storyboard in Resources */,
-				20D0FED120B6C0B000C547A5 /* LevelSelect.sks in Resources */,
 				20113796212001A400B5A138 /* ScenarioScene.sks in Resources */,
 				20E9E8D920223B1400D31410 /* magicSword.wav in Resources */,
 				20E9E8DA20223B1400D31410 /* selectNewGame.wav in Resources */,

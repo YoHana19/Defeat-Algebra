@@ -32,9 +32,6 @@ struct GameStageController {
         case MainMenu.timeBombStartTurn: //3
             loadScenarioScene(scene: scene)
             break;
-        case 4:
-            loadGameScene(scene: scene)
-            break;
         case MainMenu.moveExplainStartTurn: //5
             loadScenarioScene(scene: scene)
             break;
@@ -44,34 +41,20 @@ struct GameStageController {
         case MainMenu.eqRobStartTurn: //7
             loadScenarioScene(scene: scene)
             break;
-        case 8:
-            loadGameScene(scene: scene)
-            break;
-        case MainMenu.secondDayStartTurn: //9
-            loadGameScene(scene: scene)
-            break;
-        case 10:
+        case MainMenu.secondDayStartTurn: //10
             loadGameScene(scene: scene)
             break;
         case MainMenu.cannonStartTurn:
             loadScenarioScene(scene: scene)
             break;
-        case 12:
-            loadGameScene(scene: scene)
-            break;
-        case 13:
-            loadGameScene(scene: scene)
-            break;
-        case MainMenu.invisivleStartTurn: //14
+        case MainMenu.invisibleStartTurn: //16
             loadScenarioScene(scene: scene)
             break;
-        case 15:
-            loadGameScene(scene: scene)
-            break;
-        case MainMenu.lastTurn: //16
+        case MainMenu.lastTurn: //19
             loadScenarioScene(scene: scene)
             break;
         default:
+            loadGameScene(scene: scene)
             break;
         }
     }
@@ -125,6 +108,8 @@ struct GameStageController {
             gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb"]
         } else if GameScene.stageLevel == MainMenu.secondDayStartTurn {
             gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb"]
+        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn+1 {
+            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb"]
         } else {
             gameScene.handedItemNameArray = [String]()
         }
@@ -140,7 +125,9 @@ struct GameStageController {
     private static func eqRob() {
         if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             gameScene.eqRob.isHidden = true
-        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn && GameScene.stageLevel < MainMenu.invisivleStartTurn+2 {
+        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn || GameScene.stageLevel == MainMenu.secondDayStartTurn+1 {
+            gameScene.eqRob.isHidden = true
+        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn && GameScene.stageLevel < MainMenu.lastTurn {
             gameScene.eqRob.isHidden = true
         } else {
             gameScene.eqRob.isHidden = false
@@ -180,7 +167,7 @@ struct GameStageController {
     private static func eqRobForScenario() {
         if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             gameScene.eqRob.isHidden = true
-        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn && GameScene.stageLevel < MainMenu.invisivleStartTurn+2 {
+        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn && GameScene.stageLevel < MainMenu.invisibleStartTurn+2 {
             gameScene.eqRob.isHidden = true
         } else {
             if GameScene.stageLevel == MainMenu.eqRobStartTurn {
@@ -219,21 +206,23 @@ struct GameStageController {
         guard let scenarioScene = gameScene as? ScenarioScene else { return }
         if GameScene.stageLevel == 0 {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.initialScenario
-        } else if GameScene.stageLevel == MainMenu.uncoverSignalStartTurn { //1
+        } else if GameScene.stageLevel == MainMenu.uncoverSignalStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.uncoverSignal
-        } else if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn { //2
+        } else if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.changeMoveSpan
-        } else if GameScene.stageLevel == MainMenu.timeBombStartTurn { //3
+        } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.timeBombExplain
-        } else if GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn { //6
+        } else if GameScene.stageLevel == MainMenu.moveExplainStartTurn {
+            scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.moveExplain
+        } else if GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.showUnsimplified
-        } else if GameScene.stageLevel == MainMenu.eqRobStartTurn { //7
+        } else if GameScene.stageLevel == MainMenu.eqRobStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.eqRobExplain
-        } else if GameScene.stageLevel == MainMenu.cannonStartTurn { //11
+        } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.cannonExplain
-        } else if GameScene.stageLevel == MainMenu.invisivleStartTurn { //14
+        } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.invisibleSignal
-        } else if GameScene.stageLevel == MainMenu.lastTurn { //16
+        } else if GameScene.stageLevel == MainMenu.lastTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.lastScenario
         }
     }
@@ -258,9 +247,9 @@ struct GameStageController {
     }
     
     public static func signalVisibility(signal: SignalValueHolder) {
-        if GameScene.stageLevel < 1, ScenarioController.currentActionIndex < MainMenu.invisivleStartTurn+1, let _ = gameScene as? ScenarioScene {
+        if GameScene.stageLevel < 1, ScenarioController.currentActionIndex < MainMenu.invisibleStartTurn+1, let _ = gameScene as? ScenarioScene {
             signal.xValue.isHidden = true
-        } else if GameScene.stageLevel >= MainMenu.invisivleStartTurn {
+        } else if GameScene.stageLevel >= MainMenu.invisibleStartTurn {
             if CannonTouchController.state != .Trying && EqRobTouchController.state != .DeadInstruction && EqRobTouchController.state != .AliveInstruction  {
                 signal.xValue.isHidden = true
             }
@@ -268,7 +257,7 @@ struct GameStageController {
     }
     
     public static func signalVisibilityForCannon(signal: SignalValueHolder) {
-        if GameScene.stageLevel >= MainMenu.invisivleStartTurn {
+        if GameScene.stageLevel >= MainMenu.invisibleStartTurn {
             if CannonTouchController.state != .Trying {
                 signal.xValue.isHidden = true
             }
@@ -276,7 +265,7 @@ struct GameStageController {
     }
     
     public static func adjustGameSceneLevel() -> Int {
-        if GameScene.stageLevel < 11 {
+        if GameScene.stageLevel < MainMenu.cannonStartTurn {
             return GameScene.stageLevel - 2
         } else {
             return GameScene.stageLevel - 3

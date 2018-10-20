@@ -28,6 +28,7 @@ class Cannon: Item {
     }
     var variableExpressionLabel = SKLabelNode(fontNamed: DAFont.fontName)
     var isFront = true
+    var isActive = false
     var state: CannonState = .Ready
     
     var constantsArray = [Int]()
@@ -111,7 +112,7 @@ class Cannon: Item {
     /* Calculate the distance to throw bomb */
     func calculateValue(value: Int) -> Int {
         var outPut = 0
-        if GameScene.stageLevel < MainMenu.invisivleStartTurn {
+        if GameScene.stageLevel < MainMenu.invisibleStartTurn {
             for constant in constantsArray {
                 outPut += constant
             }
@@ -148,6 +149,7 @@ extension Cannon {
                 self.hitEnemy(xValue: value) {
                     self.resetInputVE()
                     self.resetVEElementArray()
+                    self.isActive = false
                     return completion()
                 }
             }

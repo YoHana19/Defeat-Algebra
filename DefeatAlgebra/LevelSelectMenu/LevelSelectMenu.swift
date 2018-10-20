@@ -28,6 +28,9 @@ class LevelSelectMenu: SKScene {
     var button15: MSButtonNode!
     var button16: MSButtonNode!
     var button17: MSButtonNode!
+    var button18: MSButtonNode!
+    var button19: MSButtonNode!
+    var button20: MSButtonNode!
     var buttonBack: MSButtonNode!
     
     let ud = UserDefaults.standard
@@ -53,6 +56,9 @@ class LevelSelectMenu: SKScene {
         button15 = self.childNode(withName: "button15") as! MSButtonNode
         button16 = self.childNode(withName: "button16") as! MSButtonNode
         button17 = self.childNode(withName: "button17") as! MSButtonNode
+        button18 = self.childNode(withName: "button18") as! MSButtonNode
+        button19 = self.childNode(withName: "button19") as! MSButtonNode
+        button20 = self.childNode(withName: "button20") as! MSButtonNode
         buttonBack = self.childNode(withName: "buttonBack") as! MSButtonNode
         
         /* Start tutorial */
@@ -123,6 +129,15 @@ class LevelSelectMenu: SKScene {
         
         button17.selectedHandler = { [weak self] in
             self?.loadScene(level: 17)
+        }
+        button18.selectedHandler = { [weak self] in
+            self?.loadScene(level: 18)
+        }
+        button19.selectedHandler = { [weak self] in
+            self?.loadScene(level: 19)
+        }
+        button20.selectedHandler = { [weak self] in
+            self?.loadScene(level: 20)
         }
         
         buttonBack.selectedHandler = { [weak self] in

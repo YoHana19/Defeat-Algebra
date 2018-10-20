@@ -25,33 +25,34 @@ struct AddItemTurnController {
             /* Make sure to call addEnemy once */
             if !done {
                 done = true
-                let stageLevel = GameStageController.adjustGameSceneLevel()
+                let manager = ItemDropController.getManager()
+                let itemManager = ItemDropController.getItemManager()
                 
                 gameScene.countTurnForAddItem += 1
-                if gameScene.countTurnForAddItem >= ItemDropController.manager[stageLevel].count {
+                if gameScene.countTurnForAddItem >= manager.count {
                     gameScene.compAddItemFlag = true
                     done = false
                     return
                 }
                 
-                let addingIndex = ItemDropController.manager[stageLevel][gameScene.countTurnForAddItem]
+                let addingIndex = manager[gameScene.countTurnForAddItem]
                 
                 /* Add enemies initially */
-                if gameScene.initialAddItemFlag {
-                    gameScene.initialAddItemFlag = false
-                    let items = ItemDropController.initialItemPosArray[stageLevel]
-                    guard items.count > 0 else {
-                        gameScene.gameState = .PlayerTurn
-                        done = false
-                        return
-                    }
-                    gameScene.plane.fly(items: items) {
-                        /* Move to next state */
-                        gameScene.gameState = .PlayerTurn
-                        done = false
-                    }
-                } else if addingIndex != 0 {
-                    let items = ItemDropController.itemManager[stageLevel][String(addingIndex)]
+//                if gameScene.initialAddItemFlag {
+//                    gameScene.initialAddItemFlag = false
+//                    let items = ItemDropController.initialItemPosArray[stageLevel]
+//                    guard items.count > 0 else {
+//                        gameScene.gameState = .PlayerTurn
+//                        done = false
+//                        return
+//                    }
+//                    gameScene.plane.fly(items: items) {
+//                        /* Move to next state */
+//                        gameScene.gameState = .PlayerTurn
+//                        done = false
+//                    }
+                if addingIndex != 0 {
+                    let items = itemManager[String(addingIndex)]
                     ItemDropController.makeItemPosArray(items: items!) { itemPosArray in
                         itemPos = itemPosArray
                         gameScene.plane.fly(items: itemPosArray) {

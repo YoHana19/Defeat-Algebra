@@ -49,7 +49,7 @@ struct CannonTutorialController {
             } else {
                 return true
             }
-        case MainMenu.invisivleStartTurn:
+        case MainMenu.invisibleStartTurn:
             if let name = name {
                 switch ScenarioController.currentActionIndex {
                 case 6:

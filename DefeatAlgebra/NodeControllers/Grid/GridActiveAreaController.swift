@@ -516,7 +516,7 @@ class GridActiveAreaController {
     /* Show timeBomb setting area */
     public static func showtimeBombSettingArea(grid: Grid) {
         for gridX in 0..<grid.columns {
-            for gridY in 1..<grid.rows-1 {
+            for gridY in 1..<grid.rows-3 {
                 grid.squarePurpleArray[gridX][gridY].isHidden = false
             }
         }
