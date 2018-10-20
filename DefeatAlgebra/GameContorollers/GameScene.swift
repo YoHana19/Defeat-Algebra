@@ -139,6 +139,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var countTurnForAddEnemy: Int = -1
     var dupliExsist = false
     var willFastForward = false
+    var enemyKillingHero: Enemy?
     
     /*== Enemy Turn management ==*/
     var enemyTurnDoneFlag = false
@@ -290,14 +291,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Retry button */
         buttonRetry.selectedHandler = { [weak self] in
-            
             guard let flag = self?.heroKilled else { return }
+            self?.buttonRetry.isHidden = true
+            self?.buttonRetry.state = .msButtonNodeStateHidden
             if flag {
-                self?.heroKilled = false
-                GameOverTurnController.done = false
                 self?.unDo(inGame: true) {
+                    self?.heroKilled = false
                     self?.gameState = .AddItem
                     GameOverTurnController.gameOverReset()
+                    GameOverTurnController.done = false
                 }
             } else {
                 /* Grab reference to the SpriteKit view */
@@ -644,12 +646,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! Hero
+                    if let enemyFist = contactB.node as? EnemyFist {
+                        if !heroKilled {
+                            enemyKillingHero = enemyFist.parent as? Enemy
+                        }
+                    }
                     hero.isHidden = true
                     heroKilled = true
                     self.lastGameState = self.gameState
                     self.gameState = .GameOver
                 } else if contactB.categoryBitMask == 1 {
                     let hero = contactB.node as! Hero
+                    if let enemyFist = contactA.node as? EnemyFist {
+                        if !heroKilled {
+                            enemyKillingHero = enemyFist.parent as? Enemy
+                        }
+                    }
                     hero.isHidden = true
                     heroKilled = true
                     self.lastGameState = self.gameState

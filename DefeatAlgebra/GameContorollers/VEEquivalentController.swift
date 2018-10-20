@@ -138,9 +138,6 @@ struct VEEquivalentController {
         gameScene.valueOfX.zPosition = 1
         numOfCheck = 0
         gameScene.xValue = gameScene.xValue
-        if GameScene.stageLevel == 8 {
-            gameScene.valueOfX.text = ""
-        }
         backEnemies()
         getBG(completion: { bg in
             bg?.removeExcessArea()

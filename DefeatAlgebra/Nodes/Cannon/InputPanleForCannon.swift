@@ -633,13 +633,14 @@ class InputPanelForCannon: SKSpriteNode {
     /* Toggle ok buttons */
     func coverOK() {
         coverOKBtn.isHidden = false
-        guard GameScene.stageLevel != MainMenu.cannonStartTurn else { return }
+        guard GameScene.stageLevel >= MainMenu.invisivleStartTurn else { return }
         guard CannonTouchController.state != .Trying else { return }
         coverTryBtn.isHidden = false
     }
+    
     func uncoverOK() {
         coverOKBtn.isHidden = true
-        guard GameScene.stageLevel != MainMenu.cannonStartTurn else { return }
+        guard GameScene.stageLevel >= MainMenu.invisivleStartTurn else { return }
         guard CannonTouchController.state != .Trying else { return }
         coverTryBtn.isHidden = true
     }
