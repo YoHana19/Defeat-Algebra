@@ -25,7 +25,7 @@ class CannonRecordBoard: SKSpriteNode {
     let lineSpace: CGFloat = 55
     
     var numOfCannon = 1
-    var numOfXValue = 0
+    var numOfXValue = 3
     var currentVeLabel = SKLabelNode()
     var distLabel: [SKLabelNode] = [SKLabelNode]() {
         didSet {
@@ -95,6 +95,11 @@ class CannonRecordBoard: SKSpriteNode {
         self.addChild(cannonNode)
         let labelPos = CGPoint(x: leftMarginTopLabel, y: -(topMargin+lineSpace))
         createLabel(text: ve, color: nil, pos: labelPos, name: nil, fontSize: nil, isCannon: true)
+        // x= label
+        for i in 1...3 {
+            let xlabelPos = CGPoint(x: leftMarginRecordL, y: -(topMargin+lineSpace*CGFloat(i+1)))
+            createLabel(text: "x=\(i)", color: nil, pos: xlabelPos, name: nil, fontSize: nil)
+        }
     }
     
     func setDistLabel() {
@@ -105,13 +110,10 @@ class CannonRecordBoard: SKSpriteNode {
     }
     
     public func createRecord(xValue: Int, distanse: Int, enemyValue: Int, cannonValue: Int) {
-        let lineIndex = 1 + numOfCannon + numOfXValue
-        numOfXValue += 1
+        let lineIndex = 1 + numOfCannon + (numOfXValue-3) + (xValue-1)
         enemyForRecord(lineIndex: lineIndex, value: enemyValue)
         cannonForRecord(lineIndex: lineIndex, value: cannonValue)
-        let xlabelPos = CGPoint(x: leftMarginRecordL, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
         let distlabelPos = CGPoint(x: leftMarginDist, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: "x=\(xValue)", color: nil, pos: xlabelPos, name: nil, fontSize: nil)
         createLabel(text: String(distanse), color: nil, pos: distlabelPos, name: nil, fontSize: nil, isDistanse: true)
     }
     
@@ -150,6 +152,12 @@ class CannonRecordBoard: SKSpriteNode {
         self.addChild(cannonNode)
         let labelPos = CGPoint(x: leftMarginTopLabel, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
         createLabel(text: ve, color: nil, pos: labelPos, name: nil, fontSize: nil, isCannon: true)
+        // x= label
+        numOfXValue += 3
+        for i in 1...3 {
+            let xlabelPos = CGPoint(x: leftMarginRecordL, y: -(topMargin+lineSpace*CGFloat(lineIndex+i)))
+            createLabel(text: "x=\(i)", color: nil, pos: xlabelPos, name: nil, fontSize: nil)
+        }
     }
     
     func createLabel(text: String, color: UIColor?, pos: CGPoint, name: String?, fontSize: CGFloat?, font: String? = DAFont.fontName, isDistanse: Bool = false, isCannon: Bool = false) {
