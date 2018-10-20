@@ -24,13 +24,18 @@ struct GameOverTurnController {
                 gameScene.run(sound)
             }
         }
-        if gameScene.heroKilled {
-            gameScene.buttonRetry.state = .msButtonNodeStateActive
-        }
-        gameScene.buttonRetryFromTop.state = .msButtonNodeStateActive
-        
         if !done {
             done = true
+            let wait = SKAction.wait(forDuration: calculateWaitTime())
+            gameScene.run(wait, completion: {
+                gameScene.enemyKillingHero = nil
+                if gameScene.heroKilled {
+                    gameScene.buttonRetry.isHidden = false
+                    gameScene.buttonRetry.state = .msButtonNodeStateActive
+                }
+                gameScene.buttonRetryFromTop.state = .msButtonNodeStateActive
+            })
+            
             DataController.setDataForEnemyKilled()
             DataController.setDataForGameOver(isHit: gameScene.heroKilled)
         }
@@ -44,6 +49,18 @@ struct GameOverTurnController {
             gameScene.gameOverSoundDone = true
             gameScene.main.play()
             gameScene.removeAllActions()
+        }
+    }
+    
+    private static func calculateWaitTime() -> TimeInterval {
+        if let enemy = gameScene.enemyKillingHero {
+            let dif = enemy.positionY - gameScene.hero.positionY
+            let leftVal = enemy.valueOfEnemy - dif
+            let leftPunchLength = CGFloat(leftVal) * enemy.singlePunchLength
+            let totalLength = leftPunchLength + enemy.punchLength
+            return TimeInterval(totalLength * enemy.punchSpeed)
+        } else {
+            return 0.5
         }
     }
 }
