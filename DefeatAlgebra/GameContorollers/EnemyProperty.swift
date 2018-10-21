@@ -23,7 +23,7 @@ class EnemyProperty {
         (1, 100, [[1, 10, 3], [3, 10, 3], [5, 10, 3], [7, 10, 3]]), //3-6
         (1, 100, [[1, 10, 4], [4, 10, 5], [7, 10, 4]]), //4-7
         (2, 6, [[1, 11], [3, 10], [5, 10], [7, 11]]), //5-8 eqRob
-        (2, 6, [[1, 9], [3, 9], [5, 9], [7, 9]]), //6-9
+        (2, 6, [[1, 10], [3, 10], [5, 10], [7, 10]]), //6-9
         (2, 106, [[1, 9], [3, 9], [5, 9], [7, 9]]), //7-10
         (0, 7, [[1, 11], [4, 10], [7, 11]]), //8-11 second day
         (1, 100, [[1, 10, 8], [3, 11, 8], [5, 10, 8], [7, 11, 8]]), //9-12
@@ -46,8 +46,8 @@ class EnemyProperty {
     static let level3VE = ["1": [[4, 3, 2]]]
     static let level4 = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2] //7 (unsimplified)
     static let level4VE = ["1": [[2, 5, 2], [1, 4, 2]], "2": [[2, 5, 2], [2, 4, 2]]]
-    static let level5 = [0, 0, 0, 0, 0, 0, 11] //8 (eqRob)
-    static let level5VE = ["11": [[4, 6, 2]]]
+    static let level5 = [0] //8 (eqRob)
+    static let level5VE = [String: [[Int]]]()
     static let level6 = [0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 11] //9
     static let level6VE = ["11": [[5, 6, 4]]]
     static let level7 = [0, 0, 0, 0, 0, 0, 101, 0, 0, 0, 0, 0, 0, 0, 101] //10
@@ -92,7 +92,7 @@ class EnemyProperty {
         let iniProperty = EnemyProperty.initialEnemyPosArray[stageLevel]
         var start = 0
         if (iniProperty.0 == 0 || iniProperty.0 == 1 || iniProperty.0 == 2) {
-            start = iniProperty.2.count
+            start += iniProperty.2.count
         }
         
         let dispatchGroup = DispatchGroup()

@@ -170,11 +170,16 @@ struct EqRobController {
         doctorSays(in: .EqRobGo, value: nil)
         eqRobAttackFirst(selectedEnemies[0])
         gameScene.selectionPanel.againButton.isHidden = true
+        let difEnemies = selectedEnemies.filter { $0.vECategory != gameScene.eqRob.veCategory }
         sameVeEnemies = gameScene.gridNode.enemyArray.filter { $0.vECategory == gameScene.eqRob.veCategory }
-        if sameVeEnemies.count == selectedEnemies.count {
-            return true
-        } else {
+        if difEnemies.count > 0 {
             return false
+        } else {
+            if sameVeEnemies.count == selectedEnemies.count {
+                return true
+            } else {
+                return false
+            }
         }
     }
     

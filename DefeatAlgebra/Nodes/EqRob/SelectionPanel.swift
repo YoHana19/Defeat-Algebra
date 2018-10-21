@@ -108,7 +108,7 @@ class SelectionPanel: SKSpriteNode {
     }
     
     func setAgainButton() {
-        let texture = SKTexture(imageNamed: "buttonAgain")
+        let texture = SKTexture(imageNamed: "againButton")
         againButton = SKSpriteNode(texture: texture, color: UIColor.clear, size: texture.size())
         againButton.name = "again"
         againButton.zPosition = 3

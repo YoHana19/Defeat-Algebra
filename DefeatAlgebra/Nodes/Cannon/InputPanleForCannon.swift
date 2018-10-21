@@ -38,11 +38,22 @@ class InputPanelForCannon: SKSpriteNode {
                     if CannonTouchController.state == .Trying {
                         buttonTry.isHidden = true
                         coverTryBtn.isHidden = true
+                        CannonTryController.getBG() { bg in
+                            guard let bg = bg else { return }
+                            bg.isEnable = false
+                        }
                     } else {
                         buttonTry.isHidden = false
                         coverTryBtn.isHidden = false
                     }
                 }    
+            } else {
+                if CannonTouchController.state == .Trying {
+                    CannonTryController.getBG() { bg in
+                        guard let bg = bg else { return }
+                        bg.isEnable = true
+                    }
+                }
             }
         }
     }
@@ -326,9 +337,9 @@ class InputPanelForCannon: SKSpriteNode {
             /* Invalid +-, ok, 0*/
             self.coverOperant()
             self.coverOK()
-            self.cover0()
+            //self.cover0()
             
-            self.isHidden = true
+            self.isActive = false
             
             if let _ = gameScene as? ScenarioScene {
                 if GameScene.stageLevel == MainMenu.cannonStartTurn {
@@ -386,7 +397,7 @@ class InputPanelForCannon: SKSpriteNode {
     func tappedNumber(num: Int) {
         /* Valid x, +-, 0 */
         uncoverOperant()
-        uncover0()
+        //uncover0()
         
         /* Make sure to put at least one x */
         if isNewVesion {
@@ -425,7 +436,7 @@ class InputPanelForCannon: SKSpriteNode {
         /* Invalid +-, ok, 0 */
         coverOperant()
         coverOK()
-        cover0()
+        //cover0()
     }
     
     func makeButtons(completion: @escaping ([SKSpriteNode]) -> Void) {
@@ -482,7 +493,7 @@ class InputPanelForCannon: SKSpriteNode {
                     button.position = pos
                     if button.name == "button0" {
                         self.cover0Btn = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
-                        self.cover0Btn.isHidden = false
+                        self.cover0Btn.isHidden = true
                         self.coverNumArray.append(self.cover0Btn)
                     } else {
                         let cover = self.setCoverButtons(buttonSize: self.radius, buttonPosition: pos)
@@ -620,16 +631,16 @@ class InputPanelForCannon: SKSpriteNode {
         }
     }
     
-    /* Toggle 0 buttons */
-    func cover0() {
-        guard !isNewVesion else { return }
-        cover0Btn.isHidden = false
-    }
-    
-    func uncover0() {
-        guard !isNewVesion else { return }
-        cover0Btn.isHidden = true
-    }
+//    /* Toggle 0 buttons */
+//    func cover0() {
+//        guard !isNewVesion else { return }
+//        cover0Btn.isHidden = false
+//    }
+//
+//    func uncover0() {
+//        guard !isNewVesion else { return }
+//        cover0Btn.isHidden = true
+//    }
     
     /* Toggle ok buttons */
     func coverOK() {

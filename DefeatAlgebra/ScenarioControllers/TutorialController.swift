@@ -183,17 +183,11 @@ struct TutorialController {
         case MainMenu.moveExplainStartTurn: //5
             switch currentIndex {
             case 0:
-                createMultiTutorialLabel(text: "敵をタッチすれば\n文字式の表示の大きさを変えられるぞ", posY: Int(scene.size.height/2+100))
-                scene.pointingGridAt(x: 4, y: 9)
-                scene.pointingGridAt(x: 5, y: 9)
-                state = .Waiting
-                break;
-            case 2:
                 createTutorialLabel(text: "指でなぞれば、移動のルートを指定できるぞ", posY: Int(scene.size.height/2+100))
                 scene.movingPointing()
                 state = .Waiting
                 break;
-            case 3:
+            case 1:
                 createTutorialLabel(text: "敵に当たらないように移動しよう", posY: Int(scene.size.height/2+100))
                 state = .Waiting
                 break;
@@ -208,6 +202,16 @@ struct TutorialController {
                 break;
             }
             break;
+        case MainMenu.showUnsimplifiedStartTurn: //5
+            switch currentIndex {
+            case 0:
+                createMultiTutorialLabel(text: "敵をタッチすれば\n文字式の表示の大きさを変えられるぞ", posY: Int(scene.size.height/2+100))
+                scene.gridNode.enemyArray.forEach({ $0.pointing() })
+                state = .Waiting
+                break;
+            default:
+                break;
+            }
         case MainMenu.eqRobStartTurn: //7
             switch currentIndex {
             case 0:
@@ -443,23 +447,6 @@ struct TutorialController {
         case MainMenu.moveExplainStartTurn: // 5
             switch currentIndex {
             case 0:
-                guard scene.playerTurnState == .MoveState && name == "enemy" else { return false }
-                keyCount += 1
-                currentIndex += 1
-                return true
-            case 1:
-                guard scene.playerTurnState == .MoveState && name == "enemy" else { return false }
-                keyCount += 1
-                if (keyCount > 4) {
-                    removeTutorialLabel()
-                    currentIndex += 1
-                    state = .Show
-                    execute()
-                    scene.removePointing()
-                    scene.removePointing()
-                }
-                return true
-            case 2:
                 guard scene.playerTurnState == .MoveState && name == "activeArea" else { return false }
                 guard scene.gridNode.touchedGridPos == ScenarioController.keyTouchPos else { return false }
                 ScenarioController.keyTouchPos = (100, 100)
@@ -470,7 +457,7 @@ struct TutorialController {
                 state = .Show
                 execute()
                 return true
-            case 3:
+            case 1:
                 guard scene.isCharactersTurn else { return false }
                 ScenarioController.controllActions()
                 state = .Pending
@@ -486,6 +473,25 @@ struct TutorialController {
                 scene.isCharactersTurn = false
                 scene.gridNode.isTutorial = false
                 state = .Pending
+                return true
+            default:
+                return true
+            }
+        case MainMenu.showUnsimplifiedStartTurn:
+            switch currentIndex {
+            case 0:
+                guard scene.playerTurnState == .MoveState && name == "enemy" else { return false }
+                keyCount += 1
+                currentIndex += 1
+                return true
+            case 1:
+                guard scene.playerTurnState == .MoveState && name == "enemy" else { return false }
+                keyCount += 1
+                if (keyCount > 4) {
+                    removeTutorialLabel()
+                    currentIndex += 1
+                    scene.gridNode.enemyArray.forEach({ $0.removePointing() })
+                }
                 return true
             default:
                 return true
@@ -609,6 +615,15 @@ struct TutorialController {
                 break;
             case 4:
                 guard scene.isCharactersTurn else { return }
+                state = .Show
+                break;
+            default:
+                break;
+            }
+        case MainMenu.showUnsimplifiedStartTurn:
+            switch currentIndex {
+            case 0:
+                guard !scene.isCharactersTurn else { return }
                 state = .Show
                 break;
             default:

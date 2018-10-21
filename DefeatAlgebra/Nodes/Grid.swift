@@ -330,8 +330,6 @@ class Grid: SKSpriteNode {
             }
             
             guard TutorialController.userTouch(on: nodeAtPoint.name) else { return }
-            guard SpeakInGameController.userTouch(on: nodeAtPoint.name) else { return }
-            
             
             if nodeAtPoint.name == "cannon" || nodeAtPoint.name == "cannonVE" {
                 if let cannon = nodeAtPoint as? Cannon {

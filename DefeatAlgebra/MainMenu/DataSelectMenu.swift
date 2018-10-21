@@ -20,11 +20,14 @@ class DataSelectMenu: SKScene {
     var button9: MSButtonNode!
     var button10: MSButtonNode!
     var button11: MSButtonNode!
+    var button12: MSButtonNode!
     var button13: MSButtonNode!
     var button14: MSButtonNode!
-    var button15: MSButtonNode!
     var button16: MSButtonNode!
     var button17: MSButtonNode!
+    var button18: MSButtonNode!
+    var button19: MSButtonNode!
+    var button20: MSButtonNode!
     var buttonBack: MSButtonNode!
     
     let ud = UserDefaults.standard
@@ -42,11 +45,14 @@ class DataSelectMenu: SKScene {
         button9 = self.childNode(withName: "button9") as! MSButtonNode
         button10 = self.childNode(withName: "button10") as! MSButtonNode
         button11 = self.childNode(withName: "button11") as! MSButtonNode
+        button12 = self.childNode(withName: "button12") as! MSButtonNode
         button13 = self.childNode(withName: "button13") as! MSButtonNode
         button14 = self.childNode(withName: "button14") as! MSButtonNode
-        button15 = self.childNode(withName: "button15") as! MSButtonNode
         button16 = self.childNode(withName: "button16") as! MSButtonNode
         button17 = self.childNode(withName: "button17") as! MSButtonNode
+        button18 = self.childNode(withName: "button18") as! MSButtonNode
+        button19 = self.childNode(withName: "button19") as! MSButtonNode
+        button20 = self.childNode(withName: "button20") as! MSButtonNode
         buttonBack = self.childNode(withName: "buttonBack") as! MSButtonNode
         
         /* Start tutorial */
@@ -87,6 +93,10 @@ class DataSelectMenu: SKScene {
             self?.loadScene(level: 11)
         }
         
+        button12.selectedHandler = { [weak self] in
+            self?.loadScene(level: 12)
+        }
+        
         button13.selectedHandler = { [weak self] in
             self?.loadScene(level: 13)
         }
@@ -95,16 +105,24 @@ class DataSelectMenu: SKScene {
             self?.loadScene(level: 14)
         }
         
-        button15.selectedHandler = { [weak self] in
-            self?.loadScene(level: 15)
-        }
-        
         button16.selectedHandler = { [weak self] in
             self?.loadScene(level: 16)
         }
         
         button17.selectedHandler = { [weak self] in
             self?.loadScene(level: 17)
+        }
+        
+        button18.selectedHandler = { [weak self] in
+            self?.loadScene(level: 18)
+        }
+        
+        button19.selectedHandler = { [weak self] in
+            self?.loadScene(level: 19)
+        }
+        
+        button20.selectedHandler = { [weak self] in
+            self?.loadScene(level: 20)
         }
         
         buttonBack.selectedHandler = { [weak self] in

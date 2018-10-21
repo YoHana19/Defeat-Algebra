@@ -758,15 +758,13 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.setHero()
             scenarioScene.tutorialState = .None
-            scenarioScene.enemyEnter([(4, 9, "2×x+1", 1), (5, 9, "x+x+1", 1)]) {
-                scenarioScene.gameState = .PlayerTurn
-                scenarioScene.playerTurnState = .MoveState
-                scenarioScene.isCharactersTurn = false
-                scenarioScene.gridNode.isTutorial = false
-                TutorialController.enable()
-                TutorialController.execute()
-                currentActionIndex += 1
-            }
+            scenarioScene.gameState = .PlayerTurn
+            scenarioScene.playerTurnState = .MoveState
+            scenarioScene.isCharactersTurn = false
+            scenarioScene.gridNode.isTutorial = false
+            TutorialController.enable()
+            TutorialController.execute()
+            currentActionIndex += 1
             break;
         case 1:
             guard scenarioScene.isCharactersTurn else { return }
@@ -806,7 +804,7 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.setHero()
             scenarioScene.tutorialState = .Action
-            scenarioScene.enemyEnter([(1, 10, "2×x+1", 1), (3, 8, "2x+1", 2), (5, 8, "x+1+x", 1), (7, 10, "1+3x-x", 0)]) {
+            scenarioScene.enemyEnter([(1, 10, "2×x+1", 1), (3, 8, "2x+1", 2), (5, 8, "x+1+x", 1), (7, 10, "1+3x-x", 0), (4, 10, "3x", 1)]) {
                 nextLine()
                 wait(length: 2.0) {
                     scenarioScene.tutorialState = .Converstaion
@@ -1000,8 +998,12 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             EqRobTutorialController.showSelectionPanel()
+            scenarioScene.tutorialState = .None
             nextLine()
             currentActionIndex += 1
+            wait(length: 3.0) {
+                scenarioScene.tutorialState = .Action
+            }
             break;
         case 20:
             guard scenarioScene.isCharactersTurn else { return }
@@ -1055,7 +1057,11 @@ struct ScenarioController {
                 nextLine()
                 scenarioScene.tutorialState = .Converstaion
             } else {
-                EqRobTutorialController.pointingMissedEnemies()
+                if EqRobController.gameScene.eqRob.state == .Dead {
+                    EqRobTutorialController.pointingKillerEnemy()
+                } else {
+                    EqRobTutorialController.pointingMissedEnemies()
+                }
                 currentActionIndex = 29
                 currentLineIndex = 53
             }
@@ -1067,8 +1073,13 @@ struct ScenarioController {
             break;
         case 29: // miss
             guard scenarioScene.isCharactersTurn else { return }
-            EqRobTutorialController.makeInsturctionForMiss()
-            EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction())
+            if EqRobController.gameScene.eqRob.state == .Dead {
+                EqRobTutorialController.makeInsturctionForKilled()
+                EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForDestroyedInstruction())
+            } else {
+                EqRobTutorialController.makeInsturctionForMiss()
+                EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction())
+            }
             scenarioScene.tutorialState = .Action
             currentActionIndex += 1
             break;
@@ -1079,6 +1090,7 @@ struct ScenarioController {
             break;
         case 31:
             guard scenarioScene.isCharactersTurn else { return }
+            EqRobController.gameScene.eqRob.state = .Ready
             DAUserDefaultUtility.doneFirstly(name: "eqRobExplain")
             loadGameScene()
             break;

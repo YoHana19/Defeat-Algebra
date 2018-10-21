@@ -19,6 +19,7 @@ class EqRobTutorialController {
     private static var selectedEnemyIndex: Int = 0
     private static var attackingEnemyIndex: Int = 0
     private static var missedEnemies = [Enemy]()
+    private static var instructedEnemy: Enemy?
     
     static func userTouch(on name: String?) -> Bool {
         switch GameScene.stageLevel {
@@ -113,11 +114,16 @@ class EqRobTutorialController {
     
     static func eqRobGoToAttack() -> Bool {
         eqRobAttackFirst(selectedEnemies[0])
+        let difEnemies = selectedEnemies.filter { $0.vECategory != EqRobController.gameScene.eqRob.veCategory }
         sameVeEnemies = EqRobController.gameScene.gridNode.enemyArray.filter { $0.vECategory == EqRobController.gameScene.eqRob.veCategory }
-        if sameVeEnemies.count == selectedEnemies.count {
-            return true
-        } else {
+        if difEnemies.count > 0 {
             return false
+        } else {
+            if sameVeEnemies.count == selectedEnemies.count {
+                return true
+            } else {
+                return false
+            }
         }
     }
     
@@ -143,6 +149,11 @@ class EqRobTutorialController {
                     }
                 }
             }
+        } else {
+            destroyEnemiesAtOnce()
+            EqRobController.gameScene.eqRob.killed(target) {
+                eqRobDead(enemy: target)
+            }
         }
     }
     
@@ -167,6 +178,11 @@ class EqRobTutorialController {
                         EqRobController.gameScene.eqRob.run(rotate)
                     }
                 }
+            }
+        } else {
+            destroyEnemiesAtOnce()
+            EqRobController.gameScene.eqRob.killed(target) {
+                eqRobDead(enemy: target)
             }
         }
     }
@@ -207,6 +223,32 @@ class EqRobTutorialController {
     public static func makeInsturctionForMiss() {
         missedEnemies.forEach { $0.removePointing() }
         VEEquivalentController.showEqGrid(enemies: missedEnemies, eqRob: EqRobController.gameScene.eqRob)
+        EqRobController.gameScene.selectionPanel.resetInstruction()
+        EqRobController.gameScene.selectionPanel.resetAllEnemies()
+    }
+    
+    private static func eqRobDead(enemy: Enemy) {
+        lines.forEach { $0.removeFromParent() }
+        EqRobController.doctorSays(in: .EqRobDestroyed, value: nil)
+        CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctorOnPos.x, y: CharacterController.doctorOnPos.y-200))
+        instructedEnemy = enemy
+        let wait = SKAction.wait(forDuration: 2.0)
+        EqRobController.gameScene.run(wait, completion: {
+            EqRobController.gameScene.eqRob.state = .Dead
+            ScenarioController.controllActions()
+        })
+    }
+    
+    public static func pointingKillerEnemy() {
+        instructedEnemy?.pointing()
+        instructedEnemy?.isSelectedForEqRob = false
+        EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForDestroyedInstruction())
+        EqRobTouchController.state = .DeadInstruction
+    }
+    
+    public static func makeInsturctionForKilled() {
+        instructedEnemy?.removePointing()
+        VEEquivalentController.showEqGrid(enemies: [instructedEnemy!], eqRob: EqRobController.gameScene.eqRob)
         EqRobController.gameScene.selectionPanel.resetInstruction()
         EqRobController.gameScene.selectionPanel.resetAllEnemies()
     }

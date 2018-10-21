@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum CharacterSpeakContentType {
-    case None, PlaneExplain, EqRobFirstly, LogDefenceFirstly, TimeBombGotFirstly, MoveExplain, SecondDay, EqRobReturn
+    case None, PlaneExplain, EqRobFirstly, LogDefenceFirstly, TimeBombGotFirstly, MoveExplain, SecondDay, EqRobReturn, VeScaleExplain
 }
 
 struct SpeakInGameController {
@@ -19,13 +19,7 @@ struct SpeakInGameController {
     static var currentLineIndex = 0
     static var lastAction: CharacterSpeakContentType = .None
     static var gameScene: GameScene!
-    static var waitingUserTouch = false {
-        didSet {
-            if waitingUserTouch {
-                initialAction()
-            }
-        }
-    }
+    static var waitingUserTouch = false
     static var keyTurn = -1
     
     public static func controlAction() {
@@ -53,6 +47,15 @@ struct SpeakInGameController {
                 guard lastAction != .EqRobFirstly else { return }
                 wait(length: 1.0) {
                     doAction(type: .EqRobFirstly)
+                }
+                return
+            }
+            break;
+        case MainMenu.showUnsimplifiedStartTurn:
+            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
+                guard lastAction != .VeScaleExplain else { return }
+                wait(length: 1.0) {
+                    doAction(type: .VeScaleExplain)
                 }
                 return
             }
@@ -148,6 +151,9 @@ struct SpeakInGameController {
         case .TimeBombGotFirstly:
             currentContent = SpeakInGameProperty.timeBombGotFirstly
             break;
+        case .VeScaleExplain:
+            currentContent = SpeakInGameProperty.veScaleExplain
+            break;
         case .LogDefenceFirstly:
             DAUserDefaultUtility.doneFirstly(name: "logDefenceFirst")
             currentContent = SpeakInGameProperty.logDefenceFirstly
@@ -197,8 +203,12 @@ struct SpeakInGameController {
     
     public static func userTouch(on name: String?) -> Bool {
         if waitingUserTouch {
-            guard let name = name else { return false }
-            return true
+            if GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn && TutorialController.currentIndex < 2 {
+                return false
+            } else {
+                waitingUserTouch = false
+                return true
+            }
         } else {
             return true
         }
@@ -218,6 +228,20 @@ struct SpeakInGameController {
             case 0:
                 CharacterController.retreatDoctor()
                 TutorialController.currentIndex = 4
+                TutorialController.enable()
+                TutorialController.execute()
+                break;
+            default:
+                break;
+            }
+            break;
+        case .VeScaleExplain:
+            switch currentActionIndex {
+            case 0:
+                gameScene.isCharactersTurn = false
+                gameScene.gridNode.isTutorial = false
+                gameScene.tutorialState = .None
+                waitingUserTouch = true
                 TutorialController.enable()
                 TutorialController.execute()
                 break;

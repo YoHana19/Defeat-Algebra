@@ -18,6 +18,11 @@ struct SpeakInGameProperty {
         ["0", "爆弾を使うにはアイテムアイコンをタッチするのじゃ！"]
     ]
     
+    static let veScaleExplain: [[String]] = [
+        ["pause"],
+        ["pause"]
+        ]
+    
     static let eqRobFirstly: [[String]] = [
         ["0", "エクロボを使いたい時は、エクロボ自身をタッチするのじゃ！"]
     ]
