@@ -164,10 +164,11 @@ struct TutorialController {
         case MainMenu.timeBombStartTurn: //3
             switch currentIndex {
             case 0:
-                createTutorialLabel(text: "敵の動きを予測して爆弾を仕掛けよう！", posY: Int(scene.size.height/2+100))
+                createTutorialLabel(text: "敵の動きを予測して爆弾を仕掛けよう！", posY: Int(scene.size.height/2-250))
                 state = .Waiting
                 break;
             case 1:
+                removeTutorialLabel()
                 createTutorialLabel(text: "取り逃がしてしまった！", posY: Int(scene.size.height/2+100))
                 state = .Waiting
                 break;
@@ -415,7 +416,6 @@ struct TutorialController {
             switch currentIndex {
             case 0:
                 guard scene.isCharactersTurn else { return false }
-                removeTutorialLabel()
                 currentIndex += 1
                 state = .Pending
                 ScenarioController.controllActions()
@@ -693,7 +693,7 @@ struct TutorialController {
         scene.addChild(multi)
     }
     
-    private static func removeTutorialLabel() {
+    public static func removeTutorialLabel() {
         currentLabel.removeFromParent()
     }
 }

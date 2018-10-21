@@ -734,6 +734,7 @@ struct ScenarioController {
             break;
         case 21: // clear
             guard !scenarioScene.isCharactersTurn && scenarioScene.gameState == .StageClear else { return }
+            TutorialController.removeTutorialLabel()
             scenarioScene.isCharactersTurn = true
             scenarioScene.gridNode.isTutorial = true
             scenarioScene.tutorialState = .Converstaion
