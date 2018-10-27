@@ -18,7 +18,6 @@ struct GameStageController {
         if let gamescene = scene as? GameScene {
             DAUserDefaultUtility.SetData(gameScene: gamescene)
         }
-        print(GameScene.stageLevel)
         switch GameScene.stageLevel {
         case 0:
             loadScenarioScene(scene: scene)
@@ -83,6 +82,7 @@ struct GameStageController {
     
     public static func initialize() {
         moveLevel()
+        dodgeRatio()
         timeBomb()
         stageLabel()
         eqRob()
@@ -94,6 +94,24 @@ struct GameStageController {
             gameScene.moveLevel = 3
         } else {
             gameScene.moveLevel = 4
+        }
+    }
+    
+    private static func dodgeRatio() {
+        if GameScene.stageLevel < MainMenu.timeBombStartTurn + 2 {
+            EnemyMoveController.dodgeRation = 0
+        } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
+            EnemyMoveController.dodgeRation = 70
+        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn {
+            EnemyMoveController.dodgeRation = 60
+        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+1 {
+            EnemyMoveController.dodgeRation = 0
+        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
+            EnemyMoveController.dodgeRation = 70
+        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn+2 {
+            EnemyMoveController.dodgeRation = 80
+        } else if GameScene.stageLevel <= MainMenu.lastTurn {
+            EnemyMoveController.dodgeRation = 90
         }
     }
     
@@ -150,6 +168,7 @@ struct GameStageController {
     public static func initializeForScenario() {
         moveLevel()
         madPos()
+        dodgeRatioForScenario()
         eqRobForScenario()
         cannon()
         enemyNum()
@@ -164,6 +183,9 @@ struct GameStageController {
         }
     }
     
+    private static func dodgeRatioForScenario() {
+        EnemyMoveController.dodgeRation = 0
+    }
     private static func eqRobForScenario() {
         if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             gameScene.eqRob.isHidden = true

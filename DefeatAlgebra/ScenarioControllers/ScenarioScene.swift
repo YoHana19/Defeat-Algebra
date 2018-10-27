@@ -98,6 +98,7 @@ class ScenarioScene: GameScene {
         CannonTryController.gameScene = self
         GameStageController.gameScene = self
         ScenarioTouchController.gameScene = self
+        EnemyMoveController.gameScene = self
         
         /* Sound */
         if MainMenu.soundOnFlag {

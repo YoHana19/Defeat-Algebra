@@ -11,6 +11,10 @@ import SpriteKit
 import SpriteKitEasingSwift
 
 class EnemyMoveController {
+    
+    public static var dodgeRation = 0
+    public static var gameScene: GameScene!
+    
     static func move(enemy: Enemy, gridNode: Grid) {
         if enemy.forEduBranchFlag {
             moveAni(enemy: enemy, gridNode: gridNode)
@@ -52,15 +56,77 @@ class EnemyMoveController {
     }
     
     private static func setDirection(enemy: Enemy, gridNode: Grid, success: @escaping (Bool) -> Void) {
-        getDirection(enemy: enemy, gridNode: gridNode) { direction in
-            enemy.direction = direction
-            if let branch = gridNode.enemySUPairDict[enemy] {
-                branch.direction = direction
-                success(true)
-            } else {
+        if enemy.positionX == 0 || enemy.positionX == 8 || enemy.positionY <= 1 {
+            getDirection(enemy: enemy, gridNode: gridNode) { direction in
+                enemy.direction = direction
                 success(true)
             }
+        } else {
+            let rand = Int(arc4random_uniform(100))
+            if rand < dodgeRation {
+                let candsDirection = detectHeroOrBomb(enemy: enemy, grid: gridNode)
+                if candsDirection.count == 3 || candsDirection.count == 0 {
+                    getDirection(enemy: enemy, gridNode: gridNode) { direction in
+                        enemy.direction = direction
+                        success(true)
+                    }
+                } else {
+                    enemy.direction = candsDirection[0]
+                    success(true)
+                }
+            } else {
+                getDirection(enemy: enemy, gridNode: gridNode) { direction in
+                    enemy.direction = direction
+                    success(true)
+                }
+            }
         }
+    }
+    
+    private static func detectHeroOrBomb(enemy: Enemy, grid: Grid) -> [Direction] {
+        var leftIsSafe = true
+        var rightIsSafe = true
+        var forwardIsSafe = true
+        let enemyPosX = enemy.positionX
+        let enemyPosY = enemy.positionY
+        // hero
+        if enemyPosX-1 == gameScene.hero.positionX && enemyPosY-1 == gameScene.hero.positionY {
+            leftIsSafe = false
+            forwardIsSafe = false
+        } else if enemyPosX+1 == gameScene.hero.positionX && enemyPosY-1 == gameScene.hero.positionY {
+            rightIsSafe = false
+            forwardIsSafe = false
+        } else if enemyPosX == gameScene.hero.positionX && enemyPosY-2 == gameScene.hero.positionY {
+            forwardIsSafe = false
+        }
+        
+        if (GameScene.stageLevel >= MainMenu.timeBombStartTurn && GameScene.stageLevel <= MainMenu.timeBombStartTurn+3) || (GameScene.stageLevel >= MainMenu.secondDayStartTurn && GameScene.stageLevel <= MainMenu.secondDayStartTurn+1) {
+            // bomb
+            let bombLeft = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX-1, enemyPosY) })
+            let bombRight = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX+1, enemyPosY) })
+            let bombForward = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX, enemyPosY-1) })
+            if bombLeft.count > 0 {
+                leftIsSafe = false
+            }
+            if bombRight.count > 0 {
+                rightIsSafe = false
+            }
+            if bombForward.count > 0 {
+                forwardIsSafe = false
+            }
+        }
+        
+        var direction = [Direction]()
+        if leftIsSafe {
+            direction.append(.left)
+        }
+        if rightIsSafe {
+            direction.append(.right)
+        }
+        if forwardIsSafe {
+            direction.append(.front)
+        }
+        return direction
     }
     
     private static func getDirection(enemy: Enemy, gridNode: Grid, completion: @escaping (Direction) -> Void) {
