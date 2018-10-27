@@ -22,7 +22,7 @@ struct ItemDropController {
         case MainMenu.moveExplainStartTurn:
             return [0, 0, 0, 0, 1]
         case MainMenu.showUnsimplifiedStartTurn:
-            return [0, 0, 0, 0, 1]
+            return [0, 0, 0, 1]
         case MainMenu.secondDayStartTurn+1:
             return [0, 0, 0, 1]
         default:

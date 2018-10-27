@@ -186,8 +186,8 @@ struct GameStageController {
             gameScene.totalNumOfEnemy = 2
         } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
             gameScene.totalNumOfEnemy = 3
-        } else if GameScene.stageLevel == 6 {
-            gameScene.totalNumOfEnemy = 4
+        } else if GameScene.stageLevel == MainMenu.eqRobStartTurn {
+            gameScene.totalNumOfEnemy = 5
         } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
             gameScene.totalNumOfEnemy = 2
         } else {

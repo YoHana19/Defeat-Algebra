@@ -56,6 +56,9 @@ class MainMenu: SKScene {
         if !ud.bool(forKey: "initialScenarioFirst") {
             buttonContinue.isHidden = true
             buttonNewGame.position = CGPoint(x: buttonNewGame.position.x, y: buttonNewGame.position.y-100)
+        } else {
+            buttonNewGame.isHidden = true
+            buttonContinue.position = CGPoint(x: buttonNewGame.position.x, y: buttonNewGame.position.y-100)
         }
         
         /* Sound */
