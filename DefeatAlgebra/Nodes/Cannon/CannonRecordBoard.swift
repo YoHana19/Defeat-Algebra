@@ -17,15 +17,23 @@ class CannonRecordBoard: SKSpriteNode {
     let marginWidth: CGFloat = 20
     let marginHeight: CGFloat = 40
     
-    let leftMarginTop: CGFloat = 20
-    let leftMarginTopLabel: CGFloat = 60
-    let leftMarginDistTitle: CGFloat = 130
+    let leftMarginX: CGFloat = 15
+    let leftMarginEnemy: CGFloat = 70
+    let leftMarginCannon: CGFloat = 140
+    let leftMarginDistTitle: CGFloat = 210
     let leftMarginRecordL: CGFloat = 0
     let leftMarginRecordE: CGFloat = 80
     let leftMarginRecordC: CGFloat = 140
     let leftMarginDist: CGFloat = 210
+    
     let topMargin: CGFloat = 40
+    let gapBtwNodeNVe: CGFloat = 25
+    let gapBtwTitleNLog: CGFloat = 35
     let lineSpace: CGFloat = 55
+    
+    let oneBlock: CGFloat = 225
+    
+    var distanceFromTop: CGFloat = 0
     
     var scrollViewYPos: CGFloat = 0
     var startTouchYPos: CGFloat = 0
@@ -35,6 +43,7 @@ class CannonRecordBoard: SKSpriteNode {
         didSet {
             if numOfCannon > 3 {
                 isScrollable = true
+                scrollView.position = CGPoint(x: scrollView.position.x, y: scrollView.position.y+oneBlock)
             }
         }
     }
@@ -64,6 +73,8 @@ class CannonRecordBoard: SKSpriteNode {
         }
     }
     
+    var enemyVE = ""
+    
     init(isLeft: Bool, enemyVe: String, cannonVe: String) {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "cannonRecordBoard")
@@ -71,7 +82,8 @@ class CannonRecordBoard: SKSpriteNode {
         super.init(texture: texture, color: UIColor.clear, size: bodySize)
         
         isUserInteractionEnabled = true
-
+        self.enemyVE = enemyVe
+        
         zPosition = 2
         if isLeft {
             position = posLeft
@@ -80,11 +92,9 @@ class CannonRecordBoard: SKSpriteNode {
         }
         anchorPoint = CGPoint(x: 0.0, y: 1.0)
         
+        distanceFromTop = topMargin
         setScrollView()
-        
-        setEnemy(ve: enemyVe)
-        setCannon(ve: cannonVe)
-        setDistLabel()
+        setInitial(veForEnemy: enemyVe, veForCannon: cannonVe)
     }
     
     /* You are required to implement this for your subclass to work */
@@ -148,15 +158,27 @@ class CannonRecordBoard: SKSpriteNode {
         addChild(cropNode)
     }
     
-    func setEnemy(ve: String) {
+    func setInitial(veForEnemy: String, veForCannon: String) {
+        setXLabel()
+        setCannon(ve: veForCannon)
+        setDistLabel()
+        setEnemy()
+    }
+    
+    func setXLabel() {
+        let labelPos = CGPoint(x: leftMarginX, y: -topMargin+10)
+        createLabel(text: "x", color: nil, pos: labelPos, name: nil, fontSize: 35, font: DAFont.fontName)
+    }
+    
+    func setEnemy() {
         let texture = SKTexture(imageNamed: "front1")
         let bodySize = CGSize(width: 40, height: 40)
         let enemyNode = SKSpriteNode(texture: texture, color: UIColor.clear, size: bodySize)
         enemyNode.zPosition = 1
-        enemyNode.position = CGPoint(x: leftMarginTop, y: -topMargin)
+        enemyNode.position = CGPoint(x: leftMarginEnemy, y: -distanceFromTop)
         scrollView.addChild(enemyNode)
-        let labelPos = CGPoint(x: leftMarginTopLabel, y: -topMargin)
-        createLabel(text: ve, color: nil, pos: labelPos, name: nil, fontSize: nil)
+        let labelPos = CGPoint(x: leftMarginEnemy, y: -(distanceFromTop+gapBtwNodeNVe))
+        createMultiLineLabel(text: self.enemyVE, color: nil, pos: labelPos, name: nil, fontSize: 25)
     }
     
     func setCannon(ve: String) {
@@ -164,80 +186,60 @@ class CannonRecordBoard: SKSpriteNode {
         let bodySize = CGSize(width: 40, height: 40)
         let cannonNode = SKSpriteNode(texture: texture, color: UIColor.clear, size: bodySize)
         cannonNode.zPosition = 1
-        cannonNode.position = CGPoint(x: leftMarginTop, y: -(topMargin+lineSpace))
+        cannonNode.position = CGPoint(x: leftMarginCannon, y: -distanceFromTop)
         scrollView.addChild(cannonNode)
-        let labelPos = CGPoint(x: leftMarginTopLabel, y: -(topMargin+lineSpace))
-        createLabel(text: ve, color: nil, pos: labelPos, name: nil, fontSize: nil, isCannon: true)
-        // x= label
+        let labelPos = CGPoint(x: leftMarginCannon, y: -(distanceFromTop+gapBtwNodeNVe))
+        createLabel(text: ve, color: nil, pos: labelPos, name: nil, fontSize: 25, isCannon: true)
+    }
+    
+    func setXValue() {
+        distanceFromTop += gapBtwTitleNLog
         for i in 1...3 {
-            let xlabelPos = CGPoint(x: leftMarginRecordL, y: -(topMargin+lineSpace*CGFloat(i+1)))
-            createLabel(text: "x=\(i)", color: nil, pos: xlabelPos, name: nil, fontSize: nil)
+            let xlabelPos = CGPoint(x: leftMarginX, y: -distanceFromTop)
+            let signal = SignalValueHolder(value: i)
+            signal.setScale(0.55)
+            signal.zPosition = 1
+            signal.position = xlabelPos
+            scrollView.addChild(signal)
+            distanceFromTop += lineSpace
         }
     }
     
     func setDistLabel() {
-        let labelPos1 = CGPoint(x: leftMarginDistTitle, y: -(topMargin+lineSpace-10))
-        let labelPos2 = CGPoint(x: leftMarginDistTitle, y: -(topMargin+lineSpace+10))
-        createLabel(text: "砲撃した所と", color: nil, pos: labelPos1, name: nil, fontSize: 20, font: DAFont.fontNameForTutorial)
-        createLabel(text: "敵との距離", color: nil, pos: labelPos2, name: nil, fontSize: 20, font: DAFont.fontNameForTutorial)
+        let labelPos1 = CGPoint(x: leftMarginDistTitle, y: -topMargin+20)
+        let labelPos2 = CGPoint(x: leftMarginDistTitle, y: -topMargin)
+        let labelPos3 = CGPoint(x: leftMarginDistTitle, y: -topMargin-20)
+        createLabel(text: "砲撃と", color: nil, pos: labelPos1, name: nil, fontSize: 20, font: DAFont.fontNameForTutorial)
+        createLabel(text: "敵との", color: nil, pos: labelPos2, name: nil, fontSize: 20, font: DAFont.fontNameForTutorial)
+        createLabel(text: "距離", color: nil, pos: labelPos3, name: nil, fontSize: 20, font: DAFont.fontNameForTutorial)
     }
     
     public func createRecord(xValue: Int, distanse: Int, enemyValue: Int, cannonValue: Int) {
-        let lineIndex = 1 + numOfCannon + (numOfXValue-3) + (xValue-1)
-        enemyForRecord(lineIndex: lineIndex, value: enemyValue)
-        cannonForRecord(lineIndex: lineIndex, value: cannonValue)
-        let distlabelPos = CGPoint(x: leftMarginDist, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: String(distanse), color: nil, pos: distlabelPos, name: nil, fontSize: nil, isDistanse: true)
+        let lineIndex = xValue - 4
+        let enemyLabelPos = CGPoint(x: leftMarginEnemy, y: -(distanceFromTop+lineSpace*CGFloat(lineIndex)))
+        createLabel(text: String(enemyValue), color: nil, pos: enemyLabelPos, name: nil, fontSize: 30, isRecord: true)
+        let cannonLabelPos = CGPoint(x: leftMarginCannon, y: -(distanceFromTop+lineSpace*CGFloat(lineIndex)))
+        createLabel(text: String(cannonValue), color: nil, pos: cannonLabelPos, name: nil, fontSize: 30, isRecord: true)
+        let distlabelPos = CGPoint(x: leftMarginDist, y: -(distanceFromTop+lineSpace*CGFloat(lineIndex)))
+        createLabel(text: String(distanse), color: nil, pos: distlabelPos, name: nil, fontSize: nil, isDistanse: true, isRecord: true)
     }
-    
-    private func enemyForRecord(lineIndex: Int, value: Int) {
-        let texture = SKTexture(imageNamed: "front1")
-        let bodySize = CGSize(width: 25, height: 25)
-        let enemyNode = SKSpriteNode(texture: texture, color: UIColor.clear, size: bodySize)
-        enemyNode.zPosition = 1
-        enemyNode.position = CGPoint(x: leftMarginRecordE, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        scrollView.addChild(enemyNode)
-        let labelPos = CGPoint(x: leftMarginRecordE+20, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: String(value), color: nil, pos: labelPos, name: nil, fontSize: 25)
-    }
-    
-    private func cannonForRecord(lineIndex: Int, value: Int) {
-        let texture = SKTexture(imageNamed: "cannonFront")
-        let bodySize = CGSize(width: 25, height: 25)
-        let cannonNode = SKSpriteNode(texture: texture, color: UIColor.clear, size: bodySize)
-        cannonNode.zPosition = 1
-        cannonNode.position = CGPoint(x: leftMarginRecordC, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        scrollView.addChild(cannonNode)
-        let labelPos = CGPoint(x: leftMarginRecordC+20, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: String(value), color: nil, pos: labelPos, name: nil, fontSize: 25)
-    }
-    
     
     public func createCannon(ve: String) {
-        let lineIndex = 1 + numOfCannon + numOfXValue
+        setCannon(ve: ve)
         numOfCannon += 1
+        setEnemy()
         distLabel.removeAll()
-        let texture = SKTexture(imageNamed: "cannonFront")
-        let bodySize = CGSize(width: 40, height: 40)
-        let cannonNode = SKSpriteNode(texture: texture, color: UIColor.clear, size: bodySize)
-        cannonNode.zPosition = 1
-        cannonNode.position = CGPoint(x: leftMarginTop, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        scrollView.addChild(cannonNode)
-        let labelPos = CGPoint(x: leftMarginTopLabel, y: -(topMargin+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: ve, color: nil, pos: labelPos, name: nil, fontSize: nil, isCannon: true)
-        // x= label
-        numOfXValue += 3
-        for i in 1...3 {
-            let xlabelPos = CGPoint(x: leftMarginRecordL, y: -(topMargin+lineSpace*CGFloat(lineIndex+i)))
-            createLabel(text: "x=\(i)", color: nil, pos: xlabelPos, name: nil, fontSize: nil)
-        }
     }
     
-    func createLabel(text: String, color: UIColor?, pos: CGPoint, name: String?, fontSize: CGFloat?, font: String? = DAFont.fontName, isDistanse: Bool = false, isCannon: Bool = false) {
+    func createLabel(text: String, color: UIColor?, pos: CGPoint, name: String?, fontSize: CGFloat?, font: String? = DAFont.fontName, isDistanse: Bool = false, isCannon: Bool = false, isRecord: Bool = false) {
         let veLabel = SKLabelNode(fontNamed: font)
         veLabel.text = text
-        veLabel.horizontalAlignmentMode = .left
-        veLabel.verticalAlignmentMode = .center
+        veLabel.horizontalAlignmentMode = .center
+        if isRecord {
+            veLabel.verticalAlignmentMode = .center
+        } else {
+            veLabel.verticalAlignmentMode = .top
+        }
         veLabel.fontSize = fontSize ?? 30
         veLabel.position = pos
         veLabel.zPosition = 1
@@ -249,5 +251,31 @@ class CannonRecordBoard: SKSpriteNode {
             currentVeLabel = veLabel
         }
         scrollView.addChild(veLabel)
+    }
+    
+    func createMultiLineLabel(text: String, color: UIColor?, pos: CGPoint, name: String?, fontSize: CGFloat?, font: String? = DAFont.fontName, isDistanse: Bool = false, isCannon: Bool = false) {
+        let veLabel = SKLabelNode(fontNamed: font)
+        veLabel.text = text
+        veLabel.horizontalAlignmentMode = .center
+        veLabel.verticalAlignmentMode = .top
+        veLabel.fontSize = fontSize ?? 30
+        veLabel.position = pos
+        veLabel.zPosition = 1
+        veLabel.fontColor = color ?? UIColor.white
+        veLabel.name = name ?? ""
+        if text.count > 4 {
+            text.DAMultilined(length: 4) { multiText in
+                veLabel.text = multiText
+                veLabel.multilinedForVE() { multiLabel in
+                    self.scrollView.addChild(multiLabel)
+                    self.distanceFromTop += self.gapBtwNodeNVe + 42
+                    self.setXValue()
+                }
+            }
+        } else {
+            scrollView.addChild(veLabel)
+            self.distanceFromTop += self.gapBtwNodeNVe + 21
+            self.setXValue()
+        }
     }
 }

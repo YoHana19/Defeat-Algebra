@@ -133,7 +133,7 @@ class ScenarioScene: GameScene {
                 self?.stageClear.stop()
             }
             TutorialController.state = .Pending
-            if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.moveExplainStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.invisibleStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
+            if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.moveExplainStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
                 ScenarioController.loadGameScene()
             } else {
                 CharacterController.retreatMainHero()
@@ -159,6 +159,9 @@ class ScenarioScene: GameScene {
             case MainMenu.cannonStartTurn:
                 DAUserDefaultUtility.doneFirstly(name: "cannonExplain")
                 break;
+            case MainMenu.invisibleStartTurn:
+                DAUserDefaultUtility.doneFirstly(name: "invisibleSignal")
+                break;
             default:
                 break;
             }
@@ -167,8 +170,9 @@ class ScenarioScene: GameScene {
         
         /* Pause button */
         buttonPause.selectedHandler = { [weak self] in
-            self?.pauseFlag = true
-            self?.pauseScreen.isHidden = false
+            guard let pauseFlag = self?.pauseFlag, let pauseScreen = self?.pauseScreen else { return }
+            self?.pauseFlag = !pauseFlag
+            self?.pauseScreen.isHidden = !pauseScreen.isHidden
         }
         
         /*====================================================*/
@@ -253,7 +257,7 @@ class ScenarioScene: GameScene {
                 break;
             }
         } else {
-//            print("\(gameState), \(playerTurnState), \(itemType)")
+            print("\(gameState), \(playerTurnState), \(itemType)")
 //            print(TutorialController.currentIndex)
 //            print(TutorialController.state)
             switch gameState {
@@ -314,8 +318,20 @@ class ScenarioScene: GameScene {
                     } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
                         GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
                         return
+                    } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
+                        if countTurn == 0 {
+                            if CannonController.willFireCannon.count == gridNode.enemyArray.count {
+                                guard CannonTouchController.state != .Trying else { return }
+                                TutorialController.removeTutorialLabel()
+                                playerTurnState = .TurnEnd
+                                GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
+                                ScenarioController.currentActionIndex += 1
+                                return
+                            }
+                        }
+                        GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
+                        return
                     }
-                    //PlayerTurnController.moveState()
                     /* Wait for player touch to move */
                     break;
                 case .AttackState:
@@ -372,7 +388,6 @@ class ScenarioScene: GameScene {
                 break;
             case .StageClear:
                 if GameScene.stageLevel == 0 {
-                    DAUserDefaultUtility.doneFirstly(name: "initialScenarioFirst")
                     StageClearTurnController.clear()
                 } else if GameScene.stageLevel == 1 {
                     TutorialController.currentIndex = 11
@@ -386,7 +401,8 @@ class ScenarioScene: GameScene {
                     TutorialController.currentIndex = 4
                     TutorialController.enable()
                     TutorialController.execute()
-                    DAUserDefaultUtility.doneFirstly(name: "cannonExplainFirst")
+                    StageClearTurnController.clear()
+                } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                     StageClearTurnController.clear()
                 } else {
                     ScenarioController.controllActions()

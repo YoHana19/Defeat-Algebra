@@ -410,7 +410,7 @@ struct EqRobController {
     }
     
     private static func allDone() {
-        CannonController.changeZpos(zPos: 5)
+        CannonController.changeZpos(zPos: 6)
         selectedEnemyIndex = 0
         attackingEnemyIndex = 0
         selectedEnemies = [Enemy]()

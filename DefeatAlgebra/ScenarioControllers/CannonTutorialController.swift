@@ -12,6 +12,7 @@ import SpriteKit
 struct CannonTutorialController {
     
     public static var keyPos = CGPoint(x: 0, y: 0)
+    public static var isTouchEnable = true
     
     static func userTouch(on name: String?) -> Bool {
         switch GameScene.stageLevel {
@@ -99,20 +100,70 @@ struct CannonTutorialController {
                     } else {
                         return false
                     }
-                case 21:
+                case 23:
                     if name == "changeVeButton" {
                         return true
                     } else {
                         return false
                     }
-                case 22:
-                    if name == "signal1" || name == "label1" || name == "signal2" || name == "label2" || name == "signal3" || name == "label3" || name == "changeVeButton" || name == "tryDoneButton" {
-                        return false
-                    } else if name == "buttonOK" {
+                case 24:
+                    if name == "buttonX" {
                         ScenarioController.controllActions()
                         return true
                     } else {
+                        return false
+                    }
+                case 25:
+                    if name == "button+" {
+                        ScenarioController.controllActions()
                         return true
+                    } else {
+                        return false
+                    }
+                case 26:
+                    if name == "button2" {
+                        ScenarioController.controllActions()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 27:
+                    if name == "buttonOK" {
+                        ScenarioController.controllActions()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 28:
+                    if name == "signal1" || name == "label1" || name == "signal2" || name == "label2" || name == "signal3" || name == "label3" {
+                        guard isTouchEnable else { return false }
+                        CannonTryController.resetEnemy()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 29:
+                    if name == "signal1" || name == "label1" || name == "signal2" || name == "label2" || name == "signal3" || name == "label3" {
+                        guard isTouchEnable else { return false }
+                        CannonTryController.resetEnemy()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 30:
+                    if name == "signal1" || name == "label1" || name == "signal2" || name == "label2" || name == "signal3" || name == "label3" {
+                        guard isTouchEnable else { return false }
+                        CannonTryController.resetEnemy()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 32:
+                    if name == "tryDoneButton" {
+                        ScenarioController.controllActions()
+                        return true
+                    } else {
+                        return false
                     }
                 default:
                     return true
@@ -129,5 +180,34 @@ struct CannonTutorialController {
         CannonController.gameScene.inputPanelForCannon.isActive = true
         CharacterController.doctor.setScale(CannonController.doctorScale[0])
         CharacterController.doctor.move(from: nil, to: CannonController.doctorOnPos[0])
+    }
+    
+    public static func hideEqGrid() {
+        CannonController.gameScene.hero.setPhysics(isActive: true)
+        CannonController.selectedCannon.zPosition = 6
+        CannonController.gameScene.eqGrid.isHidden = true
+        CannonController.gameScene.eqGrid.zPosition = -1
+        CannonController.gameScene.eqRob.zPosition = 11
+        CannonController.gameScene.inputPanelForCannon.zPosition = 10
+        SignalController.speed = 0.006
+        CharacterController.doctor.changeBalloonTexture(index: 0)
+        CannonController.gameScene.signalHolder.zPosition = 0
+        CannonController.gameScene.valueOfX.zPosition = 1
+        CannonTryController.numOfCheck = 0
+        CannonTryController.numOfChangeVE = 0
+        CannonController.gameScene.valueOfX.text = ""
+        CannonTryController.backEnemy()
+        CannonTryController.getBG(completion: { bg in
+            bg?.removeFromParent()
+        })
+        
+        CannonController.hideInputPanel()
+        CannonTouchController.state = .Ready
+        CharacterController.doctor.setScale(1)
+        let cands = CannonController.gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == CannonController.selectedCannon.spotPos[0] })
+        for enemy in cands {
+            SignalController.sendToCannon(target: CannonController.selectedCannon, num: CannonController.gameScene.xValue, from: enemy.absolutePos()) {
+            }
+        }
     }
 }

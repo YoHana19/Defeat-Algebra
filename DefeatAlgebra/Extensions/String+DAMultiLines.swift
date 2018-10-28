@@ -9,8 +9,8 @@
 import Foundation
 
 extension String {
-    func DAMultilined(completion: @escaping (String) -> Void) {
-        let length = 10 // num of max characters in single line
+    func DAMultilined(length: Int = 10, completion: @escaping (String) -> Void) {
+        // default 10 is num of max characters in single line
         var multiLine = ""
         let substrings: [String] = self.components(separatedBy: "\n")
         let dispachGroup = DispatchGroup()

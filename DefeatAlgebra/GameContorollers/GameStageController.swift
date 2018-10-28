@@ -103,11 +103,13 @@ struct GameStageController {
         } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             EnemyMoveController.dodgeRation = 70
         } else if GameScene.stageLevel < MainMenu.secondDayStartTurn {
-            EnemyMoveController.dodgeRation = 60
+            EnemyMoveController.dodgeRation = 70
         } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+1 {
             EnemyMoveController.dodgeRation = 0
-        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
+        } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
             EnemyMoveController.dodgeRation = 70
+        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
+            EnemyMoveController.dodgeRation = 50
         } else if GameScene.stageLevel < MainMenu.invisibleStartTurn+2 {
             EnemyMoveController.dodgeRation = 80
         } else if GameScene.stageLevel <= MainMenu.lastTurn {
@@ -189,7 +191,7 @@ struct GameStageController {
     private static func eqRobForScenario() {
         if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             gameScene.eqRob.isHidden = true
-        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn && GameScene.stageLevel < MainMenu.invisibleStartTurn+2 {
+        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn {
             gameScene.eqRob.isHidden = true
         } else {
             if GameScene.stageLevel == MainMenu.eqRobStartTurn {
@@ -212,6 +214,8 @@ struct GameStageController {
             gameScene.totalNumOfEnemy = 5
         } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
             gameScene.totalNumOfEnemy = 2
+        } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
+            gameScene.totalNumOfEnemy = 3
         } else {
             gameScene.totalNumOfEnemy = 1
         }
@@ -289,8 +293,10 @@ struct GameStageController {
     public static func adjustGameSceneLevel() -> Int {
         if GameScene.stageLevel < MainMenu.cannonStartTurn {
             return GameScene.stageLevel - 2
-        } else {
+        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
             return GameScene.stageLevel - 3
+        } else {
+            return GameScene.stageLevel - 4
         }
     }
 }

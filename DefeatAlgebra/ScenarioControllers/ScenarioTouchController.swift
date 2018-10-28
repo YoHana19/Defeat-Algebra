@@ -109,6 +109,8 @@ class ScenarioTouchController {
             ScenarioController.controllActions()
         } else if ScenarioController.currentActionIndex == 17 {
             ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 39 {
+            let _ = TutorialController.userTouch(on: "")
         }
     }
     
@@ -195,6 +197,8 @@ class ScenarioTouchController {
             }
         } else if ScenarioController.currentActionIndex == 6 || ScenarioController.currentActionIndex == 7 {
             ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 39 {
+            let _ = TutorialController.userTouch(on: "")
         }
     }
 }

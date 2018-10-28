@@ -55,6 +55,15 @@ class InputPanelForCannon: SKSpriteNode {
                     }
                 }
             }
+            if GameScene.stageLevel == MainMenu.invisibleStartTurn {
+                if ScenarioController.currentActionIndex > 35 {
+                    if (CannonTouchController.state == .Trying) {
+                        TutorialController.visibleTutorialLabel(false)
+                    } else {
+                        TutorialController.visibleTutorialLabel(!isActive)
+                    }
+                }
+            }
         }
     }
     
@@ -347,6 +356,14 @@ class InputPanelForCannon: SKSpriteNode {
                 } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                     if ScenarioController.currentActionIndex < 17 {
                         return
+                    } else if ScenarioController.currentActionIndex < 30 {
+                        CannonTryController.getBG() { bg in
+                            guard let canSim = bg else { return }
+                            canSim.showAllSignalButton()
+                            canSim.rePosChangeVeButton(originPos: true)
+                            canSim.recordBoard.createCannon(ve: tempVe)
+                        }
+                        return
                     }
                 }
             }
@@ -356,6 +373,8 @@ class InputPanelForCannon: SKSpriteNode {
                 CannonController.execute(3, cannon: nil)
                 CannonTryController.getBG() { bg in
                     guard let canSim = bg else { return }
+                    canSim.showAllSignalButton()
+                    canSim.rePosChangeVeButton(originPos: true)
                     canSim.recordBoard.createCannon(ve: tempVe)
                 }
             } else {
@@ -390,6 +409,12 @@ class InputPanelForCannon: SKSpriteNode {
             
             self.isHidden = true
             CannonController.execute(2, cannon: nil)
+            
+            if let _ = self.parent as? ScenarioScene, GameScene.stageLevel == MainMenu.invisibleStartTurn {
+                if ScenarioController.currentActionIndex > 35 {
+                    TutorialController.visibleTutorialLabel(false)
+                }
+            }
         }
         
     }

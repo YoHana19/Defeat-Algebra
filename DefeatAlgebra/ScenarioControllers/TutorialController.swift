@@ -212,7 +212,7 @@ struct TutorialController {
             default:
                 break;
             }
-        case MainMenu.eqRobStartTurn: //7
+        case MainMenu.eqRobStartTurn:
             switch currentIndex {
             case 0:
                 createMultiTutorialLabel(text: "2x+1と同じ文字式を持つ敵を選択し\n最後にエクロボをタッチして攻撃せよ！", posY: Int(scene.size.height/2+100))
@@ -221,7 +221,7 @@ struct TutorialController {
             default:
                 break;
             }
-        case MainMenu.cannonStartTurn: //11
+        case MainMenu.cannonStartTurn:
             switch currentIndex {
             case 0:
                 createTutorialLabel(text: "アルジェ砲を使って敵を倒せ！", posY: Int(scene.size.height/2+440))
@@ -240,6 +240,25 @@ struct TutorialController {
                 removeTutorialLabel()
                 currentIndex += 1
                 state = .Waiting
+            default:
+                break;
+            }
+        case MainMenu.invisibleStartTurn:
+            switch currentIndex {
+            case 0:
+                createMultiTutorialLabel(text: "改良されたアルジェ砲を使って\n敵ロボットを倒せ！", posY: Int(scene.size.height/2+100))
+                currentIndex += 1
+                state = .Pending
+                break;
+            case 2:
+                removeTutorialLabel()
+                createTutorialLabel(text: "外してしまった！！", posY: Int(scene.size.height/2+100))
+                state = .Waiting
+                break;
+            case 3:
+                createMultiTutorialLabel(text: "試し撃ち機能を使いながら\n確実に倒せる飛距離を見つけよう！", posY: Int(scene.size.height/2+100))
+                state = .Waiting
+                break;
             default:
                 break;
             }
@@ -496,7 +515,7 @@ struct TutorialController {
             default:
                 return true
             }
-        case MainMenu.eqRobStartTurn: //7
+        case MainMenu.eqRobStartTurn:
             switch currentIndex {
             case 0:
                 guard scene.isCharactersTurn else { return false }
@@ -507,10 +526,29 @@ struct TutorialController {
             default:
                 return true
             }
-        case MainMenu.cannonStartTurn: //11
+        case MainMenu.cannonStartTurn:
             switch currentIndex {
             case 2:
                 guard scene.isCharactersTurn else { return false }
+                removeTutorialLabel()
+                currentIndex += 1
+                state = .Show
+                execute()
+                return true
+            case 3:
+                guard scene.isCharactersTurn else { return false }
+                removeTutorialLabel()
+                currentIndex = 0
+                state = .Pending
+                ScenarioController.controllActions()
+                return true
+            default:
+                return true
+            }
+        case MainMenu.invisibleStartTurn:
+            switch currentIndex {
+            case 2:
+                guard scene.isCharactersTurn else { return false } 
                 removeTutorialLabel()
                 currentIndex += 1
                 state = .Show
@@ -564,7 +602,7 @@ struct TutorialController {
                 break;
             }
             break;
-        case MainMenu.uncoverSignalStartTurn: //1
+        case MainMenu.uncoverSignalStartTurn:
             switch currentIndex {
             case 0:
                 guard scene.playerTurnState == .MoveState else { return }
@@ -590,7 +628,7 @@ struct TutorialController {
                 break;
             }
             break;
-        case MainMenu.timeBombStartTurn: //3
+        case MainMenu.timeBombStartTurn:
             switch currentIndex {
             case 0:
                 guard scene.isCharactersTurn else { return }
@@ -607,7 +645,7 @@ struct TutorialController {
             default:
                 break;
             }
-        case MainMenu.moveExplainStartTurn: //5
+        case MainMenu.moveExplainStartTurn:
             switch currentIndex {
             case 0:
                 guard !scene.isCharactersTurn else { return }
@@ -629,7 +667,7 @@ struct TutorialController {
             default:
                 break;
             }
-        case MainMenu.eqRobStartTurn: //7
+        case MainMenu.eqRobStartTurn:
             switch currentIndex {
             case 0:
                 guard scene.isCharactersTurn else { return }
@@ -638,7 +676,7 @@ struct TutorialController {
             default:
                 break;
             }
-        case MainMenu.cannonStartTurn: //11
+        case MainMenu.cannonStartTurn:
             switch currentIndex {
             case 0:
                 guard scene.isCharactersTurn else { return }
@@ -650,6 +688,19 @@ struct TutorialController {
                 break;
             case 4:
                 guard !scene.isCharactersTurn else { return }
+                state = .Show
+                break;
+            default:
+                break;
+            }
+        case MainMenu.invisibleStartTurn:
+            switch currentIndex {
+            case 0:
+                guard scene.isCharactersTurn else { return }
+                state = .Show
+                break;
+            case 2:
+                guard scene.isCharactersTurn else { return }
                 state = .Show
                 break;
             default:
@@ -710,5 +761,9 @@ struct TutorialController {
     
     public static func removeTutorialLabel() {
         currentLabel.removeFromParent()
+    }
+    
+    public static func visibleTutorialLabel(_ isVisible: Bool) {
+        currentLabel.isHidden = !isVisible
     }
 }

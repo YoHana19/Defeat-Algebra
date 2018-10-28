@@ -100,7 +100,7 @@ struct CannonTryController {
     
     public static func hideEqGrid() {
         gameScene.hero.setPhysics(isActive: true)
-        CannonController.selectedCannon.zPosition = 5
+        CannonController.selectedCannon.zPosition = 6
         gameScene.eqGrid.isHidden = true
         gameScene.eqGrid.zPosition = -1
         gameScene.eqRob.zPosition = 11
@@ -136,13 +136,13 @@ struct CannonTryController {
         })
     }
     
-    private static func backEnemy() {
+    public static func backEnemy() {
         checkingEnemy.xValueLabel.text = ""
         checkingEnemy.calculatePunchLength(value: gameScene.xValue)
         checkingEnemy.variableExpressionLabel.fontColor = UIColor.white
         checkingEnemy.punchIntervalForCount = 0
         checkingEnemy.forcusForAttack(color: UIColor.red, value: gameScene.xValue)
-        checkingEnemy.zPosition = 4
+        checkingEnemy.zPosition = 5
     }
     
 }

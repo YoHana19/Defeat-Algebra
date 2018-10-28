@@ -41,8 +41,17 @@ class EqGrid: Grid {
                             return
                         }
                     }
+                } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
+                    guard CannonTutorialController.userTouch(on: "") else { return }
                 }
                 break;
+            }
+        }
+        
+        if CannonTouchController.state == .Trying {
+            guard let gameScene = self.parent as? GameScene else { return }
+            if gameScene.inputPanelForCannon.isActive == true {
+                CannonController.hideInputPanelInTrying()
             }
         }
     }

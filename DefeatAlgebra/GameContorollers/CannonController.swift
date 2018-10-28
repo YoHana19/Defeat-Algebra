@@ -157,6 +157,12 @@ struct CannonController {
         showInputPanel()
     }
     
+    public static func hideInputPanelInTrying() {
+        hideInputPanel()
+        gameScene.inputPanelForCannon.buttonClearTapped()
+        selectedCannon.recoverVEElementArray()
+    }
+    
     public static func hint() {
         doctorSays(in: .Trying, value: "6")
         CannonTryController.getBG() { bg in
@@ -216,7 +222,7 @@ struct CannonController {
         gameScene.inputPanelForCannon.isActive = true
     }
     
-    private static func hideInputPanel() {
+    public static func hideInputPanel() {
         gameScene.inputPanelForCannon.isActive = false
     }
     

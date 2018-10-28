@@ -31,9 +31,8 @@ class EnemyProperty {
         (2, 106, [[2, 11], [2, 9], [6, 9], [6, 11]]), //11-14
         (1, 100, [[1, 9, 8], [4, 11, 8], [7, 9, 8]]), //12-16 cannon
         (1, 100, [[1, 10, 8], [3, 9, 9], [4, 11, 8], [5, 9, 9], [7, 10, 8]]), //13-17
-        (1, 100, [[1, 9, 10], [4, 10, 10], [7, 9, 10]]), //14-18 invisible
-        (1, 100, [[0, 11, 8], [2, 10, 9], [6, 10, 8], [8, 11, 9]]), //15-19
-        (2, 6, [[1, 10], [3, 9], [4, 11], [5, 9], [7, 10]]) //16-20
+        (1, 100, [[1, 9, 10], [4, 10, 10], [7, 9, 10]]), //14-19 invisible
+        (1, 100, [[0, 11, 8], [2, 10, 9], [6, 10, 8], [8, 11, 9]]) //15-20
         ]
     
     static let level0 = [0] //3
@@ -69,8 +68,6 @@ class EnemyProperty {
     static let level14VE = ["1": [[4, 10, 4]]]
     static let level15 = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1] //19
     static let level15VE = ["1": [[2, 8, 4], [2, 9, 4]]]
-    static let level16 = [0, 0, 0, 1, 0, 0, 0, 0, 101, 0, 0, 0, 0, 2, 0, 0, 0, 0, 102] //20 (last)
-    static let level16VE = ["1": [[4, 8, 4]], "2": [[6, 9, 4]], "101": [[5, 6, 4]], "102": [[6, 6, 4]]]
     
     static func judgeCorrectVe(origin: String, input: String) -> Bool {
         if let cand = vELabelPairDict[origin] {
@@ -85,8 +82,8 @@ class EnemyProperty {
         "x+1-1": ["x"], "2+x-2": ["x"], "x+2-1": ["x+1", "1+x"], "2+x-1": ["x+1", "1+x"], "2x-2+2": ["2x"], "1+2x-1": ["2x"], "2x-1+2": ["2x+1", "1+2x"], "3-2+2x": ["2x+1", "1+2x"]
     ]
     
-    static let addEnemyManager = [level0, level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11, level12, level13, level14, level15, level16]
-    static let addEnemyVEManager = [level0VE, level1VE, level2VE, level3VE, level4VE, level5VE, level6VE, level7VE, level8VE, level9VE, level10VE, level11VE, level12VE, level13VE, level14VE, level15VE, level16VE]
+    static let addEnemyManager = [level0, level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11, level12, level13, level14, level15]
+    static let addEnemyVEManager = [level0VE, level1VE, level2VE, level3VE, level4VE, level5VE, level6VE, level7VE, level8VE, level9VE, level10VE, level11VE, level12VE, level13VE, level14VE, level15VE]
     
     static func getNumOfAllEnemy(stageLevel: Int, completion: @escaping (Int) -> Void) {
         let iniProperty = EnemyProperty.initialEnemyPosArray[stageLevel]

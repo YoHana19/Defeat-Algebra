@@ -345,8 +345,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Pause button */
         buttonPause.selectedHandler = { [weak self] in
-            self?.pauseFlag = true
-            self?.pauseScreen.isHidden = false
+            guard let pauseFlag = self?.pauseFlag, let pauseScreen = self?.pauseScreen else { return }
+            self?.pauseFlag = !pauseFlag
+            self?.pauseScreen.isHidden = !pauseScreen.isHidden
         }
         
         /*====================================================*/
@@ -1016,7 +1017,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func pointingChangeVeButton() {
-        let pos3 = CGPoint(x: 570, y: 1310)
+        let pos3 =  CGPoint(x: 700, y: 200)
+        pointing(pos: pos3)
+    }
+    
+    func pointingTryDoneButton() {
+        let pos3 =  CGPoint(x: 720, y: 1310)
         pointing(pos: pos3)
     }
     
@@ -1049,6 +1055,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if name == "1" {
             let pos = CGPoint(x: 210, y: 720)
             pointing(pos: pos)
+        } else if name == "2" {
+            let pos = CGPoint(x: 300, y: 720)
+            pointing(pos: pos)
         } else if name == "4" {
             let pos = CGPoint(x: 490, y: 720)
             pointing(pos: pos)
@@ -1068,6 +1077,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             let pos = CGPoint(x: 700, y: 720)
             pointing(pos: pos)
         }
+    }
+    
+    func pointingLog() {
+        let pos1 = CGPoint(x: 160, y: 1100)
+        pointing(pos: pos1)
+        let pos2 = CGPoint(x: 240, y: 1100)
+        pointing(pos: pos2)
+    }
+    
+    func pointingDist() {
+        let pos = CGPoint(x: 310, y: 1100)
+        pointing(pos: pos)
     }
     
     /* Set pointing icon */

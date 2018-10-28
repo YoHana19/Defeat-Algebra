@@ -15,6 +15,9 @@ class EqBackground: SKSpriteNode {
     var enemies = [Enemy]()
     var eqRob: EqRob?
     let doneButton = SKSpriteNode(imageNamed: "tryDoneButton")
+    var signal1 = SignalValueHolder(value: 1)
+    var signal2 = SignalValueHolder(value: 1)
+    var signal3 = SignalValueHolder(value: 1)
     
     init(gameScene: GameScene, enemies: [Enemy], eqRob: EqRob?) {
         /* Initialize with enemy asset */
@@ -78,6 +81,7 @@ class EqBackground: SKSpriteNode {
         /* Touch button 1 */
         if nodeAtPoint.name == "signal1" || nodeAtPoint.name == "label1" {
             guard isEnable else { return }
+            signal1.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             signalTapped(value: 1, node: node as! SKSpriteNode)
         }
@@ -85,6 +89,7 @@ class EqBackground: SKSpriteNode {
         /* Touch button 2 */
         if nodeAtPoint.name == "signal2" || nodeAtPoint.name == "label2" {
             guard isEnable else { return }
+            signal2.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             signalTapped(value: 2, node: node as! SKSpriteNode)
         }
@@ -92,6 +97,7 @@ class EqBackground: SKSpriteNode {
         /* Touch button 3 */
         if nodeAtPoint.name == "signal3" || nodeAtPoint.name == "label3" {
             guard isEnable else { return }
+            signal3.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             signalTapped(value: 3, node: node as! SKSpriteNode)
         }
@@ -171,6 +177,7 @@ class EqBackground: SKSpriteNode {
                         GridActiveAreaController.showActiveArea(at: [(eqRob.eqPosX, eqRob.eqPosY-i)], color: "yellow", grid: gameScene.eqGrid, zPosition: 12)
                     }
                 }
+                self.showAllSignalButton()
                 self.isEnable = true
             }
         } else {
@@ -186,6 +193,7 @@ class EqBackground: SKSpriteNode {
                 }
             }
             dispatchgroup.notify(queue: .main, execute: {
+                self.showAllSignalButton()
                 self.forInstruction()
                 self.isEnable = true
             })
@@ -201,6 +209,21 @@ class EqBackground: SKSpriteNode {
             signal.zPosition = 3
             signal.position = CGPoint(x: 120*i+320, y: 150)
             addChild(signal)
+            if i == 1 {
+                signal1 = signal
+            } else if i == 2 {
+                signal2 = signal
+            } else {
+                signal3 = signal
+            }
+        }
+    }
+    
+    func showAllSignalButton() {
+        if signal1.isHidden && signal2.isHidden && signal3.isHidden {
+            signal1.isHidden = false
+            signal2.isHidden = false
+            signal3.isHidden = false
         }
     }
     
