@@ -832,14 +832,24 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctor.position.x, y: CharacterController.doctor.position.y-300), duration: 1.0)
             nextLineWithoutMoving()
-            scenarioScene.pointingEqSignal()
+            //scenarioScene.pointingEqSignal()
+            VEEquivalentController.getBG() { bg in
+                if let bg = bg {
+                    bg.pointingSignalButton()
+                }
+            }
             currentActionIndex += 1
             break;
         case 4:
             guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.removePointing()
-            scenarioScene.removePointing()
-            scenarioScene.removePointing()
+//            scenarioScene.removePointing()
+//            scenarioScene.removePointing()
+//            scenarioScene.removePointing()
+            VEEquivalentController.getBG() { bg in
+                if let bg = bg {
+                    bg.removePointingSignalButton()
+                }
+            }
             CharacterController.doctor.changeBalloonTexture(index: 1)
             nextLine()
             scenarioScene.tutorialState = .Converstaion

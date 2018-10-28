@@ -11,7 +11,7 @@ import SpriteKit
 
 class EqBackground: SKSpriteNode {
     
-    var isEnable = true
+    public var isEnable = false
     var enemies = [Enemy]()
     var eqRob: EqRob?
     let doneButton = SKSpriteNode(imageNamed: "tryDoneButton")
@@ -278,5 +278,36 @@ class EqBackground: SKSpriteNode {
         doneButton.name = "doneButton"
         addChild(doneButton)
         doneButton.isHidden = true
+    }
+    
+    func pointingSignalButton() {
+        let pos = CGPoint(x: 50, y: 50)
+        signal1.addChild(pointing(pos: pos))
+        signal2.addChild(pointing(pos: pos))
+        signal3.addChild(pointing(pos: pos))
+    }
+    
+    func removePointingSignalButton() {
+        if let icon = signal1.childNode(withName: "pointing") {
+            icon.removeFromParent()
+        }
+        if let icon = signal2.childNode(withName: "pointing") {
+            icon.removeFromParent()
+        }
+        if let icon = signal3.childNode(withName: "pointing") {
+            icon.removeFromParent()
+        }
+    }
+    
+    func pointing(pos: CGPoint) -> SKSpriteNode {
+        let icon = SKSpriteNode(imageNamed: "pointing")
+        icon.name = "pointing"
+        icon.size = CGSize(width: 50, height: 50)
+        icon.position = pos
+        icon.zPosition = 100
+        let shakePoint = SKAction(named: "shakePoint")
+        let repeatAction = SKAction.repeatForever(shakePoint!)
+        icon.run(repeatAction)
+        return icon
     }
 }

@@ -739,7 +739,7 @@ struct TutorialController {
         scene.addChild(label)
     }
     
-    private static func createMultiTutorialLabel(text: String, posY: Int) {
+    public static func createMultiTutorialLabel(text: String, posY: Int) {
         /* Set label with font */
         let label = SKLabelNode(fontNamed: DAFont.fontNameForTutorial)
         /* Set text */

@@ -16,7 +16,7 @@ struct GameStageController {
         ResetController.reset()
         GameScene.stageLevel += next
         if let gamescene = scene as? GameScene {
-            DAUserDefaultUtility.SetData(gameScene: gamescene)
+            DAUserDefaultUtility.SetData()
         }
         switch GameScene.stageLevel {
         case 0:
@@ -147,7 +147,7 @@ struct GameStageController {
             gameScene.eqRob.isHidden = true
         } else if GameScene.stageLevel == MainMenu.secondDayStartTurn || GameScene.stageLevel == MainMenu.secondDayStartTurn+1 {
             gameScene.eqRob.isHidden = true
-        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn && GameScene.stageLevel < MainMenu.lastTurn {
+        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn {
             gameScene.eqRob.isHidden = true
         } else {
             gameScene.eqRob.isHidden = false

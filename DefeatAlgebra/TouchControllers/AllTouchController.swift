@@ -37,6 +37,7 @@ struct AllTouchController {
         guard gameScene.itemType != .EqRob else { return }
         let cands = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == node.spotPos[0] })
         guard cands.count > 0 else {
+            guard gameScene.inputPanelForCannon.isHidden else { return }
             CannonController.execute(4, cannon: nil)
             return
         }

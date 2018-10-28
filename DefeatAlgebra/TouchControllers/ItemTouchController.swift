@@ -29,17 +29,12 @@ struct ItemTouchController {
         GridActiveAreaController.showAttackArea(posX: gameScene.hero.positionX, posY: gameScene.hero.positionY, grid: gameScene.gridNode)
         gameScene.playerTurnState = .AttackState
 
-        /* Remove input board for cane */
-        gameScene.inputBoardForCane.isHidden = true
     }
     
     public static func timeBombTapped(touchedNode: SKNode) {
         /* Remove activeArea for catapult */
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
-        
-        /* Remove input board for cane */
-        gameScene.inputBoardForCane.isHidden = true
         
         /* Set timeBomb using state */
         gameScene.itemType = .timeBomb
@@ -101,9 +96,6 @@ struct ItemTouchController {
         /* Remove active area */
         GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
-        
-        /* Remove input board for cane */
-        gameScene.inputBoardForCane.isHidden = true
         
     }
 }

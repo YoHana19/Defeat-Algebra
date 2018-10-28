@@ -588,7 +588,7 @@ struct EqRobLines {
         case .EqRobGo:
             return "エクロボ 発進じゃ！"
         case .EqRobDestroyed:
-            return "むむぅ...\nどうやら選択ミスしてしまったようじゃの"
+            return "むむぅ・・・\nどうやら選択ミスしてしまったようじゃの"
         case .DestroyedInstruction:
             return value!
         case .DestroyedInstructionDone:
@@ -616,8 +616,8 @@ struct EqRobLines {
     static let subLinesForSelecting: [String] = [
         "エクロボをタッチすれば、選択した敵たちに向かって発進するぞ",
         "やり直したい時は、下のやり直しボタンを押すのじゃ",
-        "xの数に関係なく、同じになる暗号を選ぶのじゃ",
-        "見た目に騙されるでないぞ。xの値が違っても同じ大きさになるものは、同じ暗号なのじゃ"
+        "わからなければ、xに数を入れて計算してみるのじゃ",
+        "xにどんな数が入っても計算結果が同じものは同じ暗号じゃ"
     ]
     
     static var curIndex = 0

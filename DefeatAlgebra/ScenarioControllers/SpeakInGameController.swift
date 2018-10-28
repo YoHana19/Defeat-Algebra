@@ -51,15 +51,15 @@ struct SpeakInGameController {
                 return
             }
             break;
-        case MainMenu.showUnsimplifiedStartTurn:
-            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
-                guard lastAction != .VeScaleExplain else { return }
-                wait(length: 1.0) {
-                    doAction(type: .VeScaleExplain)
-                }
-                return
-            }
-            break;
+//        case MainMenu.showUnsimplifiedStartTurn:
+//            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
+//                guard lastAction != .VeScaleExplain else { return }
+//                wait(length: 1.0) {
+//                    doAction(type: .VeScaleExplain)
+//                }
+//                return
+//            }
+//            break;
         case MainMenu.secondDayStartTurn:
             if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
                 guard lastAction != .SecondDay else { return }

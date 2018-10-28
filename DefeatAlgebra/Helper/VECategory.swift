@@ -24,13 +24,11 @@ struct VECategory {
     static let ve6 = ["x+2", "x+3", "2+x", "3+x", "2x+1", "1+2x", "2x-1", "3x-1", "3x-2"]
     // level 11 (second day)
     static let ve7 = ["x+1", "3+x", "2x"]
-    // level 12, 16(cannon), 17, 19
+    // level 12, 16(cannon), 17, 18(invisible), 19
     static let ve8 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
     static let ve9 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
-    // level 18(invisible)
-    static let ve10 = ["x+1", "x+2", "x+3", "1+x", "2+x", "3+x", "2x+1", "2x+2", "1+2x", "2+2x", "x", "2x", "3x"]
     
-    static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8, ve9, ve10]
+    static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8, ve9]
     static let unSFrom = [9]
     
     static func getCategory(ve: String, completion: @escaping (Int) -> Void) {

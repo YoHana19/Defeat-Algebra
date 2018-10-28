@@ -52,12 +52,6 @@ struct PlayerTurnController {
         case .timeBomb:
             GridActiveAreaController.showtimeBombSettingArea(grid: gameScene.gridNode)
             break;
-        case .Wall:
-            GridActiveAreaController.showWallSettingArea(grid: gameScene.gridNode)
-            break;
-        case .Cane:
-            gameScene.inputBoardForCane.isHidden = false
-            break;
         default:
             break;
         }

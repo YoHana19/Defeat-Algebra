@@ -193,8 +193,6 @@ class ScenarioScene: GameScene {
         CharacterController.setCharacter(scene: self)
         
         /* Set input boards */
-        setInputBoardForCane()
-        setSimplificationBoard()
         setInputPanel()
         setSelectionPanel()
         setInputPanelForCannon()
@@ -257,7 +255,7 @@ class ScenarioScene: GameScene {
                 break;
             }
         } else {
-            print("\(gameState), \(playerTurnState), \(itemType)")
+//            print("\(gameState), \(playerTurnState), \(itemType)")
 //            print(TutorialController.currentIndex)
 //            print(TutorialController.state)
             switch gameState {

@@ -24,18 +24,19 @@ struct SignalSendingTurnController {
                 let max = GameStageController.signalVale()
                 gameScene.xValue =  times ?? Int(arc4random_uniform(UInt32(max)))+1
                 gameScene.valueOfX.fontColor = UIColor.red
+                let dispatchGroup = DispatchGroup()
                 for enemy in willAttackEnemies {
+                    dispatchGroup.enter()
                     enemy.calculatePunchLength(value: gameScene.xValue)
-                    SignalController.send(target: enemy, num: gameScene.xValue) {}
+                    SignalController.send(target: enemy, num: gameScene.xValue) {
+                        dispatchGroup.leave()
+                    }
                 }
-                if let maxDistanceEnemy = willAttackEnemies.max(by: {$1.distance(to: gameScene.madScientistNode) > $0.distance(to: gameScene.madScientistNode)}) {
-                    let wait = SKAction.wait(forDuration: SignalController.signalSentDuration(target: maxDistanceEnemy, xValue: gameScene.xValue)+0.2)
-                    gameScene.run(wait, completion: {
-                        gameScene.gameState = .AddItem
-                        done = false
-                        return completion()
-                    })
-                }
+                dispatchGroup.notify(queue: .main, execute: {
+                    gameScene.gameState = .AddItem
+                    done = false
+                    return completion()
+                })
             } else {
                 gameScene.xValue = 0
                 gameScene.valueOfX.fontColor = UIColor.red
@@ -43,26 +44,6 @@ struct SignalSendingTurnController {
                 done = false
                 return completion()
             }
-        }
-    }
-    
-    static func invisibleSignal(in times: Int? = nil) {
-        if !done {
-            done = true
-            gameScene.gridNode.numOfTurnEndEnemy = 0
-            let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
-            if willAttackEnemies.count > 0 {
-                gameScene.xValue = times ?? Int(arc4random_uniform(UInt32(3)))+1
-                for enemy in willAttackEnemies {
-                    enemy.calculatePunchLength(value: gameScene.xValue)
-                    let num = times ?? 0
-                    enemy.forcusForAttack(color: UIColor.red, value: num)
-                }
-            }
-            gameScene.valueOfX.text = "x = ？"
-            gameScene.valueOfX.fontColor = UIColor.red
-            gameScene.gameState = .AddItem
-            done = false
         }
     }
 }

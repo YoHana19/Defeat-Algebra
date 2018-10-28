@@ -85,6 +85,8 @@
 		204163A420C2653F00217F6A /* GridFlashController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A220C2653F00217F6A /* GridFlashController.swift */; };
 		204163A620C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
 		204163A720C266AD00217F6A /* GridActiveAreaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204163A520C266AD00217F6A /* GridActiveAreaController.swift */; };
+		2043C4112185ADD6007B3F8F /* PasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2043C4102185ADD6007B3F8F /* PasswordScreen.swift */; };
+		2043C4122185ADD6007B3F8F /* PasswordScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2043C4102185ADD6007B3F8F /* PasswordScreen.swift */; };
 		2044B0232163447A00E8E21C /* VEEquivalentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B0222163447A00E8E21C /* VEEquivalentController.swift */; };
 		2044B0242163447A00E8E21C /* VEEquivalentController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B0222163447A00E8E21C /* VEEquivalentController.swift */; };
 		2044B026216344CB00E8E21C /* EqBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2044B025216344CB00E8E21C /* EqBackground.swift */; };
@@ -197,8 +199,6 @@
 		20D0FEEF20B6C11100C547A5 /* CharacterLinesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEE320B6C11100C547A5 /* CharacterLinesController.swift */; };
 		20D0FEF020B6C11200C547A5 /* CharacterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEE420B6C11100C547A5 /* CharacterController.swift */; };
 		20D0FEF120B6C11200C547A5 /* CharacterController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEE420B6C11100C547A5 /* CharacterController.swift */; };
-		20D0FF1120B6C12300C547A5 /* InputVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEF520B6C12300C547A5 /* InputVariable.swift */; };
-		20D0FF1220B6C12300C547A5 /* InputVariable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEF520B6C12300C547A5 /* InputVariable.swift */; };
 		20D0FF1320B6C12300C547A5 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEF620B6C12300C547A5 /* Hero.swift */; };
 		20D0FF1420B6C12300C547A5 /* Hero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEF620B6C12300C547A5 /* Hero.swift */; };
 		20D0FF1520B6C12300C547A5 /* InputVariableExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20D0FEF720B6C12300C547A5 /* InputVariableExpression.swift */; };
@@ -381,6 +381,7 @@
 		2041518D215CBBF500595003 /* ShowLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowLength.swift; sourceTree = "<group>"; };
 		204163A220C2653F00217F6A /* GridFlashController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridFlashController.swift; sourceTree = "<group>"; };
 		204163A520C266AD00217F6A /* GridActiveAreaController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridActiveAreaController.swift; sourceTree = "<group>"; };
+		2043C4102185ADD6007B3F8F /* PasswordScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordScreen.swift; sourceTree = "<group>"; };
 		2044B0222163447A00E8E21C /* VEEquivalentController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VEEquivalentController.swift; sourceTree = "<group>"; };
 		2044B025216344CB00E8E21C /* EqBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqBackground.swift; sourceTree = "<group>"; };
 		2044B028216345D700E8E21C /* EqGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqGrid.swift; sourceTree = "<group>"; };
@@ -442,7 +443,6 @@
 		20D0FEE120B6C11100C547A5 /* EnemyVEController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EnemyVEController.swift; sourceTree = "<group>"; };
 		20D0FEE320B6C11100C547A5 /* CharacterLinesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterLinesController.swift; sourceTree = "<group>"; };
 		20D0FEE420B6C11100C547A5 /* CharacterController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CharacterController.swift; sourceTree = "<group>"; };
-		20D0FEF520B6C12300C547A5 /* InputVariable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputVariable.swift; sourceTree = "<group>"; };
 		20D0FEF620B6C12300C547A5 /* Hero.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hero.swift; sourceTree = "<group>"; };
 		20D0FEF720B6C12300C547A5 /* InputVariableExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputVariableExpression.swift; sourceTree = "<group>"; };
 		20D0FEF820B6C12300C547A5 /* SimplificationBoard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimplificationBoard.swift; sourceTree = "<group>"; };
@@ -579,7 +579,6 @@
 			isa = PBXGroup;
 			children = (
 				20D0FEF820B6C12300C547A5 /* SimplificationBoard.swift */,
-				20D0FEF520B6C12300C547A5 /* InputVariable.swift */,
 				20D0FEF720B6C12300C547A5 /* InputVariableExpression.swift */,
 				20D0FEFC20B6C12300C547A5 /* PauseScreen.swift */,
 			);
@@ -628,6 +627,7 @@
 				20F0D5152176006B00E76641 /* DataSelectMenu.sks */,
 				20F0D5182176007A00E76641 /* DataSelectMenu.swift */,
 				20F0D5122175EF0D00E76641 /* DataController.swift */,
+				2043C4102185ADD6007B3F8F /* PasswordScreen.swift */,
 			);
 			path = MainMenu;
 			sourceTree = "<group>";
@@ -1401,6 +1401,7 @@
 				20D0FEDA20B6C0E300C547A5 /* EnemyProperty.swift in Sources */,
 				20D0FF3520B6C12300C547A5 /* Catapult.swift in Sources */,
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
+				2043C4112185ADD6007B3F8F /* PasswordScreen.swift in Sources */,
 				201137922120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
 				204D5939216B091D00BC776C /* CannonRecordBoard.swift in Sources */,
 				2052888C20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
@@ -1439,7 +1440,6 @@
 				205A0ED6207A0D58006A44A6 /* LoginService.swift in Sources */,
 				20F0D5132175EF0D00E76641 /* DataController.swift in Sources */,
 				2058CA8720F885A6005DF357 /* SignalController.swift in Sources */,
-				20D0FF1120B6C12300C547A5 /* InputVariable.swift in Sources */,
 				2011378F212000CD00B5A138 /* ScenarioController.swift in Sources */,
 				20F1A74C212EE0F50013FF9D /* SpeakInGameProperty.swift in Sources */,
 				20D0FF2B20B6C12300C547A5 /* BattleShip.swift in Sources */,
@@ -1521,6 +1521,7 @@
 				20D0FEDB20B6C0E300C547A5 /* EnemyProperty.swift in Sources */,
 				20E9E89A20223B1400D31410 /* AppDelegate.swift in Sources */,
 				20D0FF3620B6C12300C547A5 /* Catapult.swift in Sources */,
+				2043C4122185ADD6007B3F8F /* PasswordScreen.swift in Sources */,
 				201137932120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
 				204D593A216B091D00BC776C /* CannonRecordBoard.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
@@ -1559,7 +1560,6 @@
 				205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */,
 				20F0D5142175EF0D00E76641 /* DataController.swift in Sources */,
 				2058CA8820F885A6005DF357 /* SignalController.swift in Sources */,
-				20D0FF1220B6C12300C547A5 /* InputVariable.swift in Sources */,
 				20113790212000CD00B5A138 /* ScenarioController.swift in Sources */,
 				20F1A74D212EE0F50013FF9D /* SpeakInGameProperty.swift in Sources */,
 				20D0FF2C20B6C12300C547A5 /* BattleShip.swift in Sources */,

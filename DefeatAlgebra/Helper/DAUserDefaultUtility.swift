@@ -20,6 +20,8 @@ class DAUserDefaultUtility {
     static var timeBombExplain = false
     static var moveExplain = false
     static var showUnsimplified = false
+    static var changeVeSizeExplainByEdge = false
+    static var changeVeSizeExplainByNeignbor = false
     static var eqRobExplain = false
     static var cannonExplain = false
     static var invisibleSignal = false
@@ -29,12 +31,6 @@ class DAUserDefaultUtility {
     public static func DrawData(gameScene: GameScene) {
         /* Stage Level */
         GameScene.stageLevel = gameScene.selectedLevel.map { $0 } ?? ud.integer(forKey: "stageLevel")
-//        /* Hero */
-//        gameScene.moveLevel = ud.integer(forKey: "moveLevel") == 0 ? 1 : ud.integer(forKey: "moveLevel")
-//        /* Items */
-//        gameScene.handedItemNameArray = ud.array(forKey: "itemNameArray") as? [String] ?? []
-//        /* Life */
-//        gameScene.life = ud.integer(forKey: "life") < 6 ? 5 : ud.integer(forKey: "life")
         
         initialScenario = ud.bool(forKey: "initialScenario")
         uncoverSignal = ud.bool(forKey: "uncoverSignal")
@@ -42,6 +38,8 @@ class DAUserDefaultUtility {
         timeBombExplain = ud.bool(forKey: "timeBombExplain")
         moveExplain = ud.bool(forKey: "moveExplain")
         showUnsimplified = ud.bool(forKey: "showUnsimplified")
+        changeVeSizeExplainByEdge = ud.bool(forKey: "changeVeSizeExplainByEdge")
+        changeVeSizeExplainByNeignbor = ud.bool(forKey: "changeVeSizeExplainByNeignbor")
         eqRobExplain = ud.bool(forKey: "eqRobExplain")
         cannonExplain = ud.bool(forKey: "cannonExplain")
         invisibleSignal = ud.bool(forKey: "invisibleSignal")
@@ -50,22 +48,9 @@ class DAUserDefaultUtility {
         logDefenceFirst = ud.bool(forKey: "logDefenceFirst")
     }
     
-    public static func SetData(gameScene: GameScene?) {
-        guard let gameScene = gameScene else { return }
+    public static func SetData() {
         /* Stage level */
         ud.set(GameScene.stageLevel, forKey: "stageLevel")
-        /* Hero */
-        //ud.set(gameScene.hero!.moveLevel, forKey: "moveLevel")
-        /* Items */
-        var itemNameArray = [String]()
-        for (i, item) in (gameScene.itemArray.enumerated()) {
-            itemNameArray.append(item.name!)
-            if i == (gameScene.itemArray.count)-1 {
-                ud.set(itemNameArray, forKey: "itemNameArray")
-            }
-        }
-        /* Life */
-        ud.set(gameScene.life, forKey: "life")
     }
     
     public static func resetData() {
@@ -79,6 +64,8 @@ class DAUserDefaultUtility {
         timeBombExplain = false
         moveExplain = false
         showUnsimplified = false
+        changeVeSizeExplainByEdge = false
+        changeVeSizeExplainByNeignbor = false
         eqRobExplain = false
         cannonExplain = false
         invisibleSignal = false
@@ -107,6 +94,12 @@ class DAUserDefaultUtility {
             break;
         case "showUnsimplified":
             showUnsimplified = true
+            break;
+        case "changeVeSizeExplainByNeignbor":
+            changeVeSizeExplainByNeignbor = true
+            break;
+        case "changeVeSizeExplainByEdge":
+            changeVeSizeExplainByEdge = true
             break;
         case "eqRobExplain":
             eqRobExplain = true

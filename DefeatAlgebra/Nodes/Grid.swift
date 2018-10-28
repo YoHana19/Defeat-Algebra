@@ -144,39 +144,6 @@ class Grid: SKSpriteNode {
                     }
                 }
             }
-            
-            /*
-             /* Touch enemy to check variable expression */
-             if touchingEnemyFlag == false {
-             if nodeAtPoint.name == "enemy" {
-             /* Make sure to be invalid when using magicSword */
-             guard gameScene.magicSwordAttackDone == false else { return }
-             
-             touchingEnemyFlag = true
-             touchedEnemy = nodeAtPoint as! Enemy
-             touchedEnemy.position = location
-             touchedEnemy.physicsBody = nil
-             }
-             }
-             */
-            
-            /*
-            /* Touch enemy to edit variable expression */
-            if !gameScene.usingMagicSword {
-                if nodeAtPoint.name == "enemy" {
-                    /* Get enemy to edit */
-                    editedEnemy = nodeAtPoint as! Enemy
-                    
-                    /* Set enemy's original variable expression */
-                    gameScene.simplificationBoard.originLabel.text = editedEnemy.originVariableExpression
-                    
-                    /* Make simplification board visible */
-                    gameScene.simplificationBoard.isActive = true
-                    
-                    gameScene.boardActiveFlag = true
-                }
-            }
-            */
         }
     }
     
@@ -244,12 +211,6 @@ class Grid: SKSpriteNode {
                     touchingEnemyFlag = false
                 }
                 
-                /*
-                 } else if nodeAtPoint.name == "enemy" {
-                 if touchingEnemyFlag {
-                 touchedEnemy.position = location
-                 }
-                 */
             } else {
                 directionJudgeDoneFlag = false
                 GridActiveAreaController.resetMovePath(grid: self)
@@ -282,6 +243,24 @@ class Grid: SKSpriteNode {
             } else if let gameScene = self.parent as? GameScene {
                 switch gameScene.tutorialState {
                 case .None:
+                    if gameScene.isVeScaleExplaining {
+                        let touch = touches.first!
+                        let location = touch.location(in: self)
+                        let nodeAtPoint = atPoint(location)
+                        guard let enemy = nodeAtPoint as? Enemy else { return }
+                        AllTouchController.enemyTouched(enemy: enemy)
+                        if gameScene.enemiesForVeScaleExplaining.contains(enemy) {
+                            gameScene.touchCountForVeScaleExplaining += 1
+                        }
+                        if gameScene.touchCountForVeScaleExplaining >= 3 {
+                            gameScene.removeTutorialForVeScale()
+                            gameScene.touchCountForVeScaleExplaining = 0
+                            gameScene.isVeScaleExplaining = false
+                            gameScene.isCharactersTurn = false
+                            self.isTutorial = false
+                            gameScene.enemiesForVeScaleExplaining.forEach({ $0.removePointing() })
+                        }
+                    }
                     break;
                 case .Converstaion:
                     SpeakInGameController.nextLine()
@@ -292,10 +271,14 @@ class Grid: SKSpriteNode {
                         let location = touch.location(in: self)
                         let nodeAtPoint = atPoint(location)
                         guard let enemy = nodeAtPoint as? Enemy else { return }
-                        if enemy.positionX == CannonController.selectedCannon.spotPos[0] {
-                            if enemy.state == .Attack {
-                                CannonTouchController.onEvent(cannon: nil, enemy: enemy)
+                        if gameScene.eqGrid.isHidden {
+                            if enemy.positionX == CannonController.selectedCannon.spotPos[0] {
+                                if enemy.state == .Attack {
+                                    CannonTouchController.onEvent(cannon: nil, enemy: enemy)
+                                }
                             }
+                        } else {
+                            AllTouchController.enemyTouched(enemy: enemy)
                         }
                     }
                     break;
@@ -309,14 +292,6 @@ class Grid: SKSpriteNode {
             guard gameScene.pauseFlag == false else { return }
             guard gameScene.gameState == .PlayerTurn else { return }
             guard gameScene.timeBombConfirming == false else { return }
-            
-            /*
-             /* Reset enemy position after checking variable expression */
-             if touchingEnemyFlag {
-             rePosEnemy(enemy: touchedEnemy)
-             touchingEnemyFlag = false
-             }
-             */
             
             /* Get touch point */
             let touch = touches.first!              // Get the first touch

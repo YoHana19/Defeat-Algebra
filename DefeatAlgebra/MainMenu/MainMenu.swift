@@ -27,10 +27,11 @@ class MainMenu: SKScene {
     var buttonContinue: MSButtonNode!
     var settingScreen: SettingScreen!
     var confirmScreen: ConfirmScreen!
-    var buttonLevelSelect: MSButtonNode!
+    var passwordScreen: PasswordScreen!
+    var buttonMute: SKSpriteNode!
+    var buttonSoundOn: SKSpriteNode!
     
     var confirmingNewGameFlag = false
-    var notInitialFlag = true
     
     /* Sound */
     static var soundOnFlag = true
@@ -41,9 +42,9 @@ class MainMenu: SKScene {
         
         /* Check user has played */
         let ud = UserDefaults.standard
-        notInitialFlag = ud.bool(forKey: "notInitialFlag")
+        
         MainMenu.soundOnFlag = ud.bool(forKey: "soundOn")
-        if notInitialFlag == false {
+        if !ud.bool(forKey: "notInitialFlag") {
             MainMenu.soundOnFlag = true
             ud.set(true, forKey: "notInitialFlag")
         }
@@ -51,9 +52,8 @@ class MainMenu: SKScene {
         /* Set UI connections */
         buttonNewGame = self.childNode(withName: "buttonNewGame") as! MSButtonNode
         buttonContinue = self.childNode(withName: "buttonContinue") as! MSButtonNode
-        buttonLevelSelect = self.childNode(withName: "LevelSelect") as! MSButtonNode
         
-        if !ud.bool(forKey: "initialScenarioFirst") {
+        if !ud.bool(forKey: "initialScenario") {
             buttonContinue.isHidden = true
             buttonNewGame.position = CGPoint(x: buttonNewGame.position.x, y: buttonNewGame.position.y-100)
         } else {
@@ -67,26 +67,9 @@ class MainMenu: SKScene {
             sound.numberOfLoops = -1
         }
         
-        /* For Debug */
-        buttonLevelSelect.selectedHandler = { [weak self] in
-            /* Grab reference to the SpriteKit view */
-            let skView = self?.view as SKView?
-            
-            /* Debug */
-            guard let scene = LevelSelectMenu(fileNamed:"LevelSelectMenu") as LevelSelectMenu? else {
-                return
-            }
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
-        }
-        
         /* New game */
         buttonNewGame.selectedHandler = { [weak self] in
-            if !ud.bool(forKey: "initialScenarioFirst") {
+            if !ud.bool(forKey: "initialScenario") {
                 /* Reset game property */
                 DAUserDefaultUtility.resetData()
                 /* Grab reference to the SpriteKit view */
@@ -109,14 +92,7 @@ class MainMenu: SKScene {
                     self?.run(sound)
                 }
             } else {
-                self?.confirmScreen.isHidden = false
-                self?.confirmingNewGameFlag = true
-                
-                /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let sound = SKAction.playSoundFileNamed("selectNewGame.wav", waitForCompletion: true)
-                    self!.run(sound)
-                }
+                self?.showConfirm()
             }
         }
         
@@ -126,6 +102,11 @@ class MainMenu: SKScene {
             GameStageController.stageManager(scene: self, next: 0)
         }
         
+        setSoundButton()
+        
+        passwordScreen = PasswordScreen()
+        addChild(passwordScreen)
+        
         /* Set setting screen */
         settingScreen = SettingScreen()
         addChild(settingScreen)
@@ -133,6 +114,10 @@ class MainMenu: SKScene {
         /* Set confirm screen for new game */
         confirmScreen = ConfirmScreen()
         addChild(confirmScreen)
+        
+        if MainMenu.soundOnFlag {
+            buttonMute.isHidden = true
+        }
         
     }
     
@@ -156,7 +141,72 @@ class MainMenu: SKScene {
                     self.run(sound)
                 }
             }
-            settingScreen.isActive = !settingScreen.isActive
+            
+            if settingScreen.isActive {
+               settingScreen.isActive = false
+            } else {
+                passwordScreen.isActive = !passwordScreen.isActive
+            }
+        }
+        
+        if nodeAtPoint.name == "buttonMute" {
+            buttonMute.isHidden = true
+            MainMenu.soundOnFlag = true
+            sound.play()
+            sound.numberOfLoops = -1
+            let ud = UserDefaults.standard
+            ud.set(true, forKey: "soundOn")
+        } else if nodeAtPoint.name == "buttonSoundOn" {
+            buttonMute.isHidden = false
+            MainMenu.soundOnFlag = false
+            sound.stop()
+            let ud = UserDefaults.standard
+            ud.set(false, forKey: "soundOn")
+        }
+    }
+    
+    func setSoundButton() {
+        /* Sound button mute */
+        buttonMute = SKSpriteNode(imageNamed: "mute")
+        buttonMute.position = CGPoint(x: 100, y: 75)
+        buttonMute.size = CGSize(width: 100, height: 100)
+        buttonMute.name = "buttonMute"
+        buttonMute.zPosition = 4
+        addChild(buttonMute)
+        
+        /* Sound button on */
+        buttonSoundOn = SKSpriteNode(imageNamed: "soundOn")
+        buttonSoundOn.position = CGPoint(x: 100, y: 75)
+        buttonSoundOn.size = CGSize(width: 100, height: 100)
+        buttonSoundOn.name = "buttonSoundOn"
+        buttonSoundOn.zPosition = 3
+        addChild(buttonSoundOn)
+    }
+    
+    public func loadLevelSelect() {
+        /* Grab reference to the SpriteKit view */
+        let skView = self.view as SKView?
+        
+        /* Debug */
+        guard let scene = LevelSelectMenu(fileNamed:"LevelSelectMenu") as LevelSelectMenu? else {
+            return
+        }
+        
+        /* Ensure correct aspect mode */
+        scene.scaleMode = .aspectFit
+        
+        /* Restart GameScene */
+        skView?.presentScene(scene)
+    }
+    
+    public func showConfirm() {
+        self.confirmScreen.isHidden = false
+        self.confirmingNewGameFlag = true
+        
+        /* Play Sound */
+        if MainMenu.soundOnFlag {
+            let sound = SKAction.playSoundFileNamed("selectNewGame.wav", waitForCompletion: true)
+            self.run(sound)
         }
     }
 }

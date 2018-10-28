@@ -54,11 +54,8 @@ class PauseScreen: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if nodeAtPoint.name == "pauseResume" {
-            gameScene.pauseFlag = false
-            self.isHidden = true
-            
-        } else if nodeAtPoint.name == "pauseRetry" {
+        
+        if nodeAtPoint.name == "pauseRetry" {
             /* EqRob */
             EqRobController.back(2)
             
@@ -92,7 +89,7 @@ class PauseScreen: SKSpriteNode {
                 /* Restart GameScene */
                 skView?.presentScene(scene)
             }
-        } else if nodeAtPoint.name == "pauseMainMenu" {
+        } else if nodeAtPoint.name == "pauseHome" {
             /* EqRob */
             EqRobController.back(2)
             
@@ -143,25 +140,25 @@ class PauseScreen: SKSpriteNode {
     func setButtons() {
         
         /* button Resume */
-        let buttonResume = SKSpriteNode(imageNamed: "pauseResume")
-        buttonResume.position = CGPoint(x: 0, y: self.size.height/4+30)
-        buttonResume.name = "pauseResume"
-        buttonResume.zPosition = 3
-        addChild(buttonResume)
-        
-        /* button Retry */
-        let buttonRetry = SKSpriteNode(imageNamed: "pauseRetry")
-        buttonRetry.position = CGPoint(x: 0, y: 30)
+        let buttonRetry = SKSpriteNode(imageNamed: "pauseRetryJ")
+        buttonRetry.position = CGPoint(x: 0, y: self.size.height/4+30)
         buttonRetry.name = "pauseRetry"
         buttonRetry.zPosition = 3
         addChild(buttonRetry)
         
+        /* button Retry */
+        let buttonHome = SKSpriteNode(imageNamed: "pauseHomeJ")
+        buttonHome.position = CGPoint(x: 0, y: 30)
+        buttonHome.name = "pauseHome"
+        buttonHome.zPosition = 3
+        addChild(buttonHome)
+        
         /* button Main Menu */
-        let buttonMainMenu = SKSpriteNode(imageNamed: "pauseMainMenu")
-        buttonMainMenu.position = CGPoint(x: 0, y: -self.size.height/4+30)
-        buttonMainMenu.name = "pauseMainMenu"
-        buttonMainMenu.zPosition = 3
-        addChild(buttonMainMenu)
+        let buttonTutorial = SKSpriteNode(imageNamed: "pauseTutorialJ")
+        buttonTutorial.position = CGPoint(x: 0, y: -self.size.height/4+30)
+        buttonTutorial.name = "pauseTutorial"
+        buttonTutorial.zPosition = 3
+        addChild(buttonTutorial)
         
         /* Sound button mute */
         buttonMute = SKSpriteNode(imageNamed: "mute")

@@ -87,8 +87,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     public var gameState: GameSceneState = .AddEnemy
     var playerTurnState: PlayerTurnState = .DisplayPhase {
         didSet {
-            if (oldValue != .MoveState && playerTurnState == .MoveState) {
-                PlayerTurnController.moveState()
+            if gameState == .PlayerTurn {
+                if (oldValue != .MoveState && playerTurnState == .MoveState) {
+                    PlayerTurnController.moveState()
+                }
             }
         }
     }
@@ -104,11 +106,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     var dispClearLabelDone = false
-    
     var isCharactersTurn = false
     var countTurn = 0
     var countTurnDone = false
     var tutorialState: TutorialState = .Action
+    var isVeScaleExplaining = false
+    var touchCountForVeScaleExplaining = 0
+    var enemiesForVeScaleExplaining = [Enemy]()
     
     /*== Game Sounds ==*/
     var main = BGM(bgm: 0)
@@ -166,9 +170,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var bombExplodeDoneFlag = false
     var timeBombDoneFlag = false
     var timeBombConfirming = false
-    /* cane */
-    var inputBoardForCane: InputVariable!
-    var caneOnFlag = false
     /* eqROb */
     var eqRobTurnCountingDone = false
     
@@ -194,7 +195,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     /*== Castle life ==*/
     /*=================*/
     
-    //var maxLife = 3
     var life: Int = 5
     
     var log0: Log!
@@ -372,8 +372,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         CharacterController.setCharacter(scene: self)
         
         /* Set input boards */
-        setInputBoardForCane()
-        setSimplificationBoard()
         setInputPanel()
         setSelectionPanel()
         setInputPanelForCannon()
@@ -421,7 +419,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         /* For debug */
-        //print("\(gameState), \(playerTurnState), \(itemType)")
+//        print("\(gameState), \(playerTurnState), \(itemType)")
         
 //        print(GameScene.stageLevel)
 //        print(GameStageController.adjustGameSceneLevel())
@@ -457,6 +455,37 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     PlayerTurnController.itemOn()
                     break;
                 case .MoveState:
+                    if !DAUserDefaultUtility.changeVeSizeExplainByEdge {
+                        detectLongVeNeighbor() { cands in
+                            if cands.0.count > 0 {
+                                guard !cands.1 else { return }
+                                DAUserDefaultUtility.doneFirstly(name: "changeVeSizeExplainByEdge")
+                                self.isVeScaleExplaining = true
+                                self.isCharactersTurn = true
+                                self.gridNode.isTutorial = true
+                                self.tutorialState = .None
+                                self.tutorialForVeScale()
+                                self.enemiesForVeScaleExplaining = cands.0
+                                self.enemiesForVeScaleExplaining.forEach({ $0.pointing() })
+                            }
+                        }
+                    } else if !DAUserDefaultUtility.changeVeSizeExplainByNeignbor {
+                        detectLongVeNeighbor() { cands in
+                            if cands.0.count > 0 {
+                                guard cands.1 else { return }
+                                DAUserDefaultUtility.doneFirstly(name: "changeVeSizeExplainByNeignbor")
+                                
+                                self.isVeScaleExplaining = true
+                                self.isCharactersTurn = true
+                                self.gridNode.isTutorial = true
+                                self.tutorialState = .None
+                                self.tutorialForVeScale()
+                                self.enemiesForVeScaleExplaining = cands.0
+                                self.enemiesForVeScaleExplaining.forEach({ $0.pointing() })
+                            }
+                        }
+                    }
+                    
                     /* Wait for player touch to move */
                     break;
                 case .AttackState:
@@ -887,14 +916,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    /*== Cane ==*/
-    /* Set input board for setiing variable expression */
-    func setInputBoardForCane() {
-        inputBoardForCane = InputVariable()
-        inputBoardForCane.isHidden = true
-        addChild(inputBoardForCane)
-    }
-    
     /*=====================*/
     /*== Game Management ==*/
     /*=====================*/
@@ -1151,6 +1172,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                     return completion()
                 })
+            } else if lastGameState == .AddEnemy {
+                gridNode.enemyArray.forEach({ $0.removeFromParent() })
+                countTurnForAddEnemy -= 1
+                AddEnemyTurnController.done = false
+                compAddEnemyFlag = false
+                willFastForward = false
+                gridNode.enemyArray.removeAll()
+                return completion()
             } else {
                 return completion()
             }
@@ -1171,6 +1200,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     EnemyMoveController.updateEnemyPositon(grid: self.gridNode)
                     return completion()
                 })
+            } else if lastGameState == .AddEnemy {
+                gridNode.enemyArray.removeAll()
+                countTurnForAddEnemy -= 1
+                AddEnemyTurnController.done = false
+                compAddEnemyFlag = false
+                willFastForward = false
+                return completion()
             } else {
                 return completion()
             }
@@ -1238,6 +1274,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         } else {
             enemy.reachCastleFlag = false
         }
+    }
+    
+    func detectLongVeNeighbor(completion: @escaping(([Enemy], Bool)) -> Void) {
+        var cands = [Enemy]()
+        let longVeEnemies = gridNode.enemyArray.filter({ $0.variableExpressionString.count > 6 })
+        if longVeEnemies.count > 0 {
+            let cand = longVeEnemies[0]
+            if cand.positionX == 0 || cand.positionX == 8 {
+                cands.append(cand)
+                return completion((cands, false))
+            } else {
+                let a = gridNode.enemyArray.filter({ ($0.positionX == cand.positionX-1 || $0.positionX == cand.positionX+1) && $0.positionY == cand.positionY })
+                if a.count > 0 {
+                    cands.append(cand)
+                    let b = a.filter({ $0.variableExpressionString.count > 4 })
+                    cands.append(contentsOf: b)
+                    return completion((cands, true))
+                }
+            }
+        } else {
+            return completion((cands, false))
+        }
+    }
+    
+    func tutorialForVeScale() {
+        TutorialController.createMultiTutorialLabel(text: "敵をタッチすれば\n文字式の表示の大きさを変えられるぞ", posY: Int(self.size.height/2+100))
+    }
+    
+    func removeTutorialForVeScale() {
+        TutorialController.removeTutorialLabel()
     }
 }
 

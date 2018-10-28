@@ -18,10 +18,6 @@ class SettingScreen: SKSpriteNode {
         }
     }
     
-    var buttonMute: SKSpriteNode!
-    var buttonSoundOn: SKSpriteNode!
-    
-    
     init() {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "settingScreen")
@@ -43,11 +39,6 @@ class SettingScreen: SKSpriteNode {
         /* Set buttons */
         setButtons()
         
-        if MainMenu.soundOnFlag {
-            buttonMute.isHidden = true
-        }
-        
-        
     }
     
     /* You are required to implement this for your subclass to work */
@@ -63,30 +54,8 @@ class SettingScreen: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if nodeAtPoint.name == "buttonTutorial" {
-            /*
-            /* Grab reference to the SpriteKit view */
-            let skView = mainMenu.view as SKView?
-            
-            /* Load Game scene */
-            guard let scene = Tutorial1(fileNamed:"Tutorial1") as Tutorial1? else {
-                return
-            }
-            
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                scene.run(sound)
-            }
-            
-            //Tutorial.tutorialPhase = 0
-            
-            /* Ensure correct aspect mode */
-            scene.scaleMode = .aspectFit
-            
-            /* Restart GameScene */
-            skView?.presentScene(scene)
-            */
+        if nodeAtPoint.name == "hakase" {
+            mainMenu.loadLevelSelect()
         } else if nodeAtPoint.name == "buttonItemList" {
             
             /* Grab reference to the SpriteKit view */
@@ -130,62 +99,40 @@ class SettingScreen: SKSpriteNode {
             /* Restart GameScene */
             skView?.presentScene(scene)
             
-        } else if nodeAtPoint.name == "buttonMute" {
-            buttonMute.isHidden = true
-            MainMenu.soundOnFlag = true
-            mainMenu.sound.play()
-            mainMenu.sound.numberOfLoops = -1
-            let ud = UserDefaults.standard
-            ud.set(true, forKey: "soundOn")
-        } else if nodeAtPoint.name == "buttonSoundOn" {
-            buttonMute.isHidden = false
-            MainMenu.soundOnFlag = false
-            mainMenu.sound.stop()
-            let ud = UserDefaults.standard
-            ud.set(false, forKey: "soundOn")
+        } else if nodeAtPoint.name == "buttonNewGame" {
+            mainMenu.showConfirm()
         }
     }
     
     func setButtons() {
-        /* Set button size */
-//        let buttonSize = CGSize(width: 120, height: 120)
         
         /* button Item List */
         let buttonItemList = SKSpriteNode(imageNamed: "buttonItemList")
-        buttonItemList.position = CGPoint(x: 0, y: 30)
+        buttonItemList.position = CGPoint(x: 0, y: self.size.height/4+30)
         buttonItemList.name = "buttonItemList"
         buttonItemList.zPosition = 3
         addChild(buttonItemList)
         
-        /* button Tutorial */
-        let buttonTutorial = SKSpriteNode(imageNamed: "buttonTutorial")
-        buttonTutorial.position = CGPoint(x: 0, y: self.size.height/4+30)
-        buttonTutorial.name = "buttonTutorial"
-        buttonTutorial.zPosition = 3
-        addChild(buttonTutorial)
-        
         /* button Credits */
         let buttonCredits = SKSpriteNode(imageNamed: "buttonCredits")
-        buttonCredits.position = CGPoint(x: 0, y: -self.size.height/4+30)
+        buttonCredits.position = CGPoint(x: 0, y: 30)
         buttonCredits.name = "buttonCredits"
         buttonCredits.zPosition = 3
         addChild(buttonCredits)
         
-        /* Sound button mute */
-        buttonMute = SKSpriteNode(imageNamed: "mute")
-        buttonMute.position = CGPoint(x: 195, y: -345)
-        buttonMute.size = CGSize(width: 80, height: 80)
-        buttonMute.name = "buttonMute"
-        buttonMute.zPosition = 4
-        addChild(buttonMute)
+        /* button NewGame */
+        let buttonNewGame = SKSpriteNode(imageNamed: "buttonNewGame")
+        buttonNewGame.position = CGPoint(x: 0, y: -self.size.height/4+30)
+        buttonNewGame.name = "buttonNewGame"
+        buttonNewGame.zPosition = 3
+        addChild(buttonNewGame)
         
-        /* Sound button on */
-        buttonSoundOn = SKSpriteNode(imageNamed: "soundOn")
-        buttonSoundOn.position = CGPoint(x: 195, y: -345)
-        buttonSoundOn.size = CGSize(width: 80, height: 80)
-        buttonSoundOn.name = "buttonSoundOn"
-        buttonSoundOn.zPosition = 3
-        addChild(buttonSoundOn)
+        let hakase = SKSpriteNode(imageNamed: "goodDoctorDefault")
+        hakase.position = CGPoint(x: 195, y: -345)
+        hakase.size = CGSize(width: 76, height: 90)
+        hakase.name = "hakase"
+        hakase.zPosition = 4
+        addChild(hakase)
         
     }
 }

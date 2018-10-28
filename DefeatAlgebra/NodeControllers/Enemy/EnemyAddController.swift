@@ -324,7 +324,6 @@ class EnemyAddController {
     
     static func addEnemyAtGrid2(addIndex: Int, grid: Grid, isHard: Bool, completion: @escaping () -> Void) {
         let manager = EnemyProperty.addEnemyVEManager[GameStageController.adjustGameSceneLevel()][String(addIndex)]![0]
-        print(addIndex)
         getEqRobSource(isHard: isHard, veCate: manager[1], numOfEnemy: manager[0]) { source in
             let dispatchGroup = DispatchGroup()
             let veSource = source.shuffled

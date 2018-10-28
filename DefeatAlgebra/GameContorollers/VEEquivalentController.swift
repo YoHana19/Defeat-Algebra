@@ -26,6 +26,8 @@ struct VEEquivalentController {
         gameScene.valueOfX.text = ""
         if let eqRob = eqRob {
             lineupEqRob(eqRob: eqRob)
+        } else {
+            enableEqBgTouch()
         }
     }
     
@@ -93,6 +95,7 @@ struct VEEquivalentController {
                 let rotate = SKAction.rotate(toAngle: .pi * 1/2, duration: 1.0)
                 eqRob.run(rotate, completion: {
                     eqRob.variableExpressionLabel.isHidden = false
+                    enableEqBgTouch()
                 })
             }
         } else if EqRobTouchController.state == .DeadInstruction {
@@ -100,6 +103,7 @@ struct VEEquivalentController {
             eqRob.zRotation = .pi * 1/2
             eqRob.position = pos
             eqRob.isHidden = false
+            enableEqBgTouch()
         }
     }
     
@@ -171,6 +175,13 @@ struct VEEquivalentController {
         dispatchGroup.notify(queue: .main, execute: {
             return completion(cand)
         })
+    }
+    
+    private static func enableEqBgTouch() {
+        getBG() { bg in
+            guard let bg = bg else { return }
+            bg.isEnable = true
+        }
     }
     
     public static func backEnemies() {

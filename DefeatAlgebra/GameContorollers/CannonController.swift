@@ -44,10 +44,11 @@ struct CannonController {
             doctorSays(in: .Trying, value: "3")
             break;
         case 4:
+            CharacterController.doctor.removeAllActions()
             CharacterController.showDoctor()
             doctorSays(in: .NotAvilable, value: nil)
             let wait = SKAction.wait(forDuration: 2.5)
-            gameScene.run(wait, completion: {
+            CharacterController.doctor.run(wait, completion: {
                 CharacterController.retreatDoctor()
             })
             break;
@@ -79,6 +80,7 @@ struct CannonController {
     private static func showInputPanelWithDoctor() {
         resetAll()
         showInputPanel()
+        CharacterController.doctor.removeAllActions()
         CannonTouchController.state = .Pending
         CharacterController.doctor.setScale(doctorScale[0])
         CharacterController.doctor.balloon.isHidden = false
@@ -279,7 +281,7 @@ struct CannonLines {
             guard let val = value else { return "" }
             return setSubLineForTrying(index: val)
         case .NotAvilable:
-            return "信号を受け取った敵が同じ列にいる時だけ砲撃できるんじゃ"
+            return "攻撃モードの敵が前後にいる時だけ砲撃できるんじゃ"
         default:
             return ""
         }
@@ -313,24 +315,23 @@ struct CannonLines {
         case "1":
             return "ジャストミートじゃ！xが他の数でも当たるか確かめるのじゃ！"
         case "2":
-            return "うーむ当たらないのう。確実に当てるにはどうしたらよいじゃろうか"
+            return "うーむ当たらないのう。確実に当てるにはどうすればよいじゃろうか"
         case "3":
             return "xに入る数を選んで、試し撃ちしてみよう！"
         case "4":
             return "砲撃の飛距離を変えることもできるぞ"
         case "5":
-            return "アルジェブラ砲と敵との距離に注目してみたらどうじゃろうか"
+            return "アルジェ砲と敵との距離に注目してみたらどうじゃろう"
         case "6":
-            return "砲撃した所と敵との距離が常に一緒じゃな！"
+            return "砲撃と敵との距離が常に一緒じゃな！"
         case "7":
-            return "その数字にはどんな意味があるじゃろうか"
+            return "なぜ一緒なのじゃろうか・・"
         case "8":
             return "xの数がいくつでも砲撃が必ず当たるようじゃ！"
         case "9":
-            return "なぜその飛距離を設定したら、必ず当たるのか考えるのじゃ！"
+            return "なぜその飛距離なら必ず当たるのじゃろう？"
         default:
             return ""
         }
     }
 }
-
