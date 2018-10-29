@@ -183,6 +183,7 @@ struct CannonTutorialController {
     }
     
     public static func hideEqGrid() {
+        GameStageController.soundForScenario()
         CannonController.gameScene.hero.setPhysics(isActive: true)
         CannonController.selectedCannon.zPosition = 6
         CannonController.gameScene.eqGrid.isHidden = true

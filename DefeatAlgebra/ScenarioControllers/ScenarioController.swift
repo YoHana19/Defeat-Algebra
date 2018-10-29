@@ -32,6 +32,7 @@ struct ScenarioController {
     }
     
     static func characterSpeak(chara: String, line: String) {
+        SoundController.sound(scene: scenarioScene, sound: .CharaLine)
         switch chara {
         case "0":
             CharacterController.showDoctor()
@@ -60,6 +61,7 @@ struct ScenarioController {
             controllActions()
         } else {
             currentLineIndex += 1
+            SoundController.sound(scene: scenarioScene, sound: .CharaLine)
             switch action[0] {
             case "0":
                 CharacterLinesController.doctorSay(line: action[1])
@@ -178,13 +180,19 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             currentActionIndex += 1
             controllActions()
+            SoundController.sound(scene: scenarioScene, sound: .SwordSound)
             scenarioScene.hero.attack() {
+                SoundController.sound(scene: scenarioScene, sound: .SwordSound)
                 scenarioScene.hero.attack() {
                     scenarioScene.hero.direction = .right
+                    SoundController.sound(scene: scenarioScene, sound: .SwordSound)
                     scenarioScene.hero.attack() {
+                        SoundController.sound(scene: scenarioScene, sound: .SwordSound)
                         scenarioScene.hero.attack() {
                             scenarioScene.hero.direction = .front
+                            SoundController.sound(scene: scenarioScene, sound: .SwordSound)
                             scenarioScene.hero.attack() {
+                                SoundController.sound(scene: scenarioScene, sound: .SwordSound)
                                 scenarioScene.hero.attack() {
                                     scenarioScene.hero.removeAllActions()
                                     scenarioScene.hero.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -205,6 +213,8 @@ struct ScenarioController {
             break;
         case 3:
             guard scenarioScene.isCharactersTurn else { return }
+            SoundController.sound(scene: scenarioScene, sound: .ShowMad)
+            SoundController.stopBGM()
             if let shake: SKAction = SKAction.init(named: "Shake") {
                 let dispatchGroup = DispatchGroup()
                 for node in scenarioScene.children {
@@ -229,6 +239,7 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.retreatMadDoctor()
             scenarioScene.enemyEnter([(4,10,"x",1)]) {
+                SoundController.playBGM(bgm: .Game1, isLoop: true)
                 currentActionIndex += 1
                 controllActions()
             }
@@ -286,7 +297,7 @@ struct ScenarioController {
                 return
             }
             break;
-        case 13: // Game Over
+        case 12: // Game Over
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.tutorialState = .None
             TutorialController.currentIndex = 9
@@ -297,7 +308,7 @@ struct ScenarioController {
                 scenarioScene.tutorialState = .Action
             }
             break;
-        case 14:
+        case 13:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.resetEnemies()
             scenarioScene.resetHeroPos(x: 4, y: 2)
@@ -362,6 +373,7 @@ struct ScenarioController {
             break;
         case 3:
             guard scenarioScene.isCharactersTurn else { return }
+            SoundController.sound(scene: scenarioScene, sound: .ShowVe)
             scenarioScene.showX()
             wait(length: 1.0) {
                 currentActionIndex += 1
@@ -384,6 +396,7 @@ struct ScenarioController {
         case 6:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.getSignal() { signal in
+                SoundController.sound(scene: scenarioScene, sound: .ShowVe)
                 signal.xValue.isHidden = false
                 charaSpeak(at: currentLineIndex)
                 scenarioScene.tutorialState = .Converstaion
@@ -394,7 +407,9 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             scenarioScene.getSignal() { signal in
-                SignalController.sendHalf2(signal: signal, target: scenarioScene.gridNode.enemyArray[0], num: 2) {
+                SignalController.sendHalf2(signal: signal, target:
+                scenarioScene.gridNode.enemyArray[0], num: 2) {
+                    SoundController.sound(scene: scenarioScene, sound: .ShowVe)
                     scenarioScene.xValue = 2
                     scenarioScene.valueOfX.fontColor = UIColor.red
                     scenarioScene.gridNode.enemyArray[0].punchIntervalForCount = 0
@@ -416,6 +431,7 @@ struct ScenarioController {
             break;
         case 9:
             guard scenarioScene.isCharactersTurn else { return }
+            SoundController.playBGM(bgm: .Game1, isLoop: true)
             CharacterController.retreatDoctor()
             CharacterController.retreatMainHero()
             scenarioScene.gameState = .PlayerTurn
@@ -669,10 +685,7 @@ struct ScenarioController {
             break;
         case 15:
             if scenarioScene.gridNode.timeBombSetArray.count > 0 {
-                if MainMenu.soundOnFlag {
-                    let explode = SKAction.playSoundFileNamed("timeBombExplosion.mp3", waitForCompletion: true)
-                    scenarioScene.run(explode)
-                }
+                SoundController.sound(scene: scenarioScene, sound: .TimeBombExplosion)
                 let timeBomb = scenarioScene.gridNode.timeBombSetArray[0]
                 timeBomb.explode {
                     nextLine()
@@ -813,6 +826,7 @@ struct ScenarioController {
             break;
         case 1:
             guard scenarioScene.isCharactersTurn else { return }
+            SoundController.sound(scene: scenarioScene, sound: .ShowVe)
             scenarioScene.pointingGridAt(x: 3, y: 8)
             scenarioScene.pointingGridAt(x: 5, y: 8)
             charaSpeak(at: currentLineIndex)
@@ -832,7 +846,6 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.doctor.move(from: nil, to: CGPoint(x: CharacterController.doctor.position.x, y: CharacterController.doctor.position.y-300), duration: 1.0)
             nextLineWithoutMoving()
-            //scenarioScene.pointingEqSignal()
             VEEquivalentController.getBG() { bg in
                 if let bg = bg {
                     bg.pointingSignalButton()
@@ -842,9 +855,6 @@ struct ScenarioController {
             break;
         case 4:
             guard scenarioScene.isCharactersTurn else { return }
-//            scenarioScene.removePointing()
-//            scenarioScene.removePointing()
-//            scenarioScene.removePointing()
             VEEquivalentController.getBG() { bg in
                 if let bg = bg {
                     bg.removePointingSignalButton()
@@ -947,6 +957,7 @@ struct ScenarioController {
         case 11: // eqRob show up
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.eqRob.go(toPos: EqRobController.eqRobOriginPos) {
+                SoundController.sound(scene: scenarioScene, sound: .ShowVe)
                 let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
                 scenarioScene.eqRob.run(rotate, completion: {
                     scenarioScene.tutorialState = .Converstaion
@@ -1134,6 +1145,7 @@ struct ScenarioController {
             break;
         case 2:
             guard scenarioScene.isCharactersTurn else { return }
+            SoundController.sound(scene: scenarioScene, sound: .ShowVe)
             scenarioScene.pointingGridAt(x: 1, y: 11)
             charaSpeak(at: currentLineIndex)
             break;
@@ -1280,6 +1292,7 @@ struct ScenarioController {
             guard scenarioScene.gameState == .AddEnemy && scenarioScene.countTurn == 0 else { return }
             scenarioScene.isCharactersTurn = true
             SignalController.send(target: scenarioScene.gridNode.enemyArray[0], num: 1) {
+                SoundController.playBGM(bgm: .Opening2, isLoop: true)
                 nextLine()
                 scenarioScene.tutorialState = .Converstaion
             }
@@ -1291,6 +1304,7 @@ struct ScenarioController {
             break;
         case 5:
             guard scenarioScene.isCharactersTurn else { return }
+            SoundController.sound(scene: scenarioScene, sound: .ShowVe)
             CharacterController.retreatMainHero()
             CannonTutorialController.showInputPanelWithDoctor()
             scenarioScene.removePointing()
@@ -1506,6 +1520,7 @@ struct ScenarioController {
             break;
         case 36:
             guard scenarioScene.isCharactersTurn else { return }
+            SoundController.playBGM(bgm: .Game1, isLoop: true)
             TutorialController.enable()
             TutorialController.execute()
             scenarioScene.countTurn = 0
@@ -1569,6 +1584,7 @@ struct ScenarioController {
     }
 
     private static func charaSpeak(at i: Int) {
+        SoundController.sound(scene: scenarioScene, sound: .CharaLine)
         let currentScenario = getScenario()
         let action = currentScenario[i]
         characterSpeak(chara: action[0], line: action[1])
@@ -1582,7 +1598,7 @@ struct ScenarioController {
         CharacterController.retreatDoctor()
         CharacterController.retreatMadDoctor()
         
-        scenarioScene.main.stop()
+        SoundController.stopBGM()
         
         /* Grab reference to the SpriteKit view */
         let skView = scenarioScene.view as SKView?

@@ -90,6 +90,7 @@ class CannonBackground: SKSpriteNode {
         /* Touch button 1 */
         if nodeAtPoint.name == "signal1" || nodeAtPoint.name == "label1" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
             signal1.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             if let _ = gameScene as? ScenarioScene {
@@ -100,6 +101,7 @@ class CannonBackground: SKSpriteNode {
         /* Touch button 2 */
         } else if nodeAtPoint.name == "signal2" || nodeAtPoint.name == "label2" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
             signal2.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             if let _ = gameScene as? ScenarioScene {
@@ -110,6 +112,7 @@ class CannonBackground: SKSpriteNode {
         /* Touch button 3 */
         } else if nodeAtPoint.name == "signal3" || nodeAtPoint.name == "label3" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
             signal3.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             if let _ = gameScene as? ScenarioScene {
@@ -119,6 +122,7 @@ class CannonBackground: SKSpriteNode {
             }
         } else if nodeAtPoint.name == "changeVeButton" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .UtilButton)
             isSignal1Tapped = false
             isSignal2Tapped = false
             isSignal3Tapped = false
@@ -131,6 +135,7 @@ class CannonBackground: SKSpriteNode {
             CannonTryController.numOfChangeVE += 1
         } else if nodeAtPoint.name == "tryDoneButton" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .HeroMove)
             if let _ = gameScene as? ScenarioScene {
                 if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                     if ScenarioController.currentActionIndex > 21 && ScenarioController.currentActionIndex < 36 {

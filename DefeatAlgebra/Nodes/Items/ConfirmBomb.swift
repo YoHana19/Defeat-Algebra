@@ -56,6 +56,7 @@ class ConfirmBomb: SKSpriteNode {
         }
         
         if nodeAtPoint.name == "yes" {
+            SoundController.sound(scene: gameScene, sound: .BombOk)
             DataController.setDataForUsedBomb()
             setBomb()
             self.isHidden = true

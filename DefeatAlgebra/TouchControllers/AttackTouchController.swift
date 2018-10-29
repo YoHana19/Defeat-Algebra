@@ -15,6 +15,8 @@ struct AttackTouchController {
     public static func buttonItemTapped() {
         guard gameScene.heroMovingFlag == false else { return }
         
+        SoundController.sound(scene: gameScene, sound: .ActionButton)
+        
         /* Reset active area */
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
@@ -43,10 +45,7 @@ struct AttackTouchController {
         gameScene.hero.setSwordAnimation() {}
         
         /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let attack = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
-            gridNode.run(attack)
-        }
+        SoundController.sound(scene: gameScene, sound: .SwordSound)
         /* If hitting enemy! */
         if gridNode.positionEnemyAtGrid[gridX][gridY] {
             let waitAni = SKAction.wait(forDuration: 0.5)
@@ -63,8 +62,6 @@ struct AttackTouchController {
             gridNode.run(seq)
         }
         
-        /* Back to MoveState */
-        gameScene.hero.attackDoneFlag = true
         let wait = SKAction.wait(forDuration: gameScene.turnEndWait+1.0) /* 1.0 is wait time for animation */
         let moveState = SKAction.run({
             /* Reset hero animation to back */

@@ -194,10 +194,7 @@ extension Cannon {
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
         /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let dead = SKAction.playSoundFileNamed("catapultBomb.mp3", waitForCompletion: true)
-            bomb.run(dead)
-        }
+        SoundController.sound(scene: self.parent?.parent as? SKScene, sound: .CannonBomb)
         particles.run(seqEffect, completion: {
             bomb.removeFromParent()
             return completion()

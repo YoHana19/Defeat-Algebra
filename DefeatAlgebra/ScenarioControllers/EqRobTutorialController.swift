@@ -132,6 +132,7 @@ class EqRobTutorialController {
         if EqRobController.gameScene.eqRob.veCategory == target.vECategory {
             if attackingEnemyIndex < selectedEnemies.count-1 {
                 EqRobController.gameScene.eqRob.kill(target) {
+                    SoundController.sound(scene: EqRobController.gameScene, sound: .EqAttack)
                     enemiesToDestroy.append(target)
                     EqRobController.gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackingEnemyIndex += 1
@@ -139,6 +140,7 @@ class EqRobTutorialController {
                 }
             } else {
                 EqRobController.gameScene.eqRob.kill(target) {
+                    SoundController.sound(scene: EqRobController.gameScene, sound: .EqAttack)
                     enemiesToDestroy.append(target)
                     EqRobController.gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackDone()
@@ -162,6 +164,7 @@ class EqRobTutorialController {
         if EqRobController.gameScene.eqRob.veCategory == target.vECategory {
             if attackingEnemyIndex < selectedEnemies.count-1 {
                 EqRobController.gameScene.eqRob.kill(target) {
+                    SoundController.sound(scene: EqRobController.gameScene, sound: .EqAttack)
                     enemiesToDestroy.append(target)
                     EqRobController.gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackingEnemyIndex += 1
@@ -169,6 +172,7 @@ class EqRobTutorialController {
                 }
             } else {
                 EqRobController.gameScene.eqRob.kill(target) {
+                    SoundController.sound(scene: EqRobController.gameScene, sound: .EqAttack)
                     enemiesToDestroy.append(target)
                     EqRobController.gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackDone()

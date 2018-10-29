@@ -47,10 +47,7 @@ class EnemyDeadController {
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
         /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
-            grid.run(dead)
-        }
+        SoundController.sound(scene: grid.parent as? SKScene, sound: .EnemyKilled)
         particles.run(seqEffect, completion: {
             return completion()
         })

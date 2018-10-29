@@ -19,18 +19,11 @@ class Credits: SKScene {
         "* Hero was created by Sharm (Lanea Zimmerman)",
         "* BackGround Image is from the PlatForge project",
         "created by Summer Thaxton and Hannah Cohan",
-        "* Wall item was by Alejandro Ballestrino, made for",
-        "Exiled Kingdoms game: http://www.exiledkingdoms.com",
         "* Some buttons were created by Ironthunder",
-        "* Spear Icon was created by Scrittl",
-        "* Battle Ship Icon was created by Skorpio",
         "* Sword Icon was created by Ironthunder",
-        "* Wrench Icon was created by RDT",
-        "* Teleport Icon was created by craftpix.net",
-        "* Reinforcement Icon was created by Santiago Iborra",
         "* Town Wall image was created by Hyptosis",
         "* Town Floor image was created by jesusmora",
-        "* Main BGM was created by Snabisch",
+        "* one of main BGM was created by Snabisch",
         "* Game Over sound was created by remaxim",
         "* Featuring Music by Matthew Pablo",
         "http://www.matthewpablo.com",
@@ -38,6 +31,9 @@ class Credits: SKScene {
         "by ViRiX Dreamcore soundcloud.com/virix",
         "* Some button sounds were created",
         "by David McKee (ViRiX) soundcloud.com/virix",
+        "* Some SFX were created by Rodeo",
+        "* Some main BGM were created by Bart K.",
+        "* one of main BGM were created by remaxim.",
         "* Some BGM were created by syncopika",
         "* Some sounds were created by spookymodem, Foundation",
         "submitted by Lamoot, Bart Kelsey submitted by bart"
@@ -69,11 +65,7 @@ class Credits: SKScene {
                 return
             }
             
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonBack.wav", waitForCompletion: true)
-                scene.run(sound)
-            }
+            SoundController.sound(scene: self, sound: .ButtonBack)
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit

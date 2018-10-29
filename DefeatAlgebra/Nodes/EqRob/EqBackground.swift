@@ -81,6 +81,7 @@ class EqBackground: SKSpriteNode {
         /* Touch button 1 */
         if nodeAtPoint.name == "signal1" || nodeAtPoint.name == "label1" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
             signal1.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             signalTapped(value: 1, node: node as! SKSpriteNode)
@@ -89,6 +90,7 @@ class EqBackground: SKSpriteNode {
         /* Touch button 2 */
         if nodeAtPoint.name == "signal2" || nodeAtPoint.name == "label2" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
             signal2.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             signalTapped(value: 2, node: node as! SKSpriteNode)
@@ -97,6 +99,7 @@ class EqBackground: SKSpriteNode {
         /* Touch button 3 */
         if nodeAtPoint.name == "signal3" || nodeAtPoint.name == "label3" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
             signal3.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
             signalTapped(value: 3, node: node as! SKSpriteNode)
@@ -104,6 +107,7 @@ class EqBackground: SKSpriteNode {
         
         if nodeAtPoint.name == "doneButton" {
             guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .HeroMove)
             if let _ = self.parent as? ScenarioScene {
                 ScenarioController.controllActions()
             } else {

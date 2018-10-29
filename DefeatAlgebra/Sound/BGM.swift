@@ -9,22 +9,39 @@
 import Foundation
 import AVFoundation
 
+enum Bgm {
+    case Opening, Opening2, MainMenu, StageClear, Game1, Game2, Game3, SimBGM, FirstDayLast, Last
+}
+
 class BGM: AVAudioPlayer {
-    //使用するBGMファイルのリスト配列を作っときます
-    let bgm_list = [
-        0: "mainBGM",
-        1: "mainMenu",
-        2: "stageClear",
-        3: "mainMenuHard"
-    ]
-    init (bgm:Int){
-        if bgm < 4 {
-            let bgm_url = NSURL(fileURLWithPath: Bundle.main.path(forResource: bgm_list[bgm], ofType:"mp3")!)
-            try! super.init(contentsOf: bgm_url as URL, fileTypeHint: "mp3")
-        } else {
-            let bgm_url = NSURL(fileURLWithPath: Bundle.main.path(forResource: bgm_list[bgm], ofType:"wav")!)
-            try! super.init(contentsOf: bgm_url as URL, fileTypeHint: "wav")
+    
+    init (bgm: Bgm){
+        var source: (String, String) = ("", "")
+        switch bgm {
+        case .Opening:
+            source = ("easyJoy", "wav")
+        case .Opening2:
+            source = ("opening2", "wav")
+        case .MainMenu:
+            source = ("mainMenu", "mp3")
+        case .StageClear:
+            source = ("stageClear", "mp3")
+        case .Game1:
+            source = ("game1", "wav")
+        case .Game2:
+            source = ("game2", "mp3")
+        case .Game3:
+            source = ("game3", "wav")
+        case .SimBGM:
+            source = ("simBGM", "wav")
+        case .FirstDayLast:
+            source = ("firstDayLast", "wav")
+        case .Last:
+            source = ("last", "wav")
         }
         
+        let bgm_url = NSURL(fileURLWithPath: Bundle.main.path(forResource: source.0, ofType: source.1)!)
+        try! super.init(contentsOf: bgm_url as URL, fileTypeHint: source.1)
     }
+    
 }

@@ -82,6 +82,7 @@ struct GameStageController {
     
     public static func initialize() {
         moveLevel()
+        sound()
         dodgeRatio()
         timeBomb()
         stageLabel()
@@ -102,18 +103,18 @@ struct GameStageController {
             EnemyMoveController.dodgeRation = 0
         } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             EnemyMoveController.dodgeRation = 70
-        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn {
-            EnemyMoveController.dodgeRation = 70
+        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn-1 {
+            EnemyMoveController.dodgeRation = 80
+        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn-1 {
+            EnemyMoveController.dodgeRation = 100
         } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+1 {
             EnemyMoveController.dodgeRation = 0
         } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
-            EnemyMoveController.dodgeRation = 70
-        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
-            EnemyMoveController.dodgeRation = 50
-        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn+2 {
             EnemyMoveController.dodgeRation = 80
+        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
+            EnemyMoveController.dodgeRation = 70
         } else if GameScene.stageLevel <= MainMenu.lastTurn {
-            EnemyMoveController.dodgeRation = 90
+            EnemyMoveController.dodgeRation = 100
         }
     }
     
@@ -170,6 +171,7 @@ struct GameStageController {
     public static func initializeForScenario() {
         moveLevel()
         madPos()
+        soundForScenario()
         dodgeRatioForScenario()
         eqRobForScenario()
         cannon()
@@ -182,6 +184,54 @@ struct GameStageController {
         if GameScene.stageLevel > 0 {
             gameScene.madScientistNode.position = CGPoint(x: 374.999, y: 1282.404)
             SignalController.madPos = gameScene.madScientistNode.absolutePos()
+        }
+    }
+    
+    public static func sound() {
+        if GameScene.stageLevel < MainMenu.timeBombStartTurn {
+            SoundController.playBGM(bgm: .Game1, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
+            SoundController.playBGM(bgm: .Game2, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn-1 {
+            SoundController.playBGM(bgm: .Game3, isLoop: true)
+        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn-1 {
+            SoundController.playBGM(bgm: .FirstDayLast, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+2 {
+            SoundController.playBGM(bgm: .Game2, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
+            SoundController.playBGM(bgm: .Game1, isLoop: true)
+        } else if GameScene.stageLevel == MainMenu.lastTurn {
+            SoundController.playBGM(bgm: .Last, isLoop: true)
+        } else {
+            SoundController.playBGM(bgm: .Game3, isLoop: true)
+        }
+    }
+    
+    public static func soundForScenario() {
+        if GameScene.stageLevel == 0 {
+            SoundController.playBGM(bgm: .Opening, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.timeBombStartTurn {
+            SoundController.playBGM(bgm: .Opening2, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
+            SoundController.playBGM(bgm: .Game2, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn {
+            SoundController.playBGM(bgm: .Opening2, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+2 {
+            SoundController.playBGM(bgm: .Game2, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
+            SoundController.playBGM(bgm: .Game1, isLoop: true)
+        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
+            SoundController.playBGM(bgm: .Opening2, isLoop: true)
+        } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
+            if ScenarioController.currentActionIndex < 10 {
+                SoundController.playBGM(bgm: .FirstDayLast, isLoop: true)
+            } else if ScenarioController.currentActionIndex < 36 {
+                SoundController.playBGM(bgm: .Opening2, isLoop: true)
+            } else {
+                SoundController.playBGM(bgm: .Game1, isLoop: true)
+            }
+        } else {
+            SoundController.playBGM(bgm: .FirstDayLast, isLoop: true)
         }
     }
     

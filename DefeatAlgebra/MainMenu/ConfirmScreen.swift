@@ -61,27 +61,22 @@ class ConfirmScreen: SKSpriteNode {
                 return
             }
             
+            /* Play Sound */
+            SoundController.sound(scene: mainMenu, sound: .ButtonMove)
+            
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
             
             /* Restart GameScene */
             skView?.presentScene(scene)
             
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                self.run(sound)
-            }
             
             mainMenu.confirmingNewGameFlag = false
             self.isHidden = true
             
         } else if nodeAtPoint.name == "no" {
             /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonBack.wav", waitForCompletion: true)
-                self.run(sound)
-            }
+            SoundController.sound(scene: mainMenu, sound: .ButtonBack)
             
             mainMenu.confirmingNewGameFlag = false
             self.isHidden = true

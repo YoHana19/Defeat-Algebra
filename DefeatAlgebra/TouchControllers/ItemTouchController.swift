@@ -14,7 +14,8 @@ struct ItemTouchController {
 
     public static func buttonAttackTapped() {
         guard gameScene.heroMovingFlag == false else { return }
-        guard gameScene.hero.attackDoneFlag == false else { return }
+        
+        SoundController.sound(scene: gameScene, sound: .ActionButton)
         
         /* Reset item type */
         gameScene.itemType = .None
@@ -32,6 +33,7 @@ struct ItemTouchController {
     }
     
     public static func timeBombTapped(touchedNode: SKNode) {
+        SoundController.sound(scene: gameScene, sound: .UtilButton)
         /* Remove activeArea for catapult */
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
@@ -44,8 +46,8 @@ struct ItemTouchController {
     }
     
     public static func AAForTimeBombTapped(gridX: Int, gridY: Int) {
-        
         guard !gameScene.timeBombConfirming else { return }
+        SoundController.sound(scene: gameScene, sound: .TimeBombAA)
         gameScene.timeBombConfirming = true
         gameScene.confirmBomb.gridX = gridX
         gameScene.confirmBomb.gridY = gridY
@@ -55,6 +57,7 @@ struct ItemTouchController {
     public static func enemyTapped(enemy: Enemy) {
         if gameScene.itemType == .EqRob && EqRobTouchController.state == .Attack {
             guard !enemy.isSelectedForEqRob else { return }
+            SoundController.sound(scene: gameScene, sound: .ActionButton)
             enemy.isSelectedForEqRob = true
             EqRobController.execute(2, enemy: enemy)
         }

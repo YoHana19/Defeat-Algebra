@@ -92,10 +92,7 @@ struct EnemyTurnController {
     public static func timeBombOn(completion: @escaping () -> Void) {
         if gameScene.gridNode.timeBombSetArray.count > 0 {
             /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let explode = SKAction.playSoundFileNamed("timeBombExplosion.mp3", waitForCompletion: true)
-                gameScene.run(explode)
-            }
+            SoundController.sound(scene: gameScene, sound: .TimeBombExplosion)
             let dispatchGroup = DispatchGroup()
             for timeBomb in gameScene.gridNode.timeBombSetArray {
                 dispatchGroup.enter()

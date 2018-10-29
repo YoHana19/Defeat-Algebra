@@ -32,6 +32,7 @@ struct SignalController {
         GameStageController.signalVisibility(signal: signal)
         let move = SKAction.move(to: target.absolutePos(), duration: duration)
         signal.run(move, completion: {
+            SoundController.sound(scene: gameScene, sound: .SignalGot)
             signal.removeFromParent()
             target.forcusForAttack(color: UIColor.red, value: num)
             return completion()
@@ -52,6 +53,7 @@ struct SignalController {
         
         let move = SKAction.move(to: target.absolutePos(), duration: TimeInterval(speed*distance))
         signal.run(move, completion: {
+            SoundController.sound(scene: gameScene, sound: .SignalGot)
             signal.removeFromParent()
             target.forcus()
             return completion()
@@ -74,6 +76,7 @@ struct SignalController {
         
         let move = SKAction.move(to: target.absolutePos(), duration: TimeInterval(speed*distance))
         signal.run(move, completion: {
+            SoundController.sound(scene: gameScene, sound: .SignalGot)
             signal.removeFromParent()
             return completion()
         })

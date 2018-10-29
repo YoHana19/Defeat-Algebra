@@ -19,8 +19,7 @@ struct StageClearTurnController {
         if MainMenu.soundOnFlag {
             if gameScene.stageClearSoundDone == false {
                 gameScene.stageClearSoundDone = true
-                gameScene.stageClear.play()
-                gameScene.main.stop()
+                SoundController.playBGM(bgm: .StageClear, isLoop: false)
             }
         }
         gameScene.clearLabel.isHidden = false
@@ -30,10 +29,8 @@ struct StageClearTurnController {
         } else {
             if gameScene.dispClearLabelDone == false {
                 gameScene.dispClearLabelDone = true
-                gameScene.createTutorialLabel(text: "Congulatulations!!", posY: 1120, size: 50)
-                gameScene.createTutorialLabel(text: "You beat all stages!", posY: 1040, size: 35)
-                gameScene.createTutorialLabel(text: "But keep it mind!", posY: 700, size: 35)
-                gameScene.createTutorialLabel(text: "Algebra is your friend in real world!", posY: 640, size: 35)
+                gameScene.createTutorialLabel(text: "おめでとう！", posY: 700, size: 45)
+                gameScene.createTutorialLabel(text: "全ステージクリアだ！", posY: 600, size: 45)
             }
         }
         

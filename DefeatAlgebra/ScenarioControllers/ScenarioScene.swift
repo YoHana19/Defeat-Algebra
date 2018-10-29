@@ -90,7 +90,6 @@ class ScenarioScene: GameScene {
         StageClearTurnController.gameScene = self
         GameOverTurnController.gameScene = self
         ItemDropController.gameScene = self
-        ContactController.gameScene = self
         ScenarioController.scenarioScene = self
         TutorialController.scene = self
         SpeakInGameController.gameScene = self
@@ -98,13 +97,7 @@ class ScenarioScene: GameScene {
         CannonTryController.gameScene = self
         GameStageController.gameScene = self
         ScenarioTouchController.gameScene = self
-        EnemyMoveController.gameScene = self
-        
-        /* Sound */
-        if MainMenu.soundOnFlag {
-            main.play()
-            main.numberOfLoops = -1
-        }
+//        EnemyMoveController.gameScene = self
         
         /* Labels */
         gameOverLabel = childNode(withName: "gameOverLabel")
@@ -128,10 +121,8 @@ class ScenarioScene: GameScene {
         buttonNextLevel.state = .msButtonNodeStateHidden
         
         skipButton.selectedHandler = { [weak self] in
-            if MainMenu.soundOnFlag {
-                self?.main.stop()
-                self?.stageClear.stop()
-            }
+            SoundController.stopBGM()
+            
             TutorialController.state = .Pending
             if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.moveExplainStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
                 ScenarioController.loadGameScene()
@@ -145,10 +136,8 @@ class ScenarioScene: GameScene {
         
         /* Next Level button */
         buttonNextLevel.selectedHandler = { [weak self] in
-            if MainMenu.soundOnFlag {
-                self?.main.stop()
-                self?.stageClear.stop()
-            }
+            SoundController.stopBGM()
+            
             switch GameScene.stageLevel {
             case 0:
                 DAUserDefaultUtility.doneFirstly(name: "initialScenario")
@@ -502,10 +491,7 @@ class ScenarioScene: GameScene {
                 /* A is hero */
                 if contactA.categoryBitMask == 1 {
                     /* Play Sound */
-                    if MainMenu.soundOnFlag {
-                        let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
-                        self.run(get)
-                    }
+                    SoundController.sound(scene: self, sound: .ItemGet)
                     let item = contactB.node as! Item
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)
@@ -533,10 +519,7 @@ class ScenarioScene: GameScene {
                 /* B is hero */
                 if contactB.categoryBitMask == 1 {
                     /* Play Sound */
-                    if MainMenu.soundOnFlag {
-                        let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
-                        self.run(get)
-                    }
+                    SoundController.sound(scene: self, sound: .ItemGet)
                     let item = contactA.node as! Item
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)

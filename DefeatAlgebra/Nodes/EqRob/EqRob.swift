@@ -199,16 +199,6 @@ class EqRob: SKSpriteNode {
             return completion()
         }
     }
-    
-//    func goAndAttack(to target: SKNode, completion: @escaping () -> Void) {
-//        goNear(to: target) {
-//            self.attack(to: target) {
-//                self.stepOff(toPos: self.nearPoint) {
-//                    return completion()
-//                }
-//            }
-//        }
-//    }
 
     func goAndAttack(to target: SKNode, completion: @escaping () -> Void) {
         moveSpeed = moveSpeedForAtk
@@ -250,10 +240,7 @@ class EqRob: SKSpriteNode {
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
         /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
-            self.parent!.run(dead)
-        }
+        SoundController.sound(scene: self.parent as? SKScene, sound: .EnemyKilled)
         particles.run(seqEffect, completion: {
             self.isHidden = true
             return completion()

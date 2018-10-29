@@ -35,7 +35,6 @@ class MainMenu: SKScene {
     
     /* Sound */
     static var soundOnFlag = true
-    var sound = BGM(bgm: 1)
     
     override func didMove(to view: SKView) {
         /* Setup your scene here */
@@ -62,10 +61,7 @@ class MainMenu: SKScene {
         }
         
         /* Sound */
-        if MainMenu.soundOnFlag {
-            sound.play()
-            sound.numberOfLoops = -1
-        }
+        SoundController.playBGM(bgm: .MainMenu, isLoop: true)
         
         /* New game */
         buttonNewGame.selectedHandler = { [weak self] in
@@ -74,6 +70,8 @@ class MainMenu: SKScene {
                 DAUserDefaultUtility.resetData()
                 /* Grab reference to the SpriteKit view */
                 let skView = self?.view as SKView?
+                /* Play Sound */
+                SoundController.sound(scene: self, sound: .ButtonMove)
                 
                 /* Load Game scene */
                 guard let scene = ScenarioScene(fileNamed: "ScenarioScene") as ScenarioScene? else {
@@ -86,11 +84,6 @@ class MainMenu: SKScene {
                 /* Restart GameScene */
                 skView?.presentScene(scene)
                 
-                /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                    self?.run(sound)
-                }
             } else {
                 self?.showConfirm()
             }
@@ -132,14 +125,10 @@ class MainMenu: SKScene {
         
         if nodeAtPoint.name == "buttonSetting" {
             /* Play Sound */
-            if MainMenu.soundOnFlag {
-                if settingScreen.isActive {
-                    let sound = SKAction.playSoundFileNamed("buttonBack.wav", waitForCompletion: true)
-                    self.run(sound)
-                } else {
-                    let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                    self.run(sound)
-                }
+            if settingScreen.isActive {
+                SoundController.sound(scene: self, sound: .ButtonBack)
+            } else {
+                SoundController.sound(scene: self, sound: .ButtonMove)
             }
             
             if settingScreen.isActive {
@@ -152,14 +141,13 @@ class MainMenu: SKScene {
         if nodeAtPoint.name == "buttonMute" {
             buttonMute.isHidden = true
             MainMenu.soundOnFlag = true
-            sound.play()
-            sound.numberOfLoops = -1
+            SoundController.playBGM(bgm: .MainMenu, isLoop: true)
             let ud = UserDefaults.standard
             ud.set(true, forKey: "soundOn")
         } else if nodeAtPoint.name == "buttonSoundOn" {
             buttonMute.isHidden = false
+            SoundController.stopBGM()
             MainMenu.soundOnFlag = false
-            sound.stop()
             let ud = UserDefaults.standard
             ud.set(false, forKey: "soundOn")
         }
@@ -168,16 +156,16 @@ class MainMenu: SKScene {
     func setSoundButton() {
         /* Sound button mute */
         buttonMute = SKSpriteNode(imageNamed: "mute")
-        buttonMute.position = CGPoint(x: 100, y: 75)
-        buttonMute.size = CGSize(width: 100, height: 100)
+        buttonMute.position = CGPoint(x: 80, y: 75)
+        buttonMute.size = CGSize(width: 95, height: 95)
         buttonMute.name = "buttonMute"
         buttonMute.zPosition = 4
         addChild(buttonMute)
         
         /* Sound button on */
         buttonSoundOn = SKSpriteNode(imageNamed: "soundOn")
-        buttonSoundOn.position = CGPoint(x: 100, y: 75)
-        buttonSoundOn.size = CGSize(width: 100, height: 100)
+        buttonSoundOn.position = CGPoint(x: 80, y: 75)
+        buttonSoundOn.size = CGSize(width: 95, height: 95)
         buttonSoundOn.name = "buttonSoundOn"
         buttonSoundOn.zPosition = 3
         addChild(buttonSoundOn)
@@ -204,9 +192,6 @@ class MainMenu: SKScene {
         self.confirmingNewGameFlag = true
         
         /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let sound = SKAction.playSoundFileNamed("selectNewGame.wav", waitForCompletion: true)
-            self.run(sound)
-        }
+        SoundController.sound(scene: self, sound: .UtilButton)
     }
 }

@@ -344,6 +344,8 @@ class Grid: SKSpriteNode {
                     gameScene.hero.positionX = gridX
                     gameScene.hero.positionY = gridY
                     
+                    SoundController.sound(scene: gameScene, sound: .HeroMove)
+                    
                     /* Move next state */
                     let wait = SKAction.wait(forDuration: gameScene.turnEndWait)
                     let nextHero = SKAction.run({

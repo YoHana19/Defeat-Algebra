@@ -54,16 +54,17 @@ class PauseScreen: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        
-        if nodeAtPoint.name == "pauseRetry" {
+        if nodeAtPoint.name == "pauseBack" {
+            self.isHidden = true
+            gameScene.pauseFlag = false
+        } else if nodeAtPoint.name == "pauseRetry" {
             /* EqRob */
             EqRobController.back(2)
             
             CharacterController.resetCharacter()
             
             /* Sound */
-            gameScene.main.stop()
-            gameScene.stageClear.stop()
+            SoundController.stopBGM()
             
             /* Grab reference to the SpriteKit view */
             let skView = gameScene.view as SKView?
@@ -96,8 +97,7 @@ class PauseScreen: SKSpriteNode {
             CharacterController.resetCharacter()
             
             /* Sound */
-            gameScene.main.stop()
-            gameScene.stageClear.stop()
+            SoundController.stopBGM()
             
             gameScene.isCharactersTurn = false
             gameScene.gridNode.isTutorial = false
@@ -121,16 +121,17 @@ class PauseScreen: SKSpriteNode {
         } else if nodeAtPoint.name == "buttonMute" {
             buttonMute.isHidden = true
             MainMenu.soundOnFlag = true
-            gameScene.main.play()
-            gameScene.stageClear.stop()
-            gameScene.main.numberOfLoops = -1
+            if let _ = gameScene as? ScenarioScene {
+                GameStageController.soundForScenario()
+            } else {
+                GameStageController.sound()
+            }
             let ud = UserDefaults.standard
             ud.set(true, forKey: "soundOn")
         } else if nodeAtPoint.name == "buttonSoundOn" {
             buttonMute.isHidden = false
+            SoundController.stopBGM()
             MainMenu.soundOnFlag = false
-            gameScene.main.stop()
-            gameScene.stageClear.stop()
             let ud = UserDefaults.standard
             ud.set(false, forKey: "soundOn")
         }
@@ -154,9 +155,9 @@ class PauseScreen: SKSpriteNode {
         addChild(buttonHome)
         
         /* button Main Menu */
-        let buttonTutorial = SKSpriteNode(imageNamed: "pauseTutorialJ")
+        let buttonTutorial = SKSpriteNode(imageNamed: "pauseBackJ")
         buttonTutorial.position = CGPoint(x: 0, y: -self.size.height/4+30)
-        buttonTutorial.name = "pauseTutorial"
+        buttonTutorial.name = "pauseBack"
         buttonTutorial.zPosition = 3
         addChild(buttonTutorial)
         

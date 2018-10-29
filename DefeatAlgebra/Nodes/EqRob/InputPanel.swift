@@ -137,6 +137,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button x */
         if nodeAtPoint.name == "buttonX" {
+            SoundController.sound(scene: gameScene, sound: .Input)
             
             /* Valid +-, ok */
             uncoverOperant()
@@ -174,7 +175,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 1 */
         if nodeAtPoint.name == "button1" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -195,7 +196,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 2 */
         if nodeAtPoint.name == "button2" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -216,7 +217,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 3 */
         if nodeAtPoint.name == "button3" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -236,7 +237,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 4 */
         if nodeAtPoint.name == "button4" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -257,7 +258,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 5 */
         if nodeAtPoint.name == "button5" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -278,7 +279,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 6 */
         if nodeAtPoint.name == "button6" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -299,7 +300,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 7 */
         if nodeAtPoint.name == "button7" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -320,7 +321,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button 8 */
         if nodeAtPoint.name == "button8" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -340,7 +341,7 @@ class InputPanel: SKSpriteNode {
         }
         /* Touch button 9 */
         if nodeAtPoint.name == "button9" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, +- */
             uncoverOperant()
             uncover0()
@@ -362,7 +363,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button + */
         if nodeAtPoint.name == "button+" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, num */
             uncoverNumber()
             uncoverX()
@@ -392,7 +393,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button - */
         if nodeAtPoint.name == "button-" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, num */
             uncoverNumber()
             uncoverX()
@@ -422,7 +423,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button clear */
         if nodeAtPoint.name == "buttonClear" {
-            
+            SoundController.sound(scene: gameScene, sound: .HeroMove)
             /* Reset */
             variableExpression = ""
             putXFlag = false
@@ -445,6 +446,7 @@ class InputPanel: SKSpriteNode {
         
         /* Touch button ok */
         if nodeAtPoint.name == "buttonOK" {
+            SoundController.sound(scene: gameScene, sound: .UtilButton)
             if operant == 0 {
                 gameScene.eqRob.constantsArray.append(tempSpot)
             } else {

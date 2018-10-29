@@ -45,6 +45,7 @@ struct CannonTryController {
     }
     
     public static func showEqGrid(enemy: Enemy, cannon: Cannon) {
+        SoundController.playBGM(bgm: .SimBGM, isLoop: true)
         gameScene.hero.setPhysics(isActive: false)
         gameScene.eqGrid.isHidden = false
         gameScene.eqGrid.zPosition = 9
@@ -91,6 +92,11 @@ struct CannonTryController {
     }
     
     public static func hideEqGrid() {
+        if let _ = gameScene as? ScenarioScene {
+            GameStageController.soundForScenario()
+        } else {
+            GameStageController.sound()
+        }
         gameScene.hero.setPhysics(isActive: true)
         CannonController.selectedCannon.zPosition = 6
         gameScene.eqGrid.isHidden = true

@@ -55,10 +55,7 @@ extension Enemy {
         let removeParticles = SKAction.removeFromParent()
         let seqEffect = SKAction.sequence([waitEffectRemove, removeParticles])
         /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let dead = SKAction.playSoundFileNamed("enemyKilled.mp3", waitForCompletion: true)
-            self.parent!.run(dead)
-        }
+        SoundController.sound(scene: self.gameScene, sound: .EnemyKilled)
         particles.run(seqEffect, completion: {
             return completion()
         })

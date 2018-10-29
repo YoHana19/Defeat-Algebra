@@ -15,6 +15,7 @@ struct VEEquivalentController {
     public static var numOfCheck = 0
     
     public static func showEqGrid(enemies: [Enemy], eqRob: EqRob? = nil) {
+        SoundController.playBGM(bgm: .SimBGM, isLoop: true)
         gameScene.hero.setPhysics(isActive: false)
         gameScene.eqGrid.isHidden = false
         let bg = EqBackground(gameScene: gameScene, enemies: enemies, eqRob: eqRob)
@@ -132,6 +133,11 @@ struct VEEquivalentController {
     }
     
     public static func hideEqGrid() {
+        if let _ = gameScene as? ScenarioScene {
+            GameStageController.soundForScenario()
+        } else {
+            GameStageController.sound()
+        }
         gameScene.hero.setPhysics(isActive: true)
         GridActiveAreaController.resetSquareArray(color: "yellow", grid: gameScene.eqGrid)
         GridActiveAreaController.resetSquareArray(color: "green", grid: gameScene.eqGrid)

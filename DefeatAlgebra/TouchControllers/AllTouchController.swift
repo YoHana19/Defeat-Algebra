@@ -15,6 +15,7 @@ struct AllTouchController {
     public static func eqRobTouched() {
         guard gameScene.playerTurnState == .MoveState || gameScene.playerTurnState == .AttackState || gameScene.playerTurnState == .UsingItem else { return }
         guard gameScene.itemType != .Cannon else { return }
+        SoundController.sound(scene: gameScene, sound: .EqSelected)
         
         /* Hide attack and item buttons */
         gameScene.buttonAttack.isHidden = true

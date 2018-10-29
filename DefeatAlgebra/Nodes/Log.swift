@@ -20,6 +20,7 @@ class Log: SKSpriteNode {
     func hit(completion: @escaping () -> Void) {
         move(by: -20, duration: 1.5, easeFunction: nil, easeType: nil) {
             self.move(by: 40, duration: 1.0, easeFunction: .curveTypeElastic, easeType: nil) {
+                SoundController.sound(scene: self.parent as? SKScene, sound: .LogDefence)
                 self.removeFromParent()
                 return completion()
             }

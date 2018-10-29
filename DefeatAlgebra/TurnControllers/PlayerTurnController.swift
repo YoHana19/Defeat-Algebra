@@ -61,7 +61,6 @@ struct PlayerTurnController {
         /* Reset Flags */
         gameScene.enemyTurnDoneFlag = false
         gameScene.hero.moveDoneFlag = false
-        gameScene.hero.attackDoneFlag = false
         gameScene.eqRobTurnCountingDone = false
         
         /* Remove action buttons */

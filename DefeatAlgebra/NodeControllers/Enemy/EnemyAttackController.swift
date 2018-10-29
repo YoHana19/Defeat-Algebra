@@ -46,10 +46,7 @@ extension Enemy {
                 self.gameScene.setLife(numOflife: self.gameScene.life)
                 
                 /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
-                    self.gameScene.run(sound)
-                }
+                SoundController.sound(scene: self.gameScene, sound: .CastleHit)
                 
                 self.subSetArm(arms: armAndFist.arm) { (newArms) in
                     for arm in armAndFist.arm {
@@ -240,6 +237,7 @@ extension Enemy {
         /* Make sure to call once */
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
+        self.calculatePunchLength(value: 1)
         
         self.punch() { armAndFist in
             /* Decrese life */
@@ -247,10 +245,7 @@ extension Enemy {
             self.gameScene.setLife(numOflife: self.gameScene.life)
             
             /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
-                self.gameScene.run(sound)
-            }
+            SoundController.sound(scene: self.gameScene, sound: .CastleHit)
             
             self.drawPunch(arms: armAndFist.arm, fists: armAndFist.fist) {
                 self.turnEnd()

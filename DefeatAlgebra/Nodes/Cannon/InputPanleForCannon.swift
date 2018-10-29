@@ -172,7 +172,7 @@ class InputPanelForCannon: SKSpriteNode {
         
         /* Touch button x */
         if nodeAtPoint.name == "buttonX" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid +-, ok */
             uncoverOperant()
             uncoverOK()
@@ -258,7 +258,7 @@ class InputPanelForCannon: SKSpriteNode {
         
         /* Touch button + */
         if nodeAtPoint.name == "button+" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, num */
             uncoverNumber()
             uncoverX()
@@ -288,7 +288,7 @@ class InputPanelForCannon: SKSpriteNode {
         
         /* Touch button - */
         if nodeAtPoint.name == "button-" {
-            
+            SoundController.sound(scene: gameScene, sound: .Input)
             /* Valid x, num */
             uncoverNumber()
             uncoverX()
@@ -318,6 +318,7 @@ class InputPanelForCannon: SKSpriteNode {
         
         /* Touch button clear */
         if nodeAtPoint.name == "buttonClear" {
+            SoundController.sound(scene: gameScene, sound: .HeroMove)
             buttonClearTapped()
             /* Reset elemnts of variable expression of cannon */
             CannonController.selectedCannon.resetVEElementArray()
@@ -325,6 +326,7 @@ class InputPanelForCannon: SKSpriteNode {
         
         /* Touch button ok */
         if nodeAtPoint.name == "buttonOK" {
+            SoundController.sound(scene: gameScene, sound: .UtilButton)
             if operant == 0 {
                 CannonController.selectedCannon.constantsArray.append(tempSpot)
             } else {
@@ -384,6 +386,7 @@ class InputPanelForCannon: SKSpriteNode {
         
         /* Touch button try */
         if nodeAtPoint.name == "buttonTry" {
+            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
             if operant == 0 {
                 CannonController.selectedCannon.constantsArray.append(tempSpot)
             } else {
@@ -420,6 +423,7 @@ class InputPanelForCannon: SKSpriteNode {
     }
     
     func tappedNumber(num: Int) {
+        SoundController.sound(scene: self.parent as? SKScene, sound: .Input)
         /* Valid x, +-, 0 */
         uncoverOperant()
         //uncover0()

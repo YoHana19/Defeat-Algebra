@@ -151,10 +151,7 @@ class DataSelectMenu: SKScene {
         }
         
         /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-            scene.run(sound)
-        }
+        SoundController.sound(scene: self, sound: .ButtonMove)
         
         scene.currentLevel = level-1
         

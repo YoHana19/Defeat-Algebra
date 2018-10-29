@@ -14,7 +14,8 @@ struct MoveTouchController {
     
     public static func buttonAttackTapped() {
         guard gameScene.heroMovingFlag == false else { return }
-        //guard gameScene.hero.attackDoneFlag == false else { return }
+        
+        SoundController.sound(scene: gameScene, sound: .ActionButton)
         
         /* Reset item type */
         gameScene.itemType = .None
@@ -32,6 +33,8 @@ struct MoveTouchController {
     
     public static func buttonItemTapped() {
         guard gameScene.heroMovingFlag == false else { return }
+        
+        SoundController.sound(scene: gameScene, sound: .ActionButton)
         
         /* Reset active area */
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)

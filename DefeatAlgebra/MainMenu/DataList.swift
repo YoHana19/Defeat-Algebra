@@ -11,9 +11,6 @@ import SpriteKit
 
 class DataList: SKScene {
     
-    /* Sound */
-    var sound = BGM(bgm: 3)
-    
     let titleSpace = 90
     let topSpace = 20
     let leftSpace: CGFloat = 20
@@ -26,11 +23,6 @@ class DataList: SKScene {
         
         createLabel(text: "stage \(currentLevel+1)", posY: -topSpace, fontSize: 45)
         showData()
-        
-        /* Sound */
-        if MainMenu.soundOnFlag {
-            sound.play()
-        }
         
     }
     
@@ -51,10 +43,7 @@ class DataList: SKScene {
             }
             
             /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonBack.wav", waitForCompletion: true)
-                scene.run(sound)
-            }
+            SoundController.sound(scene: self, sound: .ButtonBack)
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit

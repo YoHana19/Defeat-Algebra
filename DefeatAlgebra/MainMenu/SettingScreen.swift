@@ -67,10 +67,7 @@ class SettingScreen: SKSpriteNode {
             }
             
             /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                scene.run(sound)
-            }
+            SoundController.sound(scene: mainMenu, sound: .ButtonMove)
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit
@@ -87,11 +84,7 @@ class SettingScreen: SKSpriteNode {
                 return
             }
             
-            /* Play Sound */
-            if MainMenu.soundOnFlag {
-                let sound = SKAction.playSoundFileNamed("buttonMove.wav", waitForCompletion: true)
-                scene.run(sound)
-            }
+            SoundController.sound(scene: mainMenu, sound: .ButtonMove)
             
             /* Ensure correct aspect mode */
             scene.scaleMode = .aspectFit

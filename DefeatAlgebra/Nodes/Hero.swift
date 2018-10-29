@@ -162,57 +162,6 @@ class Hero: SKSpriteNode {
         }
     }
     
-    /* Set hero spear attack animation */
-    func setSpearAnimation() {
-        switch direction {
-        case .front:
-            self.anchorPoint = CGPoint(x: 0.5, y: 1)
-            let heroSwordAnimation = SKAction(named: "heroSpearBackward")!
-            self.run(heroSwordAnimation)
-            break;
-        case .back:
-            self.anchorPoint = CGPoint(x: 0.5, y: 0)
-            let heroSwordAnimation = SKAction(named: "heroSpearForward")!
-            self.run(heroSwordAnimation)
-            break;
-        case .left:
-            self.anchorPoint = CGPoint(x: 1, y: 0.5)
-            let heroSwordAnimation = SKAction(named: "heroSpearLeft")!
-            self.run(heroSwordAnimation)
-            break;
-        case .right:
-            self.anchorPoint = CGPoint(x: 0, y: 0.5)
-            let heroSpearAnimation = SKAction(named: "heroSpearRight")!
-            self.run(heroSpearAnimation)
-        }
-    }
-    
-    /* Set hero multi sword attack animation */
-    func setMultiSwordAttackAnimation() {
-        /* front */
-        let changeAnchorFront = SKAction.run({ self.anchorPoint = CGPoint(x: 0.5, y: 1) })
-        let heroSwordAnimationFront = SKAction(named: "heroSwordBackward")!
-        /* back */
-        let changeAnchorBack = SKAction.run({ self.anchorPoint = CGPoint(x: 0.5, y: 0) })
-        let heroSwordAnimationBack = SKAction(named: "heroSwordForward")!
-        /* left */
-        let changeAnchorLeft = SKAction.run({ self.anchorPoint = CGPoint(x: 1, y: 0.5) })
-        let heroSwordAnimationLeft = SKAction(named: "heroSwordLeft")!
-        /* right */
-        let changeAnchorRight = SKAction.run({ self.anchorPoint = CGPoint(x: 0, y: 0.5) })
-        let heroSwordAnimationRight = SKAction(named: "heroSwordRight")!
-        let seq = SKAction.sequence([changeAnchorRight, heroSwordAnimationRight, changeAnchorFront, heroSwordAnimationFront, changeAnchorLeft, heroSwordAnimationLeft, changeAnchorBack, heroSwordAnimationBack])
-        self.run(seq)
-        /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let sword = SKAction.playSoundFileNamed("swordSound.wav", waitForCompletion: true)
-            let wait = SKAction.wait(forDuration: 0.6)
-            let seqSound = SKAction.sequence([sword, wait])
-            let keepPlaying = SKAction.repeat(seqSound, count: 4)
-            self.run(keepPlaying)
-        }
-    }
-    
     /* Reset hero position and animation */
     func resetHero() {
         self.direction = .back

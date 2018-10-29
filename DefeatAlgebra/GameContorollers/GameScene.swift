@@ -115,8 +115,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var enemiesForVeScaleExplaining = [Enemy]()
     
     /*== Game Sounds ==*/
-    var main = BGM(bgm: 0)
-    var stageClear = BGM(bgm: 2)
     var gameOverSoundDone = false
     var stageClearSoundDone = false
     var hitCastleWallSoundDone = false
@@ -252,7 +250,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         StageClearTurnController.gameScene = self
         GameOverTurnController.gameScene = self
         ItemDropController.gameScene = self
-        ContactController.gameScene = self
         TutorialController.scene = self
         SpeakInGameController.gameScene = self
         VEEquivalentController.gameScene = self
@@ -260,12 +257,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameStageController.gameScene = self
         ScenarioTouchController.gameScene = self
         EnemyMoveController.gameScene = self
-        
-        /* Sound */
-        if MainMenu.soundOnFlag {
-            main.play()
-            main.numberOfLoops = -1
-        }
         
         /* Labels */
         gameOverLabel = childNode(withName: "gameOverLabel")
@@ -610,10 +601,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* A is hero */
                 if contactA.categoryBitMask == 1 {
                     /* Play Sound */
-                    if MainMenu.soundOnFlag {
-                        let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
-                        self.run(get)
-                    }
+                    SoundController.sound(scene: self, sound: .ItemGet)
                     let item = contactB.node as! Item
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)
@@ -640,10 +628,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* B is hero */
                 if contactB.categoryBitMask == 1 {
                     /* Play Sound */
-                    if MainMenu.soundOnFlag {
-                        let get = SKAction.playSoundFileNamed("ItemGet.wav", waitForCompletion: true)
-                        self.run(get)
-                    }
+                    SoundController.sound(scene: self, sound: .ItemGet)
                     let item = contactA.node as! Item
                     if let i = gridNode.itemsOnField.index(of: item) {
                         gridNode.itemsOnField.remove(at: i)

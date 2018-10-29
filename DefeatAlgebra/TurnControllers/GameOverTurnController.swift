@@ -18,10 +18,9 @@ struct GameOverTurnController {
         /* Play Sound */
         if MainMenu.soundOnFlag {
             if gameScene.gameOverSoundDone == false {
+                SoundController.stopBGM()
                 gameScene.gameOverSoundDone = true
-                gameScene.main.stop()
-                let sound = SKAction.playSoundFileNamed("gameOver.wav", waitForCompletion: true)
-                gameScene.run(sound)
+                SoundController.sound(scene: gameScene, sound: .GameOver)
             }
         }
         
@@ -48,7 +47,11 @@ struct GameOverTurnController {
         /* Play Sound */
         if MainMenu.soundOnFlag {
             gameScene.gameOverSoundDone = true
-            gameScene.main.play()
+            if let _ = gameScene as? ScenarioScene {
+                GameStageController.soundForScenario()
+            } else {
+                GameStageController.sound()
+            }
             gameScene.removeAllActions()
         }
     }
