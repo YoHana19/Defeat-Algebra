@@ -13,17 +13,17 @@ extension Enemy {
     /* Calculate punch length */
     func calculatePunchLength(value: Int) {
         if self.positionY == 0 {
-            self.punchLength = self.position.y+gameScene.gridNode.position.y-gameScene.castleNode.position.y-40+5
+            self.punchLength = CGFloat(gameScene.gridNode.cellHeight/2) + gameScene.bottomGap + 5
         } else {
             /* Calculate value of variable expression of enemy */
             self.valueOfEnemy = VECategory.calculateValue(veCategory: self.vECategory, value: value)
             
             if self.positionY < self.valueOfEnemy {
                 /* punch length to castle */
-                self.punchLength  = CGFloat(Double(self.positionY)*gridNode.cellHeight+100.0)
+                self.punchLength  = (CGFloat(self.positionY)+0.5)*CGFloat(gridNode.cellHeight)+gameScene.bottomGap + 5
             } else {
                 /* Calculate length of punch */
-                self.punchLength = self.firstPunchLength + CGFloat(self.valueOfEnemy-1) * self.singlePunchLength
+                self.punchLength = CGFloat(self.valueOfEnemy) * CGFloat(gridNode.cellHeight)
             }
         }
     }
@@ -42,10 +42,15 @@ extension Enemy {
             /* Do punch */
             punch() { armAndFist in
                 /* Decrese life */
-                if self.wallHitFlag == false {
-                    self.gameScene.life -= 1
-                    self.gameScene.setLife(numOflife: self.gameScene.life)
+                self.gameScene.life -= 1
+                self.gameScene.setLife(numOflife: self.gameScene.life)
+                
+                /* Play Sound */
+                if MainMenu.soundOnFlag {
+                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
+                    self.gameScene.run(sound)
                 }
+                
                 self.subSetArm(arms: armAndFist.arm) { (newArms) in
                     for arm in armAndFist.arm {
                         arm.removeFromParent()
@@ -88,12 +93,12 @@ extension Enemy {
         /* Set arm */
         let arm1 = EnemyArm(direction: self.direction)
         let arm2 = EnemyArm(direction: self.direction)
-        setArm(arm: [arm1, arm2], direction: self.direction)
+        setArm(arm: [arm1, arm2])
         
         /* Set fist */
         let fist1 = EnemyFist(direction: self.direction)
         let fist2 = EnemyFist(direction: self.direction)
-        setFist(fist: [fist1, fist2], direction: self.direction)
+        setFist(fist: [fist1, fist2])
         
         /* Move Fist */
         fist1.moveFistForward(length: punchLength, speed: self.punchSpeed)
@@ -128,35 +133,11 @@ extension Enemy {
     }
     
     /* Set position of arm */
-    func setArm(arm: [EnemyArm], direction: Direction) {
-        
-        /* Set position of arms */
-        switch direction {
-        case .front:
-            let armPos1 = CGPoint(x: -18, y: 5)
-            let armPos2 = CGPoint(x: 18, y: 5)
-            arm[0].position = armPos1
-            arm[1].position = armPos2
-        case .back:
-            let armPos1 = CGPoint(x: -13, y: 10)
-            let armPos2 = CGPoint(x: 13, y: 10)
-            arm[0].zPosition = -1
-            arm[1].zPosition = -1
-            arm[0].position = armPos1
-            arm[1].position = armPos2
-        case .left:
-            let armPos1 = CGPoint(x: 0, y: 3)
-            let armPos2 = CGPoint(x: 0, y: -10)
-            arm[1].zPosition = -1
-            arm[0].position = armPos1
-            arm[1].position = armPos2
-        case .right:
-            let armPos1 = CGPoint(x: 0, y: 3)
-            let armPos2 = CGPoint(x: 0, y: -10)
-            arm[1].zPosition = -1
-            arm[0].position = armPos1
-            arm[1].position = armPos2
-        }
+    func setArm(arm: [EnemyArm]) {
+        let armPos1 = CGPoint(x: -18, y: 5)
+        let armPos2 = CGPoint(x: 18, y: 5)
+        arm[0].position = armPos1
+        arm[1].position = armPos2
         
         /* Add arm as enemy child */
         addChild(arm[0])
@@ -164,37 +145,13 @@ extension Enemy {
     }
     
     /* Set position of fist */
-    func setFist(fist: [EnemyFist], direction: Direction) {
-        
-        /* Set position of fists */
-        switch direction {
-        case .front:
-            let fistPos1 = CGPoint(x: -20, y: 5)
-            let fistPos2 = CGPoint(x: 19, y: 5)
-            fist[0].position = fistPos1
-            fist[1].position = fistPos2
-            fist[1].texture = SKTexture(imageNamed: "frontFistLeft")
-        case .back:
-            let fistPos1 = CGPoint(x: -13, y: 10)
-            let fistPos2 = CGPoint(x: 13, y: 10)
-            fist[0].zPosition = -1
-            fist[1].zPosition = -1
-            fist[0].position = fistPos1
-            fist[1].position = fistPos2
-        case .left:
-            let fistPos1 = CGPoint(x: 0, y: 3)
-            let fistPos2 = CGPoint(x: 0, y: -10)
-            fist[1].zPosition = -1
-            fist[0].position = fistPos1
-            fist[1].position = fistPos2
-        case .right:
-            let fistPos1 = CGPoint(x: 0, y: 3)
-            let fistPos2 = CGPoint(x: 0, y: -10)
-            fist[1].zPosition = -1
-            fist[0].position = fistPos1
-            fist[1].position = fistPos2
-        }
-        
+    func setFist(fist: [EnemyFist]) {
+        let fistPos1 = CGPoint(x: -20, y: 5)
+        let fistPos2 = CGPoint(x: 19, y: 5)
+        fist[0].position = fistPos1
+        fist[1].position = fistPos2
+        fist[1].texture = SKTexture(imageNamed: "frontFistLeft")
+    
         /* Add arm as enemy child */
         addChild(fist[0])
         addChild(fist[1])
@@ -224,18 +181,20 @@ extension Enemy {
     
     func drawPunchNMove(arms: [EnemyArm], fists: [EnemyFist], num: Int, completion: @escaping () -> Void) {
         let duration = TimeInterval(self.punchLength*self.punchSpeed)
+        let moveLength = CGFloat(num)*CGFloat(gridNode.cellHeight)
+        let durationForBody = TimeInterval(moveLength*self.punchSpeed)
         for arm in arms {
-            let moveArm = SKAction.moveBy(x: 0, y: CGFloat(Double(num)*gridNode.cellHeight), duration:
+            let moveArm = SKAction.moveBy(x: 0, y: self.punchLength, duration:
                 duration)
             let shrinkArm = SKAction.scaleY(to: 1/arm.yScale, duration: duration)
             let group = SKAction.group([moveArm, shrinkArm])
             arm.run(group)
         }
         for fist in fists {
-            let moveFist = SKAction.moveBy(x: 0, y: CGFloat(Double(num)*gridNode.cellHeight), duration: duration)
+            let moveFist = SKAction.moveBy(x: 0, y: self.punchLength, duration: duration)
             fist.run(moveFist)
         }
-        let moveBody = SKAction.moveBy(x: 0, y: -CGFloat(Double(num)*gridNode.cellHeight), duration: duration)
+        let moveBody = SKAction.moveBy(x: 0, y: -moveLength, duration: durationForBody)
         
         self.run(moveBody, completion: {
             return completion()
@@ -287,6 +246,12 @@ extension Enemy {
             self.gameScene.life -= 1
             self.gameScene.setLife(numOflife: self.gameScene.life)
             
+            /* Play Sound */
+            if MainMenu.soundOnFlag {
+                let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
+                self.gameScene.run(sound)
+            }
+            
             self.drawPunch(arms: armAndFist.arm, fists: armAndFist.fist) {
                 self.turnEnd()
             }
@@ -306,35 +271,6 @@ extension Enemy {
         self.run(wait, completion: {
             return completion()
         })
-    }
-    
-    /* Punch when enemy reach to castle */
-    public func punchToWall(wall: Wall) {
-        /* Make sure not to call if it's not my turn */
-        guard myTurnFlag else { return }
-        guard wallHitFlag == false else { return }
-        wallHitFlag = true
-        
-        self.removeAllActions()
-        let lengthToWall = self.positionY - wall.posY - 1
-        
-        if lengthToWall < 1 {
-            self.turnEnd()
-            self.positionY = wall.posY+1
-        } else {
-            self.punchLength = self.firstPunchLength + CGFloat(lengthToWall-1) * self.singlePunchLength
-            getArmsNFists() { armNfist in
-                self.subSetArm(arms: armNfist.0) { arms in
-                    for arm in armNfist.0 {
-                        arm.removeFromParent()
-                    }
-                    self.drawPunchNMove(arms: arms, fists: armNfist.1, num: lengthToWall) {
-                        self.turnEnd()
-                        self.positionY = wall.posY+1
-                    }
-                }
-            }
-        }
     }
     
     private func getArmsNFists(completion: @escaping (([EnemyArm], [EnemyFist])) -> Void) {

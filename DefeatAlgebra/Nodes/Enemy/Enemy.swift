@@ -123,7 +123,7 @@ class Enemy: SKSpriteNode {
         }
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 5
+        zPosition = 4
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -157,7 +157,7 @@ class Enemy: SKSpriteNode {
         initializeXValueLabel()
         
         /* Set Z-Position, ensure ontop of grid */
-        zPosition = 5
+        zPosition = 4
         
         /* Set anchor point to bottom-left */
         anchorPoint = CGPoint(x: 0.5, y: 0.5)

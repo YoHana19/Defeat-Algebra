@@ -15,6 +15,7 @@ struct VEEquivalentController {
     public static var numOfCheck = 0
     
     public static func showEqGrid(enemies: [Enemy], eqRob: EqRob? = nil) {
+        gameScene.hero.setPhysics(isActive: false)
         gameScene.eqGrid.isHidden = false
         let bg = EqBackground(gameScene: gameScene, enemies: enemies, eqRob: eqRob)
         bg.zPosition = 8
@@ -131,6 +132,7 @@ struct VEEquivalentController {
     }
     
     public static func hideEqGrid() {
+        gameScene.hero.setPhysics(isActive: true)
         GridActiveAreaController.resetSquareArray(color: "yellow", grid: gameScene.eqGrid)
         GridActiveAreaController.resetSquareArray(color: "green", grid: gameScene.eqGrid)
         gameScene.eqGrid.isHidden = false
@@ -189,7 +191,7 @@ struct VEEquivalentController {
             enemy.xValueLabel.text = ""
             enemy.demoCalcLabel.isHidden = true
             enemy.variableExpressionLabel.fontColor = UIColor.white
-            if enemy.punchIntervalForCount == 0 {
+            if enemy.punchIntervalForCount == 0 && enemy.positionY != 0 {
                 enemy.forcusForAttack(color: UIColor.red, value: gameScene.xValue)
             }
             let pos = getPosOnGrid(x: enemy.positionX, y: enemy.positionY)

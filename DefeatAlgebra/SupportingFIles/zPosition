@@ -16,12 +16,12 @@ itemAreaCover 3
 buttonPause 4
 pointingIcon 4
 activeArea 4
-enemy 5
+enemy 4
 cannon 6
-castleNode 5
-life 6
-buttonAttack 6
-buttonItem 6
+castleNode 6
+life 7
+buttonAttack 7
+buttonItem 7
 eqBackground 8
 eqGrid 9
 cannonRecordBoard 10

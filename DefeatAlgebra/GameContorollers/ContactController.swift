@@ -80,14 +80,4 @@ struct ContactController {
         gameScene.run(seq)
         
     }
-    
-    static func enemyPunchToWall(wall: Wall, enemy: Enemy) {
-        /* Play Sound */
-        if MainMenu.soundOnFlag {
-            let hitWall = SKAction.playSoundFileNamed("hitWall.wav", waitForCompletion: false)
-            gameScene.run(hitWall)
-        }
-        
-        enemy.punchToWall(wall: wall)
-    }
 }

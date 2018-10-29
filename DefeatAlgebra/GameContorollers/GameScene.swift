@@ -382,7 +382,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
-        bottomGap = self.gridNode.position.y-(self.castleNode.position.y+self.castleNode.size.height/2)
+        bottomGap = self.gridNode.position.y-(self.castleNode.position.y+40)  // 40 is top ha;f of castleNode physics
         
         /* Display value of x */
         valueOfX = childNode(withName: "valueOfX") as! SKLabelNode
@@ -400,12 +400,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             self.totalNumOfEnemy = num
         }
         
-        /* Set castleWall physics property */
-        castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
-        castleNode.physicsBody?.categoryBitMask = 4
-        castleNode.physicsBody?.collisionBitMask = 0
-        castleNode.physicsBody?.contactTestBitMask = 24
-        
         /* Set life */
         life = 5
         setLife(numOflife: life)
@@ -415,6 +409,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameOverTurnController.done = false
         gridNode.isTutorial = false
         DataController.isGameScene = true
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -700,87 +695,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
-        
-        /* Enemy's arm or fist hits castle wall */
-        if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
-            
-            /* Make sure to call once at each enemy */
-            if hitCastleWallSoundDone == false {
-                hitCastleWallSoundDone = true
-                /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
-                    self.run(sound)
-                }
-            }
-            
-            if contactA.categoryBitMask == 4 {
-                /* Get enemy body or arm or fist */
-                let nodeB = contactB.node as! SKSpriteNode
-
-                /* Stop arm and fist */
-                nodeB.removeAllActions()
-            }
-            
-            if contactB.categoryBitMask == 4 {
-                /* Get enemy body or arm or fist */
-                let nodeA = contactA.node as! SKSpriteNode
-                
-                /* Stop arm and fist */
-                nodeA.removeAllActions()
-            }
-        }
-        
-        /* Items set hit enemy */
-        if contactA.categoryBitMask == 32 || contactB.categoryBitMask == 32 {
-            
-            if contactA.categoryBitMask == 32 {
-                /* Wall stop enemy punch or move */
-                if contactA.node?.name == "wall" {
-                    /* Get wall */
-                    let wall = contactA.node as! Wall
-                    /* Enemy hits wall by moving */
-                    if contactB.categoryBitMask == 2 {
-                        /* Get enemy */
-                        let enemy = contactB.node as! Enemy
-                        ContactController.enemyMoveToWall(wall: wall, enemy: enemy)
-                    /* Enemy hits wall by punching */
-                    } else {
-                        /* Get enemy arm or fist */
-                        let nodeB = contactB.node as! SKSpriteNode
-                        /* Stop arm and fist */
-                        nodeB.removeAllActions()
-                        if let enemy = nodeB.parent as? Enemy {
-                            ContactController.enemyPunchToWall(wall: wall, enemy: enemy)
-                        }
-                    }
-                }
-            }
-            
-            if contactB.categoryBitMask == 32 {
-                
-                /* Wall stop enemy punch or move */
-                if contactB.node?.name == "wall" {
-                    /* Get wall */
-                    let wall = contactB.node as! Wall
-                    /* Enemy hits wall by moving */
-                    if contactA.categoryBitMask == 2 {
-                        /* Get enemy */
-                        let enemy = contactA.node as! Enemy
-                        ContactController.enemyMoveToWall(wall: wall, enemy: enemy)
-                    /* Enemy hits wall by punching */
-                    } else {
-                        /* Get enemy arm or fist */
-                        let nodeA = contactA.node as! SKSpriteNode
-                        /* Stop arm and fist */
-                        nodeA.removeAllActions()
-                        if let enemy = nodeA.parent as? Enemy {
-                            ContactController.enemyPunchToWall(wall: wall, enemy: enemy)
-                        }
-                    }
-                }
-            }
-        }
     }
     
     
@@ -932,7 +846,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     life.size = CGSize(width: 50, height: 50)
                     life.position = CGPoint(x: Double(i)*60+45, y: 140)
                     life.name = "life"
-                    life.zPosition = 6
+                    life.zPosition = 7
                     addChild(life)
                 }
             }

@@ -13,15 +13,7 @@ struct CannonTryController {
     public static var gameScene: GameScene!
     private static var checkingEnemy = Enemy(variableExpressionSource: ["x"], forEdu: false)
     public static var numOfCheck = 0
-    public static var numOfChangeVE = 0 {
-        didSet {
-//            if numOfChangeVE >= 3 {
-//                getBG() { bg in
-//                    bg?.changeVeButton.isHidden = true
-//                }
-//            }
-        }
-    }
+    public static var numOfChangeVE = 0
     public static var hintOn: Bool = false {
         didSet {
             if !oldValue && hintOn {
@@ -142,7 +134,7 @@ struct CannonTryController {
         checkingEnemy.variableExpressionLabel.fontColor = UIColor.white
         checkingEnemy.punchIntervalForCount = 0
         checkingEnemy.forcusForAttack(color: UIColor.red, value: gameScene.xValue)
-        checkingEnemy.zPosition = 5
+        checkingEnemy.zPosition = 4
     }
     
 }

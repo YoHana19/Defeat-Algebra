@@ -203,7 +203,7 @@ class ScenarioScene: GameScene {
         
         /* Calculate dicetances of objects in Scene */
         topGap =  self.size.height-(self.gridNode.position.y+self.gridNode.size.height)
-        bottomGap = self.gridNode.position.y-(self.castleNode.position.y+self.castleNode.size.height/2)
+        bottomGap = self.gridNode.position.y-(self.castleNode.position.y+40) // 40 is top ha;f of castleNode physics
         
         /* Display value of x */
         valueOfX = childNode(withName: "valueOfX") as! SKLabelNode
@@ -217,11 +217,13 @@ class ScenarioScene: GameScene {
         /* Set item area */
         setItemAreaCover()
         
-        /* Set castleWall physics property */
-        castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
-        castleNode.physicsBody?.categoryBitMask = 4
-        castleNode.physicsBody?.collisionBitMask = 0
-        castleNode.physicsBody?.contactTestBitMask = 24
+        if GameScene.stageLevel < MainMenu.invisibleStartTurn {
+            /* Set castleWall physics property */
+            castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
+            castleNode.physicsBody?.categoryBitMask = 4
+            castleNode.physicsBody?.collisionBitMask = 0
+            castleNode.physicsBody?.contactTestBitMask = 24
+        }
         
         /* Set life */
         life = 5
@@ -604,7 +606,6 @@ class ScenarioScene: GameScene {
         
         /* Enemy's arm or fist hits castle wall */
         if contactA.categoryBitMask == 4 || contactB.categoryBitMask == 4 {
-            
             if life > 1 {
                 if GameScene.stageLevel == 0 {
                     TutorialController.currentIndex = 15
@@ -615,32 +616,6 @@ class ScenarioScene: GameScene {
                     TutorialController.enable()
                     TutorialController.execute()
                 }
-            }
-            
-            /* Make sure to call once at each enemy */
-            if hitCastleWallSoundDone == false {
-                hitCastleWallSoundDone = true
-                /* Play Sound */
-                if MainMenu.soundOnFlag {
-                    let sound = SKAction.playSoundFileNamed("castleWallHit.mp3", waitForCompletion: true)
-                    self.run(sound)
-                }
-            }
-            
-            if contactA.categoryBitMask == 4 {
-                /* Get enemy body or arm or fist */
-                let nodeB = contactB.node as! SKSpriteNode
-
-                /* Stop arm and fist */
-                nodeB.removeAllActions()
-            }
-            
-            if contactB.categoryBitMask == 4 {
-                /* Get enemy body or arm or fist */
-                let nodeA = contactA.node as! SKSpriteNode
-                
-                /* Stop arm and fist */
-                nodeA.removeAllActions()
             }
         }
     }
