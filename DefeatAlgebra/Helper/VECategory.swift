@@ -273,13 +273,4 @@ struct VECategory {
         }
     
     }
-    
-//    static func getUnsimplified(source: [String], completion: @escaping ([String]) -> Void) {
-//        let rand = Int(arc4random_uniform(UInt32(source.count)))
-//        getCategory(ve: source[rand]) { cate in
-//            var ves = unSimplifiedVEs(veCate: cate)
-//            ves.append(source[rand])
-//            return completion(ves)
-//        }
-//    }
 }
