@@ -16,72 +16,86 @@ class EnemyMoveController {
     public static var gameScene: GameScene!
     
     static func move(enemy: Enemy, gridNode: Grid) {
-        if enemy.forEduBranchFlag {
-            moveAni(enemy: enemy, gridNode: gridNode)
-        } else {
-            setDirection(enemy: enemy, gridNode: gridNode) { success in
-                if success {
-                    moveAni(enemy: enemy, gridNode: gridNode)
-                } else {
-                    print("somthing wrong in EnemyMoveController.move")
-                }
-            }
+        setDirection(enemy: enemy, gridNode: gridNode) {
+            moveAni(enemy: enemy, gridNode: gridNode) {}
         }
     }
     
-    private static func moveAni(enemy: Enemy, gridNode: Grid) {
+    public static func moveAni(enemy: Enemy, gridNode: Grid, completion: @escaping () -> Void) {
         enemy.setMovingAnimation()
         switch enemy.direction {
         case .front:
             let move = SKAction.moveBy(x: 0, y: -CGFloat(gridNode.cellHeight), duration: enemy.moveSpeed)
-            enemy.run(move)
-            /* Keep track enemy position */
-            enemy.positionY -= 1
+            enemy.run(move, completion: {
+                enemy.positionY -= 1
+                return completion()
+            })
             break;
         case .left:
             let move = SKAction.moveBy(x: -CGFloat(gridNode.cellWidth), y: 0, duration: enemy.moveSpeed)
-            enemy.run(move)
-            /* Keep track enemy position */
-            enemy.positionX -= 1
+            enemy.run(move, completion: {
+                enemy.positionX -= 1
+                return completion()
+            })
             break;
         case .right:
             let move = SKAction.moveBy(x: CGFloat(gridNode.cellWidth), y: 0, duration: enemy.moveSpeed)
-            enemy.run(move)
-            /* Keep track enemy position */
-            enemy.positionX += 1
+            enemy.run(move, completion: {
+                enemy.positionX += 1
+                return completion()
+            })
             break;
         case .back:
             break;
         }
     }
     
-    private static func setDirection(enemy: Enemy, gridNode: Grid, success: @escaping (Bool) -> Void) {
-        if enemy.positionX == 0 || enemy.positionX == 8 || enemy.positionY <= 1 {
-            getDirection(enemy: enemy, gridNode: gridNode) { direction in
-                enemy.direction = direction
-                success(true)
-            }
+    private static func setDirection(enemy: Enemy, gridNode: Grid, success: @escaping () -> Void) {
+        if enemy.positionX == 0 {
+            enemy.direction = .right
+            return success()
+        } else if enemy.positionX == 8 {
+            enemy.direction = .left
+            return success()
         } else {
             let rand = Int(arc4random_uniform(100))
-            if rand < dodgeRation {
-                let candsDirection = detectHeroOrBomb(enemy: enemy, grid: gridNode)
-                if candsDirection.count == 3 || candsDirection.count == 0 {
-                    getDirection(enemy: enemy, gridNode: gridNode) { direction in
-                        enemy.direction = direction
-                        success(true)
-                    }
-                } else {
-                    enemy.direction = candsDirection[0]
-                    success(true)
-                }
+            if rand <  50 {
+                enemy.direction = .right
+                return success()
             } else {
-                getDirection(enemy: enemy, gridNode: gridNode) { direction in
-                    enemy.direction = direction
-                    success(true)
-                }
+                enemy.direction = .left
+                return success()
             }
         }
     }
+    
+//    private static func setDirection(enemy: Enemy, gridNode: Grid, success: @escaping (Bool) -> Void) {
+//        if enemy.positionX == 0 || enemy.positionX == 8 || enemy.positionY <= 1 {
+//            getDirection(enemy: enemy, gridNode: gridNode) { direction in
+//                enemy.direction = direction
+//                success(true)
+//            }
+//        } else {
+//            let rand = Int(arc4random_uniform(100))
+//            if rand < dodgeRation {
+//                let candsDirection = detectHeroOrBomb(enemy: enemy, grid: gridNode)
+//                if candsDirection.count == 3 || candsDirection.count == 0 {
+//                    getDirection(enemy: enemy, gridNode: gridNode) { direction in
+//                        enemy.direction = direction
+//                        success(true)
+//                    }
+//                } else {
+//                    enemy.direction = candsDirection[0]
+//                    success(true)
+//                }
+//            } else {
+//                getDirection(enemy: enemy, gridNode: gridNode) { direction in
+//                    enemy.direction = direction
+//                    success(true)
+//                }
+//            }
+//        }
+//    }
     
     private static func detectHeroOrBomb(enemy: Enemy, grid: Grid) -> [Direction] {
         var leftIsSafe = true

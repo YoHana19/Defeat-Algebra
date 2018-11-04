@@ -37,39 +37,45 @@ extension Enemy {
         /* Make sure to call once */
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
-        /* Enemy punch beyond edge of grid */
-        if self.positionY < self.valueOfEnemy {
-            /* Do punch */
-            punch() { armAndFist in
-                /* Decrese life */
-                self.gameScene.life -= 1
-                self.gameScene.setLife(numOflife: self.gameScene.life)
+        resolveShield {
+            /* Enemy punch beyond edge of grid */
+            if self.positionY < self.valueOfEnemy {
                 
-                /* Play Sound */
-                SoundController.sound(scene: self.gameScene, sound: .CastleHit)
-                
-                self.subSetArm(arms: armAndFist.arm) { (newArms) in
-                    for arm in armAndFist.arm {
-                        arm.removeFromParent()
-                    }
-                    self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.positionY) {
-                        /* Set enemy position to edge */
-                        self.positionY = 0
-                        self.turnEnd()
+                /* Do punch */
+                self.punch() { armAndFist in
+                    /* Decrese life */
+                    self.gameScene.life -= 1
+                    self.gameScene.setLife(numOflife: self.gameScene.life)
+                    
+                    /* Play Sound */
+                    SoundController.sound(scene: self.gameScene, sound: .CastleHit)
+                    
+                    self.subSetArm(arms: armAndFist.arm) { (newArms) in
+                        for arm in armAndFist.arm {
+                            arm.removeFromParent()
+                        }
+                        self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.positionY) {
+                            /* Set enemy position to edge */
+                            self.positionY = 0
+                            self.variableExpressionLabel.fontColor = UIColor.white
+                            self.turnEnd()
+                        }
                     }
                 }
-            }
-        } else {
-            /* Do punch */
-            punch() { armAndFist in
-                self.subSetArm(arms: armAndFist.arm) { (newArms) in
-                    for arm in armAndFist.arm {
-                        arm.removeFromParent()
-                    }
-                    self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
-                        /* Keep track enemy position */
-                        self.positionY -= self.valueOfEnemy
-                        self.turnEnd()
+            } else {
+                /* Do punch */
+                self.punch() { armAndFist in
+                    self.subSetArm(arms: armAndFist.arm) { (newArms) in
+                        for arm in armAndFist.arm {
+                            arm.removeFromParent()
+                        }
+                        self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
+                            /* Keep track enemy position */
+                            self.positionY -= self.valueOfEnemy
+                            self.variableExpressionLabel.fontColor = UIColor.white
+                            self.state = .Stay
+                            self.turnEnd()
+                        }
                     }
                 }
             }
@@ -201,12 +207,10 @@ extension Enemy {
     func turnEnd() {
         removeArmNFist()
         
-        self.setMovingAnimation()
         self.myTurnFlag = false
-        if self.positionY > 0 {
-            /* Reset count down punchInterval */
-            self.punchIntervalForCount = self.punchInterval
-        }
+        
+        /* Reset count down punchInterval */
+        self.punchIntervalForCount = self.punchInterval
         
         if self.gridNode.turnIndex < self.gridNode.enemyArray.count-1 {
             self.gridNode.turnIndex += 1
@@ -217,6 +221,7 @@ extension Enemy {
         self.gridNode.numOfTurnEndEnemy += 1
         
         self.gameScene.hitCastleWallSoundDone = false
+        self.isAttackable = true
         
         self.xValueLabel.text = ""
     }

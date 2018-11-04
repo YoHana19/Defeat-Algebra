@@ -15,7 +15,7 @@ struct GameStageController {
     public static func stageManager(scene: SKScene?, next: Int) {
         ResetController.reset()
         GameScene.stageLevel += next
-        if let gamescene = scene as? GameScene {
+        if let _ = scene as? GameScene {
             DAUserDefaultUtility.SetData()
         }
         switch GameScene.stageLevel {
@@ -25,15 +25,15 @@ struct GameStageController {
         case MainMenu.uncoverSignalStartTurn: //1
             loadScenarioScene(scene: scene)
             break;
-        case MainMenu.changeMoveSpanStartTurn: //2
+//        case MainMenu.changeMoveSpanStartTurn: //2
+//            loadScenarioScene(scene: scene)
+//            break;
+        case MainMenu.timeBombStartTurn: //4
             loadScenarioScene(scene: scene)
             break;
-        case MainMenu.timeBombStartTurn: //3
-            loadScenarioScene(scene: scene)
-            break;
-        case MainMenu.moveExplainStartTurn: //5
-            loadScenarioScene(scene: scene)
-            break;
+//        case MainMenu.moveExplainStartTurn: //5
+//            loadScenarioScene(scene: scene)
+//            break;
         case MainMenu.showUnsimplifiedStartTurn: //6
             loadScenarioScene(scene: scene)
             break;
@@ -91,11 +91,12 @@ struct GameStageController {
     }
     
     private static func moveLevel() {
-        if GameScene.stageLevel < 2 {
-            gameScene.moveLevel = 3
-        } else {
-            gameScene.moveLevel = 4
-        }
+        gameScene.moveLevel = 4
+//        if GameScene.stageLevel < 2 {
+//            gameScene.moveLevel = 3
+//        } else {
+//            gameScene.moveLevel = 4
+//        }
     }
     
     private static func dodgeRatio() {
@@ -120,17 +121,9 @@ struct GameStageController {
     
     private static func timeBomb() {
         if GameScene.stageLevel == MainMenu.timeBombStartTurn {
-            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb"]
+            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
         } else if GameScene.stageLevel == MainMenu.timeBombStartTurn+1 {
-            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
-        } else if GameScene.stageLevel == MainMenu.timeBombStartTurn+2 {
-            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
-        } else if GameScene.stageLevel == MainMenu.timeBombStartTurn+3 {
-            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb"]
-        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn {
-            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb"]
-        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn+1 {
-            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb"]
+            gameScene.handedItemNameArray = ["timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb", "timeBomb"]
         } else {
             gameScene.handedItemNameArray = [String]()
         }
@@ -257,7 +250,7 @@ struct GameStageController {
         if GameScene.stageLevel == 0 {
             gameScene.totalNumOfEnemy = 1
         } else if GameScene.stageLevel == 1 {
-            gameScene.totalNumOfEnemy = 2
+            gameScene.totalNumOfEnemy = 1
         } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
             gameScene.totalNumOfEnemy = 3
         } else if GameScene.stageLevel == MainMenu.eqRobStartTurn {
@@ -272,7 +265,7 @@ struct GameStageController {
     }
     
     private static func xLabel() {
-        if GameScene.stageLevel <= 1 {
+        if GameScene.stageLevel == 0 {
             gameScene.signalHolder.isHidden = true
             gameScene.valueOfX.isHidden = true
         }
@@ -304,18 +297,21 @@ struct GameStageController {
     }
     
     public static func enemyProperty(enemy: Enemy) {
-        if GameScene.stageLevel < 2 {
+        if GameScene.stageLevel < 4 {
             enemy.moveSpeed = 0.2
             enemy.punchSpeed = 0.0025
             enemy.singleTurnDuration = 1.0
+        }
+        
+        if GameScene.stageLevel == 0 {
             enemy.variableExpressionLabel.isHidden = true
         }
     }
     
     public static func signalVale() -> Int {
-        if GameScene.stageLevel == 0 {
+        if GameScene.stageLevel <= 2 {
             return 3
-        } else if GameScene.stageLevel < 4 {
+        } else if GameScene.stageLevel <= 4 {
             return 2
         } else {
             return 3
@@ -323,7 +319,7 @@ struct GameStageController {
     }
     
     public static func signalVisibility(signal: SignalValueHolder) {
-        if GameScene.stageLevel < 1, ScenarioController.currentActionIndex < MainMenu.invisibleStartTurn+1, let _ = gameScene as? ScenarioScene {
+        if GameScene.stageLevel == 0 && ScenarioController.currentActionIndex < 14, let _ = gameScene as? ScenarioScene {
             signal.xValue.isHidden = true
         } else if GameScene.stageLevel >= MainMenu.invisibleStartTurn {
             if CannonTouchController.state != .Trying && EqRobTouchController.state != .DeadInstruction && EqRobTouchController.state != .AliveInstruction  {

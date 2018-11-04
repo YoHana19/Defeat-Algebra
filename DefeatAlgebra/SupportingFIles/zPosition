@@ -12,7 +12,6 @@ items 2
 signal 2
 hero 3
 line 3
-itemAreaCover 3
 buttonPause 4
 pointingIcon 4
 activeArea 4
@@ -35,7 +34,6 @@ eqRob 11
 plane 12
 DACaracter 20
 Baloon 20
-
 activeArea 100
 buttonRetry 100
 buttonNextLevel 100

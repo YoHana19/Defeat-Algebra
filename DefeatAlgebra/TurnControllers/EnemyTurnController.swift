@@ -25,15 +25,19 @@ struct EnemyTurnController {
             EnemyMoveController.resetEnemyPositon(grid: gameScene.gridNode)
             
             for enemy in gameScene.gridNode.enemyArray {
-                /* Enemy reach to castle */
-                if enemy.reachCastleFlag {
-                    enemy.punchToCastle()
-                    /* Enemy move */
-                } else if enemy.punchIntervalForCount > 0 {
-                    enemy.enemyMove()
-                    /* Enemy punch */
-                } else {
+                switch enemy.state {
+                case .Attack:
                     enemy.punchAndMove()
+                    break;
+                case .ReachCastle:
+                    enemy.punchToCastle()
+                    break;
+                case .Stay:
+                    enemy.enemyMove()
+                    break;
+                case .Defence:
+                    enemy.enemyDefending()
+                    break;
                 }
             }
             
@@ -55,7 +59,6 @@ struct EnemyTurnController {
                 enemy.turnDoneFlag = false
                 enemy.myTurnFlag = false
                 enemy.direction = .front
-                enemy.setMovingAnimation()
             }
             
             /* Update enemy position */
@@ -123,11 +126,12 @@ struct EnemyTurnController {
                     enemy.run(wait, completion: {
                         dispatchGroup.leave()
                         enemy.setPhysics(isActive: true)
+                        enemy.state = .Defence
+                        enemy.punchIntervalForCount = enemy.punchInterval
                     })
                 } else {
                     dispatchGroup.leave()
-                    enemy.reachCastleFlag = true
-                    enemy.punchIntervalForCount = 0
+                    enemy.state = .ReachCastle
                 }
             }
             dispatchGroup.notify(queue: .main, execute: {

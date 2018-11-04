@@ -50,7 +50,7 @@ class ConfirmBomb: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        if let _ = gameScene as? ScenarioScene, GameScene.stageLevel == MainMenu.timeBombStartTurn, ScenarioController.currentActionIndex == 13 {
+        if let _ = gameScene as? ScenarioScene, GameScene.stageLevel == MainMenu.timeBombStartTurn, ScenarioController.currentActionIndex == 7 {
             guard nodeAtPoint.name == "yes" else { return }
             ScenarioController.controllActions()
         }
@@ -85,8 +85,6 @@ class ConfirmBomb: SKSpriteNode {
         GridActiveAreaController.resetSquareArray(color: "purple", grid: gridNode)
         /* Reset item type */
         gameScene.itemType = .None
-        /* Set item area cover */
-        gameScene.itemAreaCover.isHidden = false
         
         /* Back to MoveState */
         gameScene.playerTurnState = .MoveState

@@ -17,11 +17,10 @@ import Foundation
 class EnemyProperty {
     
     static let initialEnemyPosArray = [
-        (0, 0, [[1, 10], [4, 10], [7, 10]]), //0-3
-        (0, 1, [[1, 10], [4, 10], [7, 10]]), //1-4 timeBomb
-        (0, 2, [[1, 10], [3, 11], [5, 11], [7, 10]]), //2-5
-        (1, 100, [[1, 10, 3], [3, 10, 3], [5, 10, 3], [7, 10, 3]]), //3-6
-        (1, 100, [[1, 10, 4], [4, 10, 5], [7, 10, 4]]), //4-7
+        (0, 0, [[2, 10], [6, 10]]), //0-3
+        (0, 1, [[1, 10], [4, 10], [7, 10]]), //1-4
+        (0, 2, [[1, 10], [4, 11], [7, 10]]), //2-5 timeBomb
+        (0, 4, [[1, 10], [4, 9], [7, 10]]), //3-6 unsimplified
         (2, 6, [[1, 11], [3, 10], [5, 10], [7, 11]]), //5-8 eqRob
         (2, 6, [[1, 10], [3, 10], [5, 10], [7, 10]]), //6-9
         (2, 106, [[1, 9], [3, 9], [5, 9], [7, 9]]), //7-10
@@ -37,15 +36,15 @@ class EnemyProperty {
     
     static let level0 = [0] //3
     static let level0VE = [String: [[Int]]]() // [3 enemies, from ve0, yRange]
-    static let level1 = [0] //4 (timeBomb)
+    static let level1 = [0] //4
     static let level1VE = [String: [[Int]]]()
-    static let level2 = [0] //5
-    static let level2VE = [String: [[Int]]]()
-    static let level3 = [0, 0, 0, 0, 0, 0, 0, 0, 1] //6 (moveExplain)
-    static let level3VE = ["1": [[4, 3, 2]]]
-    static let level4 = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2] //7 (unsimplified)
+    static let level2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] //5 (timeBomb)
+    static let level2VE = ["1": [[3, 3, 2]]]
+    static let level3 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] //6 (unsimplified)
+    static let level3VE = ["1": [[4, 5, 2]]]
+    static let level4 = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2] //7 (eqRob)
     static let level4VE = ["1": [[2, 5, 2], [1, 4, 2]], "2": [[2, 5, 2], [2, 4, 2]]]
-    static let level5 = [0] //8 (eqRob)
+    static let level5 = [0] //8
     static let level5VE = [String: [[Int]]]()
     static let level6 = [0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 11] //9
     static let level6VE = ["11": [[5, 6, 4]]]

@@ -19,14 +19,12 @@ struct AllTouchController {
         
         /* Hide attack and item buttons */
         gameScene.buttonAttack.isHidden = true
-        gameScene.buttonItem.isHidden = true
         /* Reset hero */
         gameScene.hero.resetHero()
         /* Remove active area */
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
-        gameScene.itemAreaCover.isHidden = false
         gameScene.playerTurnState = .UsingItem
         gameScene.itemType = .EqRob
         
@@ -45,14 +43,12 @@ struct AllTouchController {
         
         /* Hide attack and item buttons */
         gameScene.buttonAttack.isHidden = true
-        gameScene.buttonItem.isHidden = true
         /* Reset hero */
         gameScene.hero.resetHero()
         /* Remove active area */
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
-        gameScene.itemAreaCover.isHidden = false
         gameScene.playerTurnState = .UsingItem
         gameScene.itemType = .Cannon
         

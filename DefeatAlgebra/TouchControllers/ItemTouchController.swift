@@ -24,9 +24,6 @@ struct ItemTouchController {
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
         
-        /* Set item area cover */
-        gameScene.itemAreaCover.isHidden = false
-        
         GridActiveAreaController.showAttackArea(posX: gameScene.hero.positionX, posY: gameScene.hero.positionY, grid: gameScene.gridNode)
         gameScene.playerTurnState = .AttackState
 
@@ -83,12 +80,8 @@ struct ItemTouchController {
         
         /* Show attack and item buttons */
         gameScene.buttonAttack.isHidden = false
-        gameScene.buttonItem.isHidden = false
         
         gameScene.playerTurnState = .MoveState
-        
-        /* Set item area cover */
-        gameScene.itemAreaCover.isHidden = false
         
         /* Reset hero */
         gameScene.hero.resetHero()

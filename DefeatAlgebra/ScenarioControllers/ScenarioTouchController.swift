@@ -16,7 +16,7 @@ class ScenarioTouchController {
     public static func controllerForScenarioScene(name: String?) {
         switch GameScene.stageLevel {
         case 0:
-            scenarioScene0()
+            scenarioScene0(name: name)
             break;
         case 1:
             scenarioScene1()
@@ -38,7 +38,7 @@ class ScenarioTouchController {
     public static func controllerForGrid(location: CGPoint?, nodeAtPoint: SKNode?) {
         switch GameScene.stageLevel {
         case 0:
-            grid0()
+            grid0(location: location)
             break;
         case 1:
             grid1()
@@ -60,8 +60,14 @@ class ScenarioTouchController {
         }
     }
     
-    private static func scenarioScene0() {
-        guard TutorialController.userTouch(on: "") else { return }
+    private static func scenarioScene0(name: String?) {
+        guard let name = name else { return }
+        if ScenarioController.currentActionIndex == 21 {
+            guard name == "buttonAttack" else { return }
+            ScenarioController.currentActionIndex += 1
+            GridActiveAreaController.showAttackArea(posX: ScenarioController.scenarioScene.hero.positionX, posY: ScenarioController.scenarioScene.hero.positionY, grid: ScenarioController.scenarioScene.gridNode)
+            ScenarioController.controllActions()
+        }
     }
     
     private static func scenarioScene1() {
@@ -69,11 +75,7 @@ class ScenarioTouchController {
     }
     
     private static func scenarioSceneTimeBombStartTurn(name: String?) {
-        if ScenarioController.currentActionIndex == 8 {
-            if let name = name, name == "buttonItem" {
-                ScenarioController.controllActions()
-            }
-        } else if ScenarioController.currentActionIndex == 9 {
+        if ScenarioController.currentActionIndex == 3 {
             if let name = name, name == "timeBomb" {
                 ScenarioController.controllActions()
             }
@@ -114,8 +116,35 @@ class ScenarioTouchController {
         }
     }
     
-    private static func grid0() {
-        guard TutorialController.userTouch(on: "") else { return }
+    private static func grid0(location: CGPoint?) {
+        guard let loca = location else { return }
+        if ScenarioController.currentActionIndex == 19 {
+            let gridX = Int(Double(loca.x) / gameScene.gridNode.cellWidth)
+            let gridY = Int(Double(loca.y) / gameScene.gridNode.cellHeight)
+            if gridX == 5 && gridY == 3 {
+                ScenarioController.currentActionIndex += 1
+                ScenarioFunction.heroMove(gridX: gridX, gridY: gridY) {
+                    ScenarioController.controllActions()
+                }
+            }
+        } else if ScenarioController.currentActionIndex == 22 {
+            let gridX = Int(Double(loca.x) / gameScene.gridNode.cellWidth)
+            let gridY = Int(Double(loca.y) / gameScene.gridNode.cellHeight)
+            if gridX == 6 && gridY == 3 {
+                ScenarioController.currentActionIndex += 1
+                ScenarioController.scenarioScene.removePointing()
+                CharacterController.doctor.balloon.isHidden = true
+                ScenarioController.scenarioScene.gridNode.enemyArray[0].isAttackable = true
+                GridActiveAreaController.resetSquareArray(color: "red", grid: ScenarioController.scenarioScene.gridNode)
+                ScenarioController.scenarioScene.hero.direction = .right
+                ScenarioController.scenarioScene.hero.setSwordAnimation() {
+                    ScenarioController.scenarioScene.hero.resetHero()
+                    EnemyDeadController.hitEnemy(enemy: ScenarioController.scenarioScene.gridNode.enemyArray[0], gameScene: ScenarioController.scenarioScene) {
+                        ScenarioController.controllActions()
+                    }
+                }
+            }
+        }
     }
     
     private static func grid1() {
@@ -123,16 +152,16 @@ class ScenarioTouchController {
     }
     
     private static func gridTimeBombStartTurn(location: CGPoint?, nodeAtPoint: SKNode?) {
-        if ScenarioController.currentActionIndex == 11 {
+        if ScenarioController.currentActionIndex == 5 {
             ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 12 {
+        } else if ScenarioController.currentActionIndex == 6 {
             guard let loca = location else { return }
             let gridX = Int(Double(loca.x) / gameScene.gridNode.cellWidth)
             let gridY = Int(Double(loca.y) / gameScene.gridNode.cellHeight)
-            if gridX == 4 && gridY == 5 {
+            if gridX == 4 && gridY == 8 {
                 ScenarioController.controllActions()
             }
-        } else if ScenarioController.currentActionIndex > 15 {
+        } else if ScenarioController.currentActionIndex > 9 {
             guard let node = nodeAtPoint else { return }
             guard TutorialController.userTouch(on: node.name) else { return }
         }

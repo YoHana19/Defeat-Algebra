@@ -43,10 +43,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var gridNode: Grid!
     var eqGrid: EqGrid!
     var castleNode: SKSpriteNode!
-    var itemAreaNode: SKSpriteNode!
     var signalHolder: SKSpriteNode!
     var buttonAttack: SKNode!
-    var buttonItem: SKNode!
     var pauseScreen: PauseScreen!
     var simplificationBoard: SimplificationBoard!
     var madScientistNode: SKSpriteNode!
@@ -161,7 +159,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var itemArray = [SKSpriteNode]()
     var usingItemIndex = 0
     var usedItemIndexArray = [Int]()
-    var itemAreaCover: SKShapeNode!
     var itemSpot = [[2,1],[2,3],[2,5],[4,1],[4,5],[6,1],[6,3],[6,5]]
     
     /* Time bomb */
@@ -212,15 +209,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         eqGrid = childNode(withName: "eqGrid") as! EqGrid
         eqGrid.isHidden = true
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
-        itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
         signalHolder = childNode(withName: "signalHolder") as! SKSpriteNode
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
         eqRob = childNode(withName: "eqRob") as! EqRob
         SignalController.madPos = madScientistNode.absolutePos()
         buttonAttack = childNode(withName: "buttonAttack")
-        buttonItem = childNode(withName: "buttonItem")
         buttonAttack.isHidden = true
-        buttonItem.isHidden = true
         plane = Plane(gameScene: self)
         stageHolder = childNode(withName: "stageHolder")
         log0 = childNode(withName: "log0") as! Log
@@ -289,7 +283,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             if flag {
                 self?.unDo(inGame: true) {
                     self?.heroKilled = false
-                    self?.gameState = .AddItem
+                    self?.gameState = .SignalSending
                     GameOverTurnController.gameOverReset()
                     GameOverTurnController.done = false
                 }
@@ -384,9 +378,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         /* Set no gravity */
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
-        /* Set item area */
-        setItemAreaCover()
-        
         EnemyProperty.getNumOfAllEnemy(stageLevel: GameStageController.adjustGameSceneLevel()) { num in
             self.totalNumOfEnemy = num
         }
@@ -424,7 +415,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 break;
             case .AddItem:
                 countTurnDone = false
-                AddItemTurnController.add()
+                playerTurnState = .DisplayPhase
+                playerTurnDoneFlag = false
+                enemyPhaseLabelDoneFlag = false
+                enemyPhaseLabel.isHidden = true
+                gameState = .PlayerTurn
                 break;
             case .PlayerTurn:
                 /* Check if all enemies are defeated or not */
@@ -492,6 +487,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 break;
             case .EnemyTurn:
+                
+//                for enemy in gridNode.enemyArray {
+//                    print("pos: (\(enemy.positionX), \(enemy.positionY)), pi: \(enemy.punchIntervalForCount)")
+//                }
+                
                 EnemyTurnController.onTurn()
                 
                 /* All enemies finish their actions */
@@ -544,15 +544,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     MoveTouchController.buttonAttackTapped()
                     
                     /* Touch item button */
-                } else if nodeAtPoint.name == "buttonItem" {
+                } else if nodeAtPoint.name == "timeBomb" {
                     MoveTouchController.buttonItemTapped()
+                    ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                 }
                 
                 /* Select attack position */
             } else if playerTurnState == .AttackState {
                 /* Touch item button */
-                if nodeAtPoint.name == "buttonItem" {
+                if nodeAtPoint.name == "timeBomb" {
                     AttackTouchController.buttonItemTapped()
+                    ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                     /* If touch anywhere but activeArea, back to MoveState  */
                 } else if nodeAtPoint.name != "activeArea" {
                     AttackTouchController.othersTouched()
@@ -563,10 +565,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Touch attack button */
                 if nodeAtPoint.name == "buttonAttack" {
                     ItemTouchController.buttonAttackTapped()
-                    
-                /* Use timeBomb */
-                } else if nodeAtPoint.name == "timeBomb" {
-                    ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                     
                 /* If player touch other place than item icons, back to MoveState */
                 } else {
@@ -723,16 +721,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    /* Create object blanketting item area */
-    func setItemAreaCover() {
-        itemAreaCover = SKShapeNode(rectOf: itemAreaNode.size)
-        itemAreaCover.fillColor = UIColor.black
-        itemAreaCover.alpha = 0.6
-        itemAreaCover.position = itemAreaNode.position
-        itemAreaCover.zPosition = 3
-        addChild(itemAreaCover)
-    }
-    
     /* Set simplification board */
     func setSimplificationBoard() {
         simplificationBoard = SimplificationBoard()
@@ -866,11 +854,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pointing(pos: pos)
     }
     
-    func pointingItmBtn() {
-        let pos = CGPoint(x: buttonItem.position.x + 50, y: buttonItem.position.y + 50)
-        pointing(pos: pos)
-    }
-    
     func pointingLastGotItem() {
         let pos = CGPoint(x: itemArray.last!.position.x + 50, y: itemArray.last!.position.y + 50)
         pointing(pos: pos)
@@ -911,7 +894,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func pointingGridAt(x: Int, y: Int) {
         let gridPos = CGPoint(x: gridNode.position.x+CGFloat(self.gridNode.cellWidth/2)+CGFloat(self.gridNode.cellWidth*Double(x)), y: gridNode.position.y+CGFloat(self.gridNode.cellHeight/2)+CGFloat(self.gridNode.cellHeight*Double(y)))
-        let pos = CGPoint(x: gridPos.x + 70, y: gridPos.y + 80)
+        let pos = CGPoint(x: gridPos.x + 50, y: gridPos.y + 50)
         pointing(pos: pos)
     }
     
@@ -1051,7 +1034,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         guard hero.posRecord.count > 0 else { return }
         gridNode.numOfTurnEndEnemy = 0
         gridNode.turnIndex = 0
-        adjustItemCount()
         let heroLastPos = hero.posRecord[hero.posRecord.count-1]
         resetHeroPos(x: heroLastPos.0, y: heroLastPos.1)
         if inGame {
@@ -1112,18 +1094,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    func adjustItemCount() {
-        if let _ = self as? ScenarioScene {
-            return
-        } else {
-            if !compAddItemFlag {
-                if ItemDropController.getManager()[countTurnForAddItem-1] == 0 {
-                    countTurnForAddItem -= 1
-                }
-            }
-        }
-    }
-    
     func unDoTimeBomb(num: Int, completion: @escaping () -> Void) {
         guard gridNode.enemyArray.count > 0 else { return }
         gridNode.numOfTurnEndEnemy = 0
@@ -1166,12 +1136,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             enemy.forcusForAttack(color: UIColor.red, value: xValue)
             valueOfX.text = "x = \(xValue)"
         }
+        resetEnemyState(enemy: enemy)
         enemy.turnDoneFlag = false
         enemy.myTurnFlag = false
-        if enemy.positionY == 0 {
-            enemy.reachCastleFlag = true
+    }
+    
+    func resetEnemyState(enemy: Enemy) {
+        if enemy.punchInterval == 0 {
+            if enemy.stateRecord.count == 1 {
+                enemy.defend()
+            }
         } else {
-            enemy.reachCastleFlag = false
+            enemy.state = enemy.stateRecord.last ?? .Defence
+            if enemy.state == .Attack {
+                enemy.defend()
+            } else if enemy.state == .Stay {
+                enemy.leftShield.isHidden = true
+                enemy.rightShield.isHidden = true
+            }
         }
     }
     

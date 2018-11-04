@@ -19,7 +19,7 @@ struct SignalSendingTurnController {
             gameScene.gridNode.numOfTurnEndEnemy = 0
             
             /* Calculate each enemy's variable expression */
-            let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack && $0.reachCastleFlag == false }
+            let willAttackEnemies = gameScene.gridNode.enemyArray.filter{ $0.state == .Attack }
             if willAttackEnemies.count > 0 {
                 let max = GameStageController.signalVale()
                 gameScene.xValue =  times ?? Int(arc4random_uniform(UInt32(max)))+1

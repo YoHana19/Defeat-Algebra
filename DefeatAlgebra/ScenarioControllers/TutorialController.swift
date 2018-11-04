@@ -27,17 +27,13 @@ struct TutorialController {
             switch currentIndex {
             case 0:
                 createTutorialLabel(text: "青い部分をタッチすると移動できるぞ", posY: Int(scene.size.height/2+100))
-                if let scenarioScene = scene as? ScenarioScene {
-                    ScenarioController.keyTouchPos = (2, 3)
-                    scenarioScene.pointingGridAt(x: ScenarioController.keyTouchPos.0, y: ScenarioController.keyTouchPos.1)
-                }
+                ScenarioController.keyTouchPos = (2, 3)
+                scene.pointingGridAt(x: ScenarioController.keyTouchPos.0, y: ScenarioController.keyTouchPos.1)
                 state = .Waiting
                 break;
             case 1:
                 createTutorialLabel(text: "攻撃は、下のアタックボタンをタッチしよう", posY: Int(scene.size.height/2+100))
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.pointingAtkBtn()
-                }
+                scene.pointingAtkBtn()
                 state = .Waiting
                 break;
             case 2:
@@ -46,62 +42,8 @@ struct TutorialController {
                 break;
             case 3:
                 createTutorialLabel(text: "移動したら自分のターンは終わりだ", posY: Int(scene.size.height/2+100))
-                state = .Waiting
-                break;
-            case 4:
-                createTutorialLabel(text: "敵のロボットのとなりまで移動して倒せ！", posY: Int(scene.size.height/2+400))
-                currentIndex += 1
-                state = .Pending
-                break;
-            case 6:
-                removeTutorialLabel()
-                createTutorialLabel(text: "今だ！攻撃をしよう！", posY: Int(scene.size.height/2+400))
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.pointingAtkBtn()
-                }
-                state = .Waiting
-                break;
-            case 7:
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.pointingGridAt(x: ScenarioController.keyTouchPos.0, y: ScenarioController.keyTouchPos.1)
-                }
-                state = .Waiting
-                break;
-            case 9:
-                removeTutorialLabel()
-                createTutorialLabel(text: "町のライフが0になってしまった...", posY: Int(scene.size.height/2+100))
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.pointingHeart()
-                }
-                state = .Waiting
-                break;
-            case 10:
-                createTutorialLabel(text: "ライフが0になる前に敵を倒すんだ！", posY: Int(scene.size.height/2+100))
-                state = .Waiting
-                break;
-            case 12:
-                removeTutorialLabel()
-                createTutorialLabel(text: "敵にぶつかると死んでしまうぞ", posY: Int(scene.size.height/2+100))
-                state = .Waiting
-                break;
-            case 13:
-                createMultiTutorialLabel(text: "敵の動きを予測して\nぶつからないようにするんだ！", posY: Int(scene.size.height/2+100))
-                state = .Waiting
-                break;
-            case 15:
-                removeTutorialLabel()
-                createMultiTutorialLabel(text: "敵の攻撃が町まで届くと\nライフが減っていくぞ", posY: Int(scene.size.height/2+100))
-                if let scenarioScene = scene as? ScenarioScene {
-                    GridActiveAreaController.resetSquareArray(color: "red", grid: scenarioScene.gridNode)
-                    scenarioScene.pointingHeart()
-                    scenarioScene.isCharactersTurn = true
-                    scenarioScene.gridNode.isTutorial = true
-                    scenarioScene.tutorialState = .Action
-                }
-                state = .Waiting
-                break;
-            case 16:
-                createTutorialLabel(text: "ライフが0になったらゲームオーバーだ", posY: Int(scene.size.height/2+100))
+                ScenarioController.keyTouchPos = (4, 4)
+                scene.pointingGridAt(x: ScenarioController.keyTouchPos.0, y: ScenarioController.keyTouchPos.1)
                 state = .Waiting
                 break;
             default:
@@ -111,29 +53,30 @@ struct TutorialController {
         case MainMenu.uncoverSignalStartTurn: //1
             switch currentIndex {
             case 0:
-                createTutorialLabel(text: "二体の敵のロボットを倒せ！", posY: Int(scene.size.height/2+520))
+                createMultiTutorialLabel(text: "敵がどこにくるか予測して\n待ち伏せよう！", posY: Int(scene.size.height/2+460))
                 currentIndex += 1
                 state = .Pending
                 break;
-            case 2:
+            case 1:
                 removeTutorialLabel()
-                createTutorialLabel(text: "町のライフが0になってしまった...", posY: Int(scene.size.height/2+100))
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.pointingHeart()
-                }
+                createTutorialLabel(text: "今だ！攻撃しよう！", posY: Int(scene.size.height/2+400))
+                scene.pointingAtkBtn()
+                state = .Waiting
+                break;
+            case 2:
+                ScenarioController.keyTouchPos = (ScenarioController.scenarioScene.gridNode.enemyArray[0].positionX, ScenarioController.scenarioScene.gridNode.enemyArray[0].positionY)
+                scene.pointingGridAt(x: ScenarioController.keyTouchPos.0, y: ScenarioController.keyTouchPos.1)
                 state = .Waiting
                 break;
             case 3:
-                createTutorialLabel(text: "ライフが0になる前に敵を倒すんだ！", posY: Int(scene.size.height/2+100))
+                removeTutorialLabel()
+                createTutorialLabel(text: "ここからじゃ攻撃が届かない！", posY: Int(scene.size.height/2+400))
+                GridActiveAreaController.showAttackArea(posX: ScenarioController.scenarioScene.hero.positionX, posY: ScenarioController.scenarioScene.hero.positionY, grid: ScenarioController.scenarioScene.gridNode)
                 state = .Waiting
                 break;
-            case 5:
+            case 4:
                 removeTutorialLabel()
                 createTutorialLabel(text: "敵にぶつかると死んでしまうぞ", posY: Int(scene.size.height/2+100))
-                state = .Waiting
-                break;
-            case 6:
-                createMultiTutorialLabel(text: "敵の動きを予測して\nぶつからないようにするんだ！", posY: Int(scene.size.height/2+100))
                 state = .Waiting
                 break;
             case 8:
@@ -275,13 +218,14 @@ struct TutorialController {
             case 0:
                 guard scene.playerTurnState == .MoveState && name == "activeArea" else { return false }
                 guard scene.gridNode.touchedGridPos == ScenarioController.keyTouchPos else { return false }
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.removePointing()
-                }
+                scene.removePointing()
                 removeTutorialLabel()
                 currentIndex += 1
                 state = .WillShow
-                return true
+                ScenarioFunction.heroMove(gridX: ScenarioController.keyTouchPos.0, gridY: ScenarioController.keyTouchPos.1) {
+                    ScenarioController.controllActions()
+                }
+                return false
             case 1:
                 guard name == "buttonAttack" else { return false }
                 removeTutorialLabel()
@@ -294,104 +238,51 @@ struct TutorialController {
             case 2:
                 guard scene.playerTurnState == .AttackState && name == "activeArea" else { return false }
                 removeTutorialLabel()
-                currentIndex += 1
-                state = .Show
+                let wait = SKAction.wait(forDuration: 1.5)
+                scene.run(wait, completion: {
+                    currentIndex += 1
+                    state = .Show
+                })
                 return true
             case 3:
                 guard scene.playerTurnState == .MoveState && name == "activeArea" else { return false }
-                removeTutorialLabel()
-                state = .WillShow
-                currentIndex += 1
-                return true
-            case 6:
-                guard name == "buttonAttack" else { return false }
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.removePointing()
-                }
-                state = .Show
-                currentIndex += 1
-                return true
-            case 7: // beat
-                guard scene.playerTurnState == .AttackState && name == "activeArea" else { return false }
                 guard scene.gridNode.touchedGridPos == ScenarioController.keyTouchPos else { return false }
                 removeTutorialLabel()
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.removePointing()
+                currentIndex += 1
+                state = .Pending
+                ScenarioFunction.heroMove(gridX: ScenarioController.keyTouchPos.0, gridY: ScenarioController.keyTouchPos.1) {
+                    ScenarioController.controllActions()
                 }
-                state = .Pending
-                currentIndex += 1
-                return true
-            case 9:
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
-                scene.removePointing()
-                removeTutorialLabel()
-                currentIndex += 1
-                state = .Show
-                execute()
-                return true
-            case 10:
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
-                removeTutorialLabel()
-                currentIndex = 4
-                state = .Pending
-                ScenarioController.controllActions()
-                return true
-            case 12:
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
-                removeTutorialLabel()
-                currentIndex += 1
-                state = .Show
-                execute()
-                return true
-            case 13:
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
-                removeTutorialLabel()
-                currentIndex = 4
-                state = .Pending
-                ScenarioController.controllActions()
-                return true
-            case 15:
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
-                removeTutorialLabel()
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.removePointing()
-                }
-                currentIndex += 1
-                state = .Show
-                execute()
-                return true
-            case 16:
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
-                removeTutorialLabel()
-                currentIndex = 4
-                state = .Pending
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.isCharactersTurn = false
-                    scenarioScene.gridNode.isTutorial = false
-                }
-                return false
-            case 17:
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
-                removeTutorialLabel()
-                scene.removePointing()
-                currentIndex += 1
-                state = .Show
-                execute()
                 return false
             default:
                 return true
             }
         case MainMenu.uncoverSignalStartTurn: //1
             switch currentIndex {
-            case 2: // Game Over
-                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
+            case 1:
+                guard name == "buttonAttack" else { return false }
                 scene.removePointing()
-                removeTutorialLabel()
                 currentIndex += 1
                 state = .Show
                 execute()
                 return true
-            case 3:
+            case 2: // beat
+                guard scene.playerTurnState == .AttackState && name == "activeArea" else { return false }
+                guard scene.gridNode.touchedGridPos == ScenarioController.keyTouchPos else { return false }
+                removeTutorialLabel()
+                scene.removePointing()
+                state = .Pending
+                currentIndex += 1
+                return true
+            case 3: // miss
+                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
+                removeTutorialLabel()
+                GridActiveAreaController.resetSquareArray(color: "red", grid: ScenarioController.scenarioScene.gridNode)
+                currentIndex = 0
+                state = .Pending
+                ScenarioController.controllActions()
+                return true
+            case 4: // bumpped
                 guard scene.isCharactersTurn, scene.tutorialState == .Action else { return false }
                 removeTutorialLabel()
                 currentIndex = 0
@@ -435,7 +326,7 @@ struct TutorialController {
             default:
                 return true
             }
-        case MainMenu.timeBombStartTurn: //3
+        case MainMenu.timeBombStartTurn: //4
             switch currentIndex {
             case 0:
                 guard scene.isCharactersTurn else { return false }
@@ -575,27 +466,9 @@ struct TutorialController {
         case 0:
             switch currentIndex {
             case 0:
-                guard scene.playerTurnState == .MoveState else { return }
                 state = .Show
                 break;
-            case 4:
-                guard scene.playerTurnState == .MoveState else { return }
-                state = .Show
-                break;
-            case 6:
-                guard scene.playerTurnState == .MoveState else { return }
-                state = .Show
-                break;
-            case 9:
-                guard scene.isCharactersTurn, scene.tutorialState == .None else { return }
-                state = .Show
-                break;
-            case 12:
-                guard scene.isCharactersTurn, scene.tutorialState == .None else { return }
-                state = .Show
-                break;
-            case 15:
-                guard scene.gameState == .EnemyTurn else { return }
+            case 1:
                 state = .Show
                 break;
             default:
@@ -605,14 +478,17 @@ struct TutorialController {
         case MainMenu.uncoverSignalStartTurn:
             switch currentIndex {
             case 0:
-                guard scene.playerTurnState == .MoveState else { return }
                 state = .Show
                 break;
-            case 2:
+            case 1:
                 guard scene.isCharactersTurn, scene.tutorialState == .None else { return }
                 state = .Show
                 break;
-            case 5:
+            case 3:
+                guard scene.isCharactersTurn, scene.tutorialState == .Action else { return }
+                state = .Show
+                break;
+            case 4:
                 guard scene.isCharactersTurn, scene.tutorialState == .None else { return }
                 state = .Show
                 break;

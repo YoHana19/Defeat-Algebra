@@ -8,15 +8,35 @@
 
 import Foundation
 import SpriteKit
+import SpriteKitEasingSwift
 
 enum EnemyState {
-    case Move, Attack
+    case Attack, Defence, Stay, ReachCastle
 }
 
 class Enemy: SKSpriteNode {
     
     /* Enemy state management */
-    var state: EnemyState = .Move
+    var state: EnemyState = .Defence {
+        didSet {
+            switch state {
+            case .Attack:
+                break;
+            case .Defence:
+                defend()
+                break;
+            case .Stay:
+                self.removeAllActions()
+                self.direction = .front
+                setStandingtexture()
+                break;
+            case .ReachCastle:
+                variableExpressionLabel.color = UIColor.red
+                break;
+            }
+        }
+    }
+    var isAttackable = false
     var circle = SKShapeNode(circleOfRadius: 20.0)
     
     /* Enemy position */
@@ -28,6 +48,10 @@ class Enemy: SKSpriteNode {
     var demoCalcLabel = SKLabelNode(fontNamed: DAFont.fontName)
     
     var posRecord = [(Int, Int, Int)]()
+    var stateRecord = [EnemyState]()
+    
+    let rightShield = SKSpriteNode(imageNamed: "ShieldRight")
+    let leftShield = SKSpriteNode(imageNamed: "ShieldLeft")
     
     /* Enemy property */
     var moveSpeed = 0.1
@@ -39,10 +63,7 @@ class Enemy: SKSpriteNode {
         didSet {
             if punchIntervalForCount == 0 {
                 state = .Attack
-            } else {
-                state = .Move
             }
-            variableExpressionLabel.fontColor = UIColor.white
         }
     }
     var singleTurnDuration: TimeInterval = 0.2
@@ -77,11 +98,11 @@ class Enemy: SKSpriteNode {
         willSet {
             if !turnDoneFlag && newValue {
                 posRecord.append((positionX, positionY, punchIntervalForCount))
+                stateRecord.append(state)
             }
         }
     }
-    var reachCastleFlag = false
-    var wallHitFlag = false
+    
     var aliveFlag = true
     var editedVEFlag = false
     var forEduOriginFlag = false
@@ -137,7 +158,9 @@ class Enemy: SKSpriteNode {
         GameStageController.enemyProperty(enemy: self)
         
         setDemoCalcLabel()
-
+        
+        setShield()
+        
     }
     
     init(ve: String) {
@@ -168,6 +191,8 @@ class Enemy: SKSpriteNode {
         GameStageController.enemyProperty(enemy: self)
         
         setDemoCalcLabel()
+        
+        setShield()
     }
     
     /* You are required to implement this for your subclass to work */
@@ -391,8 +416,7 @@ class Enemy: SKSpriteNode {
     /* Move enemy */
     func enemyMove() {
         
-        /* Get grid node */
-        let gridNode = self.parent as! Grid
+        guard state == .Stay else { return }
         
         /* Make sure not to call if it's not my turn */
         guard myTurnFlag else { return }
@@ -401,12 +425,16 @@ class Enemy: SKSpriteNode {
         guard turnDoneFlag == false else { return }
         turnDoneFlag = true
         
+        /* Get grid node */
+        let gridNode = self.parent as! Grid
+        
         EnemyMoveController.move(enemy: self, gridNode: gridNode)
         
         /* Move next enemy's turn */
         let moveTurnWait = SKAction.wait(forDuration: self.singleTurnDuration)
         let moveNextEnemy = SKAction.run({
             self.myTurnFlag = false
+            self.state = .Defence
             if gridNode.turnIndex < gridNode.enemyArray.count-1 {
                 gridNode.turnIndex += 1
                 gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
@@ -425,7 +453,71 @@ class Enemy: SKSpriteNode {
         self.run(seq)
     }
     
-    /*== For Magic Sword ==*/
+    func enemyDefending() {
+        
+        guard state == .Defence else { return }
+        /* Make sure not to call if it's not my turn */
+        guard myTurnFlag else { return }
+        
+        /* Make sure to call once */
+        guard turnDoneFlag == false else { return }
+        turnDoneFlag = true
+        
+        /* Get grid node */
+        let gridNode = self.parent as! Grid
+        self.myTurnFlag = false
+        if gridNode.turnIndex < gridNode.enemyArray.count-1 {
+            gridNode.turnIndex += 1
+            gridNode.enemyArray[gridNode.turnIndex].myTurnFlag = true
+        }
+            
+        /* To check all enemy turn done */
+        gridNode.numOfTurnEndEnemy += 1
+            
+        /* Count down till do punch */
+        self.punchIntervalForCount -= 1
+    }
+    
+    func setShield() {
+        let gap = self.frame.width/2 // 30.5
+        rightShield.anchorPoint = CGPoint(x: 0, y: 0.5)
+        leftShield.anchorPoint = CGPoint(x: 1, y: 0.5)
+        rightShield.zPosition = 1
+        leftShield.zPosition = 1
+        rightShield.position = CGPoint(x: gap, y: 0)
+        leftShield.position = CGPoint(x: -gap, y: 0)
+        rightShield.isHidden = true
+        leftShield.isHidden = true
+        addChild(rightShield)
+        addChild(leftShield)
+    }
+    
+    func defend() {
+        let gap = self.frame.width/2 // 30.5
+        rightShield.position = CGPoint(x: gap, y: 0)
+        leftShield.position = CGPoint(x: -gap, y: 0)
+        rightShield.isHidden = false
+        leftShield.isHidden = false
+        let moveR = SKAction.moveBy(x: -gap, y: 0, duration: 0.5)
+        let moveL = SKAction.moveBy(x: gap, y: 0, duration: 0.5)
+        leftShield.run(moveL)
+        rightShield.run(moveR)
+        isAttackable = false
+    }
+    
+    func resolveShield(success: @escaping () -> Void) {
+        let gap = self.frame.width/2 // 30.5
+        let moveR = SKAction.moveBy(x: gap, y: 0, duration: 0.5)
+        let moveL = SKAction.moveBy(x: -gap, y: 0, duration: 0.5)
+        leftShield.run(moveL, completion: {
+            self.leftShield.isHidden = true
+        })
+        rightShield.run(moveR, completion: {
+        self.rightShield.isHidden = true
+            return success()
+        })
+    }
+    
     /* Put color to enemy */
     func colorizeEnemy(color: UIColor) {
         self.run(SKAction.colorize(with: color, colorBlendFactor: 0.6, duration: 0.50))

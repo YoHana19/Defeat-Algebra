@@ -10,29 +10,43 @@ import Foundation
 import SpriteKit
 
 class EnemyDeadController {
-    static func hitEnemy(enemy: Enemy, gameScene: GameScene, completion: @escaping () -> Void) {
-        enemy.aliveFlag = false
-        /* Count defeated enemy */
-        gameScene.totalNumOfEnemy -= 1
-        
-        /* If you killed origin enemy */
-        if enemy.forEduOriginFlag {
-            EnemyDeadController.originEnemyDead(origin: enemy, gridNode: gameScene.gridNode)
-            /* If you killed branch enemy */
-        } else if enemy.forEduBranchFlag {
-            EnemyDeadController.branchEnemyDead(branch: enemy, gridNode: gameScene.gridNode)
-        }
-        
-        /* Effect */
-        enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy) {
-            /* Enemy */
-            let removeEnemy = SKAction.run({ enemy.removeFromParent() })
-            gameScene.run(removeEnemy)
-            return completion()
-        }
-        
-        if let i = gameScene.gridNode.enemyArray.index(of: enemy) {
-            gameScene.gridNode.enemyArray.remove(at: i)
+    static func hitEnemy(enemy: Enemy, gameScene: GameScene, isEqRob: Bool = false, completion: @escaping () -> Void) {
+        if (isEqRob) {
+            enemy.aliveFlag = false
+            /* Count defeated enemy */
+            gameScene.totalNumOfEnemy -= 1
+            
+            /* Effect */
+            enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy) {
+                /* Enemy */
+                let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                gameScene.run(removeEnemy)
+                return completion()
+            }
+            
+            if let i = gameScene.gridNode.enemyArray.index(of: enemy) {
+                gameScene.gridNode.enemyArray.remove(at: i)
+            }
+        } else {
+            if !enemy.isAttackable {
+                SpeakInGameController.doAction(type: .EnemyGuard)
+            } else {
+                enemy.aliveFlag = false
+                /* Count defeated enemy */
+                gameScene.totalNumOfEnemy -= 1
+                
+                /* Effect */
+                enemyDestroyEffect(grid: gameScene.gridNode, enemy: enemy) {
+                    /* Enemy */
+                    let removeEnemy = SKAction.run({ enemy.removeFromParent() })
+                    gameScene.run(removeEnemy)
+                    return completion()
+                }
+                
+                if let i = gameScene.gridNode.enemyArray.index(of: enemy) {
+                    gameScene.gridNode.enemyArray.remove(at: i)
+                }
+            }
         }
     }
     

@@ -10,16 +10,15 @@ import Foundation
 
 struct VECategory {
     // level 3
-    static let ve0 = ["x", "x+1", "x+2"]
-    // level 4 (timeBomb)
-    static let ve1 = ["2x", "2×x", "x×1"]
-    // level 5
-    static let ve2 = ["1×x", "x×2", "2x", "3x"]
-    // level 6 (moveExplain)
-    static let ve3 = ["2x", "x+1", "2x+1", "3x-2", "2x+2", "3x-1", "2x-1"]
-    // level 7 (unsimplified)
-    static let ve4 = ["1×x+1", "2×x+1", "x×1+1", "x×2+1", "1+1×x", "1+2×x", "1+x×1", "1+x×2", "1×x+2", "2×x+2", "x×1+2", "x×2+2", "2+1×x", "2+2×x", "2+x×1", "2+x×2", "1×x+3", "x×1+3", "3+1×x", "3+x×1", "1×x+3"]
-    static let ve5 = ["x+x", "x+x+1", "x+x+2", "x+1+x", "x+2+x", "1+x+x", "2+x+x", "x+x+x", "2x+x"]
+    static let ve0 = ["2+x", "x×1"]
+    // level 4
+    static let ve1 = ["2x", "2×x", "2x+1"]
+    // level 5 (timeBomb)
+    static let ve2 = ["3x-2", "2x+2", "3x"]
+    static let ve3 = ["2x+1", "3x-1", "2x-1"]
+    // level 6 (unsimplified)
+    static let ve4 = ["x×2+1", "x+x+2", "3+x×1"]
+    static let ve5 = ["x+1+x", "3x-x", "x+x+x", "2x+x"]
     // level 8 (eqRob), 9, 10, 13, 14
     static let ve6 = ["x+2", "x+3", "2+x", "3+x", "2x+1", "1+2x", "2x-1", "3x-1", "3x-2"]
     // level 11 (second day)

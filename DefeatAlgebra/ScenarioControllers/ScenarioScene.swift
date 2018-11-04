@@ -19,16 +19,6 @@ enum TutorialState {
 class ScenarioScene: GameScene {
     
     var skipButton: MSButtonNode!
-    var itemAreaCoverIsActive: Bool = true {
-        didSet {
-            itemAreaCover.isHidden = !itemAreaCoverIsActive
-            if GameScene.stageLevel == MainMenu.timeBombStartTurn {
-                if oldValue && !itemAreaCoverIsActive {
-                    pointingAllGotItems()
-                }
-            }
-        }
-    }
     
     override var playerTurnState: PlayerTurnState {
         didSet {
@@ -51,17 +41,14 @@ class ScenarioScene: GameScene {
         eqGrid = childNode(withName: "eqGrid") as! EqGrid
         eqGrid.isHidden = true
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
-        itemAreaNode = childNode(withName: "itemAreaNode") as! SKSpriteNode
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
         signalHolder = childNode(withName: "signalHolder") as! SKSpriteNode
         stageHolder = childNode(withName: "stageHolder")
         eqRob = childNode(withName: "eqRob") as! EqRob
         buttonAttack = childNode(withName: "buttonAttack")
-        buttonItem = childNode(withName: "buttonItem")
         skipButton = childNode(withName: "skipButton")  as! MSButtonNode
         skipButton.isHidden = true
         buttonAttack.isHidden = true
-        buttonItem.isHidden = true
         plane = Plane(gameScene: self)
         log0 = childNode(withName: "log0") as! Log
         log1 = childNode(withName: "log1") as! Log
@@ -203,9 +190,6 @@ class ScenarioScene: GameScene {
         /* Set no gravity */
         self.physicsWorld.gravity = CGVector(dx: 0, dy: 0)
         
-        /* Set item area */
-        setItemAreaCover()
-        
         if GameScene.stageLevel < MainMenu.invisibleStartTurn {
             /* Set castleWall physics property */
             castleNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: castleNode.size.width, height: 80))
@@ -262,7 +246,7 @@ class ScenarioScene: GameScene {
             case .AddItem:
                 //AddItemTurnController.add()
                 ScenarioController.controllActions()
-                TutorialController.active()
+                //TutorialController.active()
                 gameState = .PlayerTurn
                 break;
             case .PlayerTurn:
@@ -274,6 +258,7 @@ class ScenarioScene: GameScene {
                 
                 switch playerTurnState {
                 case .DisplayPhase:
+                    TutorialController.active()
                     PlayerTurnController.displayPhase()
                     break;
                 case .ItemOn:
@@ -285,7 +270,6 @@ class ScenarioScene: GameScene {
                     if GameScene.stageLevel == MainMenu.timeBombStartTurn {
                         if countTurn == 0 {
                             if itemArray.count < 1 {
-                                itemAreaCoverIsActive = true
                                 playerTurnState = .TurnEnd
                                 GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
                                 return
@@ -300,9 +284,7 @@ class ScenarioScene: GameScene {
                             GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
                             return
                         }
-                        playerTurnState = .UsingItem
                         GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
-                        itemAreaCoverIsActive = false
                         return
                     } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
                         GridActiveAreaController.resetSquareArray(color: "blue", grid: gridNode)
@@ -346,7 +328,19 @@ class ScenarioScene: GameScene {
                 
                 /* All enemies finish their actions */
                 if gridNode.numOfTurnEndEnemy >= gridNode.enemyArray.count {
-                    if GameScene.stageLevel == MainMenu.timeBombStartTurn {
+                    
+                    if GameScene.stageLevel == MainMenu.uncoverSignalStartTurn {
+                        isCharactersTurn = true
+                        gridNode.isTutorial = true
+                        tutorialState = .None
+                        if ScenarioFunction.judgeCanAttack() {
+                            ScenarioController.currentActionIndex = 4
+                        } else {
+                            ScenarioController.currentActionIndex = 5
+                        }
+                        ScenarioController.controllActions()
+                        return
+                    } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
                         isCharactersTurn = true
                         tutorialState = .None
                         EnemyTurnController.timeBombOn() {
@@ -379,12 +373,9 @@ class ScenarioScene: GameScene {
                 if GameScene.stageLevel == 0 {
                     StageClearTurnController.clear()
                 } else if GameScene.stageLevel == 1 {
-                    TutorialController.currentIndex = 11
-                    TutorialController.enable()
-                    TutorialController.execute()
                     StageClearTurnController.clear()
                 } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
-                    ScenarioController.currentActionIndex = 21
+                    ScenarioController.currentActionIndex = 15
                     ScenarioController.controllActions()
                 } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
                     TutorialController.currentIndex = 4
@@ -438,15 +429,17 @@ class ScenarioScene: GameScene {
                     MoveTouchController.buttonAttackTapped()
                     
                     /* Touch item button */
-                } else if nodeAtPoint.name == "buttonItem" {
+                } else if nodeAtPoint.name == "timeBomb" {
                     MoveTouchController.buttonItemTapped()
+                    ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                 }
                 
                 /* Select attack position */
             } else if playerTurnState == .AttackState {
                 /* Touch item button */
-                if nodeAtPoint.name == "buttonItem" {
+                if nodeAtPoint.name == "timeBomb" {
                     AttackTouchController.buttonItemTapped()
+                    ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                     /* If touch anywhere but activeArea, back to MoveState  */
                 } else if nodeAtPoint.name != "activeArea" {
                     AttackTouchController.othersTouched()
@@ -458,9 +451,6 @@ class ScenarioScene: GameScene {
                 if nodeAtPoint.name == "buttonAttack" {
                     if GameScene.stageLevel == 2 { return }
                     ItemTouchController.buttonAttackTapped()
-                    /* Use timeBomb */
-                } else if nodeAtPoint.name == "timeBomb" {
-                    ItemTouchController.timeBombTapped(touchedNode: nodeAtPoint)
                 }
             }
         }
@@ -549,36 +539,18 @@ class ScenarioScene: GameScene {
             } else {
                 if contactA.categoryBitMask == 1 {
                     let hero = contactA.node as! Hero
-                    if GameScene.stageLevel == 0 {
+                    if GameScene.stageLevel == 1 {
                         hero.isHidden = true
-                        if ScenarioController.currentActionIndex < 15 {
-                            ScenarioController.currentActionIndex = 15
-                            ScenarioController.controllActions()
-                        }
-                    } else if GameScene.stageLevel == 1 {
-                        hero.isHidden = true
-                        if ScenarioController.currentActionIndex < 13 {
-                            ScenarioController.currentActionIndex = 13
-                            ScenarioController.controllActions()
-                        }
+                        self.gameState = .GameOver
                     } else {
                         hero.removeFromParent()
                         self.gameState = .GameOver
                     }
                 } else if contactB.categoryBitMask == 1 {
                     let hero = contactB.node as! Hero
-                    if GameScene.stageLevel == 0 {
+                    if GameScene.stageLevel == 1 {
                         hero.isHidden = true
-                        if ScenarioController.currentActionIndex < 15 {
-                            ScenarioController.currentActionIndex = 15
-                            ScenarioController.controllActions()
-                        }
-                    } else if GameScene.stageLevel == 1 {
-                        hero.isHidden = true
-                        if ScenarioController.currentActionIndex < 13 {
-                            ScenarioController.currentActionIndex = 13
-                            ScenarioController.controllActions()
-                        }
+                        self.gameState = .GameOver
                     } else {
                         hero.removeFromParent()
                         self.gameState = .GameOver
@@ -674,6 +646,11 @@ class ScenarioScene: GameScene {
             /* Move enemy for startMoveDistance */
             let move = SKAction.moveTo(y: CGFloat((Double(enemy.positionY)+0.5)*gridNode.cellHeight), duration: startDulation)
             enemy.run(move, completion: {
+                if enemy.punchIntervalForCount == 0 {
+                    enemy.defend()
+                } else {
+                    enemy.state = .Defence
+                }
                 dispatchGroup.leave()
             })
         }
@@ -740,33 +717,16 @@ class ScenarioScene: GameScene {
         self.enemyTurnDoneFlag = true
         self.gridNode.turnIndex = 0
         self.gridNode.numOfTurnEndEnemy = 0
-        if GameScene.stageLevel == 0 {
+        
+        if GameScene.stageLevel == 1 {
             if gridNode.enemyArray.count == 1 {
                 let enemy = gridNode.enemyArray[0]
                 resetEnemy(enemy: enemy)
                 enemy.positionX = 4
-                enemy.positionY = 10
+                enemy.positionY = 9
                 let gridPosition = CGPoint(x: (Double(enemy.positionX)+0.5)*gridNode.cellWidth, y: (Double(enemy.positionY)+0.5)*gridNode.cellHeight)
                 enemy.position = gridPosition
                 enemy.myTurnFlag = true
-            }
-        } else if GameScene.stageLevel == 1 {
-            if gridNode.enemyArray.count == 1 {
-                let enemy = gridNode.enemyArray[0]
-                resetEnemy(enemy: enemy)
-                enemy.positionX = 4
-                enemy.positionY = 10
-                let gridPosition = CGPoint(x: (Double(enemy.positionX)+0.5)*gridNode.cellWidth, y: (Double(enemy.positionY)+0.5)*gridNode.cellHeight)
-                enemy.position = gridPosition
-                enemy.myTurnFlag = true
-            } else {
-                let enemy0 = gridNode.enemyArray[0]
-                let enemy1 = gridNode.enemyArray[1]
-                resetEnemy(enemy: enemy0)
-                resetEnemy(enemy: enemy1)
-                resetEnemyPos(enemy: enemy0, x: 2, y: 10, punchInterval: nil)
-                resetEnemyPos(enemy: enemy1, x: 6, y: 10, punchInterval: nil)
-                enemy0.myTurnFlag = true
             }
         }
     }
@@ -774,8 +734,8 @@ class ScenarioScene: GameScene {
     func resetEnemy(enemy: Enemy) {
         enemy.turnDoneFlag = false
         enemy.myTurnFlag = false
-        enemy.reachCastleFlag = false
         enemy.punchIntervalForCount = enemy.punchInterval
+        enemy.defend()
         enemy.posRecord.removeAll()
     }
 }

@@ -21,9 +21,6 @@ struct AttackTouchController {
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
         
-        /* Remove item area cover */
-        gameScene.itemAreaCover.isHidden = true
-        
         /* Change state to UsingItem */
         gameScene.playerTurnState = .UsingItem
     }
@@ -77,8 +74,6 @@ struct AttackTouchController {
         let gridNode = gameScene.gridNode as Grid
         
         gameScene.playerTurnState = .MoveState
-        /* Set item area cover */
-        gameScene.itemAreaCover.isHidden = false
         
         /* Reset item type */
         gameScene.itemType = .None

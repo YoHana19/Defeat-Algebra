@@ -18,7 +18,7 @@ class EnemyAddController {
     }
     
     /* Add initial enemy */
-    
+    // fix
     static func addInitialEnemyAtGrid0(veCate: Int, enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
         /* Add a new enemy at grid position*/
         let dispatchGroup = DispatchGroup()
@@ -39,6 +39,7 @@ class EnemyAddController {
         })
     }
     
+    // random
     static func addInitialEnemyAtGrid1(enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
         /* Add a new enemy at grid position*/
         let dispatchGroup = DispatchGroup()
@@ -71,6 +72,7 @@ class EnemyAddController {
         })
     }
     
+    // eqRob
     static func addInitialEnemyAtGrid2(veCate: Int, isHard: Bool, enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
         
         getEqRobSource(isHard: isHard, veCate: veCate, numOfEnemy: enemyPosArray.count) { source in
@@ -252,6 +254,7 @@ class EnemyAddController {
     }
     
     /* Add enemy in the middle of game */
+    // random
     static func addEnemyAtGrid1(addIndex: Int, grid: Grid, completion: @escaping () -> Void) {
         let manager = EnemyProperty.addEnemyVEManager[GameStageController.adjustGameSceneLevel()][String(addIndex)]!
         
@@ -322,6 +325,7 @@ class EnemyAddController {
         })
     }
     
+    // eqRob
     static func addEnemyAtGrid2(addIndex: Int, grid: Grid, isHard: Bool, completion: @escaping () -> Void) {
         let manager = EnemyProperty.addEnemyVEManager[GameStageController.adjustGameSceneLevel()][String(addIndex)]![0]
         getEqRobSource(isHard: isHard, veCate: manager[1], numOfEnemy: manager[0]) { source in
@@ -387,6 +391,11 @@ class EnemyAddController {
         /* Move enemy for startMoveDistance */
         let move = SKAction.moveTo(y: CGFloat((Double(enemy.positionY)+0.5)*grid.cellHeight), duration: startDulation)
         enemy.run(move, completion: {
+            if enemy.punchIntervalForCount == 0 {
+                enemy.defend()
+            } else {
+                enemy.state = .Defence
+            }
             return completion()
         })
     }

@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum CharacterSpeakContentType {
-    case None, PlaneExplain, EqRobFirstly, LogDefenceFirstly, TimeBombGotFirstly, MoveExplain, SecondDay, EqRobReturn, VeScaleExplain
+    case None, PlaneExplain, EqRobFirstly, LogDefenceFirstly, TimeBombGotFirstly, MoveExplain, SecondDay, EqRobReturn, VeScaleExplain, EnemyGuard
 }
 
 struct SpeakInGameController {
@@ -167,12 +167,15 @@ struct SpeakInGameController {
         case .EqRobReturn:
             currentContent = SpeakInGameProperty.eqRobReturn
             break;
+        case .EnemyGuard:
+            currentContent = SpeakInGameProperty.enemyGuard
+            break;
         default:
             break;
         }
     }
     
-    static func doAction(type: CharacterSpeakContentType) {
+    public static func doAction(type: CharacterSpeakContentType) {
         lastAction = type
         getContent(type: type)
         currentLineIndex = 0

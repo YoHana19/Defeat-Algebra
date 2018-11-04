@@ -42,7 +42,6 @@ struct PlayerTurnController {
         
         /* Display action buttons */
         gameScene.buttonAttack.isHidden = false
-        gameScene.buttonItem.isHidden = false
     }
     
     public static func usingItem() {
@@ -65,7 +64,6 @@ struct PlayerTurnController {
         
         /* Remove action buttons */
         gameScene.buttonAttack.isHidden = true
-        gameScene.buttonItem.isHidden = true
         
         /* Remove move area */
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)

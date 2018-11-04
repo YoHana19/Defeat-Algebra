@@ -99,7 +99,6 @@ struct AddEnemyTurnController {
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
                             
                             guard !gameScene.hero.isHidden else { return }
-                            print("HOEGOH")
                             /* Move to next state */
                             gameScene.gameState = .SignalSending
                             done = false
@@ -119,7 +118,6 @@ struct AddEnemyTurnController {
                             EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
                             
                             guard !gameScene.hero.isHidden else { return }
-                            print("HOEGOH")
                             /* Move to next state */
                             gameScene.gameState = .SignalSending
                             done = false
@@ -139,7 +137,7 @@ struct AddEnemyTurnController {
     }
     
     private static func syncPunchInterval() {
-        if GameScene.stageLevel == MainMenu.cannonStartTurn+2 || GameScene.stageLevel == MainMenu.lastTurn {
+        if GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.cannonStartTurn+2 || GameScene.stageLevel == MainMenu.lastTurn {
             let rand = Int(arc4random_uniform(UInt32(3)))
             gameScene.gridNode.enemyArray.forEach({ $0.punchInterval = rand; $0.punchIntervalForCount = rand })
         }

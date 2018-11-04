@@ -248,7 +248,7 @@ class Hero: SKSpriteNode {
         }
     }
     
-    func heroMoveToDest(posX: Int, posY: Int) {
+    func heroMoveToDest(posX: Int, posY: Int, completion: @escaping () -> Void) {
         /* Calculate difference between current position and destination */
         let diffX = posX - self.positionX
         let diffY = posY - self.positionY
@@ -273,7 +273,9 @@ class Hero: SKSpriteNode {
                     let moveToDestY = SKAction.repeat(singleMoveV, count: diffY)
                     
                     let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
-                    self.run(seq)
+                    self.run(seq, completion: {
+                        return completion()
+                    })
                     
                     /* Move backward */
                 } else if diffY < 0 {
@@ -290,13 +292,17 @@ class Hero: SKSpriteNode {
                     let moveToDestY = SKAction.repeat(singleMove, count: -diffY)
                     
                     let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
-                    self.run(seq)
+                    self.run(seq, completion: {
+                        return completion()
+                    })
                     
                     /* Only move horizontaly */
                 } else {
                     let singleMove = SKAction.run({ self.heroSingleMove() })
                     let moveToDestX = SKAction.repeat(singleMove, count: diffX)
-                    self.run(moveToDestX)
+                    self.run(moveToDestX, completion: {
+                        return completion()
+                    })
                 }
                 
                 /* Move Left */
@@ -318,7 +324,9 @@ class Hero: SKSpriteNode {
                     let moveToDestY = SKAction.repeat(singleMoveV, count: diffY)
                     
                     let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
-                    self.run(seq)
+                    self.run(seq, completion: {
+                        return completion()
+                    })
                     
                     /* Move backward */
                 } else if diffY < 0 {
@@ -335,13 +343,17 @@ class Hero: SKSpriteNode {
                     let moveToDestY = SKAction.repeat(singleMove, count: -diffY)
                     
                     let seq = SKAction.sequence([moveToDestX, wait, changeDirect, moveToDestY])
-                    self.run(seq)
+                    self.run(seq, completion: {
+                        return completion()
+                    })
                     
                     /* Only move horizontaly */
                 } else {
                     let singleMove = SKAction.run({ self.heroSingleMove() })
                     let moveToDestX = SKAction.repeat(singleMove, count: -diffX)
-                    self.run(moveToDestX)
+                    self.run(moveToDestX, completion: {
+                        return completion()
+                    })
                 }
                 /* Only move vertically */
             } else {
@@ -351,7 +363,9 @@ class Hero: SKSpriteNode {
                     self.direction = .back
                     let singleMoveV = SKAction.run({ self.heroSingleMove() })
                     let moveToDestY = SKAction.repeat(singleMoveV, count: diffY)
-                    self.run(moveToDestY)
+                    self.run(moveToDestY, completion: {
+                        return completion()
+                    })
                     
                     /* Move backward */
                 } else if diffY < 0 {
@@ -359,10 +373,12 @@ class Hero: SKSpriteNode {
                     self.direction = .front
                     let singleMove = SKAction.run({ self.heroSingleMove() })
                     let moveToDestY = SKAction.repeat(singleMove, count: -diffY)
-                    self.run(moveToDestY)
+                    self.run(moveToDestY, completion: {
+                        return completion()
+                    })
                     /* Stay */
                 } else {
-                    return
+                    return completion()
                 }
             }
             

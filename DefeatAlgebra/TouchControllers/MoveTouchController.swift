@@ -20,9 +20,6 @@ struct MoveTouchController {
         /* Reset item type */
         gameScene.itemType = .None
         
-        /* Set item area cover */
-        gameScene.itemAreaCover.isHidden = false
-        
         GridActiveAreaController.showAttackArea(posX: gameScene.hero.positionX, posY: gameScene.hero.positionY, grid: gameScene.gridNode)
         gameScene.playerTurnState = .AttackState
         
@@ -34,14 +31,9 @@ struct MoveTouchController {
     public static func buttonItemTapped() {
         guard gameScene.heroMovingFlag == false else { return }
         
-        SoundController.sound(scene: gameScene, sound: .ActionButton)
-        
         /* Reset active area */
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
         GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
-        
-        /* Remove item area cover */
-        gameScene.itemAreaCover.isHidden = true
         
         /* Change state to UsingItem */
         gameScene.playerTurnState = .UsingItem

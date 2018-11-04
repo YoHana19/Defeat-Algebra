@@ -15,7 +15,11 @@ struct SpeakInGameProperty {
     ]
     
     static let timeBombGotFirstly: [[String]] = [
-        ["0", "爆弾を使うにはアイテムアイコンをタッチするのじゃ！"]
+        ["0", "爆弾は１ターンに何個でも使えるぞ！"]
+    ]
+    
+    static let enemyGuard: [[String]] = [
+        ["2", "ダメだ！シールドがあって攻撃が防がれる！"]
     ]
     
     static let veScaleExplain: [[String]] = [

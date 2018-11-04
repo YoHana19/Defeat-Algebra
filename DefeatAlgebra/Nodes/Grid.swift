@@ -298,7 +298,7 @@ class Grid: SKSpriteNode {
             let location = touch.location(in: self) // Find the location of that touch in this view
             let nodeAtPoint = atPoint(location)     // Find the node at that location
             
-            if GameScene.stageLevel == 0 || GameScene.stageLevel == MainMenu.timeBombStartTurn+2 {
+            if GameScene.stageLevel <= 1 || GameScene.stageLevel == MainMenu.timeBombStartTurn+2 {
                 let gridX = Int(Double(location.x) / cellWidth)
                 let gridY = Int(Double(location.y) / cellHeight)
                 touchedGridPos = (gridX, gridY)
@@ -338,7 +338,7 @@ class Grid: SKSpriteNode {
                     gameScene.hero.moveDoneFlag = true
                     
                     /* Move hero to touch location */
-                    gameScene.hero.heroMoveToDest(posX: gridX, posY: gridY)
+                    gameScene.hero.heroMoveToDest(posX: gridX, posY: gridY) {}
                     
                     /* Keep track hero position */
                     gameScene.hero.positionX = gridX

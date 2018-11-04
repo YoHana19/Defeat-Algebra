@@ -73,6 +73,8 @@
 		203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A711F67BBD100DDCC03 /* MainMenu.swift */; };
 		203B2A7A1F67BBD200DDCC03 /* SettingScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203B2A721F67BBD100DDCC03 /* SettingScreen.swift */; };
 		203B2A931F6917A400DDCC03 /* mainMenuHard.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */; };
+		203E6D8D218D9808006D4D13 /* ScenarioFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6D8C218D9808006D4D13 /* ScenarioFunction.swift */; };
+		203E6D8E218D9808006D4D13 /* ScenarioFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6D8C218D9808006D4D13 /* ScenarioFunction.swift */; };
 		203FB9222159F32300BD3A14 /* EqRobTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */; };
 		203FB9232159F32300BD3A14 /* EqRobTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */; };
 		20415188215CA75500595003 /* VeLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20415187215CA75500595003 /* VeLength.swift */; };
@@ -409,6 +411,7 @@
 		203B2A711F67BBD100DDCC03 /* MainMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		203B2A721F67BBD100DDCC03 /* SettingScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingScreen.swift; sourceTree = "<group>"; };
 		203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = mainMenuHard.mp3; sourceTree = "<group>"; };
+		203E6D8C218D9808006D4D13 /* ScenarioFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenarioFunction.swift; sourceTree = "<group>"; };
 		203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobTutorialController.swift; sourceTree = "<group>"; };
 		20415187215CA75500595003 /* VeLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VeLength.swift; sourceTree = "<group>"; };
 		2041518A215CBABD00595003 /* LengthArrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthArrow.swift; sourceTree = "<group>"; };
@@ -586,6 +589,7 @@
 		2011378D2120009E00B5A138 /* ScenarioControllers */ = {
 			isa = PBXGroup;
 			children = (
+				203E6D8C218D9808006D4D13 /* ScenarioFunction.swift */,
 				20113794212001A400B5A138 /* ScenarioScene.sks */,
 				20113797212001AC00B5A138 /* ScenarioScene.swift */,
 				2011378E212000CD00B5A138 /* ScenarioController.swift */,
@@ -1505,6 +1509,7 @@
 				20D0FF4320B6C12300C547A5 /* MainHero.swift in Sources */,
 				20D0FEF020B6C11200C547A5 /* CharacterController.swift in Sources */,
 				20D0FF2320B6C12300C547A5 /* ResetCatapult.swift in Sources */,
+				203E6D8D218D9808006D4D13 /* ScenarioFunction.swift in Sources */,
 				204BFA04210334FC00A2AB7A /* Cannon.swift in Sources */,
 				20E807A120FDE7F400EED36D /* ItemTouchController.swift in Sources */,
 				20D0FF2920B6C12300C547A5 /* Spear.swift in Sources */,
@@ -1624,6 +1629,7 @@
 				20E9E89620223B1400D31410 /* SettingScreen.swift in Sources */,
 				20D0FF4420B6C12300C547A5 /* MainHero.swift in Sources */,
 				20D0FEF120B6C11200C547A5 /* CharacterController.swift in Sources */,
+				203E6D8E218D9808006D4D13 /* ScenarioFunction.swift in Sources */,
 				20D0FF2420B6C12300C547A5 /* ResetCatapult.swift in Sources */,
 				204BFA05210334FC00A2AB7A /* Cannon.swift in Sources */,
 				20E807A220FDE7F400EED36D /* ItemTouchController.swift in Sources */,
