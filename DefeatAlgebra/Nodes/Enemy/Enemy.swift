@@ -488,6 +488,8 @@ class Enemy: SKSpriteNode {
         leftShield.position = CGPoint(x: -gap, y: 0)
         rightShield.isHidden = true
         leftShield.isHidden = true
+        rightShield.name = "shield"
+        leftShield.name = "shield"
         addChild(rightShield)
         addChild(leftShield)
     }

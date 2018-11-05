@@ -16,8 +16,18 @@ class EqBackground: SKSpriteNode {
     var eqRob: EqRob?
     let doneButton = SKSpriteNode(imageNamed: "tryDoneButton")
     var signal1 = SignalValueHolder(value: 1)
+    var originPos1 = CGPoint(x: 0, y: 0)
     var signal2 = SignalValueHolder(value: 1)
+    var originPos2 = CGPoint(x: 0, y: 0)
     var signal3 = SignalValueHolder(value: 1)
+    var originPos3 = CGPoint(x: 0, y: 0)
+    var movingSignal = SignalValueHolder(value: 1)
+    var originPos = CGPoint(x: 0, y: 0)
+    var isMoving = false
+    var enemyVeSim = EqVESimulator(text: "")
+    var enemyVeSim2 = EqVESimulator(text: "")
+    var eqRobVeSim = EqVESimulator(text: "")
+    var curVeSim = EqVESimulator(text: "")
     
     init(gameScene: GameScene, enemies: [Enemy], eqRob: EqRob?) {
         /* Initialize with enemy asset */
@@ -39,6 +49,9 @@ class EqBackground: SKSpriteNode {
         
         self.name = "eqBackground"
         
+        setSimulator()
+        curVeSim = enemyVeSim
+        
         /* Set buttons */
         setSignals()
         setButton()
@@ -47,6 +60,24 @@ class EqBackground: SKSpriteNode {
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    func setSimulator() {
+        if enemies.count > 1 {
+            enemyVeSim = EqVESimulator(text: enemies[0].variableExpressionString)
+            enemyVeSim2 = EqVESimulator(text: enemies[1].variableExpressionString)
+            addChild(enemyVeSim)
+            addChild(enemyVeSim2)
+            enemyVeSim.position = CGPoint(x: 80, y: 250)
+            enemyVeSim2.position = CGPoint(x: 80, y: 180)
+        } else {
+            enemyVeSim = EqVESimulator(text: enemies[0].variableExpressionString)
+            addChild(enemyVeSim)
+            eqRobVeSim = EqVESimulator(text: eqRob!.variableExpressionString)
+            addChild(eqRobVeSim)
+            enemyVeSim.position = CGPoint(x: 80, y: 250)
+            eqRobVeSim.position = CGPoint(x: 80, y: 180)
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -61,13 +92,8 @@ class EqBackground: SKSpriteNode {
                 return
             case .Action:
                 if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
-                    if ScenarioController.currentActionIndex < 11 {
-                        if VEEquivalentController.numOfCheck > 2 {
-                            ScenarioController.controllActions()
-                            isEnable = false
-                            return
-                        }
-                    }
+                    print("HAHAHAHAHAHAAH")
+                    guard ScenarioTouchController.eqRobSimulatorTutorialTouch() else { return }
                 }
                 break;
             }
@@ -78,129 +104,100 @@ class EqBackground: SKSpriteNode {
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
         
-        /* Touch button 1 */
+        if VEEquivalentController.simOneSessionDone {
+            VEEquivalentController.nextSessoin()
+            return
+        } else if VEEquivalentController.simTwoVeDone {
+            VEEquivalentController.compare()
+            return
+        } else if VEEquivalentController.simOneVeDone {
+            VEEquivalentController.nextSim()
+            return
+        } else if VEEquivalentController.allDone {
+            VEEquivalentController.doneSimulation()
+            return
+        }
+        
         if nodeAtPoint.name == "signal1" || nodeAtPoint.name == "label1" {
-            guard isEnable else { return }
-            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
-            signal1.isHidden = true
+            CharacterController.doctor.balloon.isHidden = true
             let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
-            signalTapped(value: 1, node: node as! SKSpriteNode)
-        }
-        
-        /* Touch button 2 */
-        if nodeAtPoint.name == "signal2" || nodeAtPoint.name == "label2" {
-            guard isEnable else { return }
-            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
-            signal2.isHidden = true
-            let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
-            signalTapped(value: 2, node: node as! SKSpriteNode)
-        }
-        
-        /* Touch button 3 */
-        if nodeAtPoint.name == "signal3" || nodeAtPoint.name == "label3" {
-            guard isEnable else { return }
-            SoundController.sound(scene: gameScene, sound: .TimeBombAA)
-            signal3.isHidden = true
-            let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
-            signalTapped(value: 3, node: node as! SKSpriteNode)
-        }
-        
-        if nodeAtPoint.name == "doneButton" {
-            guard isEnable else { return }
-            SoundController.sound(scene: gameScene, sound: .HeroMove)
-            if let _ = self.parent as? ScenarioScene {
-                ScenarioController.controllActions()
-            } else {
-                EqRobController.execute(7, enemy: nil)
+            if let signal = node as? SignalValueHolder {
+                VEEquivalentController.xValue = 1
+                movingSignal = signal
+                originPos = originPos1
+                isMoving = true
             }
+        }
+        
+        if nodeAtPoint.name == "signal2" || nodeAtPoint.name == "label2" {
+            CharacterController.doctor.balloon.isHidden = true
+            let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
+            if let signal = node as? SignalValueHolder {
+                VEEquivalentController.xValue = 2
+                movingSignal = signal
+                originPos = originPos2
+                isMoving = true
+            }
+        }
+        
+        if nodeAtPoint.name == "signal3" || nodeAtPoint.name == "label3" {
+            CharacterController.doctor.balloon.isHidden = true
+            let node = nodeAtPoint as? SKSpriteNode ?? nodeAtPoint.parent
+            if let signal = node as? SignalValueHolder {
+                VEEquivalentController.xValue = 3
+                movingSignal = signal
+                originPos = originPos3
+                isMoving = true
+            }
+        }
+
+//        guard let gameScene = self.parent as? GameScene else { return }
+//        if gameScene.isCharactersTurn {
+//            switch gameScene.tutorialState {
+//            case .None:
+//                break;
+//            case .Converstaion:
+//                ScenarioController.nextLine()
+//                return
+//            case .Action:
+//                if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
+//                    if ScenarioController.currentActionIndex < 11 {
+//                        if VEEquivalentController.numOfCheck > 2 {
+//                            ScenarioController.controllActions()
+//                            isEnable = false
+//                            return
+//                        }
+//                    }
+//                }
+//                break;
+//            }
+//        }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        /* Get touch point */
+        let touch = touches.first!              // Get the first touch
+        let location = touch.location(in: self) // Find the location of that touch in this view
+        
+        if isMoving {
+            movingSignal.position = location
         }
     }
     
-    func signalTapped(value: Int, node: SKSpriteNode) {
-        guard let gameScene = self.parent as? GameScene else { return }
-        CharacterController.doctor.balloon.isHidden = true
-        VEEquivalentController.numOfCheck += 1
-        if VEEquivalentController.numOfCheck > 2 {
-            doneButton.isHidden = false
-        }
-        forInstruction2()
-        isEnable = false
-        gameScene.valueOfX.text = "x=\(value)"
-        GridActiveAreaController.resetSquareArray(color: "green", grid: gameScene.eqGrid)
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        if let eqRob = eqRob {
-            gameScene.eqGrid.demoCalcLabel.isHidden = true
-            if enemies.count > 1 {
-                for (i, enemy) in enemies.enumerated() {
-                    enemy.demoCalcLabel.isHidden = true
-                    let odd = i % 2
-                    SignalController.send(target: enemy, num: value, from: node.position, zPos: 10) {
-                        enemy.calculatePunchLength(value: value)
-                        let labelPos = CGPoint(x: 0, y: -CGFloat(enemy.valueOfEnemy+1)*CGFloat(gameScene.gridNode.cellHeight)+40*CGFloat(odd-1))
-                        enemy.showCalculation(pos: labelPos, value: value)
-                        for idx in 1...enemy.valueOfEnemy {
-                            GridActiveAreaController.showActiveArea(at: [(enemy.eqPosX, enemy.eqPosY-idx)], color: "green", grid: gameScene.eqGrid, zPosition: 12)
-                        }
-                    }
-                }
+        if isMoving {
+            if VEEquivalentController.puttingXValue {
+                movingSignal.position = originPos
+                VEEquivalentController.activateVeSim()
+                ScenarioFunction.eqRobSimulatorTutorialTrriger()
             } else {
-                for enemy in enemies {
-                    enemy.demoCalcLabel.isHidden = true
-                    SignalController.send(target: enemy, num: value, from: node.position, zPos: 10) {
-                        enemy.calculatePunchLength(value: value)
-                        let labelPos = CGPoint(x: 0, y: -CGFloat(enemy.valueOfEnemy+1)*CGFloat(gameScene.gridNode.cellHeight))
-                        enemy.showCalculation(pos: labelPos, value: value)
-                        for i in 1...enemy.valueOfEnemy {
-                            GridActiveAreaController.showActiveArea(at: [(enemy.eqPosX, enemy.eqPosY-i)], color: "green", grid: gameScene.eqGrid, zPosition: 12)
-                        }
-                    }
-                }
+                EqRobSimLines.doctorSays(in: VEEquivalentController.lineState, value: nil)
+                let move = SKAction.move(to: originPos, duration: 0.5)
+                movingSignal.run(move)
             }
-            
-            removeExcessArea()
-            GridActiveAreaController.resetSquareArray(color: "yellow", grid: gameScene.eqGrid)
-            SignalController.sendToEqRob(target: eqRob, num: value, from: node.position) {
-                let length = eqRob.calculateValue(value: value)
-                if length < 0 {
-                    let labelPos = VEEquivalentController.getPosOnGrid(x: eqRob.eqPosX, y: 10)
-                    let excessLength = Double(-1 * length) * gameScene.gridNode.cellHeight
-                    self.setExcessArea(length: excessLength, posX: eqRob.eqPosX, bottom: false)
-                    gameScene.eqGrid.showEqRobDemoCalcLabel(pos: labelPos, value: value, eqRob: eqRob)
-                } else if length < 12 {
-                    let labelPos = VEEquivalentController.getPosOnGrid(x: eqRob.eqPosX, y: eqRob.eqPosY-length-1)
-                    gameScene.eqGrid.showEqRobDemoCalcLabel(pos: labelPos, value: value, eqRob: eqRob)
-                    for i in 1...length {
-                        GridActiveAreaController.showActiveArea(at: [(eqRob.eqPosX, eqRob.eqPosY-i)], color: "yellow", grid: gameScene.eqGrid, zPosition: 12)
-                    }
-                } else {
-                    let labelPos = VEEquivalentController.getPosOnGrid(x: eqRob.eqPosX, y: 0)
-                    let excessLength = Double(length - 11) * gameScene.gridNode.cellHeight
-                    self.setExcessArea(length: excessLength, posX: eqRob.eqPosX, bottom: true)
-                    gameScene.eqGrid.showEqRobDemoCalcLabel(pos: labelPos, value: value, eqRob: eqRob)
-                    for i in 1...11 {
-                        GridActiveAreaController.showActiveArea(at: [(eqRob.eqPosX, eqRob.eqPosY-i)], color: "yellow", grid: gameScene.eqGrid, zPosition: 12)
-                    }
-                }
-                self.showAllSignalButton()
-                self.isEnable = true
-            }
-        } else {
-            let dispatchgroup = DispatchGroup()
-            for enemy in enemies {
-                dispatchgroup.enter()
-                SignalController.send(target: enemy, num: value, from: node.position, zPos: 10) {
-                    enemy.calculatePunchLength(value: value)
-                    for i in 1...enemy.valueOfEnemy {
-                        GridActiveAreaController.showActiveArea(at: [(enemy.eqPosX, enemy.eqPosY-i)], color: "green", grid: gameScene.eqGrid, zPosition: 12)
-                    }
-                    dispatchgroup.leave()
-                }
-            }
-            dispatchgroup.notify(queue: .main, execute: {
-                self.showAllSignalButton()
-                self.forInstruction()
-                self.isEnable = true
-            })
+            isMoving = false
+            VEEquivalentController.puttingXValue = false
         }
     }
     
@@ -208,26 +205,58 @@ class EqBackground: SKSpriteNode {
         for i in 1...3 {
             let signal = SignalValueHolder(value: i)
             signal.setScale(1.5)
+            signal.physicsBody = SKPhysicsBody(circleOfRadius: signal.frame.width/2)
+            signal.physicsBody?.categoryBitMask = 1024
+            signal.physicsBody?.collisionBitMask = 0
+            signal.physicsBody?.contactTestBitMask = 128
             signal.name = "signal\(i)"
             signal.xValue.name = "label\(i)"
             signal.zPosition = 3
-            signal.position = CGPoint(x: 120*i+320, y: 150)
+            signal.position = CGPoint(x: 650, y: 180)
             addChild(signal)
             if i == 1 {
                 signal1 = signal
+                originPos1 = signal.position
             } else if i == 2 {
                 signal2 = signal
+                originPos2 = signal.position
             } else {
                 signal3 = signal
+                originPos3 = signal.position
             }
         }
     }
     
-    func showAllSignalButton() {
-        if signal1.isHidden && signal2.isHidden && signal3.isHidden {
-            signal1.isHidden = false
-            signal2.isHidden = false
-            signal3.isHidden = false
+    func setSignalIcon(value: Int) {
+        let signal = SignalValueHolder(value: value)
+        signal.zPosition = 3
+        signal.position = CGPoint(x: 650-160*CGFloat(value-1), y: 1300)
+        signal.name = "signalIcon"
+        addChild(signal)
+    }
+    
+    func moveSignalIcon() {
+        for child in self.children {
+            if child.name == "signalIcon" {
+                if let signalIcon = child as? SignalValueHolder {
+                    switch signalIcon.xValue.text! {
+                    case "1":
+                        break;
+                    case "2":
+                        let distance = CGFloat(VEEquivalentController.gameScene.eqGrid.cellWidth)
+                        let move = SKAction.moveBy(x: -distance, y: 0, duration: 1.0)
+                        signalIcon.run(move)
+                        break;
+                    case "3":
+                        let distance = CGFloat(VEEquivalentController.gameScene.eqGrid.cellWidth)*2
+                        let move = SKAction.moveBy(x: -distance, y: 0, duration: 1.0)
+                        signalIcon.run(move)
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
         }
     }
     
@@ -284,11 +313,37 @@ class EqBackground: SKSpriteNode {
         doneButton.isHidden = true
     }
     
-    func pointingSignalButton() {
-        let pos = CGPoint(x: 50, y: 50)
-        signal1.addChild(pointing(pos: pos))
-        signal2.addChild(pointing(pos: pos))
-        signal3.addChild(pointing(pos: pos))
+    func removePointing() {
+        if let icon = self.childNode(withName: "pointing") {
+            icon.removeFromParent()
+        }
+    }
+    
+    func pointingSignalToX() {
+        let from = CGPoint(x: 700, y: 230)
+        let xPos = enemyVeSim.veUnit[0].absolutePos()
+        let to = CGPoint(x: xPos.x+100, y: xPos.y+50)
+        movePointing(from: from, to: to)
+    }
+    
+    func movePointing(from: CGPoint, to: CGPoint) {
+        let icon = SKSpriteNode(imageNamed: "pointing")
+        icon.name = "pointing"
+        icon.size = CGSize(width: 80, height: 80)
+        icon.position = from
+        icon.zPosition = 100
+        let move = SKAction.move(to: to, duration: 2.5)
+        let resetPos = SKAction.run({ icon.position = from })
+        let seq = SKAction.sequence([move, resetPos])
+        let repeatAction = SKAction.repeatForever(seq)
+        icon.run(repeatAction)
+        addChild(icon)
+    }
+    
+    func pointingNumToTouch() {
+        let numPos = enemyVeSim.veUnit[1].absolutePos()
+        let pos = CGPoint(x: numPos.x+140, y: numPos.y+80)
+        pointing(pos: pos)
     }
     
     func removePointingSignalButton() {
@@ -303,15 +358,48 @@ class EqBackground: SKSpriteNode {
         }
     }
     
-    func pointing(pos: CGPoint) -> SKSpriteNode {
+    func pointing(pos: CGPoint) {
         let icon = SKSpriteNode(imageNamed: "pointing")
         icon.name = "pointing"
-        icon.size = CGSize(width: 50, height: 50)
+        icon.size = CGSize(width: 80, height: 80)
         icon.position = pos
         icon.zPosition = 100
         let shakePoint = SKAction(named: "shakePoint")
         let repeatAction = SKAction.repeatForever(shakePoint!)
         icon.run(repeatAction)
-        return icon
+        addChild(icon)
+    }
+    
+    func showArea(eqGrid: EqGrid, originPos: (Int, Int)) {
+        resetArea(eqGrid: eqGrid)
+        if VEEquivalentController.outPutXValue > 0 {
+            for i in 1...VEEquivalentController.outPutXValue {
+                GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-i)], color: "red", grid: eqGrid, zPosition: 12)
+            }
+            if VEEquivalentController.outPutNumValue > 0 {
+                for i in 1...VEEquivalentController.outPutNumValue {
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-VEEquivalentController.outPutXValue-i)], color: "yellow", grid: eqGrid, zPosition: 12)
+                }
+            } else if VEEquivalentController.outPutNumValue < 0 {
+                for i in 1...abs(VEEquivalentController.outPutNumValue) {
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-VEEquivalentController.outPutXValue+i-1)], color: "yellow", grid: eqGrid, zPosition: 12)
+                }
+            }
+        } else {
+            if VEEquivalentController.outPutNumValue > 0 {
+                for i in 1...VEEquivalentController.outPutNumValue {
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-i)], color: "yellow", grid: eqGrid, zPosition: 12)
+                }
+            } else if VEEquivalentController.outPutNumValue < 0 {
+//                for i in 1...abs(VEEquivalentController.outPutNumValue) {
+//                    GridActiveAreaController.showActiveArea(at: [(enemies[0].eqPosX, enemies[0].eqPosY-VEEquivalentController.outPutXValue+i-1)], color: "yellow", grid: eqGrid, zPosition: 12)
+//                }
+            }
+        }
+    }
+    
+    func resetArea(eqGrid: EqGrid) {
+        GridActiveAreaController.resetSquareArray(at: VEEquivalentController.curActivePos.0, color: "red", grid: eqGrid)
+        GridActiveAreaController.resetSquareArray(at: VEEquivalentController.curActivePos.0, color: "yellow", grid: eqGrid)
     }
 }

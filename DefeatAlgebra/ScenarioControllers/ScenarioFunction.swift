@@ -132,7 +132,28 @@ class ScenarioFunction {
     
     
     
-    
+    public static func eqRobSimulatorTutorialTrriger(key: String = "") {
+        guard GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = VEEquivalentController.gameScene as? ScenarioScene else { return }
+        if ScenarioController.currentActionIndex == 5 {
+            ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 6 {
+            ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 8 {
+            guard key == "compare1" else { return }
+            ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 10 {
+            guard key == "last" else { return }
+            ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 16 {
+            ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 21 {
+            ScenarioController.controllActions()
+        } else if ScenarioController.currentActionIndex == 22 {
+            guard key == "perfect" else { return }
+            ScenarioController.currentActionIndex += 2
+            ScenarioController.controllActions()
+        }
+    }
     
     
     

@@ -29,22 +29,31 @@ class EqGrid: Grid {
                 break;
             case .Converstaion:
                 ScenarioController.nextLine()
+                return
                 break;
             case .Action:
                 if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
-                    if ScenarioController.currentActionIndex < 11 {
-                        if VEEquivalentController.numOfCheck > 3 {
-                            VEEquivalentController.getBG() { bg in
-                                bg?.isEnable = false
-                            }
-                            ScenarioController.controllActions()
-                            return
-                        }
-                    }
+                    guard ScenarioTouchController.eqRobSimulatorTutorialTouch() else { return }
                 } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                     guard CannonTutorialController.userTouch(on: "") else { return }
                 }
                 break;
+            }
+        }
+        
+        if gameScene.playerTurnState == .UsingItem && gameScene.itemType == .EqRob {
+            if VEEquivalentController.simOneSessionDone {
+                VEEquivalentController.nextSessoin()
+                return
+            } else if VEEquivalentController.simTwoVeDone {
+                VEEquivalentController.compare()
+                return
+            } else if VEEquivalentController.simOneVeDone {
+                VEEquivalentController.nextSim()
+                return
+            } else if VEEquivalentController.allDone {
+                VEEquivalentController.doneSimulation()
+                return
             }
         }
         

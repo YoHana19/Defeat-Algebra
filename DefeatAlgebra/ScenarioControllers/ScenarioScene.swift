@@ -44,7 +44,8 @@ class ScenarioScene: GameScene {
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
         signalHolder = childNode(withName: "signalHolder") as! SKSpriteNode
         stageHolder = childNode(withName: "stageHolder")
-        eqRob = childNode(withName: "eqRob") as! EqRob
+        againButton = childNode(withName: "againButton") as! SKSpriteNode
+        againButton.isHidden = true
         buttonAttack = childNode(withName: "buttonAttack")
         skipButton = childNode(withName: "skipButton")  as! MSButtonNode
         skipButton.isHidden = true
@@ -62,7 +63,6 @@ class ScenarioScene: GameScene {
         addChild(confirmBomb)
         
         EqRobController.gameScene = self
-        EqRobController.eqRobOriginPos = self.eqRob.absolutePos()
         CannonController.gameScene = self
         SignalController.gameScene = self
         MoveTouchController.gameScene = self
@@ -203,6 +203,8 @@ class ScenarioScene: GameScene {
         setLife(numOflife: life)
         
         GameStageController.initializeForScenario()
+        
+        setEqRob()
         
         self.isCharactersTurn = true
         gridNode.isTutorial = true
@@ -451,6 +453,9 @@ class ScenarioScene: GameScene {
                 if nodeAtPoint.name == "buttonAttack" {
                     if GameScene.stageLevel == 2 { return }
                     ItemTouchController.buttonAttackTapped()
+                } else if nodeAtPoint.name == "againButton" {
+                    guard itemType == .EqRob else { return }
+                    EqRobController.back(1)
                 }
             }
         }
@@ -557,6 +562,10 @@ class ScenarioScene: GameScene {
                     }
                 }
             }
+        }
+        
+        if (contactA.categoryBitMask == 1024 && contactB.categoryBitMask == 128) || (contactA.categoryBitMask == 128 && contactB.categoryBitMask == 1024) {
+            VEEquivalentController.puttingXValue = true
         }
         
         /* Enemy's arm or fist hits castle wall */

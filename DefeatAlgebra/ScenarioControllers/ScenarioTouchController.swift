@@ -168,21 +168,31 @@ class ScenarioTouchController {
     }
     
     private static func gridEqRobStartTurn(nodeAtPoint: SKNode?) {
-        if ScenarioController.currentActionIndex == 20 {
+        if ScenarioController.currentActionIndex == 17 {
             if let enemy = nodeAtPoint as? Enemy {
-                if enemy.positionX == 3 && enemy.positionY == 8 {
+                if enemy.positionX == 2 && enemy.positionY == 8 {
                     enemy.isSelectedForEqRob = true
-                    EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
+                    EqRobController.execute(1, enemy: enemy)
+                    ScenarioController.controllActions()
+                }
+            } else if let enemy = nodeAtPoint?.parent as? Enemy {
+                if enemy.positionX == 2 && enemy.positionY == 8 {
+                    enemy.isSelectedForEqRob = true
+                    EqRobController.execute(1, enemy: enemy)
                     ScenarioController.controllActions()
                 }
             }
-        } else if ScenarioController.currentActionIndex == 22 {
-            ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 23 {
+        } else if ScenarioController.currentActionIndex == 19 {
             if let enemy = nodeAtPoint as? Enemy {
-                if enemy.positionX == 5 && enemy.positionY == 8 {
+                if enemy.positionX == 6 && enemy.positionY == 8 {
                     enemy.isSelectedForEqRob = true
-                    EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
+                    EqRobController.execute(1, enemy: enemy)
+                    ScenarioController.controllActions()
+                }
+            } else if let enemy = nodeAtPoint?.parent as? Enemy {
+                if enemy.positionX == 6 && enemy.positionY == 8 {
+                    enemy.isSelectedForEqRob = true
+                    EqRobController.execute(1, enemy: enemy)
                     ScenarioController.controllActions()
                 }
             }
@@ -228,6 +238,26 @@ class ScenarioTouchController {
             ScenarioController.controllActions()
         } else if ScenarioController.currentActionIndex == 39 {
             let _ = TutorialController.userTouch(on: "")
+        }
+    }
+    
+    public static func eqRobSimulatorTutorialTouch() -> Bool {
+        if ScenarioController.currentActionIndex == 3 {
+            return false
+        } else if ScenarioController.currentActionIndex == 4 {
+            ScenarioController.controllActions()
+            return false
+        } else if ScenarioController.currentActionIndex == 7 {
+            ScenarioController.controllActions()
+            return false
+        } else if ScenarioController.currentActionIndex == 9 {
+            ScenarioController.controllActions()
+            return false
+        } else if ScenarioController.currentActionIndex == 11 {
+            ScenarioController.controllActions()
+            return false
+        } else {
+            return true
         }
     }
 }

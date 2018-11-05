@@ -13,22 +13,12 @@ struct AllTouchController {
     public static var gameScene: GameScene!
     
     public static func eqRobTouched() {
-        guard gameScene.playerTurnState == .MoveState || gameScene.playerTurnState == .AttackState || gameScene.playerTurnState == .UsingItem else { return }
-        guard gameScene.itemType != .Cannon else { return }
+        guard gameScene.playerTurnState == .UsingItem else { return }
+        guard gameScene.itemType == .EqRob else { return }
+        guard EqRobTouchController.state == .WillAttack else { return }
         SoundController.sound(scene: gameScene, sound: .EqSelected)
         
-        /* Hide attack and item buttons */
-        gameScene.buttonAttack.isHidden = true
-        /* Reset hero */
-        gameScene.hero.resetHero()
-        /* Remove active area */
-        GridActiveAreaController.resetSquareArray(color: "blue", grid: gameScene.gridNode)
-        GridActiveAreaController.resetSquareArray(color: "purple", grid: gameScene.gridNode)
-        GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.gridNode)
-        gameScene.playerTurnState = .UsingItem
-        gameScene.itemType = .EqRob
-        
-        EqRobTouchController.onEvent()
+        EqRobController.execute(2, enemy: nil)
     }
     
     public static func cannonTouched(node: Cannon) {

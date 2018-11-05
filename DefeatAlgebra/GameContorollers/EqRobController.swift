@@ -11,12 +11,13 @@ import SpriteKit
 
 struct EqRobController {
     public static var gameScene: GameScene!
-    public static var eqRobOriginPos: CGPoint!
+    public static var eqRobOriginPos = CGPoint(x: -60, y: 246.5)
+    public static var eqRobCenterPos = CGPoint(x: 375, y: 246.5)
+    public static var scannedVECategory = 0
     private static var lines = [SKShapeNode]()
     private static var isPerfect = false
     public static var selectedEnemies = [Enemy]()
     public static var sameVeEnemies = [Enemy]()
-    private static var enemiesToDestroy = [Enemy]()
     private static var selectedEnemyIndex: Int = 0
     private static var attackingEnemyIndex: Int = 0
     private static var missedEnemies = [Enemy]()
@@ -37,16 +38,19 @@ struct EqRobController {
     public static func execute(_ index: Int, enemy: Enemy?) {
         switch index {
         case 0:
-            showInputPanelWithDoctor()
+            showEqRobWithDoctor()
             break;
         case 1:
-            showSelectionPanelWithDoctor()
+            guard let enemy = enemy else { return }
+            select(enemy: enemy)
             break;
         case 2:
-            setSelectedEnemyOnPanel(enemy: enemy!)
+            guard EqRobController.selectedEnemies.count > 0 else { return }
+            isPerfect = eqRobGoToAttack()
+            ScenarioFunction.eqRobSimulatorTutorialTrriger()
             break;
         case 3:
-            isPerfect = eqRobGoToAttack()
+            instructionDone()
             break;
         case 4:
             instruction()
@@ -76,10 +80,10 @@ struct EqRobController {
         switch index {
         case 0:
             guard EqRobTouchController.state == .Pending else { return }
-            hideInputPanelWithDoctor()
+            
             break;
         case 1:
-            resetSelectedEnemyOnPanel()
+            resetSelectedEnemy()
             break;
         case 2:
             resetAll()
@@ -95,80 +99,84 @@ struct EqRobController {
         }
     }
     
-    private static func showInputPanelWithDoctor() {
-        resetAll()
-        showInputPanel()
-        gameScene.eqRob.stopAction()
-        gameScene.eqRob.go(to: gameScene.inputPanel.eqRobPoint, completion: {
-            gameScene.eqRob.rotateForever()
+    private static func showEqRobWithDoctor() {
+        gameScene.gridNode.enemyArray.forEach({ $0.isSelectedForEqRob = false })
+        gameScene.eqRob.go(toPos: eqRobCenterPos, completion: {
+            gameScene.eqRob.look(at: gameScene.madScientistNode) {
+                scan()
+            }
         })
+        gameScene.resizeLongVeNeighbor()
         CharacterController.doctor.setScale(doctorScale[0])
+        CharacterController.doctor.changeBalloonTexture(index: 1)
         CharacterController.doctor.balloon.isHidden = false
-        doctorSays(in: .WillInput, value: nil)
+        doctorSays(in: .Scan, value: nil)
         CharacterController.doctor.move(from: doctorOffPos, to: doctorOnPos[0])
     }
     
-    private static func hideInputPanelWithDoctor() {
-        gameScene.inputPanel.variableExpression = ""
-        hideInputPanel()
-        EqRobTouchController.state = .Ready
-        gameScene.eqRob.stopAction()
-        gameScene.eqRob.resetVEElementArray()
-        gameScene.eqRob.go(toPos: eqRobOriginPos) {
-            let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
-            gameScene.eqRob.run(rotate)
+    public static func scan() {
+        gridFlash() {
+            print("HOEHOEHOHEOHE")
+            let cands = VECategory.vEsForEqRob(veCate: scannedVECategory)
+            let rand = Int(arc4random_uniform(UInt32(cands.count)))
+            gameScene.eqRob.variableExpressionString = cands[rand]
+            gameScene.eqRob.veCategory = scannedVECategory
+            gameScene.eqRob.showVELabel()
+            doctorSays(in: .ScanDone, value: cands[rand])
+            EqRobTouchController.state = .WillAttack
+            let wait = SKAction.wait(forDuration: 3.0)
+            gameScene.run(wait, completion: {
+                startSelect(ve: cands[rand])
+                gameScene.againButton.isHidden = false
+            })
         }
-        CharacterController.doctor.setScale(1)
-        CharacterController.doctor.balloon.isHidden = true
-        CharacterController.doctor.move(from: nil, to: doctorOffPos)
     }
     
-    private static func showSelectionPanelWithDoctor() {
-        CannonController.changeZpos(zPos: 3)
-        hideInputPanel()
-        EqRobTouchController.state = .WillAttack
-        showSelectionPanel()
-        gameScene.eqRob.stopAction()
-        gameScene.eqRob.go(toPos: eqRobOriginPos) {
-            EqRobTouchController.state = .Attack
-            let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
-            gameScene.eqRob.run(rotate)
-        }
-        CharacterController.doctor.setScale(doctorScale[1])
-        doctorSays(in: .WillSelectEnemies, value: gameScene.inputPanel.confirmedVE)
-        gameScene.selectionPanel.veLabel.text = gameScene.inputPanel.confirmedVE
-        CharacterController.doctor.move(from: nil, to: doctorOnPos[1])
+    private static func gridFlash(completion: @escaping () -> Void) {
+        let flashSpeed = 1.0
+        /* Set flash animation */
+        let fadeInColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 1.0, duration: TimeInterval(flashSpeed/4))
+        let wait = SKAction.wait(forDuration: TimeInterval(flashSpeed/4))
+        let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(flashSpeed/4))
+        let flash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+        gameScene.gridNode.run(flash, completion: {
+            return completion()
+        })
     }
     
-    private static func setSelectedEnemyOnPanel(enemy: Enemy) {
-        guard selectedEnemyIndex < 8 else {
-            doctorSays(in: .WarnSelection, value: nil)
-            return
-        }
-        doctorSays(in: .SelectingEnemies, value: nil)
+    private static func startSelect(ve: String) {
+        doctorSays(in: .WillSelectEnemies, value: ve)
+        ScenarioFunction.eqRobSimulatorTutorialTrriger()
+    }
+    
+    private static func select(enemy: Enemy) {
         if selectedEnemyIndex < 1 {
             drawLine(start: gameScene.eqRob.absolutePos(), end: enemy.absolutePos())
         } else {
             drawLine(start: selectedEnemies[selectedEnemyIndex-1].absolutePos(), end: enemy.absolutePos())
         }
         selectedEnemies.append(enemy)
-        gameScene.selectionPanel.setSelectedEnemy(target: enemy, index: selectedEnemyIndex)
         selectedEnemyIndex += 1
+        if let _ = gameScene as? ScenarioScene, ScenarioController.currentActionIndex < 19 {
+        } else {
+            doctorSays(in: .SelectingEnemies, value: nil)
+        }
     }
     
-    private static func resetSelectedEnemyOnPanel() {
+    private static func resetSelection() {
         lines.forEach { $0.removeFromParent() }
         selectedEnemies.forEach { $0.isSelectedForEqRob = false }
         selectedEnemyIndex = 0
         doctorSays(in: .WillSelectEnemies, value: gameScene.inputPanel.confirmedVE)
         selectedEnemies = [Enemy]()
         lines = [SKShapeNode]()
-        gameScene.selectionPanel.resetAllEnemies()
     }
     
     private static func eqRobGoToAttack() -> Bool {
         doctorSays(in: .EqRobGo, value: nil)
         eqRobAttackFirst(selectedEnemies[0])
+        gameScene.againButton.isHidden = true
+        gameScene.gridNode.enemyArray.forEach({ $0.variableExpressionLabel.fontSize = $0.veLabelSize })
         gameScene.selectionPanel.againButton.isHidden = true
         let difEnemies = selectedEnemies.filter { $0.vECategory != gameScene.eqRob.veCategory }
         sameVeEnemies = gameScene.gridNode.enemyArray.filter { $0.vECategory == gameScene.eqRob.veCategory }
@@ -189,26 +197,16 @@ struct EqRobController {
             if attackingEnemyIndex < selectedEnemies.count-1 {
                 gameScene.eqRob.kill(target) {
                     SoundController.sound(scene: gameScene, sound: .EqAttack)
-                    enemiesToDestroy.append(target)
-                    gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackingEnemyIndex += 1
                     eqRobAttackNext(selectedEnemies[attackingEnemyIndex])
                 }
             } else {
                 gameScene.eqRob.kill(target) {
                     SoundController.sound(scene: gameScene, sound: .EqAttack)
-                    enemiesToDestroy.append(target)
-                    gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackDone()
-                    destroyEnemiesAtOnce()
-                    gameScene.eqRob.go(toPos: eqRobOriginPos) {
-                        let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
-                        gameScene.eqRob.run(rotate)
-                    }
                 }
             }
         } else {
-            destroyEnemiesAtOnce()
             gameScene.eqRob.killed(target) {
                 eqRobDead(enemy: target)
             }
@@ -221,31 +219,25 @@ struct EqRobController {
             if attackingEnemyIndex < selectedEnemies.count-1 {
                 gameScene.eqRob.kill(target) {
                     SoundController.sound(scene: gameScene, sound: .EqAttack)
-                    enemiesToDestroy.append(target)
-                    gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackingEnemyIndex += 1
                     eqRobAttackNext(selectedEnemies[attackingEnemyIndex])
                 }
             } else {
                 gameScene.eqRob.kill(target) {
                     SoundController.sound(scene: gameScene, sound: .EqAttack)
-                    enemiesToDestroy.append(target)
-                    gameScene.selectionPanel.putCrossOnEnemyOnPanel(index: attackingEnemyIndex)
                     attackDone()
-                    destroyEnemiesAtOnce()
-                    gameScene.eqRob.go(toPos: eqRobOriginPos) {
-                        let rotate = SKAction.rotate(toAngle: .pi * -1/2, duration: 1.0)
-                        gameScene.eqRob.run(rotate)
-                    }
                 }
             }
         } else {
-            destroyEnemiesAtOnce()
             gameScene.eqRob.killed(target) {
                 eqRobDead(enemy: target)
             }
         }
     }
+    
+    // perfect, miss -> attackDone()
+    
+    // fail -> eqRobDead
     
     private static func eqRobDead(enemy: Enemy) {
         lines.forEach { $0.removeFromParent() }
@@ -279,52 +271,51 @@ struct EqRobController {
     
     private static func attackDone() {
         if isPerfect {
-            gameScene.selectionPanel.resetAllEnemies()
+            destroyEnemiesAtOnce()
+            gameScene.eqRob.variableExpressionString = ""
+            gameScene.eqRob.go(toPos: eqRobOriginPos) {}
             doctorSays(in: .PerfectKill, value: nil)
+            let wait = SKAction.wait(forDuration: 3.0)
+            gameScene.run(wait, completion: {
+                allDone()
+                ScenarioFunction.eqRobSimulatorTutorialTrriger(key: "perfect")
+            })
         } else {
             doctorSays(in: .MissEnemies, value: nil)
-        }
-        let wait = SKAction.wait(forDuration: 3.0)
-        gameScene.run(wait, completion: {
-            if isPerfect {
-                back(3)
-            } else {
-                pointingMissedEnemies()
+            gameScene.eqRob.go(toPos: eqRobCenterPos) {
+                pointingMissedEnemy()
+                gameScene.eqRob.look(at: gameScene.madScientistNode) {}
             }
-        })
+        }
     }
     
     private static func destroyEnemiesAtOnce(delay: TimeInterval = 1.0) {
-        DataController.countForEnemyKilledByEqRob(num: enemiesToDestroy.count)
+        DataController.countForEnemyKilledByEqRob(num: sameVeEnemies.count)
         let wait = SKAction.wait(forDuration: delay)
         gameScene.run(wait, completion: {
-            for enemy in enemiesToDestroy {
-                EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene) {
-                    if let i = enemiesToDestroy.index(of: enemy) {
-                        enemiesToDestroy.remove(at: i)
-                    }
-                }
+            for enemy in sameVeEnemies {
+                EnemyDeadController.hitEnemy(enemy: enemy, gameScene: gameScene, isEqRob: true) {}
             }
         })
     }
     
-    private static func pointingMissedEnemies() {
+    private static func pointingMissedEnemy() {
         missedEnemies = sameVeEnemies.filter { !self.selectedEnemies.contains($0) }
-        missedEnemies.forEach { $0.pointing() }
+        missedEnemies.sort(by: {$0.variableExpressionString.count > $1.variableExpressionString.count})
+        instructedEnemy = missedEnemies[0]
+        instructedEnemy?.pointing()
         doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction())
         EqRobTouchController.state = .AliveInstruction
         gameScene.eqRob.state = .Charging
-        let wait = SKAction.wait(forDuration: 1.5)
+        let wait = SKAction.wait(forDuration: 2.5)
         gameScene.run(wait, completion: {
+            instructedEnemy?.removePointing()
             instruction()
         })
     }
-
+    
     private static func makeInsturctionForMiss() {
-        missedEnemies.forEach { $0.removePointing() }
-        VEEquivalentController.showEqGrid(enemies: missedEnemies, eqRob: gameScene.eqRob)
-        gameScene.selectionPanel.resetInstruction()
-        gameScene.selectionPanel.resetAllEnemies()
+        VEEquivalentController.showEqGrid(enemies: [instructedEnemy!], eqRob: gameScene.eqRob)
     }
     
     private static func instruction() {
@@ -413,40 +404,33 @@ struct EqRobController {
         gameScene.selectionPanel.againButton.isHidden = false
     }
     
+    private static func resetSelectedEnemy() {
+        lines.forEach { $0.removeFromParent() }
+        selectedEnemies.forEach { $0.isSelectedForEqRob = false }
+        selectedEnemyIndex = 0
+        selectedEnemies = [Enemy]()
+        lines = [SKShapeNode]()
+    }
+    
     private static func allDone() {
-        CannonController.changeZpos(zPos: 6)
         selectedEnemyIndex = 0
         attackingEnemyIndex = 0
         selectedEnemies = [Enemy]()
         lines = [SKShapeNode]()
         if gameScene.eqRob.state == .Dead {
-            gameScene.eqRob.isHidden = false
-            EqRobTouchController.state = .Dead
-            gameScene.eqRob.turn = gameScene.eqRob.deadTurnIndex
-            gameScene.eqRob.wasDead = true
             DataController.setDataForEqRob(isPerfect: false, isMiss: false)
         } else  {
             DataController.setDataForEqRob(isPerfect: isPerfect, isMiss: true)
-            if isPerfect {
-                EqRobTouchController.state = .Charging
-                gameScene.eqRob.turn = gameScene.eqRob.chargingTurnIndex
-            } else {
-                EqRobTouchController.state = .Dead
-                gameScene.eqRob.turn = gameScene.eqRob.deadTurnIndex
-            }
-            gameScene.eqRob.wasDead = false
         }
         gameScene.eqRob.state = .Pending
         gameScene.eqRob.resetVEElementArray()
         isPerfect = false
         instructedEnemy?.removePointing()
-        gameScene.selectionPanel.resetInstruction()
         CharacterController.doctor.setScale(1)
         CharacterController.doctor.balloon.isHidden = true
-        CharacterController.doctor.move(from: nil, to: doctorOffPos)
-        //gameScene.eqRob.position = eqRobOriginPos
-        gameScene.itemType = .None
         CharacterController.doctor.changeBalloonTexture(index: 0)
+        CharacterController.doctor.move(from: nil, to: doctorOffPos)
+        gameScene.itemType = .None
         ItemTouchController.othersTouched()
     }
     
@@ -575,16 +559,18 @@ struct EqRobTouchController {
 }
 
 enum EqRobLinesState {
-    case WillInput, WillSelectEnemies, SelectingEnemies, WarnSelection, EqRobGo, EqRobDestroyed, DestroyedInstruction, DestroyedInstructionDone, MissEnemies, MissEnemiesInstruction, MissEnemiesInstructionDone, PerfectKill, Charging, Dead, ChargeDone, Reborn
+    case Scan, ScanDone, WillSelectEnemies, SelectingEnemies, WarnSelection, EqRobGo, EqRobDestroyed, DestroyedInstruction, DestroyedInstructionDone, MissEnemies, MissEnemiesInstruction, MissEnemiesInstructionDone, PerfectKill, Charging, Dead, ChargeDone, Reborn
 }
 
 struct EqRobLines {
     static func getLines(state: EqRobLinesState, value: String?) -> String {
         switch state {
-        case .WillInput:
-            return "エクロボに暗号を入力するのじゃ！"
+        case .Scan:
+            return "エクロボが敵の文字式をスキャンするぞ！"
+        case .ScanDone:
+            return "\(value!)と\n同じ文字式を持つ敵が多いようじゃ！"
         case .WillSelectEnemies:
-            return value! + "と同じ暗号を持つ敵を選ぶのじゃ！"
+            return value! + "と同じ文字式を持つ敵を選ぶのじゃ！"
         case .SelectingEnemies:
             return subLineRandom(lines: subLinesForSelecting)
         case .WarnSelection:
@@ -592,13 +578,13 @@ struct EqRobLines {
         case .EqRobGo:
             return "エクロボ 発進じゃ！"
         case .EqRobDestroyed:
-            return "むむぅ・・・\nどうやら選択ミスしてしまったようじゃの"
+            return "むむぅ・・・\n間違った敵を選んでしまったようじゃの"
         case .DestroyedInstruction:
             return value!
         case .DestroyedInstructionDone:
             return value!
         case .MissEnemies:
-            return "よくやったぞ！\nじゃが、まだ倒せた敵はいたようじゃのぅ"
+            return "むむぅ・・・\nどうやら同じ文字式の敵がまだいたようじゃ"
         case .MissEnemiesInstruction:
             return value!
         case .MissEnemiesInstructionDone:
@@ -656,7 +642,7 @@ struct EqRobLines {
         switch curIndex {
         case 0:
             curIndex += 1
-            return "この敵を見逃してしまったようじゃな"
+            return "例えばこの敵を見逃してしまったようじゃな"
         case 1:
             curIndex = 0
             return "xに数を入れてみて、同じ文字式なのか確かめるぞ"

@@ -46,6 +46,9 @@ class EqRob: SKSpriteNode {
     var variableExpressionString = "" {
         didSet {
             variableExpressionLabel.text = variableExpressionString
+            if variableExpressionString == "" {
+                removeBG()
+            }
         }
     }
     
@@ -54,14 +57,23 @@ class EqRob: SKSpriteNode {
     let chargingSign = SKSpriteNode(texture: SKTexture(imageNamed: "eqRobCharging"), color: UIColor.clear, size: CGSize(width: 80, height: 40))
     let repairingSign = SKSpriteNode(texture: SKTexture(imageNamed: "eqRobReparing"), color: UIColor.clear, size: CGSize(width: 80, height: 40))
     
-    /* You are required to implement this for your subclass to work */
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
+    init() {
+        let texture = SKTexture(imageNamed: "eqRob")
+        let size = CGSize(width: 82, height: 77)
+        /* Initialize with enemy asset */
+        super.init(texture: texture, color: UIColor.clear, size: size)
         
+        self.position = CGPoint(x: -60, y: 246.5)
         self.name = "eqRob"
         self.zPosition = 11
         initailizeVariableExpressionLabel()
         setSign()
+        self.physicsBody = nil
+    }
+    
+    /* You are required to implement this for your subclass to work */
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
     
     private func setSign() {
@@ -267,7 +279,7 @@ class EqRob: SKSpriteNode {
         /* text */
         variableExpressionLabel.text = ""
         /* name */
-        variableExpressionLabel.name = "variableExpressionLabel"
+        variableExpressionLabel.name = "eqVELabel"
         /* font size */
         variableExpressionLabel.fontSize = 35
         /* zPosition */
@@ -280,6 +292,41 @@ class EqRob: SKSpriteNode {
         variableExpressionLabel.isHidden = true
         /* Add to Scene */
         self.addChild(variableExpressionLabel)
+    }
+    
+    func changeVeLabelRot(isUp: Bool) {
+        if isUp {
+            variableExpressionLabel.zRotation = .pi * 1/2
+        } else {
+            variableExpressionLabel.zRotation = .pi * -1/2
+        }
+    }
+    
+    func addBGForVeLabel() {
+        let veBG = SKShapeNode(rectOf: CGSize(width: variableExpressionLabel.frame.height+10, height: variableExpressionLabel.frame.width+10))
+        veBG.fillColor = UIColor.red
+        veBG.zPosition = -1
+        veBG.position = CGPoint(x: 0, y: 0)
+        veBG.name = "eqRobVEBG"
+        variableExpressionLabel.addChild(veBG)
+    }
+    
+    func removeBG() {
+        for child in variableExpressionLabel.children {
+            if child.name == "eqRobVEBG" {
+                child.removeFromParent()
+            }
+        }
+    }
+    
+    func showVELabel() {
+        /* font size */
+        variableExpressionLabel.fontSize = 40
+        /* position */
+        variableExpressionLabel.position = CGPoint(x: 0, y: 0)
+        variableExpressionLabel.zRotation = .pi * 1/2
+        variableExpressionLabel.isHidden = false
+        addBGForVeLabel()
     }
     
     public func forcus() {

@@ -14,24 +14,71 @@ struct PlayerTurnController {
     public static var done = false
     
     public static func displayPhase() {
-        gameScene.buttonRetry.state = .msButtonNodeStateHidden
-        gameScene.playerPhaseLabel.isHidden = false
-        let wait = SKAction.wait(forDuration: gameScene.phaseLabelTime)
-        let moveState = SKAction.run({ gameScene.playerTurnState = .ItemOn })
-        let seq = SKAction.sequence([wait, moveState])
-        gameScene.run(seq)
+        if !done {
+            done = true
+            gameScene.buttonRetry.state = .msButtonNodeStateHidden
+            gameScene.playerPhaseLabel.isHidden = false
+            let wait = SKAction.wait(forDuration: gameScene.phaseLabelTime)
+            gameScene.run(wait, completion: {
+                gameScene.playerTurnState = .ItemOn
+                done = false
+            })
+        }
     }
     
     public static func itemOn() {
-        gameScene.playerPhaseLabel.isHidden = true
-        gameScene.playerTurnState = .MoveState
-        
-        if !gameScene.eqRobTurnCountingDone {
-            gameScene.eqRobTurnCountingDone = true
-            if gameScene.eqRob.turn > 0 {
-                gameScene.eqRob.turn -= 1
+        if !done {
+            done = true
+            gameScene.playerPhaseLabel.isHidden = true
+            if GameScene.stageLevel >= MainMenu.eqRobStartTurn && GameScene.stageLevel < MainMenu.cannonStartTurn {
+                checkMultiSameEnemy() { over3 in
+                    if over3 > 0 {
+                        gameScene.itemType = .EqRob
+                        gameScene.playerTurnState = .UsingItem
+                        gameScene.gameState = .PlayerTurn
+                        EqRobController.scannedVECategory = over3
+                        EqRobController.execute(0, enemy: nil)
+                    } else {
+                        gameScene.playerTurnState = .MoveState
+                    }
+                }
+            } else {
+                gameScene.playerTurnState = .MoveState
             }
         }
+    }
+    
+    private static func checkMultiSameEnemy(completion: @escaping (Int) -> Void) {
+        
+        var cates = [Int]()
+        var uniCates = [Int]()
+        let dispatchGroup = DispatchGroup()
+        for enemy in gameScene.gridNode.enemyArray {
+            dispatchGroup.enter()
+            VECategory.getCategory(ve: enemy.variableExpressionString) { cate in
+                if !uniCates.contains(cate) {
+                    uniCates.append(cate)
+                }
+                cates.append(cate)
+                dispatchGroup.leave()
+            }
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            var over3 = -1
+            let dispatchGroup2 = DispatchGroup()
+            for cate in uniCates {
+                dispatchGroup2.enter()
+                if cates.filter({ $0 == cate}).count > 2 {
+                    over3 = cate
+                    dispatchGroup2.leave()
+                } else {
+                    dispatchGroup2.leave()
+                }
+            }
+            dispatchGroup2.notify(queue: .main, execute: {
+                return completion(over3)
+            })
+        })
     }
     
     public static func moveState() {
@@ -46,8 +93,6 @@ struct PlayerTurnController {
     
     public static func usingItem() {
         switch gameScene.itemType {
-        case .None:
-            break;
         case .timeBomb:
             GridActiveAreaController.showtimeBombSettingArea(grid: gameScene.gridNode)
             break;
@@ -61,6 +106,7 @@ struct PlayerTurnController {
         gameScene.enemyTurnDoneFlag = false
         gameScene.hero.moveDoneFlag = false
         gameScene.eqRobTurnCountingDone = false
+        done = false
         
         /* Remove action buttons */
         gameScene.buttonAttack.isHidden = true

@@ -21,5 +21,6 @@ struct ResetController {
         CannonTryController.numOfCheck = 0
         CannonController.willFireCannon.removeAll()
         VEEquivalentController.numOfCheck = 0
+        PlayerTurnController.done = false
     }
 }

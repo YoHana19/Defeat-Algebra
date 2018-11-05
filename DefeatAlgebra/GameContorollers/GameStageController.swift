@@ -86,7 +86,6 @@ struct GameStageController {
         dodgeRatio()
         timeBomb()
         stageLabel()
-        eqRob()
         cannon()
     }
     
@@ -136,19 +135,6 @@ struct GameStageController {
         }
     }
     
-    private static func eqRob() {
-        if GameScene.stageLevel < MainMenu.eqRobStartTurn {
-            gameScene.eqRob.isHidden = true
-        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn || GameScene.stageLevel == MainMenu.secondDayStartTurn+1 {
-            gameScene.eqRob.isHidden = true
-        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn {
-            gameScene.eqRob.isHidden = true
-        } else {
-            gameScene.eqRob.isHidden = false
-            EqRobTouchController.state = .Ready
-        }
-    }
-    
     private static func cannon() {
         if GameScene.stageLevel >= MainMenu.cannonStartTurn {
             setCannon(positions: [[0,9],[1,11],[2,9],[3,11],[4,9],[5,11],[6,9],[7,11],[8,9]])
@@ -166,7 +152,6 @@ struct GameStageController {
         madPos()
         soundForScenario()
         dodgeRatioForScenario()
-        eqRobForScenario()
         cannon()
         enemyNum()
         xLabel()
@@ -230,20 +215,6 @@ struct GameStageController {
     
     private static func dodgeRatioForScenario() {
         EnemyMoveController.dodgeRation = 0
-    }
-    private static func eqRobForScenario() {
-        if GameScene.stageLevel < MainMenu.eqRobStartTurn {
-            gameScene.eqRob.isHidden = true
-        } else if GameScene.stageLevel >= MainMenu.cannonStartTurn {
-            gameScene.eqRob.isHidden = true
-        } else {
-            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-                gameScene.eqRob.position = CGPoint(x: gameScene.eqRob.position.x-200, y: gameScene.eqRob.position.y)
-                gameScene.selectionPanel.againButton.isHidden = true
-            }
-            gameScene.eqRob.isHidden = false
-            EqRobTouchController.state = .Ready
-        }
     }
     
     private static func enemyNum() {

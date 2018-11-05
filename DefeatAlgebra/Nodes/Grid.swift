@@ -247,18 +247,33 @@ class Grid: SKSpriteNode {
                         let touch = touches.first!
                         let location = touch.location(in: self)
                         let nodeAtPoint = atPoint(location)
-                        guard let enemy = nodeAtPoint as? Enemy else { return }
-                        AllTouchController.enemyTouched(enemy: enemy)
-                        if gameScene.enemiesForVeScaleExplaining.contains(enemy) {
-                            gameScene.touchCountForVeScaleExplaining += 1
-                        }
-                        if gameScene.touchCountForVeScaleExplaining >= 3 {
-                            gameScene.removeTutorialForVeScale()
-                            gameScene.touchCountForVeScaleExplaining = 0
-                            gameScene.isVeScaleExplaining = false
-                            gameScene.isCharactersTurn = false
-                            self.isTutorial = false
-                            gameScene.enemiesForVeScaleExplaining.forEach({ $0.removePointing() })
+                        if nodeAtPoint.name == "shiled" {
+                            guard let enemy = nodeAtPoint.parent as? Enemy else { return }
+                            AllTouchController.enemyTouched(enemy: enemy)
+                            if gameScene.enemiesForVeScaleExplaining.contains(enemy) {
+                                gameScene.touchCountForVeScaleExplaining += 1
+                            }
+                            if gameScene.touchCountForVeScaleExplaining >= 3 {
+                                gameScene.removeTutorialForVeScale()
+                                gameScene.touchCountForVeScaleExplaining = 0
+                                gameScene.isVeScaleExplaining = false
+                                gameScene.isCharactersTurn = false
+                                self.isTutorial = false
+                                gameScene.enemiesForVeScaleExplaining.forEach({ $0.removePointing() })
+                            }
+                        } else if let enemy = nodeAtPoint as? Enemy {
+                            AllTouchController.enemyTouched(enemy: enemy)
+                            if gameScene.enemiesForVeScaleExplaining.contains(enemy) {
+                                gameScene.touchCountForVeScaleExplaining += 1
+                            }
+                            if gameScene.touchCountForVeScaleExplaining >= 3 {
+                                gameScene.removeTutorialForVeScale()
+                                gameScene.touchCountForVeScaleExplaining = 0
+                                gameScene.isVeScaleExplaining = false
+                                gameScene.isCharactersTurn = false
+                                self.isTutorial = false
+                                gameScene.enemiesForVeScaleExplaining.forEach({ $0.removePointing() })
+                            }
                         }
                     }
                     break;
@@ -285,6 +300,7 @@ class Grid: SKSpriteNode {
                 }
                 return
             }
+            print("dddddddddddddd")
         } else {
             /* Get gameScene */
             let gameScene = self.parent as! GameScene
@@ -304,18 +320,21 @@ class Grid: SKSpriteNode {
                 touchedGridPos = (gridX, gridY)
             }
             
+            print("cccccccccccccc")
             guard TutorialController.userTouch(on: nodeAtPoint.name) else { return }
             
+            print("bbbbbbbbbbbbbbb")
+            print(gameScene.playerTurnState)
             if nodeAtPoint.name == "cannon" || nodeAtPoint.name == "cannonVE" {
                 if let cannon = nodeAtPoint as? Cannon {
                     AllTouchController.cannonTouched(node: cannon)
                 } else if let cannon = nodeAtPoint.parent as? Cannon {
                     AllTouchController.cannonTouched(node: cannon)
                 }
-            
+            print("QQQQQQQQQQQQQQQQ")
             /* Touch point to move to */
             } else if gameScene.playerTurnState == .MoveState {
-                
+                print("****************")
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
                     /* Reset move area */
@@ -367,7 +386,7 @@ class Grid: SKSpriteNode {
                 
             /* Touch point to attack to */
             } else if gameScene.playerTurnState == .AttackState {
-                
+                print("LLLLLLLL")
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
                     AttackTouchController.activeAreaTouched(touchedPoint: location)
@@ -383,7 +402,7 @@ class Grid: SKSpriteNode {
                 
             /* Touch position to use item at */
             } else if gameScene.playerTurnState == .UsingItem {
-                
+                print("aaaaaaaaaaaaaaa")
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
                     
@@ -395,15 +414,23 @@ class Grid: SKSpriteNode {
                     if gameScene.itemType == .timeBomb {
                         ItemTouchController.AAForTimeBombTapped(gridX: gridX, gridY: gridY)
                     }
-                } else if nodeAtPoint.name == "enemy" {
-                    guard let enemy = nodeAtPoint as? Enemy else { return }
-                    /* Touch ends enemy for eqRob */
-                    if gameScene.itemType == .EqRob {
-                        ItemTouchController.enemyTapped(enemy: enemy)
-                    } else {
-                        AllTouchController.enemyTouched(enemy: enemy)
+                } else if nodeAtPoint.name == "enemy" || nodeAtPoint.name == "shield" {
+                    print("OHAIHHHHHHHHH")
+                    if let enemy = nodeAtPoint as? Enemy {
+                        /* Touch ends enemy for eqRob */
+                        if gameScene.itemType == .EqRob {
+                            ItemTouchController.enemyTapped(enemy: enemy)
+                        } else {
+                            AllTouchController.enemyTouched(enemy: enemy)
+                        }
+                    } else if let enemy = nodeAtPoint.parent as? Enemy {
+                        /* Touch ends enemy for eqRob */
+                        if gameScene.itemType == .EqRob {
+                            ItemTouchController.enemyTapped(enemy: enemy)
+                        } else {
+                            AllTouchController.enemyTouched(enemy: enemy)
+                        }
                     }
-                    
                 /* Touch ends on anywhere except active area or enemy */
                 } else {
                     ItemTouchController.othersTouched()

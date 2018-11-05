@@ -158,7 +158,7 @@ struct TutorialController {
         case MainMenu.eqRobStartTurn:
             switch currentIndex {
             case 0:
-                createMultiTutorialLabel(text: "2x+1と同じ文字式を持つ敵を選択し\n最後にエクロボをタッチして攻撃せよ！", posY: Int(scene.size.height/2+100))
+                createMultiTutorialLabel(text: "\(VEEquivalentController.gameScene.eqRob.variableExpressionString)と同じ文字式を持つ敵を選択し\n最後にエクロボをタッチして攻撃せよ！", posY: Int(scene.size.height/2+100))
                 state = .Waiting
                 break;
             default:
@@ -408,8 +408,7 @@ struct TutorialController {
             }
         case MainMenu.eqRobStartTurn:
             switch currentIndex {
-            case 0:
-                guard scene.isCharactersTurn else { return false }
+            case 1:
                 removeTutorialLabel()
                 currentIndex += 1
                 state = .Pending 

@@ -166,6 +166,44 @@ class GridActiveAreaController {
         
     }
     
+    public static func resetSquareArray(at column: Int, color: String, grid: Grid) {
+        switch color {
+        case "red":
+            /* Loop through rows */
+            for y in 0..<grid.rows {
+                grid.squareRedArray[column][y].isHidden = true
+                grid.squareRedArray[column][y].zPosition = zPosForRed
+            }
+            
+        case "blue":
+            /* Loop through rows */
+            for y in 0..<grid.rows {
+                grid.squareBlueArray[column][y].isHidden = true
+                grid.squareBlueArray[column][y].zPosition = zPos
+            }
+        case "purple":
+            /* Loop through rows */
+            for y in 0..<grid.rows {
+                grid.squarePurpleArray[column][y].isHidden = true
+                grid.squarePurpleArray[column][y].zPosition = zPos
+            }
+        case "yellow":
+            /* Loop through rows */
+            for y in 0..<grid.rows {
+                grid.squareYellowArray[column][y].isHidden = true
+                grid.squareYellowArray[column][y].zPosition = zPos
+            }
+        case "green":
+            /* Loop through rows */
+            for y in 0..<grid.rows {
+                grid.squareGreenArray[column][y].isHidden = true
+                grid.squareYellowArray[column][y].zPosition = zPos
+            }
+        default:
+            break;
+        }
+    }
+    
     /*== Move ==*/
     /* Show area where player can move */
     public static func showMoveArea(posX: Int, posY: Int, moveLevel: Int, grid: Grid) {
@@ -545,30 +583,35 @@ class GridActiveAreaController {
         switch color {
         case "red":
             for pos in poses {
+                guard pos.0 >= 0 && pos.0 <= 8 && pos.1 >= 0 && pos.1 <= 11 else { return }
                 grid.squareRedArray[pos.0][pos.1].isHidden = false
                 grid.squareRedArray[pos.0][pos.1].zPosition = zPosition
             }
             break;
         case "blue":
             for pos in poses {
+                guard pos.0 >= 0 && pos.0 <= 8 && pos.1 >= 0 && pos.1 <= 11 else { return }
                 grid.squareBlueArray[pos.0][pos.1].isHidden = false
                 grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
             }
             break;
         case "purple":
             for pos in poses {
+                guard pos.0 >= 0 && pos.0 <= 8 && pos.1 >= 0 && pos.1 <= 11 else { return }
                 grid.squarePurpleArray[pos.0][pos.1].isHidden = false
                 grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
             }
             break;
         case "yellow":
             for pos in poses {
+                guard pos.0 >= 0 && pos.0 <= 8 && pos.1 >= 0 && pos.1 <= 11 else { return }
                 grid.squareYellowArray[pos.0][pos.1].isHidden = false
                 grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
             }
             break;
         case "green":
             for pos in poses {
+                guard pos.0 >= 0 && pos.0 <= 8 && pos.1 >= 0 && pos.1 <= 11 else { return }
                 grid.squareGreenArray[pos.0][pos.1].isHidden = false
                 grid.squareBlueArray[pos.0][pos.1].zPosition = zPosition
             }

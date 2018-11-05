@@ -48,7 +48,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var pauseScreen: PauseScreen!
     var simplificationBoard: SimplificationBoard!
     var madScientistNode: SKSpriteNode!
-    var eqRob: EqRob!
+    var eqRob = EqRob()
     var inputPanel: InputPanel!
     var selectionPanel: SelectionPanel!
     var inputPanelForCannon: InputPanelForCannon!
@@ -167,6 +167,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timeBombConfirming = false
     /* eqROb */
     var eqRobTurnCountingDone = false
+    var againButton: SKSpriteNode!
     
     /*=================*/
     /*== Send Signal ==*/
@@ -211,7 +212,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         castleNode = childNode(withName: "castleNode") as! SKSpriteNode
         signalHolder = childNode(withName: "signalHolder") as! SKSpriteNode
         madScientistNode = childNode(withName: "madScientistNode") as! SKSpriteNode
-        eqRob = childNode(withName: "eqRob") as! EqRob
+        againButton = childNode(withName: "againButton") as! SKSpriteNode
+        againButton.isHidden = true
         SignalController.madPos = madScientistNode.absolutePos()
         buttonAttack = childNode(withName: "buttonAttack")
         buttonAttack.isHidden = true
@@ -229,7 +231,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(confirmBomb)
         
         EqRobController.gameScene = self
-        EqRobController.eqRobOriginPos = self.eqRob.absolutePos()
         CannonController.gameScene = self
         SignalController.gameScene = self
         MoveTouchController.gameScene = self
@@ -386,6 +387,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         life = 5
         setLife(numOflife: life)
         
+        setEqRob()
+        
         SignalSendingTurnController.done = false
         StageClearTurnController.done = false
         GameOverTurnController.done = false
@@ -534,7 +537,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             guard gameState == .PlayerTurn else { return }
             guard SpeakInGameController.userTouch(on: nodeAtPoint.name) else { return }
             
-            if nodeAtPoint.name == "eqRob" || nodeAtPoint.name == "eqRobCS" || nodeAtPoint.name == "eqRobRS" {
+            if nodeAtPoint.name == "eqRob" || nodeAtPoint.name == "eqVELabel" {
                 
                 AllTouchController.eqRobTouched()
                 
@@ -565,7 +568,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 /* Touch attack button */
                 if nodeAtPoint.name == "buttonAttack" {
                     ItemTouchController.buttonAttackTapped()
-                    
+                } else if nodeAtPoint.name == "againButton" {
+                    guard itemType == .EqRob else { return }
+                    EqRobController.back(1)
                 /* If player touch other place than item icons, back to MoveState */
                 } else {
                     ItemTouchController.othersTouched()
@@ -678,6 +683,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
             }
         }
+        
+        if (contactA.categoryBitMask == 1024 && contactB.categoryBitMask == 128) || (contactA.categoryBitMask == 128 && contactB.categoryBitMask == 1024) {
+                VEEquivalentController.puttingXValue = true
+        }
     }
     
     
@@ -748,59 +757,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(inputPanelForCannon)
     }
     
-    /* Check within grid for catapult */
-    func checkWithinGrid() -> (Int, Int, Int, Int) {
-        /* Calculate hit spots */
-        /* Make sure hit spots within grid */
-        if hero.positionX == 0 {
-            let hitSpotXLeft = 0
-            let hitSpotXRight = hero.positionX+1
-            if hero.positionY == 0 {
-                let hitSpotYDown = 0
-                let hitSpotYUp = hero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if hero.positionX == 8 {
-                let hitSpotYDown = hero.positionY-1
-                let hitSpotYUp = 11
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else {
-                let hitSpotYDown = hero.positionY-1
-                let hitSpotYUp = hero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            }
-        } else if hero.positionX == 8 {
-            let hitSpotXLeft = hero.positionX-1
-            let hitSpotXRight = 8
-            if hero.positionY == 0 {
-                let hitSpotYDown = 0
-                let hitSpotYUp = hero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if hero.positionX == 8 {
-                let hitSpotYDown = hero.positionY-1
-                let hitSpotYUp = 11
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else {
-                let hitSpotYDown = hero.positionY-1
-                let hitSpotYUp = hero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            }
-        } else {
-            let hitSpotXLeft = hero.positionX-1
-            let hitSpotXRight = hero.positionX+1
-            if hero.positionY == 0 {
-                let hitSpotYDown = 0
-                let hitSpotYUp = hero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else if hero.positionX == 8 {
-                let hitSpotYDown = hero.positionY-1
-                let hitSpotYUp = 11
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            } else {
-                let hitSpotYDown = hero.positionY-1
-                let hitSpotYUp = hero.positionY+1
-                return (hitSpotXLeft, hitSpotXRight, hitSpotYDown, hitSpotYUp)
-            }
-        }
+    func setEqRob() {
+        addChild(eqRob)
     }
     
     /*=====================*/
@@ -840,12 +798,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         label.position = CGPoint(x: self.size.width/2, y: posY)
         /* Add to Scene */
         self.addChild(label)
-    }
-    
-    func showPunchIntervalLabel(active: Bool) {
-        for enemy in gridNode.enemyArray {
-            enemy.punchIntervalLabel.isHidden = !active
-        }
     }
     
     // Pointing icon
@@ -1176,6 +1128,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         } else {
             return completion((cands, false))
+        }
+    }
+    
+    func resizeLongVeNeighbor() {
+        let longVeEnemies = gridNode.enemyArray.filter({ $0.variableExpressionString.count > 4 })
+        for enemy in longVeEnemies {
+            if enemy.positionX == 0 || enemy.positionX == 8 {
+                enemy.adjustLabelSize()
+                enemy.isLabelLargeSize = false
+            } else {
+                let temp = gridNode.enemyArray.filter({
+                    ($0.positionX == enemy.positionX && $0.positionY == enemy.positionY-1) || ($0.positionX == enemy.positionX && $0.positionY == enemy.positionY+1) || ($0.positionX == enemy.positionX-1 && $0.positionY == enemy.positionY) || ($0.positionX == enemy.positionX+1 && $0.positionY == enemy.positionY)
+                })
+                if temp.count > 0 {
+                    enemy.adjustLabelSize()
+                    enemy.isLabelLargeSize = false
+                }
+            }
         }
     }
     

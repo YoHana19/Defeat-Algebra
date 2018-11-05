@@ -52,11 +52,13 @@ struct ItemTouchController {
     }
     
     public static func enemyTapped(enemy: Enemy) {
-        if gameScene.itemType == .EqRob && EqRobTouchController.state == .Attack {
+        print("HOGE")
+        if gameScene.itemType == .EqRob && EqRobTouchController.state == .WillAttack {
             guard !enemy.isSelectedForEqRob else { return }
+            print("FUGA")
             SoundController.sound(scene: gameScene, sound: .ActionButton)
             enemy.isSelectedForEqRob = true
-            EqRobController.execute(2, enemy: enemy)
+            EqRobController.execute(1, enemy: enemy)
         }
     }
     
