@@ -17,7 +17,7 @@ class MainMenu: SKScene {
     public static let moveExplainStartTurn = 20
     public static let showUnsimplifiedStartTurn = 5
     public static let eqRobStartTurn = 6
-    public static let secondDayStartTurn = 10
+    public static let secondDayStartTurn = 8
     public static let cannonStartTurn = 14
     public static let invisibleStartTurn = 17
     public static let lastTurn = 19

@@ -92,6 +92,7 @@ class EqXSimulator: SKLabelNode {
         } else {
             self.text = "×\(value)"
         }
+        SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ItemGet)
         setBg()
         outPut()
     }

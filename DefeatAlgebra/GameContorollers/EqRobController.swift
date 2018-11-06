@@ -115,8 +115,7 @@ struct EqRobController {
     }
     
     public static func scan() {
-        gridFlash() {
-            print("HOEHOEHOHEOHE")
+        gridFlash() {   
             let cands = VECategory.vEsForEqRob(veCate: scannedVECategory)
             let rand = Int(arc4random_uniform(UInt32(cands.count)))
             gameScene.eqRob.variableExpressionString = cands[rand]
@@ -139,6 +138,7 @@ struct EqRobController {
         let wait = SKAction.wait(forDuration: TimeInterval(flashSpeed/4))
         let fadeOutColorlize = SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: TimeInterval(flashSpeed/4))
         let flash = SKAction.sequence([fadeInColorlize, wait, fadeOutColorlize, wait])
+        SoundController.sound(scene: gameScene, sound: .Flash)
         gameScene.gridNode.run(flash, completion: {
             return completion()
         })

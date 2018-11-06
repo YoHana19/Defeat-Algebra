@@ -80,7 +80,7 @@ class ScenarioTouchController {
                 ScenarioController.controllActions()
             }
         } else if ScenarioController.currentActionIndex == 11 {
-            ScenarioController.controllActions()
+            let _ = TutorialController.userTouch(on: "")
         } else if ScenarioController.currentActionIndex > 15 {
             guard TutorialController.userTouch(on: "") else { return }
         }

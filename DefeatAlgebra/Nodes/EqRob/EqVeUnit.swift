@@ -96,6 +96,7 @@ class EqVeUnit: SKLabelNode {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard isActive else { return }
         guard xSim == nil else { return }
+        SoundController.sound(scene: VEEquivalentController.gameScene, sound: .UtilButton)
         VEEquivalentController.activateVeSim()
         ScenarioFunction.eqRobSimulatorTutorialTrriger()
     }

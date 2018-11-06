@@ -1076,6 +1076,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         hero.position = CGPoint(x: xPos, y: yPos)
         hero.moveDoneFlag = false
         hero.aliveFlag = true
+        playerTurnState = .DisplayPhase
+        PlayerTurnController.done = false
     }
     
     func resetEnemyPos(enemy: Enemy, x: Int, y: Int, punchInterval: Int?) {

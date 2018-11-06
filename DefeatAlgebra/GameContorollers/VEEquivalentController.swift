@@ -145,7 +145,6 @@ struct VEEquivalentController {
         guard simOneSessionDone else { return }
         guard simState == .Second else { return }
         simOneSessionDone = false
-        print("nextSessoin()")
         let nextState = SignalState(rawValue: signalState.rawValue+1)
         if let ns = nextState {
             signalState = ns
@@ -190,6 +189,10 @@ struct VEEquivalentController {
         checkingEnemies.forEach({ $0.isHidden = true })
         dummyEnemies.forEach({ $0.lastMove {} })
         dummyEqRobs.forEach({ $0.lastMove {} })
+        let waitForSound = SKAction.wait(forDuration: 1.0)
+        gameScene.run(waitForSound, completion: {
+            SoundController.sound(scene: gameScene, sound: .ShowVe)
+        })
         lineState = .Conclution
         CharacterController.doctor.changeBalloonTexture(index: 0)
         ScenarioFunction.eqRobSimulatorTutorialTrriger(key: "last")
@@ -269,7 +272,6 @@ struct VEEquivalentController {
             simOneVeDone = true
             lineState = .EnemyResult
             EqRobSimLines.doctorSays(in: lineState, value: nil)
-            print("doneSim() first")
         } else {
             simTwoVeDone = true
             if let _ = gameScene as? ScenarioScene {
@@ -278,7 +280,6 @@ struct VEEquivalentController {
                 lineState = .EqRobResult
             }
             EqRobSimLines.doctorSays(in: lineState, value: nil)
-            print("doneSim() second")
         }
     }
     

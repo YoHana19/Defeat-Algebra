@@ -300,7 +300,6 @@ class Grid: SKSpriteNode {
                 }
                 return
             }
-            print("dddddddddddddd")
         } else {
             /* Get gameScene */
             let gameScene = self.parent as! GameScene
@@ -319,22 +318,16 @@ class Grid: SKSpriteNode {
                 let gridY = Int(Double(location.y) / cellHeight)
                 touchedGridPos = (gridX, gridY)
             }
-            
-            print("cccccccccccccc")
             guard TutorialController.userTouch(on: nodeAtPoint.name) else { return }
             
-            print("bbbbbbbbbbbbbbb")
-            print(gameScene.playerTurnState)
             if nodeAtPoint.name == "cannon" || nodeAtPoint.name == "cannonVE" {
                 if let cannon = nodeAtPoint as? Cannon {
                     AllTouchController.cannonTouched(node: cannon)
                 } else if let cannon = nodeAtPoint.parent as? Cannon {
                     AllTouchController.cannonTouched(node: cannon)
                 }
-            print("QQQQQQQQQQQQQQQQ")
             /* Touch point to move to */
             } else if gameScene.playerTurnState == .MoveState {
-                print("****************")
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
                     /* Reset move area */
@@ -379,21 +372,26 @@ class Grid: SKSpriteNode {
                     let seq = SKAction.sequence([wait, nextHero])
                     self.run(seq)
                 
-                } else if nodeAtPoint.name == "enemy" {
-                    guard let enemy = nodeAtPoint as? Enemy else { return }
-                    AllTouchController.enemyTouched(enemy: enemy)
+                } else if nodeAtPoint.name == "enemy" || nodeAtPoint.name == "shield" {
+                    if let enemy = nodeAtPoint as? Enemy {
+                        AllTouchController.enemyTouched(enemy: enemy)
+                    } else if let enemy = nodeAtPoint.parent as? Enemy {
+                        AllTouchController.enemyTouched(enemy: enemy)
+                    }
                 }
                 
             /* Touch point to attack to */
             } else if gameScene.playerTurnState == .AttackState {
-                print("LLLLLLLL")
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
                     AttackTouchController.activeAreaTouched(touchedPoint: location)
                     
-                } else if nodeAtPoint.name == "enemy" {
-                    guard let enemy = nodeAtPoint as? Enemy else { return }
-                    AllTouchController.enemyTouched(enemy: enemy)
+                } else if nodeAtPoint.name == "enemy" || nodeAtPoint.name == "shield" {
+                    if let enemy = nodeAtPoint as? Enemy {
+                        AllTouchController.enemyTouched(enemy: enemy)
+                    } else if let enemy = nodeAtPoint.parent as? Enemy {
+                        AllTouchController.enemyTouched(enemy: enemy)
+                    }
                     
                 /* If touch anywhere but activeArea, back to MoveState  */
                 } else {
@@ -402,7 +400,6 @@ class Grid: SKSpriteNode {
                 
             /* Touch position to use item at */
             } else if gameScene.playerTurnState == .UsingItem {
-                print("aaaaaaaaaaaaaaa")
                 /* Touch ends on active area */
                 if nodeAtPoint.name == "activeArea" {
                     
@@ -415,7 +412,6 @@ class Grid: SKSpriteNode {
                         ItemTouchController.AAForTimeBombTapped(gridX: gridX, gridY: gridY)
                     }
                 } else if nodeAtPoint.name == "enemy" || nodeAtPoint.name == "shield" {
-                    print("OHAIHHHHHHHHH")
                     if let enemy = nodeAtPoint as? Enemy {
                         /* Touch ends enemy for eqRob */
                         if gameScene.itemType == .EqRob {

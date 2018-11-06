@@ -30,6 +30,7 @@ class EnemyDeadController {
         } else {
             if !enemy.isAttackable {
                 SpeakInGameController.doAction(type: .EnemyGuard)
+                SoundController.sound(scene: gameScene, sound: .EqAttack)
             } else {
                 enemy.aliveFlag = false
                 /* Count defeated enemy */

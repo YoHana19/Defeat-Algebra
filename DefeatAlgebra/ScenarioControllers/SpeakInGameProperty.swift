@@ -45,7 +45,7 @@ struct SpeakInGameProperty {
     ]
     
     static let logDefenceFirstly: [[String]] = [
-        ["0", "町の防御システムは、一度作動すると壊れてしまうぞ"]
+        ["0", "町の防御システムは、近くまできた敵を弾き飛ばすぞ"]
     ]
     
 }

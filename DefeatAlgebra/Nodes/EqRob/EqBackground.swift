@@ -92,7 +92,6 @@ class EqBackground: SKSpriteNode {
                 return
             case .Action:
                 if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
-                    print("HAHAHAHAHAHAAH")
                     guard ScenarioTouchController.eqRobSimulatorTutorialTouch() else { return }
                 }
                 break;

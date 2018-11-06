@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 enum Sfx {
-    case ActionButton, HeroMove, ButtonMove, ButtonBack, ItemGet, CastleHit, CharaLine, EnemyKilled, CannonBomb, SwordSound, TimeBombExplosion, SignalGot, UtilButton, GameOver, ShowVe, ShowMad, LogDefence, TimeBombAA, BombOk, Input, EqAttack, EqSelected
+    case ActionButton, HeroMove, ButtonMove, ButtonBack, ItemGet, CastleHit, CharaLine, EnemyKilled, CannonBomb, SwordSound, TimeBombExplosion, SignalGot, UtilButton, GameOver, ShowVe, ShowMad, LogDefence, TimeBombAA, BombOk, Input, EqAttack, EqSelected, Flash
 }
 
 class SoundController {
@@ -97,6 +97,8 @@ class SoundController {
             return "eqAttack.mp3"
         case .EqSelected:
             return "eqSelected.mp3"
+        case .Flash:
+            return "flash.wav"
         }
     }
 }

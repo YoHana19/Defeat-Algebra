@@ -129,7 +129,7 @@ struct ScenarioController {
     
     static func controllActions() {
 //        print(scenarioScene.tutorialState)
-        print("currentActionIndex: \(currentActionIndex)")
+//        print("currentActionIndex: \(currentActionIndex)")
 //        print("currentLineIndex: \(currentLineIndex)")
         switch GameScene.stageLevel {
         case 0:
@@ -310,6 +310,7 @@ struct ScenarioController {
         case 12:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.showX()
+            SoundController.sound(scene: scenarioScene, sound: .ShowVe)
             wait(length: 1.0) {
                 scenarioScene.tutorialState = .Converstaion
                 nextLine()
@@ -904,14 +905,15 @@ struct ScenarioController {
             break;
         case 23:
             guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.buttonAttack.isHidden = true
+            scenarioScene.playerTurnState = .UsingItem
+            scenarioScene.itemType = .EqRob
             scenarioScene.isCharactersTurn = false
             scenarioScene.gridNode.isTutorial = false
             TutorialController.currentIndex = 0
             TutorialController.state = .Show
             TutorialController.execute()
             GridActiveAreaController.resetSquareArray(color: "blue", grid: scenarioScene.gridNode)
-            scenarioScene.playerTurnState = .UsingItem
-            scenarioScene.itemType = .EqRob
             EqRobController.execute(0, enemy: nil)
             currentActionIndex = 21
             break;
@@ -925,29 +927,6 @@ struct ScenarioController {
             break;
         case 25: // clear
             guard scenarioScene.isCharactersTurn else { return }
-            DAUserDefaultUtility.doneFirstly(name: "eqRobExplain")
-            loadGameScene()
-            break;
-        case 29: // miss
-            guard scenarioScene.isCharactersTurn else { return }
-            if EqRobController.gameScene.eqRob.state == .Dead {
-                EqRobTutorialController.makeInsturctionForKilled()
-                EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForDestroyedInstruction())
-            } else {
-                EqRobTutorialController.makeInsturctionForMiss()
-                EqRobController.doctorSays(in: .MissEnemiesInstruction, value: EqRobLines.subLinesForMissEnemiesInstruction())
-            }
-            scenarioScene.tutorialState = .Action
-            currentActionIndex += 1
-            break;
-        case 30:
-            VEEquivalentController.hideEqGrid()
-            scenarioScene.tutorialState = .Converstaion
-            nextLine()
-            break;
-        case 31:
-            guard scenarioScene.isCharactersTurn else { return }
-            EqRobController.gameScene.eqRob.state = .Ready
             DAUserDefaultUtility.doneFirstly(name: "eqRobExplain")
             loadGameScene()
             break;
@@ -1066,7 +1045,7 @@ struct ScenarioController {
             break;
         case 13:
             guard !scenarioScene.isCharactersTurn else { return }
-            print(scenarioScene.gridNode.enemyArray[0].valueOfEnemy)
+//            print(scenarioScene.gridNode.enemyArray[0].valueOfEnemy)
             scenarioScene.gridNode.enemyArray[0].calculatePunchLength(value: scenarioScene.xValue)
             scenarioScene.gridNode.enemyArray[0].turnDoneFlag = false
             scenarioScene.gridNode.enemyArray[0].myTurnFlag = true

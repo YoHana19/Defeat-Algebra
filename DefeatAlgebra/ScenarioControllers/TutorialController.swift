@@ -228,10 +228,9 @@ struct TutorialController {
                 return false
             case 1:
                 guard name == "buttonAttack" else { return false }
+                scene.playerTurnState = .UsingItem
                 removeTutorialLabel()
-                if let scenarioScene = scene as? ScenarioScene {
-                    scenarioScene.removePointing()
-                }
+                scene.removePointing()
                 currentIndex += 1
                 state = .Show
                 return true
@@ -343,9 +342,8 @@ struct TutorialController {
                 execute()
                 return true
             case 2:
-                guard scene.isCharactersTurn else { return false }
+                guard scene.isCharactersTurn else { return false }                
                 removeTutorialLabel()
-                currentIndex += 1
                 state = .Show
                 ScenarioController.controllActions()
                 currentIndex = 0
