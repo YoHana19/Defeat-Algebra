@@ -33,42 +33,6 @@ struct SpeakInGameController {
                 return
             }
             break;
-        case MainMenu.moveExplainStartTurn:
-            if gameScene.gameState == .AddItem && gameScene.countTurn == 4 {
-                guard lastAction != .PlaneExplain else { return }
-                wait(length: 1.0) {
-                    doAction(type: .PlaneExplain)
-                }
-                return
-            }
-            break;
-        case MainMenu.secondDayStartTurn:
-            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
-                guard lastAction != .SecondDay else { return }
-                wait(length: 1.0) {
-                    doAction(type: .SecondDay)
-                }
-                return
-            }
-            break;
-        case MainMenu.secondDayStartTurn+2:
-            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
-                guard lastAction != .EqRobReturn else { return }
-                wait(length: 1.0) {
-                    doAction(type: .EqRobReturn)
-                }
-                return
-            }
-            break;
-//        case MainMenu.lastTurn:
-//            if gameScene.gameState == .AddItem && gameScene.countTurn == 0 {
-//                guard lastAction != .EqRobReturn else { return }
-//                wait(length: 1.0) {
-//                    doAction(type: .EqRobReturn)
-//                }
-//                return
-//            }
-//            break;
         default:
             break;
         }

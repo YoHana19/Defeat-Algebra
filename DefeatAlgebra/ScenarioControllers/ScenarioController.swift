@@ -730,7 +730,7 @@ struct ScenarioController {
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.setHero()
             scenarioScene.tutorialState = .Action
-            scenarioScene.enemyEnter([(2, 8, "2x+1", 2), (6, 8, "x+1+x", 1), (2, 10, "1+3x-x", 0), (6, 10, "3x", 1)]) {
+            scenarioScene.enemyEnter([(2, 8, "2x+1", 2), (6, 8, "x+x+1", 1), (2, 10, "1+3x-x", 0), (6, 10, "3x", 1)]) {
                 nextLine()
                 wait(length: 2.0) {
                     scenarioScene.tutorialState = .Converstaion

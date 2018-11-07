@@ -213,12 +213,12 @@ class EqVESimulator: SKLabelNode {
     func setXMlpNum(num: Int, isPositive: Bool, isFirst: Bool, completion: @escaping () -> Void) {
         var eqUnit = EqVeUnit(text: "", withX: true, isFront: true, isPositive: isPositive, value: 0, isMultiplied: false, isFirst: isFirst)
         if isFirst {
-            eqUnit = EqVeUnit(text: "×\(num)", withX: true, isFront: true, isPositive: true, value: num, isMultiplied: true, isFirst: isFirst)
+            eqUnit = EqVeUnit(text: "×\(num)", withX: true, isFront: false, isPositive: true, value: num, isMultiplied: true, isFirst: true)
         } else {
             if isPositive {
-                eqUnit = EqVeUnit(text: "×\(num)", withX: true, isFront: false, isPositive: true, value: num, isMultiplied: true, isFirst: isFirst)
+                eqUnit = EqVeUnit(text: "×\(num)", withX: true, isFront: false, isPositive: true, value: num, isMultiplied: true, isFirst: false)
             } else {
-                eqUnit = EqVeUnit(text: "×\(num)", withX: true, isFront: false, isPositive: false, value: num, isMultiplied: true, isFirst: isFirst)
+                eqUnit = EqVeUnit(text: "×\(num)", withX: true, isFront: false, isPositive: false, value: num, isMultiplied: true, isFirst: false)
             }
         }
         addChild(eqUnit)
@@ -311,7 +311,11 @@ class EqVESimulator: SKLabelNode {
     
     func getPosition(i: Int, completion: @escaping (CGPoint) -> Void) {
         if i == 0 {
-            return completion(CGPoint(x: 0, y: self.position.y))
+            var xPos: CGFloat = 0
+            if let xSim = veUnit[0].xSim, !veUnit[0].isFront {
+                xPos = xSim.frame.width + veUnit[0].gap
+            }
+            return completion(CGPoint(x: xPos, y: self.position.y))
         } else {
             var width: CGFloat = CGFloat(i)*gap
             let dispatchGroup = DispatchGroup()

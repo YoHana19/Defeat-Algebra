@@ -18,9 +18,9 @@ class MainMenu: SKScene {
     public static let showUnsimplifiedStartTurn = 5
     public static let eqRobStartTurn = 6
     public static let secondDayStartTurn = 8
-    public static let cannonStartTurn = 14
-    public static let invisibleStartTurn = 17
-    public static let lastTurn = 19
+    public static let cannonStartTurn = 9
+    public static let invisibleStartTurn = 12
+    public static let lastTurn = 14
     
     /* UI Connections */
     var buttonNewGame: MSButtonNode!

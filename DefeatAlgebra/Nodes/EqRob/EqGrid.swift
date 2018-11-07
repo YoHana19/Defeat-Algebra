@@ -12,12 +12,14 @@ import SpriteKit
 class EqGrid: Grid {
     
     public var demoCalcLabel = SKLabelNode(fontNamed: DAFont.fontName)
+    private var conclusionLabel = SKLabelNode(fontNamed: DAFont.fontNameForTutorial)
     
     /* You are required to implement this for your subclass to work */
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         isUserInteractionEnabled = true
         setEqRobDemoCalcLabel()
+        setConclusionLabel()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -63,6 +65,49 @@ class EqGrid: Grid {
                 CannonController.hideInputPanelInTrying()
             }
         }
+    }
+    
+    
+    private func setConclusionLabel() {
+        /* Set label with font */
+        conclusionLabel = SKLabelNode(fontNamed: DAFont.fontNameForTutorial)
+        conclusionLabel.fontSize = 100
+        conclusionLabel.fontColor = UIColor.white
+        conclusionLabel.horizontalAlignmentMode = .center
+        conclusionLabel.verticalAlignmentMode = .center
+        conclusionLabel.position = CGPoint(x: self.frame.width/2, y: self.frame.height/2-60)
+        conclusionLabel.zPosition = 140
+        conclusionLabel.isHidden = true
+        conclusionLabel.text = "同じ文字式"
+        addChild(conclusionLabel)
+        let veBG = SKShapeNode(rectOf: CGSize(width:  537, height: 156))
+        veBG.fillColor = UIColor.red
+        veBG.strokeColor = UIColor.clear
+        veBG.zPosition = -1
+        veBG.position = CGPoint(x: 0, y: 0)
+        conclusionLabel.addChild(veBG)
+    }
+    
+    public func showConclusionLabel() -> Bool {
+        guard conclusionLabel.isHidden else { return true }
+        conclusionLabel.isHidden = false
+        if EqRobTouchController.state == .AliveInstruction
+        {
+            SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonMove)
+            conclusionLabel.text = "同じ文字式"
+        } else if EqRobTouchController.state == .DeadInstruction {
+            SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonBack)
+            conclusionLabel.text = "違う文字式"
+        } else if let _ = VEEquivalentController.gameScene as? ScenarioScene {
+            SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonMove)
+            conclusionLabel.text = "同じ文字式"
+        }
+        return false
+    }
+    
+    public func hideConclusionLabel() {
+        conclusionLabel.isHidden = true
+        conclusionLabel.text = ""
     }
     
     public func createLabel(text: String, posX: Int, posY: Int, redLetterPos: [Int], greenLetterPos: [Int]) {

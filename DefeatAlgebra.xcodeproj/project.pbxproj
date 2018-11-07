@@ -83,14 +83,6 @@
 		203E6D97218F0E92006D4D13 /* EqVeUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6D95218F0E92006D4D13 /* EqVeUnit.swift */; };
 		203E6D9921901CDC006D4D13 /* DummyEqRob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6D9821901CDC006D4D13 /* DummyEqRob.swift */; };
 		203E6D9A21901CDC006D4D13 /* DummyEqRob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6D9821901CDC006D4D13 /* DummyEqRob.swift */; };
-		203E6DA02190A588006D4D13 /* EqBackgroundTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6D9F2190A588006D4D13 /* EqBackgroundTutorial.swift */; };
-		203E6DA12190A588006D4D13 /* EqBackgroundTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6D9F2190A588006D4D13 /* EqBackgroundTutorial.swift */; };
-		203E6DA52190A66A006D4D13 /* EqXSimulatorTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6DA22190A669006D4D13 /* EqXSimulatorTutorial.swift */; };
-		203E6DA62190A66A006D4D13 /* EqXSimulatorTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6DA22190A669006D4D13 /* EqXSimulatorTutorial.swift */; };
-		203E6DA72190A66A006D4D13 /* EqVeUnitTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6DA32190A66A006D4D13 /* EqVeUnitTutorial.swift */; };
-		203E6DA82190A66A006D4D13 /* EqVeUnitTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6DA32190A66A006D4D13 /* EqVeUnitTutorial.swift */; };
-		203E6DA92190A66A006D4D13 /* EqVESimulatorTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6DA42190A66A006D4D13 /* EqVESimulatorTutorial.swift */; };
-		203E6DAA2190A66A006D4D13 /* EqVESimulatorTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E6DA42190A66A006D4D13 /* EqVESimulatorTutorial.swift */; };
 		203FB9222159F32300BD3A14 /* EqRobTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */; };
 		203FB9232159F32300BD3A14 /* EqRobTutorialController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */; };
 		20415188215CA75500595003 /* VeLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20415187215CA75500595003 /* VeLength.swift */; };
@@ -432,10 +424,6 @@
 		203E6D92218F0978006D4D13 /* EqXSimulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqXSimulator.swift; sourceTree = "<group>"; };
 		203E6D95218F0E92006D4D13 /* EqVeUnit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqVeUnit.swift; sourceTree = "<group>"; };
 		203E6D9821901CDC006D4D13 /* DummyEqRob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyEqRob.swift; sourceTree = "<group>"; };
-		203E6D9F2190A588006D4D13 /* EqBackgroundTutorial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqBackgroundTutorial.swift; sourceTree = "<group>"; };
-		203E6DA22190A669006D4D13 /* EqXSimulatorTutorial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EqXSimulatorTutorial.swift; sourceTree = "<group>"; };
-		203E6DA32190A66A006D4D13 /* EqVeUnitTutorial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EqVeUnitTutorial.swift; sourceTree = "<group>"; };
-		203E6DA42190A66A006D4D13 /* EqVESimulatorTutorial.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EqVESimulatorTutorial.swift; sourceTree = "<group>"; };
 		203FB9212159F32300BD3A14 /* EqRobTutorialController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobTutorialController.swift; sourceTree = "<group>"; };
 		20415187215CA75500595003 /* VeLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VeLength.swift; sourceTree = "<group>"; };
 		2041518A215CBABD00595003 /* LengthArrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthArrow.swift; sourceTree = "<group>"; };
@@ -613,7 +601,6 @@
 		2011378D2120009E00B5A138 /* ScenarioControllers */ = {
 			isa = PBXGroup;
 			children = (
-				203E6D9B2190A500006D4D13 /* EqRobTutorial */,
 				203E6D8C218D9808006D4D13 /* ScenarioFunction.swift */,
 				20113794212001A400B5A138 /* ScenarioScene.sks */,
 				20113797212001AC00B5A138 /* ScenarioScene.swift */,
@@ -717,17 +704,6 @@
 				2043C4102185ADD6007B3F8F /* PasswordScreen.swift */,
 			);
 			path = MainMenu;
-			sourceTree = "<group>";
-		};
-		203E6D9B2190A500006D4D13 /* EqRobTutorial */ = {
-			isa = PBXGroup;
-			children = (
-				203E6D9F2190A588006D4D13 /* EqBackgroundTutorial.swift */,
-				203E6DA42190A66A006D4D13 /* EqVESimulatorTutorial.swift */,
-				203E6DA32190A66A006D4D13 /* EqVeUnitTutorial.swift */,
-				203E6DA22190A669006D4D13 /* EqXSimulatorTutorial.swift */,
-			);
-			path = EqRobTutorial;
 			sourceTree = "<group>";
 		};
 		204163A120C2651F00217F6A /* Grid */ = {
@@ -1569,7 +1545,6 @@
 				20D0FEE620B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3720B6C12300C547A5 /* Wall.swift in Sources */,
 				207A673C20D69DED0026A770 /* BalloonController.swift in Sources */,
-				203E6DA52190A66A006D4D13 /* EqXSimulatorTutorial.swift in Sources */,
 				2058CA8B20F88726005DF357 /* SKNode+Utility.swift in Sources */,
 				208C5D57202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				204CD70F215B92DF006E8B1F /* CannonTutorialController.swift in Sources */,
@@ -1584,10 +1559,8 @@
 				2052888620FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
 				203E6D9921901CDC006D4D13 /* DummyEqRob.swift in Sources */,
 				20FD5F5F2160E57600A6604B /* DAFont.swift in Sources */,
-				203E6DA72190A66A006D4D13 /* EqVeUnitTutorial.swift in Sources */,
 				20D0FF1F20B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1B20B6C12300C547A5 /* Enemy.swift in Sources */,
-				203E6DA02190A588006D4D13 /* EqBackgroundTutorial.swift in Sources */,
 				2049217A21873F1300989180 /* SoundController.swift in Sources */,
 				2041518B215CBABD00595003 /* LengthArrow.swift in Sources */,
 				20DACE8E21298F070015D1BA /* TutorialController.swift in Sources */,
@@ -1627,7 +1600,6 @@
 				20D0FF2120B6C12300C547A5 /* Grid.swift in Sources */,
 				203B2A791F67BBD200DDCC03 /* MainMenu.swift in Sources */,
 				2099C7252169BA0B00540B3C /* EnemyEqDemo.swift in Sources */,
-				203E6DA92190A66A006D4D13 /* EqVESimulatorTutorial.swift in Sources */,
 				203B2A731F67BBD100DDCC03 /* ConfirmScreen.swift in Sources */,
 				20D0FF2F20B6C12300C547A5 /* Teleport.swift in Sources */,
 				2052888920FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,
@@ -1697,7 +1669,6 @@
 				20D0FF2E20B6C12300C547A5 /* Cane.swift in Sources */,
 				20D0FEE720B6C11100C547A5 /* EnemyAddController.swift in Sources */,
 				20D0FF3820B6C12300C547A5 /* Wall.swift in Sources */,
-				203E6DA62190A66A006D4D13 /* EqXSimulatorTutorial.swift in Sources */,
 				207A673D20D69DED0026A770 /* BalloonController.swift in Sources */,
 				2058CA8C20F88726005DF357 /* SKNode+Utility.swift in Sources */,
 				204CD710215B92DF006E8B1F /* CannonTutorialController.swift in Sources */,
@@ -1712,10 +1683,8 @@
 				2052888720FC603800B011D2 /* SKLabelNode+MultiLines.swift in Sources */,
 				203E6D9A21901CDC006D4D13 /* DummyEqRob.swift in Sources */,
 				20FD5F602160E57600A6604B /* DAFont.swift in Sources */,
-				203E6DA82190A66A006D4D13 /* EqVeUnitTutorial.swift in Sources */,
 				20D0FF2020B6C12300C547A5 /* PauseScreen.swift in Sources */,
 				20D0FF1C20B6C12300C547A5 /* Enemy.swift in Sources */,
-				203E6DA12190A588006D4D13 /* EqBackgroundTutorial.swift in Sources */,
 				2049217B21873F1300989180 /* SoundController.swift in Sources */,
 				2041518C215CBABD00595003 /* LengthArrow.swift in Sources */,
 				20DACE8F21298F070015D1BA /* TutorialController.swift in Sources */,
@@ -1755,7 +1724,6 @@
 				20D0FF2220B6C12300C547A5 /* Grid.swift in Sources */,
 				20E9E8B420223B1400D31410 /* MainMenu.swift in Sources */,
 				2099C7262169BA0B00540B3C /* EnemyEqDemo.swift in Sources */,
-				203E6DAA2190A66A006D4D13 /* EqVESimulatorTutorial.swift in Sources */,
 				20E9E8B620223B1400D31410 /* ConfirmScreen.swift in Sources */,
 				20D0FF3020B6C12300C547A5 /* Teleport.swift in Sources */,
 				2052888A20FC6EF100B011D2 /* String+DAMultiLines.swift in Sources */,

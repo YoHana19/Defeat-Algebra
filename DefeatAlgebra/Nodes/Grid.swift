@@ -247,7 +247,7 @@ class Grid: SKSpriteNode {
                         let touch = touches.first!
                         let location = touch.location(in: self)
                         let nodeAtPoint = atPoint(location)
-                        if nodeAtPoint.name == "shiled" {
+                        if nodeAtPoint.name == "shield" {
                             guard let enemy = nodeAtPoint.parent as? Enemy else { return }
                             AllTouchController.enemyTouched(enemy: enemy)
                             if gameScene.enemiesForVeScaleExplaining.contains(enemy) {

@@ -15,7 +15,7 @@ struct EqRobController {
     public static var eqRobCenterPos = CGPoint(x: 375, y: 246.5)
     public static var scannedVECategory = 0
     private static var lines = [SKShapeNode]()
-    private static var isPerfect = false
+    public static var isPerfect = false
     public static var selectedEnemies = [Enemy]()
     public static var sameVeEnemies = [Enemy]()
     private static var selectedEnemyIndex: Int = 0
@@ -115,15 +115,19 @@ struct EqRobController {
     }
     
     public static func scan() {
-        gridFlash() {   
-            let cands = VECategory.vEsForEqRob(veCate: scannedVECategory)
+        gridFlash() {
+            var cands = [String]()
+            if GameScene.stageLevel < MainMenu.secondDayStartTurn {
+                cands = VECategory.originVEsForEqRob(veCate: scannedVECategory)
+            } else {
+                cands = VECategory.unSVEsForEqRob(veCate: scannedVECategory)
+            }
             let rand = Int(arc4random_uniform(UInt32(cands.count)))
             gameScene.eqRob.variableExpressionString = cands[rand]
             gameScene.eqRob.veCategory = scannedVECategory
             gameScene.eqRob.showVELabel()
             doctorSays(in: .ScanDone, value: cands[rand])
-            EqRobTouchController.state = .WillAttack
-            let wait = SKAction.wait(forDuration: 3.0)
+            let wait = SKAction.wait(forDuration: 2.0)
             gameScene.run(wait, completion: {
                 startSelect(ve: cands[rand])
                 gameScene.againButton.isHidden = false
@@ -145,6 +149,7 @@ struct EqRobController {
     }
     
     private static func startSelect(ve: String) {
+        EqRobTouchController.state = .WillAttack
         doctorSays(in: .WillSelectEnemies, value: ve)
         ScenarioFunction.eqRobSimulatorTutorialTrriger()
     }
@@ -177,7 +182,6 @@ struct EqRobController {
         eqRobAttackFirst(selectedEnemies[0])
         gameScene.againButton.isHidden = true
         gameScene.gridNode.enemyArray.forEach({ $0.variableExpressionLabel.fontSize = $0.veLabelSize })
-        gameScene.selectionPanel.againButton.isHidden = true
         let difEnemies = selectedEnemies.filter { $0.vECategory != gameScene.eqRob.veCategory }
         sameVeEnemies = gameScene.gridNode.enemyArray.filter { $0.vECategory == gameScene.eqRob.veCategory }
         if difEnemies.count > 0 {
@@ -383,6 +387,9 @@ struct EqRobController {
                 doctorSays(in: .MissEnemiesInstructionDone, value: EqRobLines.subLinesForMissEnemiesInstructionDone())
                 break;
             case 2:
+                doctorSays(in: .MissEnemiesInstructionDone, value: EqRobLines.subLinesForMissEnemiesInstructionDone())
+                break;
+            case 3:
                 EqRobLines.curIndex = 0
                 back(3)
                 break;
@@ -401,7 +408,6 @@ struct EqRobController {
         lines = [SKShapeNode]()
         EqRobTouchController.state = .Ready
         isPerfect = false
-        gameScene.selectionPanel.againButton.isHidden = false
     }
     
     private static func resetSelectedEnemy() {
@@ -570,9 +576,9 @@ struct EqRobLines {
         case .ScanDone:
             return "\(value!)と\n同じ文字式を持つ敵が多いようじゃ！"
         case .WillSelectEnemies:
-            return value! + "と同じ文字式を持つ敵を選ぶのじゃ！"
+            return value! + "と同じ文字式を持つ敵を全て選ぶのじゃ！"
         case .SelectingEnemies:
-            return subLineRandom(lines: subLinesForSelecting)
+            return subLineOrder(lines: subLinesForSelecting)
         case .WarnSelection:
             return "すまぬ!\n8体までしか選択できんのじゃ"
         case .EqRobGo:
@@ -604,10 +610,11 @@ struct EqRobLines {
     
     static var selectedLine = ""
     static let subLinesForSelecting: [String] = [
-        "エクロボをタッチすれば、選択した敵たちに向かって発進するぞ",
-        "やり直したい時は、下のやり直しボタンを押すのじゃ",
-        "わからなければ、xに数を入れて計算してみるのじゃ",
-        "xにどんな数が入っても計算結果が同じものは同じ暗号じゃ"
+        "同じ文字式の敵を全て選べないと攻撃が失敗してしまうぞ",
+        "取りこぼしが一体でもあると攻撃が失敗してしまうぞ",
+        "違う文字式を選んでしまうと攻撃が失敗してしまうぞ",
+        "xにどんな数が入っても計算結果が同じになる文字式を選ぶのじゃ",
+        "エクロボをタッチすれば、選択した敵たちに向かって発進するぞ"
     ]
     
     static var curIndex = 0
@@ -632,7 +639,7 @@ struct EqRobLines {
             return "xの数によって文字式の計算結果が違うことがわかったかな"
         case 1:
             curIndex += 1
-            return "次は、間違えないように気をつけるんじゃぞ"
+            return "次は、エクロボがスキャンした文字式と同じ文字式だけを選ぶのじゃ！"
         default:
             return ""
         }
@@ -658,7 +665,10 @@ struct EqRobLines {
             return "xがどんな数でも文字式の計算結果が同じになることがわかったかな"
         case 1:
             curIndex += 1
-            return "次は、パーフェクトを目指すのじゃ！"
+            return "次は、エクロボの文字式と同じ文字式の敵を全て選んで"
+        case 2:
+            curIndex += 1
+            return "パーフェクトを目指すのじゃ！"
         default:
             return ""
         }
@@ -670,7 +680,7 @@ struct EqRobLines {
                 selectedLine = lines[index+1]
                 return selectedLine
             } else {
-                selectedLine = ""
+                selectedLine = lines[0]
                 return selectedLine
             }
         } else {

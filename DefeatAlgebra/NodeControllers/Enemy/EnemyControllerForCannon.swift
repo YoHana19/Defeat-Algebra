@@ -19,18 +19,20 @@ extension Enemy {
     }
     
     public func punchAndMoveForCannon(completion: @escaping () -> Void) {
-        /* Do punch */
-        punch() { armAndFist in
-            self.subSetArm(arms: armAndFist.arm) { (newArms) in
-                for arm in armAndFist.arm {
-                    arm.removeFromParent()
-                }
-                self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
-                    /* Keep track enemy position */
-                    self.cannonPosY -= self.valueOfEnemy
-                    self.removeArmNFist()
-                    self.setMovingAnimation()
-                    return completion()
+        resolveShield {
+            /* Do punch */
+            self.punch() { armAndFist in
+                self.subSetArm(arms: armAndFist.arm) { (newArms) in
+                    for arm in armAndFist.arm {
+                        arm.removeFromParent()
+                    }
+                    self.drawPunchNMove(arms: newArms, fists: armAndFist.fist, num: self.valueOfEnemy) {
+                        /* Keep track enemy position */
+                        self.cannonPosY -= self.valueOfEnemy
+                        self.removeArmNFist()
+                        self.setMovingAnimation()
+                        return completion()
+                    }
                 }
             }
         }

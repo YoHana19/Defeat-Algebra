@@ -82,6 +82,7 @@ struct CannonTryController {
         checkingEnemy.cannonPosY = checkingEnemy.positionY
         checkingEnemy.xValueLabel.text = ""
         checkingEnemy.variableExpressionLabel.color = UIColor.white
+        checkingEnemy.defend()
         checkingEnemy.position = pos
     }
     

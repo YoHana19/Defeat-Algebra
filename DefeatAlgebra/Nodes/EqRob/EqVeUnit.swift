@@ -13,6 +13,7 @@ import SpriteKitEasingSwift
 class EqVeUnit: SKLabelNode {
     
     var xSim: EqXSimulator?
+    var isFront = true
     var label2: SKLabelNode?
     var totalWidth: CGFloat = 0
     var gap: CGFloat = 5
@@ -53,8 +54,9 @@ class EqVeUnit: SKLabelNode {
         self.verticalAlignmentMode = .center
         self.horizontalAlignmentMode = .left
         self.totalWidth = self.frame.width
+        self.isFront = isFront
         if withX {
-            setXSim(isFront: isFront, isPositive: isPositive, keisu: value, isMultiplied: isMultiplied)
+            setXSim(isFront: isFront, isPositive: isPositive, keisu: value, isMultiplied: isMultiplied, isFirst: isFirst)
             if isPositive {
                 if value == 1 {
                     if isFirst {
@@ -101,8 +103,8 @@ class EqVeUnit: SKLabelNode {
         ScenarioFunction.eqRobSimulatorTutorialTrriger()
     }
     
-    func setXSim(isFront: Bool, isPositive: Bool, keisu: Int, isMultiplied: Bool) {
-        if isMultiplied && !isFront {
+    func setXSim(isFront: Bool, isPositive: Bool, keisu: Int, isMultiplied: Bool, isFirst: Bool) {
+        if isMultiplied && !isFirst {
             xSim = EqXSimulator(isPositive: isPositive, keisu: keisu, isMultiplied: isMultiplied)
             label2 = SKLabelNode(fontNamed: DAFont.fontName)
             label2?.verticalAlignmentMode = .center
@@ -127,7 +129,7 @@ class EqVeUnit: SKLabelNode {
                 //print("\(text): IS IT Fine Right?")
             } else {
                 xSim!.position = CGPoint(x: -(xSim!.frame.width+gap), y: 0)
-                self.position = CGPoint(x: self.position.x+(xSim!.frame.width+gap), y: self.position.y)
+//                self.position = CGPoint(x: self.position.x+(xSim!.frame.width+gap), y: self.position.y)
                 //print("\(text): Any Problem?")
             }
             addChild(xSim!)

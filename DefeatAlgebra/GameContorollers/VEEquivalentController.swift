@@ -165,6 +165,7 @@ struct VEEquivalentController {
     
     public static func doneSimulation() {
         guard allDone else { return }
+        guard gameScene.eqGrid.showConclusionLabel() else { return }
         allDone = false
         if let _ = gameScene as? ScenarioScene {
             ScenarioController.controllActions()
@@ -429,6 +430,7 @@ struct VEEquivalentController {
         gameScene.hero.setPhysics(isActive: true)
         GridActiveAreaController.resetSquareArray(color: "yellow", grid: gameScene.eqGrid)
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.eqGrid)
+        gameScene.eqGrid.hideConclusionLabel()
         gameScene.eqGrid.isHidden = false
         gameScene.eqGrid.zPosition = -1
         gameScene.eqGrid.demoCalcLabel.isHidden = true
@@ -530,15 +532,15 @@ struct EqRobSimLines {
         case .TouchNum:
             return "数字をタッチするのじゃ"
         case .EnemyResult:
-            return "このロボットの文字式は\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
+            return "x=\(VEEquivalentController.xValue)の時、この敵の文字式を計算すると\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
         case .NextEqRob:
             return "次はエクロボの文字式を試してみよう"
         case .NextEnemy:
             return "もう片方のロボットの文字式を試してみよう"
         case .EqRobResult:
-            return "エクロボの文字式は\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
+            return "x=\(VEEquivalentController.xValue)の時、エクロボの文字式を計算すると\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
         case .AnotherEnemyResult:
-            return "こっちのロボットの文字式も\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
+            return "x=\(VEEquivalentController.xValue)の時、こっちの敵の文字式も計算すると\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
         case .Compare:
             return "x＝\(VEEquivalentController.xValue)のとき、二つの文字式は\(value!)計算結果になるようじゃな"
         case .Conclution:

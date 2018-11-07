@@ -21,14 +21,12 @@ struct VECategory {
     static let ve5 = ["x+1+x", "3x-x", "x+x+x", "2x+x"]
     // level 8 (eqRob), 9, 10, 13, 14
     static let ve6 = ["x+2", "x+3", "2+x", "3+x", "2x+1", "1+2x", "2x-1", "3x-1", "3x-2"]
-    // level 11 (second day)
-    static let ve7 = ["x+1", "3+x", "2x"]
     // level 12, 16(cannon), 17, 18(invisible), 19
+    static let ve7 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
     static let ve8 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
-    static let ve9 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
     
-    static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8, ve9]
-    static let unSFrom = [9]
+    static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8]
+    static let unSFrom = [8]
     
     static func getCategory(ve: String, completion: @escaping (Int) -> Void) {
         switch ve {
@@ -95,13 +93,28 @@ struct VECategory {
             let ves = ["1+1×x", "x×1+1", "x+2-1", "3+x-2", "2x-x+1", "1+3x-2x"]
             return ves
         case 4: // x+2
-            let ves = ["2+x×1", "4+x-2", "2x+2-x", "2x-x+2", "2+3x-2x"]
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
+                ves = ["x×1+2", "x+4-2", "x+3-1", "2x-x+2", "3x-2x+2"]
+            } else {
+                ves = ["2+x×1", "4+x-2", "2x+2-x", "2x-x+2", "2+3x-2x"]
+            }
             return ves
         case 5: // x+3
-            let ves = ["1×x+3", "x-2+5", "2x+3-x", "2x-x+3", "3+3x-2x"]
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
+                ves = ["1×x+3", "x+4-1", "x+5-2", "2x-x+3", "3x-2x+3"]
+            } else {
+                ves = ["1×x+3", "x-2+5", "2x+3-x", "2x-x+3", "3+3x-2x"]
+            }
             return ves
         case 6: // 2x+1
-            let ves = ["x×2+1", "3+2x-2", "3x-x+1", "1+4x-2x", "x+1+x"]
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
+                ves = ["x×2+1", "2x+3-2", "3x-x+1", "4x-2x+1", "x+x+1"]
+            } else {
+                ves = ["x×2+1", "3+2x-2", "3x-x+1", "1+4x-2x", "x+1+x"]
+            }
             return ves
         case 7: // 2x+2
             let ves = ["2+2×x", "x×2+2", "2x+3-1", "4+2x-2", "3x-x+2", "2+4x-2x", "x+x+2"]
@@ -119,13 +132,28 @@ struct VECategory {
             let ves = ["3+3×x", "x×3+3", "3x+4-1", "5+3x-2", "4x-x+3", "3+5x-2x", "x+x+x+3", "2x+x+3"]
             return ves
         case 12: // 2x-1
-            let ves = ["x×2-1", "2x+1-2", "3x-x-1", "4x-1-2x", "x+x-1"]
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
+                ves = ["x×2-1", "2x-2+1", "3x-x-1", "4x-2x-1", "x+x-1"]
+            } else {
+                ves = ["x×2-1", "2x+1-2", "3x-x-1", "4x-1-2x", "x-1+x"]
+            }
             return ves
         case 13: // 3x-1
-            let ves = ["x×3-1", "3x+2-3", "4x-x-1", "5x-1-2x", "x+x+x-1", "2x-1+x"]
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
+                ves = ["x×3-1", "3x-3+2", "4x-x-1", "5x-2x-1", "x+x+x-1"]
+            } else {
+                ves = ["x×3-1", "3x+2-3", "4x-x-1", "5x-1-2x", "x+x+x-1", "2x-1+x"]
+            }
             return ves
         case 14: // 3x-2
-            let ves = ["x×3-2", "1+3x-3", "4x-x-2", "5x-2-2x", "x+x+x-2", "2x-2+x"]
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
+                ves = ["x×3-2", "3x-3+1", "4x-x-2", "5x-2x-2", "x+x+x-2"]
+            } else {
+                ves = ["x×3-2", "1+3x-3", "4x-x-2", "5x-2-2x", "x+x+x-2", "2x-2+x"]
+            }
             return ves
         case 15: // 4x-1
             let ves = ["4×x-1", "x×4-1", "4x+1-2", "4x+2-3", "4x+3-4", "4x-2+1", "4x-3+2", "4x-4+3", "1+4x-2", "2+4x-3", "3+4x-4", "1-2+4x", "2-3+4x", "3-4+4x"]
@@ -141,61 +169,127 @@ struct VECategory {
         }
     }
     
-    public static func vEsForEqRob(veCate: Int) -> [String] {
+    public static func originVEsForEqRob(veCate: Int) -> [String] {
         switch veCate {
         case 0: // x
-            let ves = ["x", "1×x", "x×1", "2x-x", "3x-2x"]
+            let ves = ["x"]
             return ves
         case 1: // 2x
-            let ves = ["2x", "2×x", "x×2", "3x-x", "4x-2x", "x+x"]
+            let ves = ["2x"]
             return ves
         case 2: // 3x
-            let ves = ["3x", "3×x", "x×3", "2x+x", "4x-x", "x+x+x", "2×x+x"]
+            let ves = ["3x"]
             return ves
         case 3: // x+1
-            let ves = ["x+1", "1+x", "1+1×x", "x×1+1", "x+2-1", "3+x-2", "2x-x+1", "1+3x-2x"]
+            let ves = ["x+1", "1+x"]
             return ves
         case 4: // x+2
-            let ves = ["x+2", "2+x", "2+x×1", "1×x+2", "x-1+3", "4+x-2", "2x-x+2", "2+3x-2x"]
+            let ves = ["x+2", "2+x"]
             return ves
         case 5: // x+3
-            let ves = ["x+3", "3+x", "3+x×1", "1×x+3", "x-2+5", "4+x-1", "2x-x+3", "3+3x-2x"]
+            let ves = ["x+3", "3+x"]
             return ves
         case 6: // 2x+1
-            let ves = ["2x+1", "1+2x", "1+2×x", "x×2+1", "2x+2-1", "3+2x-2", "3x-x+1", "1+4x-2x", "x+x+1", "x+1+x"]
-            return ves
+            if let _ = VEEquivalentController.gameScene as? ScenarioScene {
+                let ves = ["2x+1"]
+                return ves
+            } else {
+                let ves = ["2x+1", "1+2x"]
+                return ves
+            }
         case 7: // 2x+2
-            let ves = ["2x+2", "2+2x", "2+2×x", "x×2+2", "2x+3-1", "4+2x-2", "3x-x+2", "2+4x-2x", "x+x+2"]
+            let ves = ["2x+2", "2+2x"]
             return ves
         case 8: // 2x+3
-            let ves = ["2x+3", "3+2x", "3+2×x", "x×2+3", "2x+4-1", "5+2x-2", "3x-x+3", "3+4x-2x", "x+x+3"]
+            let ves = ["2x+3", "3+2x"]
             return ves
         case 9: // 3x+1
-            let ves = ["3x+1", "1+3x", "1+3×x", "x×3+1", "3x+2-1", "3+3x-2", "4x-x+1", "1+5x-2x", "x+x+x+1", "2x+x+1"]
+            let ves = ["3x+1", "1+3x"]
             return ves
         case 10: // 3x+2
-            let ves = ["3x+2", "2+3x", "2+3×x", "x×3+2", "3x+3-1", "4+3x-2", "4x-x+2", "2+5x-2x", "x+x+x+2", "2x+x+2"]
+            let ves = ["3x+2", "2+3x"]
             return ves
         case 11: // 3x+3
-            let ves = ["3x+3", "3+3x", "3+3×x", "x×3+3", "3x+4-1", "5+3x-2", "4x-x+3", "3+5x-2x", "x+x+x+3", "2x+x+3"]
+            let ves = ["3x+3", "3+3x"]
             return ves
         case 12: // 2x-1
-            let ves = ["2x-1", "2×x-1", "x×2-1", "2x+1-2", "3x-x-1", "4x-1-2x", "x+x-1"]
+            let ves = ["2x-1"]
             return ves
         case 13: // 3x-1
-            let ves = ["3x-1", "3×x-1", "x×3-1", "3x+2-3", "4x-x-1", "5x-1-2x", "x+x+x-1", "2×x+x-1"]
+            let ves = ["3x-1"]
             return ves
         case 14: // 3x-2
-            let ves = ["3x-2", "3×x-2", "x×3-2", "1+3x-3", "4x-x-2", "5x-2-2x", "x+x+x-2", "2×x+x-2"]
+            let ves = ["3x-2"]
             return ves
         case 15: // 4x-1
-            let ves = ["4x-1", "4×x-1", "x×4-1", "4x+1-2", "4x+2-3", "4x+3-4", "4x-2+1", "4x-3+2", "4x-4+3", "1+4x-2", "2+4x-3", "3+4x-4", "1-2+4x", "2-3+4x", "3-4+4x"]
+            let ves = ["4x-1"]
             return ves
         case 16: // 4x-2
-            let ves = ["4x-2", "4×x-2", "x×4-2", "4x+1-3", "4x+2-4", "4x+3-5", "4x-3+1", "4x-4+2", "4x-5+3", "1+4x-3", "2+4x-4", "3+4x-5", "1-3+4x", "2-4+4x", "3-5+4x"]
+            let ves = ["4x-2"]
             return ves
         case 17: // 4x-3
-            let ves = ["4x-3", "4×x-3", "x×4-3", "4x+1-4", "4x+2-5", "4x+3-6", "4x-4+1", "4x-5+2", "4x-6+3", "1+4x-4", "2+4x-5", "3+4x-6", "1-4+4x", "2-5+4x", "3-6+4x"]
+            let ves = ["4x-3"]
+            return ves
+        default:
+            return []
+        }
+    }
+    
+    public static func unSVEsForEqRob(veCate: Int) -> [String] {
+        switch veCate {
+        case 0: // x
+            let ves = ["2x-x", "3x-2x"]
+            return ves
+        case 1: // 2x
+            let ves = ["3x-x", "4x-2x", "x+x"]
+            return ves
+        case 2: // 3x
+            let ves = ["2x+x", "4x-x", "x+x+x", "2×x+x"]
+            return ves
+        case 3: // x+1
+            let ves = ["x+2-1", "3+x-2", "2x-x+1", "1+3x-2x"]
+            return ves
+        case 4: // x+2
+            let ves = ["x-1+3", "4+x-2", "2x-x+2", "2+3x-2x"]
+            return ves
+        case 5: // x+3
+            let ves = ["x-2+5", "4+x-1", "2x-x+3", "3+3x-2x"]
+            return ves
+        case 6: // 2x+1
+            let ves = ["2x+2-1", "3+2x-2", "3x-x+1", "1+4x-2x", "x+x+1", "x+1+x"]
+            return ves
+        case 7: // 2x+2
+            let ves = ["2x+3-1", "4+2x-2", "3x-x+2", "2+4x-2x", "x+x+2"]
+            return ves
+        case 8: // 2x+3
+            let ves = ["2x+4-1", "5+2x-2", "3x-x+3", "3+4x-2x", "x+x+3"]
+            return ves
+        case 9: // 3x+1
+            let ves = ["3x+2-1", "3+3x-2", "4x-x+1", "1+5x-2x", "x+x+x+1", "2x+x+1"]
+            return ves
+        case 10: // 3x+2
+            let ves = ["3x+3-1", "4+3x-2", "4x-x+2", "2+5x-2x", "x+x+x+2", "2x+x+2"]
+            return ves
+        case 11: // 3x+3
+            let ves = ["3x+4-1", "5+3x-2", "4x-x+3", "3+5x-2x", "x+x+x+3", "2x+x+3"]
+            return ves
+        case 12: // 2x-1
+            let ves = ["2x+1-2", "3x-x-1", "4x-1-2x", "x+x-1"]
+            return ves
+        case 13: // 3x-1
+            let ves = ["3x+2-3", "4x-x-1", "5x-1-2x", "x+x+x-1", "2×x+x-1"]
+            return ves
+        case 14: // 3x-2
+            let ves = ["1+3x-3", "4x-x-2", "5x-2-2x", "x+x+x-2", "2×x+x-2"]
+            return ves
+        case 15: // 4x-1
+            let ves = ["4x+1-2", "4x+2-3", "4x+3-4", "4x-2+1", "4x-3+2", "4x-4+3", "1+4x-2", "2+4x-3", "3+4x-4", "1-2+4x", "2-3+4x", "3-4+4x"]
+            return ves
+        case 16: // 4x-2
+            let ves = ["4x+1-3", "4x+2-4", "4x+3-5", "4x-3+1", "4x-4+2", "4x-5+3", "1+4x-3", "2+4x-4", "3+4x-5", "1-3+4x", "2-4+4x", "3-5+4x"]
+            return ves
+        case 17: // 4x-3
+            let ves = ["4x+1-4", "4x+2-5", "4x+3-6", "4x-4+1", "4x-5+2", "4x-6+3", "1+4x-4", "2+4x-5", "3+4x-6", "1-4+4x", "2-5+4x", "3-6+4x"]
             return ves
         default:
             return []
