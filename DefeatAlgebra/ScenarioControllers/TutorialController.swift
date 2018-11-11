@@ -123,28 +123,28 @@ struct TutorialController {
             default:
                 break;
             }
-        case MainMenu.moveExplainStartTurn: //5
-            switch currentIndex {
-            case 0:
-                createTutorialLabel(text: "指でなぞれば、移動のルートを指定できるぞ", posY: Int(scene.size.height/2+100))
-                scene.movingPointing()
-                state = .Waiting
-                break;
-            case 1:
-                createTutorialLabel(text: "敵に当たらないように移動しよう", posY: Int(scene.size.height/2+100))
-                state = .Waiting
-                break;
-            case 4:
-                createMultiTutorialLabel(text: "爆弾があるマスを通ると\n爆弾をゲットできるぞ！", posY: Int(scene.size.height/2+100))
-                for pos in AddItemTurnController.itemPos {
-                    scene.pointingGridAt(x: pos.1, y: pos.2)
-                }
-                state = .Waiting
-                break;
-            default:
-                break;
-            }
-            break;
+//        case MainMenu.moveExplainStartTurn: //5
+//            switch currentIndex {
+//            case 0:
+//                createTutorialLabel(text: "指でなぞれば、移動のルートを指定できるぞ", posY: Int(scene.size.height/2+100))
+//                scene.movingPointing()
+//                state = .Waiting
+//                break;
+//            case 1:
+//                createTutorialLabel(text: "敵に当たらないように移動しよう", posY: Int(scene.size.height/2+100))
+//                state = .Waiting
+//                break;
+//            case 4:
+//                createMultiTutorialLabel(text: "爆弾があるマスを通ると\n爆弾をゲットできるぞ！", posY: Int(scene.size.height/2+100))
+//                for pos in AddItemTurnController.itemPos {
+//                    scene.pointingGridAt(x: pos.1, y: pos.2)
+//                }
+//                state = .Waiting
+//                break;
+//            default:
+//                break;
+//            }
+//            break;
         case MainMenu.showUnsimplifiedStartTurn: //5
             switch currentIndex {
             case 0:
@@ -158,7 +158,7 @@ struct TutorialController {
         case MainMenu.eqRobStartTurn:
             switch currentIndex {
             case 0:
-                createMultiTutorialLabel(text: "\(VEEquivalentController.gameScene.eqRob.variableExpressionString)と同じ文字式を持つ敵を選択し\n最後にエクロボをタッチして攻撃せよ！", posY: Int(scene.size.height/2+100))
+                createMultiTutorialLabel(text: "\(VEEquivalentController.gameScene.eqRob.variableExpressionString)と同じ文字式を持つ敵を全て選択し\n最後にエクロボをタッチして攻撃せよ！", posY: Int(scene.size.height/2+100))
                 state = .Waiting
                 break;
             default:
@@ -352,39 +352,39 @@ struct TutorialController {
             default:
                 return true
             }
-        case MainMenu.moveExplainStartTurn: // 5
-            switch currentIndex {
-            case 0:
-                guard scene.playerTurnState == .MoveState && name == "activeArea" else { return false }
-                guard scene.gridNode.touchedGridPos == ScenarioController.keyTouchPos else { return false }
-                ScenarioController.keyTouchPos = (100, 100)
-                scene.removePointing()
-                removeTutorialLabel()
-                currentIndex += 1
-                scene.isCharactersTurn = true
-                state = .Show
-                execute()
-                return true
-            case 1:
-                guard scene.isCharactersTurn else { return false }
-                ScenarioController.controllActions()
-                state = .Pending
-                return false
-            case 4:
-                guard scene.isCharactersTurn else { return false }
-                removeTutorialLabel()
-                currentIndex += 1
-                for _ in AddItemTurnController.itemPos {
-                    scene.removePointing()
-                }
-                scene.gameState = .PlayerTurn
-                scene.isCharactersTurn = false
-                scene.gridNode.isTutorial = false
-                state = .Pending
-                return true
-            default:
-                return true
-            }
+//        case MainMenu.moveExplainStartTurn: // 5
+//            switch currentIndex {
+//            case 0:
+//                guard scene.playerTurnState == .MoveState && name == "activeArea" else { return false }
+//                guard scene.gridNode.touchedGridPos == ScenarioController.keyTouchPos else { return false }
+//                ScenarioController.keyTouchPos = (100, 100)
+//                scene.removePointing()
+//                removeTutorialLabel()
+//                currentIndex += 1
+//                scene.isCharactersTurn = true
+//                state = .Show
+//                execute()
+//                return true
+//            case 1:
+//                guard scene.isCharactersTurn else { return false }
+//                ScenarioController.controllActions()
+//                state = .Pending
+//                return false
+//            case 4:
+//                guard scene.isCharactersTurn else { return false }
+//                removeTutorialLabel()
+//                currentIndex += 1
+//                for _ in AddItemTurnController.itemPos {
+//                    scene.removePointing()
+//                }
+//                scene.gameState = .PlayerTurn
+//                scene.isCharactersTurn = false
+//                scene.gridNode.isTutorial = false
+//                state = .Pending
+//                return true
+//            default:
+//                return true
+//            }
         case MainMenu.showUnsimplifiedStartTurn:
             switch currentIndex {
             case 0:
@@ -518,19 +518,19 @@ struct TutorialController {
             default:
                 break;
             }
-        case MainMenu.moveExplainStartTurn:
-            switch currentIndex {
-            case 0:
-                guard !scene.isCharactersTurn else { return }
-                state = .Show
-                break;
-            case 4:
-                guard scene.isCharactersTurn else { return }
-                state = .Show
-                break;
-            default:
-                break;
-            }
+//        case MainMenu.moveExplainStartTurn:
+//            switch currentIndex {
+//            case 0:
+//                guard !scene.isCharactersTurn else { return }
+//                state = .Show
+//                break;
+//            case 4:
+//                guard scene.isCharactersTurn else { return }
+//                state = .Show
+//                break;
+//            default:
+//                break;
+//            }
         case MainMenu.showUnsimplifiedStartTurn:
             switch currentIndex {
             case 0:

@@ -144,13 +144,13 @@ struct ScenarioController {
         case MainMenu.timeBombStartTurn: //3
             excuteTimeBombStartTurn()
             break;
-        case MainMenu.moveExplainStartTurn: //5
-            excuteMoveExplain()
-            break;
+//        case MainMenu.moveExplainStartTurn: //5
+//            excuteMoveExplain()
+//            break;
         case MainMenu.showUnsimplifiedStartTurn: //6
             excuteUnsimplified()
             break;
-        case MainMenu.eqRobStartTurn: //7
+        case MainMenu.eqRobNewStartTurn: //7
             excuteEqRobStartTurn()
             break;
         case MainMenu.cannonStartTurn: //11

@@ -19,8 +19,6 @@ struct ItemDropController {
     
     public static func getManager() -> [Int] {
         switch GameScene.stageLevel {
-        case MainMenu.moveExplainStartTurn:
-            return [0, 0, 0, 0, 1]
         case MainMenu.showUnsimplifiedStartTurn:
             return [0, 0, 0, 1]
         case MainMenu.secondDayStartTurn+1:
@@ -32,8 +30,6 @@ struct ItemDropController {
     
     public static func getItemManager() -> [String: [Int]] {
         switch GameScene.stageLevel {
-        case MainMenu.moveExplainStartTurn:
-            return ["1": [1, 1, 1]] // [itemType]
         case MainMenu.showUnsimplifiedStartTurn:
             return ["1": [1, 1, 1, 1]]
         case MainMenu.secondDayStartTurn+1:

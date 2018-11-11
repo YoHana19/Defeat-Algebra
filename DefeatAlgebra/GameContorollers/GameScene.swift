@@ -252,6 +252,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         GameStageController.gameScene = self
         ScenarioTouchController.gameScene = self
         EnemyMoveController.gameScene = self
+        EqRobJudgeController.gameScene = self
         
         /* Labels */
         gameOverLabel = childNode(withName: "gameOverLabel")

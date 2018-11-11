@@ -30,7 +30,16 @@ struct PlayerTurnController {
         if !done {
             done = true
             gameScene.playerPhaseLabel.isHidden = true
-            if GameScene.stageLevel >= MainMenu.eqRobStartTurn && GameScene.stageLevel < MainMenu.cannonStartTurn {
+            if GameScene.stageLevel >= MainMenu.eqRobStartTurn && GameScene.stageLevel < MainMenu.eqRobNewStartTurn {
+                if gameScene.gridNode.enemyArray.count > 2 {
+                    gameScene.itemType = .None
+                    gameScene.playerTurnState = .UsingItem
+                    gameScene.gameState = .PlayerTurn
+                    EqRobJudgeController.getTwoEnemyRandomly() {
+                        EqRobJudgeController.eqRobGoToScan()
+                    }
+                }
+            } else if GameScene.stageLevel >= MainMenu.eqRobNewStartTurn && GameScene.stageLevel < MainMenu.cannonStartTurn {
                 checkMultiSameEnemy() { over3 in
                     if over3 > 0 {
                         gameScene.itemType = .EqRob

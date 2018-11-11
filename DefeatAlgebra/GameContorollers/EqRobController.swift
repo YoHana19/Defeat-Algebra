@@ -522,24 +522,7 @@ enum EqRobState {
 
 struct EqRobTouchController {
     
-    public static var state: EqRobState = .Ready {
-        didSet {
-            switch state {
-            case .Ready:
-                EqRobController.gameScene.eqRob.chargingSign.isHidden = true
-                EqRobController.gameScene.eqRob.repairingSign.isHidden = true
-                break;
-            case .Charging:
-                EqRobController.gameScene.eqRob.chargingSign.isHidden = false
-                break;
-            case .Dead:
-                EqRobController.gameScene.eqRob.repairingSign.isHidden = false
-                break;
-            default:
-                break;
-            }
-        }
-    }
+    public static var state: EqRobState = .Ready
     
     public static func onEvent() {
         switch state {
@@ -586,6 +569,7 @@ struct EqRobLines {
         case .EqRobDestroyed:
             return "むむぅ・・・\n間違った敵を選んでしまったようじゃの"
         case .DestroyedInstruction:
+            print("curIndex: \(curIndex)")
             return value!
         case .DestroyedInstructionDone:
             return value!

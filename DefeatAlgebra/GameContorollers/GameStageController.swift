@@ -37,7 +37,7 @@ struct GameStageController {
         case MainMenu.showUnsimplifiedStartTurn: //6
             loadScenarioScene(scene: scene)
             break;
-        case MainMenu.eqRobStartTurn: //7
+        case MainMenu.eqRobNewStartTurn: //7
             loadScenarioScene(scene: scene)
             break;
         case MainMenu.secondDayStartTurn: //10
@@ -252,8 +252,6 @@ struct GameStageController {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.changeMoveSpan
         } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.timeBombExplain
-        } else if GameScene.stageLevel == MainMenu.moveExplainStartTurn {
-            scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.moveExplain
         } else if GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.showUnsimplified
         } else if GameScene.stageLevel == MainMenu.eqRobStartTurn {

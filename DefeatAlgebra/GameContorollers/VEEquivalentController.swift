@@ -170,7 +170,11 @@ struct VEEquivalentController {
         if let _ = gameScene as? ScenarioScene {
             ScenarioController.controllActions()
         } else {
-            EqRobController.execute(3, enemy: nil)
+            if exsitEqRob() {
+                EqRobController.execute(3, enemy: nil)
+            } else {
+                EqRobJudgeController.checkDone()
+            }
         }
     }
     
@@ -255,10 +259,10 @@ struct VEEquivalentController {
             de.move() {}
         }
         changeCurActiveSim()
-        if let _ = gameScene as? ScenarioScene {
-            lineState = .NextEnemy
-        } else {
+        if exsitEqRob() {
             lineState = .NextEqRob
+        } else {
+            lineState = .NextEnemy
         }
         EqRobSimLines.doctorSays(in: lineState, value: nil)
         let wait = SKAction.wait(forDuration: 2.0)
@@ -275,10 +279,10 @@ struct VEEquivalentController {
             EqRobSimLines.doctorSays(in: lineState, value: nil)
         } else {
             simTwoVeDone = true
-            if let _ = gameScene as? ScenarioScene {
-                lineState = .AnotherEnemyResult
-            } else {
+            if exsitEqRob() {
                 lineState = .EqRobResult
+            } else {
+                lineState = .AnotherEnemyResult
             }
             EqRobSimLines.doctorSays(in: lineState, value: nil)
         }
@@ -470,6 +474,18 @@ struct VEEquivalentController {
         })
     }
     
+    public static func exsitEqRob() -> Bool {
+        if let bg = gameScene.childNode(withName: "eqBackground") as? EqBackground {
+            if let _ = bg.eqRob {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
     private static func enableEqBgTouch() {
         getBG() { bg in
             guard let bg = bg else { return }
@@ -540,7 +556,7 @@ struct EqRobSimLines {
         case .EqRobResult:
             return "x=\(VEEquivalentController.xValue)の時、エクロボの文字式を計算すると\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
         case .AnotherEnemyResult:
-            return "x=\(VEEquivalentController.xValue)の時、こっちの敵の文字式も計算すると\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
+            return "x=\(VEEquivalentController.xValue)の時、こっちの敵の文字式は計算すると\(VEEquivalentController.outPutXValue+VEEquivalentController.outPutNumValue)になるようじゃな"
         case .Compare:
             return "x＝\(VEEquivalentController.xValue)のとき、二つの文字式は\(value!)計算結果になるようじゃな"
         case .Conclution:
@@ -549,7 +565,15 @@ struct EqRobSimLines {
             } else if EqRobTouchController.state == .DeadInstruction {
                 return "xに入る数が違うと計算結果が違うということは、違う文字式ということだ！"
             } else {
-                return "このようにxに入る数が違っても、同じ計算結果になる文字式は"
+                if let _ = VEEquivalentController.gameScene as? ScenarioScene {
+                    return "このようにxに入る数が違っても、同じ計算結果になる文字式は"
+                } else {
+                    if EqRobJudgeController.isEquivalent {
+                        return "xに入る数が違っても計算結果が同じということは、同じ文字式ということだ！"
+                    } else {
+                        return "xに入る数が違うと計算結果が違うということは、違う文字式ということだ！"
+                    }
+                }
             }
         }
     }

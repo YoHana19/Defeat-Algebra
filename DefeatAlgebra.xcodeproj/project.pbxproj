@@ -204,6 +204,10 @@
 		205A0ED7207A0D58006A44A6 /* LoginService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED5207A0D58006A44A6 /* LoginService.swift */; };
 		205A0EDA207A0ECB006A44A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED9207A0ECB006A44A6 /* User.swift */; };
 		205A0EDB207A0ECB006A44A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205A0ED9207A0ECB006A44A6 /* User.swift */; };
+		205BC5812197F9810043ADDB /* JudgeBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205BC5802197F9810043ADDB /* JudgeBackground.swift */; };
+		205BC5822197F9810043ADDB /* JudgeBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205BC5802197F9810043ADDB /* JudgeBackground.swift */; };
+		205BC5842197FE600043ADDB /* EqRobJudgeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205BC5832197FE600043ADDB /* EqRobJudgeController.swift */; };
+		205BC5852197FE600043ADDB /* EqRobJudgeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 205BC5832197FE600043ADDB /* EqRobJudgeController.swift */; };
 		20644DB820FC9CB300745E4C /* SelectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DB720FC9CB300745E4C /* SelectionPanel.swift */; };
 		20644DB920FC9CB300745E4C /* SelectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DB720FC9CB300745E4C /* SelectionPanel.swift */; };
 		20644DBB20FCABAB00745E4C /* DummyEnemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20644DBA20FCABAB00745E4C /* DummyEnemy.swift */; };
@@ -489,6 +493,8 @@
 		2058CA8D20F8C5ED005DF357 /* EnemyAttackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnemyAttackController.swift; sourceTree = "<group>"; };
 		205A0ED5207A0D58006A44A6 /* LoginService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginService.swift; sourceTree = "<group>"; };
 		205A0ED9207A0ECB006A44A6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		205BC5802197F9810043ADDB /* JudgeBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JudgeBackground.swift; sourceTree = "<group>"; };
+		205BC5832197FE600043ADDB /* EqRobJudgeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EqRobJudgeController.swift; sourceTree = "<group>"; };
 		20644DB720FC9CB300745E4C /* SelectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionPanel.swift; sourceTree = "<group>"; };
 		20644DBA20FCABAB00745E4C /* DummyEnemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyEnemy.swift; sourceTree = "<group>"; };
 		20644DBD20FCDB6A00745E4C /* Line.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
@@ -861,6 +867,15 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		205BC57F2197F94E0043ADDB /* EqRobJudge */ = {
+			isa = PBXGroup;
+			children = (
+				205BC5802197F9810043ADDB /* JudgeBackground.swift */,
+				205BC5832197FE600043ADDB /* EqRobJudgeController.swift */,
+			);
+			path = EqRobJudge;
+			sourceTree = "<group>";
+		};
 		20644DB620FC9C9200745E4C /* EqRob */ = {
 			isa = PBXGroup;
 			children = (
@@ -948,6 +963,7 @@
 			children = (
 				201B8D18212FF3B000903468 /* Enemy */,
 				201B8D17212FF38600903468 /* Board */,
+				205BC57F2197F94E0043ADDB /* EqRobJudge */,
 				20644DB620FC9C9200745E4C /* EqRob */,
 				204BFA092104671C00A2AB7A /* Cannon */,
 				20D0FEF620B6C12300C547A5 /* Hero.swift */,
@@ -1506,6 +1522,7 @@
 				204C7D8C1F074FE800F4DD11 /* GameViewController.swift in Sources */,
 				2016D7CE210B082E00942460 /* AddItemTurnController.swift in Sources */,
 				2058CA8420F883FB005DF357 /* Signal.swift in Sources */,
+				205BC5812197F9810043ADDB /* JudgeBackground.swift in Sources */,
 				204CE03E20FB94FE00D45FFE /* DACharacter.swift in Sources */,
 				2016D7C5210AF1A900942460 /* ResetController.swift in Sources */,
 				201CF02A1F11BE1E001346C7 /* MSButtonNode.swift in Sources */,
@@ -1536,6 +1553,7 @@
 				204C7D841F074FE800F4DD11 /* AppDelegate.swift in Sources */,
 				2043C4112185ADD6007B3F8F /* PasswordScreen.swift in Sources */,
 				201137922120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
+				205BC5842197FE600043ADDB /* EqRobJudgeController.swift in Sources */,
 				204D5939216B091D00BC776C /* CannonRecordBoard.swift in Sources */,
 				2052888C20FC91CB00B011D2 /* MoveTouchController.swift in Sources */,
 				2044B0232163447A00E8E21C /* VEEquivalentController.swift in Sources */,
@@ -1630,6 +1648,7 @@
 				20E9E88A20223B1400D31410 /* GameViewController.swift in Sources */,
 				2016D7CF210B082E00942460 /* AddItemTurnController.swift in Sources */,
 				2058CA8520F883FB005DF357 /* Signal.swift in Sources */,
+				205BC5822197F9810043ADDB /* JudgeBackground.swift in Sources */,
 				204CE03F20FB94FE00D45FFE /* DACharacter.swift in Sources */,
 				2016D7C6210AF1A900942460 /* ResetController.swift in Sources */,
 				20E9E88B20223B1400D31410 /* MSButtonNode.swift in Sources */,
@@ -1660,6 +1679,7 @@
 				20D0FF3620B6C12300C547A5 /* Catapult.swift in Sources */,
 				2043C4122185ADD6007B3F8F /* PasswordScreen.swift in Sources */,
 				201137932120011E00B5A138 /* ScenarioProrerty.swift in Sources */,
+				205BC5852197FE600043ADDB /* EqRobJudgeController.swift in Sources */,
 				204D593A216B091D00BC776C /* CannonRecordBoard.swift in Sources */,
 				208C5D58202384FE0006ADE4 /* DAUtility.swift in Sources */,
 				2044B0242163447A00E8E21C /* VEEquivalentController.swift in Sources */,

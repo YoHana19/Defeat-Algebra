@@ -84,6 +84,7 @@ class ScenarioScene: GameScene {
         CannonTryController.gameScene = self
         GameStageController.gameScene = self
         ScenarioTouchController.gameScene = self
+        EqRobJudgeController.gameScene = self
 //        EnemyMoveController.gameScene = self
         
         /* Labels */
@@ -111,7 +112,7 @@ class ScenarioScene: GameScene {
             SoundController.stopBGM()
             
             TutorialController.state = .Pending
-            if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.moveExplainStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
+            if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
                 ScenarioController.loadGameScene()
             } else {
                 CharacterController.retreatMainHero()

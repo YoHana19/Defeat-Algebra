@@ -91,15 +91,17 @@ class EqGrid: Grid {
     public func showConclusionLabel() -> Bool {
         guard conclusionLabel.isHidden else { return true }
         conclusionLabel.isHidden = false
+        SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonMove)
         if EqRobTouchController.state == .AliveInstruction
         {
-            SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonMove)
             conclusionLabel.text = "同じ文字式"
         } else if EqRobTouchController.state == .DeadInstruction {
-            SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonBack)
+            conclusionLabel.text = "違う文字式"
+        } else if EqRobJudgeController.isEquivalent {
+            conclusionLabel.text = "同じ文字式"
+        } else if !EqRobJudgeController.isEquivalent {
             conclusionLabel.text = "違う文字式"
         } else if let _ = VEEquivalentController.gameScene as? ScenarioScene {
-            SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonMove)
             conclusionLabel.text = "同じ文字式"
         }
         return false

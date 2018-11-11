@@ -14,9 +14,9 @@ class MainMenu: SKScene {
     public static let uncoverSignalStartTurn = 1
     public static let changeMoveSpanStartTurn = 2
     public static let timeBombStartTurn = 4
-    public static let moveExplainStartTurn = 20
     public static let showUnsimplifiedStartTurn = 5
     public static let eqRobStartTurn = 6
+    public static let eqRobNewStartTurn = 7
     public static let secondDayStartTurn = 8
     public static let cannonStartTurn = 9
     public static let invisibleStartTurn = 12

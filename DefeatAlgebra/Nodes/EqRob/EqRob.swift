@@ -54,8 +54,8 @@ class EqRob: SKSpriteNode {
     
     var state: EqRobState = .Pending
     
-    let chargingSign = SKSpriteNode(texture: SKTexture(imageNamed: "eqRobCharging"), color: UIColor.clear, size: CGSize(width: 80, height: 40))
-    let repairingSign = SKSpriteNode(texture: SKTexture(imageNamed: "eqRobReparing"), color: UIColor.clear, size: CGSize(width: 80, height: 40))
+    let diffSign = SKSpriteNode(texture: SKTexture(imageNamed: "DifferentBtn"), color: UIColor.clear, size: CGSize(width: 75, height: 39))
+    let eqSign = SKSpriteNode(texture: SKTexture(imageNamed: "equivalentBtn"), color: UIColor.clear, size: CGSize(width: 75, height: 39))
     
     init() {
         let texture = SKTexture(imageNamed: "eqRob")
@@ -77,18 +77,18 @@ class EqRob: SKSpriteNode {
     }
     
     private func setSign() {
-        chargingSign.name = "eqRobCS"
-        repairingSign.name = "eqRobRS"
-        chargingSign.position = CGPoint(x: 0, y: 0)
-        repairingSign.position = CGPoint(x: 0, y: 0)
-        chargingSign.zRotation = .pi * 1/2
-        repairingSign.zRotation = .pi * 1/2
-        chargingSign.zPosition = 1
-        repairingSign.zPosition = 1
-        addChild(chargingSign)
-        addChild(repairingSign)
-        chargingSign.isHidden = true
-        repairingSign.isHidden = true
+        diffSign.name = "eqRobDiff"
+        eqSign.name = "eqRobEq"
+        diffSign.position = CGPoint(x: 0, y: 0)
+        eqSign.position = CGPoint(x: 0, y: 0)
+        diffSign.zRotation = .pi * 1/2
+        eqSign.zRotation = .pi * 1/2
+        diffSign.zPosition = 1
+        eqSign.zPosition = 1
+        addChild(diffSign)
+        addChild(eqSign)
+        diffSign.isHidden = true
+        eqSign.isHidden = true
     }
     
     func go(to target: SKNode, completion: @escaping () -> Void) {
