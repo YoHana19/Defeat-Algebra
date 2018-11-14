@@ -69,12 +69,7 @@ struct AddEnemyTurnController {
                             break;
                         case 2:
                             var veCate = property.1
-                            var isHard = false
-                            if property.1 > 100 {
-                                veCate = property.1 - 100
-                                isHard = true
-                            }
-                            EnemyAddController.addInitialEnemyAtGrid2(veCate: veCate, isHard: isHard, enemyPosArray: property.2, grid: gameScene.gridNode) {
+                            EnemyAddController.addInitialEnemyAtGrid2(veCate: veCate, enemyPosArray: property.2, grid: gameScene.gridNode) {
                                 syncPunchInterval()
                                 /* Update enemy position */
                                 EnemyMoveController.updateEnemyPositon(grid: gameScene.gridNode)
@@ -104,12 +99,8 @@ struct AddEnemyTurnController {
                             done = false
                         }
                     } else {
-                        var isHard = false
-                        if addingIndex > 100 {
-                            isHard = true
-                        }
                         /* Add enemy for eqRob */
-                        EnemyAddController.addEnemyAtGrid2(addIndex: addingIndex, grid: gameScene.gridNode, isHard: isHard) {
+                        EnemyAddController.addEnemyAtGrid2(addIndex: addingIndex, grid: gameScene.gridNode) {
                             /* Reset start enemy position array */
                             gameScene.gridNode.startPosArray = [0,1,2,3,4,5,6,7,8]
                             syncPunchInterval()

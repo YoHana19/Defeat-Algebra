@@ -20,57 +20,7 @@ struct AddItemTurnController {
         gameScene.enemyPhaseLabelDoneFlag = false
         gameScene.enemyPhaseLabel.isHidden = true
         
-        /* Make sure to call till complete adding enemy */
-        if gameScene.compAddItemFlag == false {
-            /* Make sure to call addEnemy once */
-            if !done {
-                done = true
-                let manager = ItemDropController.getManager()
-                let itemManager = ItemDropController.getItemManager()
-                
-                gameScene.countTurnForAddItem += 1
-                if gameScene.countTurnForAddItem >= manager.count {
-                    gameScene.compAddItemFlag = true
-                    done = false
-                    return
-                }
-                
-                let addingIndex = manager[gameScene.countTurnForAddItem]
-                
-                /* Add enemies initially */
-//                if gameScene.initialAddItemFlag {
-//                    gameScene.initialAddItemFlag = false
-//                    let items = ItemDropController.initialItemPosArray[stageLevel]
-//                    guard items.count > 0 else {
-//                        gameScene.gameState = .PlayerTurn
-//                        done = false
-//                        return
-//                    }
-//                    gameScene.plane.fly(items: items) {
-//                        /* Move to next state */
-//                        gameScene.gameState = .PlayerTurn
-//                        done = false
-//                    }
-                if addingIndex != 0 {
-                    let items = itemManager[String(addingIndex)]
-                    ItemDropController.makeItemPosArray(items: items!) { itemPosArray in
-                        itemPos = itemPosArray
-                        gameScene.plane.fly(items: itemPosArray) {
-                            /* Move to next state */
-                            gameScene.gameState = .PlayerTurn
-                            done = false
-                        }
-                    }
-                } else {
-                    /* Move to next state */
-                    gameScene.gameState = .PlayerTurn
-                    done = false
-                }
-            }
-        } else {
-            /* Move to next state */
-            gameScene.gameState = .PlayerTurn
-            done = false
-        }
+        /* Move to next state */
+        gameScene.gameState = .PlayerTurn
     }
 }

@@ -85,7 +85,7 @@ class EqVeUnit: SKLabelNode {
                 self.value = -value
             }
         }
-        self.zPosition = 15
+        self.zPosition = 50
         changeTextColor(color: UIColor.darkGray)
         isUserInteractionEnabled = true
     }
@@ -161,6 +161,7 @@ class EqVeUnit: SKLabelNode {
         xLabel?.fontColor = UIColor.red
         xLabel?.isHidden = true
         xLabel?.text = text
+        xLabel?.zPosition = 15
         addChild(xLabel!)
     }
     

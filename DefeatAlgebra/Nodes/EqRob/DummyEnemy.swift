@@ -41,8 +41,7 @@ class DummyEnemy: Enemy {
         
         self.name = "dummyEnemy"
         self.isHidden = true
-        self.variableExpressionLabel.fontSize = 30
-        
+        adjustLabelSize()
     }
     
     /* You are required to implement this for your subclass to work */
@@ -64,11 +63,19 @@ class DummyEnemy: Enemy {
     
     func move(completion: @escaping () -> Void) {
         guard let eqGrid = self.eqGrid else { return }
+        VEEquivalentController.resetEcessArea(posX: VEEquivalentController.curActivePos.0)
         self.isHidden = false
         let move = SKAction.moveBy(x: CGFloat(Double(self.distance)*eqGrid.cellWidth), y: 0, duration: 1.0)
         self.run(move, completion: {
-            for i in 1...self.outPutXValue {
-                GridActiveAreaController.showActiveArea(at: [(self.xPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+            if self.outPutXValue > 11 {
+                VEEquivalentController.showEcessArea(yValue: self.outPutXValue, posX: self.xPos)
+                for i in 1...11 {
+                    GridActiveAreaController.showActiveArea(at: [(self.xPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
+            } else {
+                for i in 1...self.outPutXValue {
+                    GridActiveAreaController.showActiveArea(at: [(self.xPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
             }
             if self.outPutNumValue > 0 {
                 for i in 1...self.outPutNumValue {
@@ -94,12 +101,21 @@ class DummyEnemy: Enemy {
     
     func lastMove(completion: @escaping () -> Void) {
         guard let eqGrid = self.eqGrid else { return }
+        VEEquivalentController.resetEcessArea(posX: xPos)
         self.isHidden = false
         let move = SKAction.moveBy(x: CGFloat(Double(lastXPos-xPos)*eqGrid.cellWidth), y: 0, duration: 1.0)
         self.run(move, completion: {
-            for i in 1...self.outPutXValue {
-                GridActiveAreaController.showActiveArea(at: [(self.lastXPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+            if self.outPutXValue > 11 {
+                VEEquivalentController.showEcessArea(yValue: self.outPutXValue, posX: self.lastXPos)
+                for i in 1...11 {
+                    GridActiveAreaController.showActiveArea(at: [(self.lastXPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
+            } else {
+                for i in 1...self.outPutXValue {
+                    GridActiveAreaController.showActiveArea(at: [(self.lastXPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
             }
+            
             if self.outPutNumValue > 0 {
                 for i in 1...self.outPutNumValue {
                     GridActiveAreaController.showActiveArea(at: [(self.lastXPos, 11-self.outPutXValue-i)], color: "yellow", grid: eqGrid, zPosition: 12)
@@ -111,5 +127,14 @@ class DummyEnemy: Enemy {
             }
             return completion()
         })
+    }
+    
+    override func adjustLabelSize() {
+        guard let grid = self.eqGrid else { return }
+        let cellWidth = CGFloat(grid.cellWidth)
+        if variableExpressionLabel.frame.width > cellWidth {
+            let scaleFactor = cellWidth / variableExpressionLabel.frame.width
+            variableExpressionLabel.fontSize *= scaleFactor
+        }
     }
 }

@@ -139,6 +139,8 @@
 		204921AA2187827B00989180 /* last.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204921A82187827B00989180 /* last.wav */; };
 		204921AC2187828E00989180 /* firstDayLast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204921AB2187828C00989180 /* firstDayLast.wav */; };
 		204921AD2187828E00989180 /* firstDayLast.wav in Resources */ = {isa = PBXBuildFile; fileRef = 204921AB2187828C00989180 /* firstDayLast.wav */; };
+		204A224F219C49B4008A4A7D /* eqJudge.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 204A224E219C49B3008A4A7D /* eqJudge.mp3 */; };
+		204A2250219C49B4008A4A7D /* eqJudge.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 204A224E219C49B3008A4A7D /* eqJudge.mp3 */; };
 		204BFA04210334FC00A2AB7A /* Cannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204BFA03210334FC00A2AB7A /* Cannon.swift */; };
 		204BFA05210334FC00A2AB7A /* Cannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204BFA03210334FC00A2AB7A /* Cannon.swift */; };
 		204BFA07210465D000A2AB7A /* CannonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 204BFA06210465D000A2AB7A /* CannonController.swift */; };
@@ -456,6 +458,7 @@
 		204921A521877E9B00989180 /* eqSelected.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = eqSelected.mp3; sourceTree = "<group>"; };
 		204921A82187827B00989180 /* last.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = last.wav; sourceTree = "<group>"; };
 		204921AB2187828C00989180 /* firstDayLast.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = firstDayLast.wav; sourceTree = "<group>"; };
+		204A224E219C49B3008A4A7D /* eqJudge.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = eqJudge.mp3; sourceTree = "<group>"; };
 		204BFA03210334FC00A2AB7A /* Cannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cannon.swift; sourceTree = "<group>"; };
 		204BFA06210465D000A2AB7A /* CannonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CannonController.swift; sourceTree = "<group>"; };
 		204BFA0A2104676200A2AB7A /* InputPanleForCannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputPanleForCannon.swift; sourceTree = "<group>"; };
@@ -726,6 +729,7 @@
 				203AEA981F3AFFF300C5CD4E /* mainMenu.mp3 */,
 				203B2A921F6917A400DDCC03 /* mainMenuHard.mp3 */,
 				201B8C6E1F3ADB9B00E91301 /* stageClear.mp3 */,
+				204A224E219C49B3008A4A7D /* eqJudge.mp3 */,
 				2049217F21874FE000989180 /* game1.wav */,
 				201B8C681F3A682700E91301 /* game2.mp3 */,
 				2049219621876CCB00989180 /* game3.wav */,
@@ -1203,6 +1207,7 @@
 				201B8C791F3AEA7E00E91301 /* buttonBack.wav in Resources */,
 				2049216E21873A1300989180 /* signalGot.wav in Resources */,
 				204921A321877DE800989180 /* eqAttack.mp3 in Resources */,
+				204A224F219C49B4008A4A7D /* eqJudge.mp3 in Resources */,
 				203B2A761F67BBD100DDCC03 /* DataList.sks in Resources */,
 				20F0D5162176006B00E76641 /* DataSelectMenu.sks in Resources */,
 				201B8C571F3A365700E91301 /* logDefence.wav in Resources */,
@@ -1268,6 +1273,7 @@
 				20E9E8D020223B1400D31410 /* buttonBack.wav in Resources */,
 				2049216F21873A1300989180 /* signalGot.wav in Resources */,
 				204921A421877DE800989180 /* eqAttack.mp3 in Resources */,
+				204A2250219C49B4008A4A7D /* eqJudge.mp3 in Resources */,
 				20E9E8D120223B1400D31410 /* DataList.sks in Resources */,
 				20F0D5172176006B00E76641 /* DataSelectMenu.sks in Resources */,
 				20E9E8D220223B1400D31410 /* logDefence.wav in Resources */,

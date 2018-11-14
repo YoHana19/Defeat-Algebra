@@ -35,6 +35,7 @@ struct VEEquivalentController {
     public static var lineState: EqRobSimLinesState = .PutX
     private static var dummyEnemies = [DummyEnemy]()
     private static var dummyEqRobs = [DummyEqRob]()
+    private static var enemy1Value = 0
     
     public static var signalState: SignalState = .Signal1 {
         didSet {
@@ -241,6 +242,13 @@ struct VEEquivalentController {
                             simOneSessionDone = true
                             bg.setSignalIcon(value: xValue)
                             ScenarioFunction.eqRobSimulatorTutorialTrriger(key: "compare1")
+                            lineState = .Compare
+                            
+                            if enemy1Value == de.outPutXValue+de.outPutNumValue {
+                                EqRobSimLines.doctorSays(in: lineState, value: "同じ")
+                            } else {
+                                EqRobSimLines.doctorSays(in: lineState, value: "違う")
+                            }
                         }
                     }
                 }
@@ -256,6 +264,7 @@ struct VEEquivalentController {
         if let de = dummyEnemy {
             GridActiveAreaController.resetSquareArray(at: curActivePos.0, color: "red", grid: gameScene.eqGrid)
             GridActiveAreaController.resetSquareArray(at: curActivePos.0, color: "yellow", grid: gameScene.eqGrid)
+            enemy1Value = de.outPutXValue+de.outPutNumValue
             de.move() {}
         }
         changeCurActiveSim()
@@ -404,6 +413,7 @@ struct VEEquivalentController {
         enemy.zPosition = 10
         enemy.xValueLabel.text = ""
         enemy.variableExpressionLabel.color = UIColor.white
+        enemy.adjustLabelSize()
         let move = SKAction.move(to: pos, duration: 1.0)
         enemy.run(move, completion: {
             enemy.resolveShield() {}
@@ -431,7 +441,6 @@ struct VEEquivalentController {
         
         outPutXValue = 0
         outPutNumValue = 0
-        gameScene.hero.setPhysics(isActive: true)
         GridActiveAreaController.resetSquareArray(color: "yellow", grid: gameScene.eqGrid)
         GridActiveAreaController.resetSquareArray(color: "red", grid: gameScene.eqGrid)
         gameScene.eqGrid.hideConclusionLabel()
@@ -444,7 +453,6 @@ struct VEEquivalentController {
         gameScene.xValue = gameScene.xValue
         backEnemies()
         getBG(completion: { bg in
-            bg?.removeExcessArea()
             bg?.removeFromParent()
         })
         gameScene.eqRob.setScale(1.0)
@@ -494,7 +502,9 @@ struct VEEquivalentController {
     }
     
     public static func backEnemies() {
+        let dispatchGroup = DispatchGroup()
         for enemy in checkingEnemies {
+            dispatchGroup.enter()
             enemy.isHidden = false
             enemy.isSelectedForEqRob = false
             enemy.xValueLabel.text = ""
@@ -507,14 +517,34 @@ struct VEEquivalentController {
             enemy.zPosition = 4
             enemy.calculatePunchLength(value: gameScene.xValue)
             let move = SKAction.move(to: pos, duration: 1.0)
-            enemy.run(move)
+            enemy.run(move, completion: {
+                dispatchGroup.leave()
+            })
             if enemy.state == .Defence {
                 enemy.defend()
             } else if enemy.stateRecord.count < 1 {
                 enemy.defend()
             }
         }
+        dispatchGroup.notify(queue: .main, execute: {
+            gameScene.hero.setPhysics(isActive: true)
+        })
     }
+    
+    public static func showEcessArea(yValue: Int, posX: Int) {
+        getBG() { bg in
+            guard let bg = bg else { return }
+            bg.setExcessArea(yValue: yValue, posX: posX)
+        }
+    }
+    
+    public static func resetEcessArea(posX: Int) {
+        getBG() { bg in
+            guard let bg = bg else { return }
+            bg.removeExcessArea(posX: posX)
+        }
+    }
+    
 }
 
 enum EqRobSimLinesState {
@@ -566,6 +596,7 @@ struct EqRobSimLines {
                 return "xに入る数が違うと計算結果が違うということは、違う文字式ということだ！"
             } else {
                 if let _ = VEEquivalentController.gameScene as? ScenarioScene {
+                    CharacterController.doctor.setScale(1.0)
                     return "このようにxに入る数が違っても、同じ計算結果になる文字式は"
                 } else {
                     if EqRobJudgeController.isEquivalent {

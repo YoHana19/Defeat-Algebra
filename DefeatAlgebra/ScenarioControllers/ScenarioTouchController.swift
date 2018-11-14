@@ -24,8 +24,8 @@ class ScenarioTouchController {
         case MainMenu.timeBombStartTurn:
             scenarioSceneTimeBombStartTurn(name: name)
             break;
-        case MainMenu.eqRobStartTurn:
-            scenarioSceneEqRobStartTurn(name: name)
+        case MainMenu.eqRobNewStartTurn:
+            scenarioSceneEqRobNewStartTurn(name: name)
             break;
         case MainMenu.invisibleStartTurn:
             scenarioSceneInvisibleStartTurn()
@@ -46,8 +46,8 @@ class ScenarioTouchController {
         case MainMenu.timeBombStartTurn:
             gridTimeBombStartTurn(location: location, nodeAtPoint: nodeAtPoint)
             break;
-        case MainMenu.eqRobStartTurn:
-            gridEqRobStartTurn(nodeAtPoint: nodeAtPoint)
+        case MainMenu.eqRobNewStartTurn:
+            gridEqRobNewStartTurn(nodeAtPoint: nodeAtPoint)
             break;
         case MainMenu.cannonStartTurn:
             gridCannonStartTurn(nodeAtPoint: nodeAtPoint)
@@ -62,7 +62,7 @@ class ScenarioTouchController {
     
     private static func scenarioScene0(name: String?) {
         guard let name = name else { return }
-        if ScenarioController.currentActionIndex == 21 {
+        if ScenarioController.currentActionIndex == 23 {
             guard name == "buttonAttack" else { return }
             ScenarioController.currentActionIndex += 1
             GridActiveAreaController.showAttackArea(posX: ScenarioController.scenarioScene.hero.positionX, posY: ScenarioController.scenarioScene.hero.positionY, grid: ScenarioController.scenarioScene.gridNode)
@@ -86,20 +86,8 @@ class ScenarioTouchController {
         }
     }
     
-    private static func scenarioSceneEqRobStartTurn(name: String?) {
-        if ScenarioController.currentActionIndex == 13 {
-            if let name = name, name == "eqRob" {
-                ScenarioController.controllActions()
-            }
-        } else if ScenarioController.currentActionIndex == 22 {
-            ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 24 {
-            ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 26 {
-            if let name = name, name == "eqRob" {
-                ScenarioController.controllActions()
-            }
-        } else if ScenarioController.currentActionIndex == 29 {
+    private static func scenarioSceneEqRobNewStartTurn(name: String?) {
+        if ScenarioController.currentActionIndex == 8 {
             ScenarioController.controllActions()
         }
     }
@@ -118,7 +106,7 @@ class ScenarioTouchController {
     
     private static func grid0(location: CGPoint?) {
         guard let loca = location else { return }
-        if ScenarioController.currentActionIndex == 19 {
+        if ScenarioController.currentActionIndex == 21 {
             let gridX = Int(Double(loca.x) / gameScene.gridNode.cellWidth)
             let gridY = Int(Double(loca.y) / gameScene.gridNode.cellHeight)
             if gridX == 5 && gridY == 3 {
@@ -127,7 +115,7 @@ class ScenarioTouchController {
                     ScenarioController.controllActions()
                 }
             }
-        } else if ScenarioController.currentActionIndex == 22 {
+        } else if ScenarioController.currentActionIndex == 24 {
             let gridX = Int(Double(loca.x) / gameScene.gridNode.cellWidth)
             let gridY = Int(Double(loca.y) / gameScene.gridNode.cellHeight)
             if gridX == 6 && gridY == 3 {
@@ -167,8 +155,8 @@ class ScenarioTouchController {
         }
     }
     
-    private static func gridEqRobStartTurn(nodeAtPoint: SKNode?) {
-        if ScenarioController.currentActionIndex == 17 {
+    private static func gridEqRobNewStartTurn(nodeAtPoint: SKNode?) {
+        if ScenarioController.currentActionIndex == 4 {
             if let enemy = nodeAtPoint as? Enemy {
                 if enemy.positionX == 2 && enemy.positionY == 8 {
                     enemy.isSelectedForEqRob = true
@@ -182,29 +170,14 @@ class ScenarioTouchController {
                     ScenarioController.controllActions()
                 }
             }
-        } else if ScenarioController.currentActionIndex == 19 {
-            if let enemy = nodeAtPoint as? Enemy {
-                if enemy.positionX == 6 && enemy.positionY == 8 {
-                    enemy.isSelectedForEqRob = true
-                    EqRobController.execute(1, enemy: enemy)
-                    ScenarioController.controllActions()
-                }
-            } else if let enemy = nodeAtPoint?.parent as? Enemy {
-                if enemy.positionX == 6 && enemy.positionY == 8 {
-                    enemy.isSelectedForEqRob = true
-                    EqRobController.execute(1, enemy: enemy)
-                    ScenarioController.controllActions()
-                }
-            }
-        } else if ScenarioController.currentActionIndex == 24 {
-            ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 26 {
+        } else if ScenarioController.currentActionIndex == 6 {
             if let enemy = nodeAtPoint as? Enemy {
                 guard !enemy.isSelectedForEqRob else { return }
+                print("HOEHOGEOHEOHEO")
                 enemy.isSelectedForEqRob = true
                 EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
             }
-        } else if ScenarioController.currentActionIndex == 29 {
+        } else if ScenarioController.currentActionIndex == 8 {
             ScenarioController.controllActions()
         }
     }
@@ -241,23 +214,43 @@ class ScenarioTouchController {
         }
     }
     
-    public static func eqRobSimulatorTutorialTouch() -> Bool {
-        if ScenarioController.currentActionIndex == 3 {
-            return false
-        } else if ScenarioController.currentActionIndex == 4 {
-            ScenarioController.controllActions()
-            return false
-        } else if ScenarioController.currentActionIndex == 7 {
-            ScenarioController.controllActions()
-            return false
-        } else if ScenarioController.currentActionIndex == 9 {
-            ScenarioController.controllActions()
-            return false
-        } else if ScenarioController.currentActionIndex == 11 {
-            ScenarioController.controllActions()
-            return false
+    public static func eqRobSimulatorTutorialTouch(value: String? = "") -> Bool {
+        if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = EqRobJudgeController.gameScene as? ScenarioScene {
+            if ScenarioController.currentActionIndex == 3 {
+                return false
+            } else if ScenarioController.currentActionIndex == 4 {
+                ScenarioController.controllActions()
+                return false
+            } else if ScenarioController.currentActionIndex == 7 {
+                ScenarioController.controllActions()
+                return false
+            } else if ScenarioController.currentActionIndex == 9 {
+                ScenarioController.controllActions()
+                return false
+            } else if ScenarioController.currentActionIndex == 11 {
+                ScenarioController.controllActions()
+                return false
+            } else if ScenarioController.currentActionIndex == 16 {
+                ScenarioController.controllActions()
+                return false
+            } else if ScenarioController.currentActionIndex == 17 {
+                ScenarioController.controllActions()
+                return false
+            } else if ScenarioController.currentActionIndex == 18 {
+                guard value == "equivalent" else { return false }
+                ScenarioController.controllActions()
+                return true
+            } else if ScenarioController.currentActionIndex == 19 {
+                ScenarioController.controllActions()
+                return false
+            } else if ScenarioController.currentActionIndex == 20 {
+                return false
+            } else {
+                return true
+            }
         } else {
             return true
         }
     }
+    
 }

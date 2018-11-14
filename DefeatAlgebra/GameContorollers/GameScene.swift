@@ -947,6 +947,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pointing(pos: pos)
     }
     
+    func pointingEqButton() {
+        let pos = CGPoint(x: 545, y: 590)
+        pointing(pos: pos)
+    }
+    
     /* Set pointing icon */
     func pointing(pos: CGPoint) {
         let icon = SKSpriteNode(imageNamed: "pointing")
@@ -1131,6 +1136,24 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
         } else {
             return completion((cands, false))
+        }
+    }
+    
+    func setEnemyLooks(toNormal: Bool) {
+        for enemy in gridNode.enemyArray {
+            enemy.xValueLabel.isHidden = toNormal
+            if toNormal {
+                enemy.variableExpressionLabel.fontColor = UIColor.white
+                enemy.resolveShield() {}
+            } else {
+                if enemy.punchIntervalForCount == 0 {
+                    enemy.forcusForAttack(color: UIColor.red, value: self.xValue)
+                    enemy.calculatePunchLength(value: self.xValue)
+                }
+                if enemy.state == .Defence {
+                    enemy.defend()
+                }
+            }
         }
     }
     

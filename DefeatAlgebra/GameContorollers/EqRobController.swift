@@ -47,7 +47,7 @@ struct EqRobController {
         case 2:
             guard EqRobController.selectedEnemies.count > 0 else { return }
             isPerfect = eqRobGoToAttack()
-            ScenarioFunction.eqRobSimulatorTutorialTrriger()
+            let _ = ScenarioFunction.eqRobNewSimulatorTutorialTrriger(key: "eqRob")
             break;
         case 3:
             instructionDone()
@@ -100,12 +100,14 @@ struct EqRobController {
     }
     
     private static func showEqRobWithDoctor() {
+        gameScene.eqRob.colorize()
         gameScene.gridNode.enemyArray.forEach({ $0.isSelectedForEqRob = false })
         gameScene.eqRob.go(toPos: eqRobCenterPos, completion: {
             gameScene.eqRob.look(at: gameScene.madScientistNode) {
                 scan()
             }
         })
+        gameScene.setEnemyLooks(toNormal: true)
         gameScene.resizeLongVeNeighbor()
         CharacterController.doctor.setScale(doctorScale[0])
         CharacterController.doctor.changeBalloonTexture(index: 1)
@@ -117,7 +119,7 @@ struct EqRobController {
     public static func scan() {
         gridFlash() {
             var cands = [String]()
-            if GameScene.stageLevel < MainMenu.secondDayStartTurn {
+            if GameScene.stageLevel == MainMenu.eqRobNewStartTurn {
                 cands = VECategory.originVEsForEqRob(veCate: scannedVECategory)
             } else {
                 cands = VECategory.unSVEsForEqRob(veCate: scannedVECategory)
@@ -150,8 +152,8 @@ struct EqRobController {
     
     private static func startSelect(ve: String) {
         EqRobTouchController.state = .WillAttack
+        guard ScenarioFunction.eqRobNewSimulatorTutorialTrriger() else { return }
         doctorSays(in: .WillSelectEnemies, value: ve)
-        ScenarioFunction.eqRobSimulatorTutorialTrriger()
     }
     
     private static func select(enemy: Enemy) {
@@ -162,10 +164,7 @@ struct EqRobController {
         }
         selectedEnemies.append(enemy)
         selectedEnemyIndex += 1
-        if let _ = gameScene as? ScenarioScene, ScenarioController.currentActionIndex < 19 {
-        } else {
-            doctorSays(in: .SelectingEnemies, value: nil)
-        }
+        doctorSays(in: .SelectingEnemies, value: nil)
     }
     
     private static func resetSelection() {
@@ -282,7 +281,7 @@ struct EqRobController {
             let wait = SKAction.wait(forDuration: 3.0)
             gameScene.run(wait, completion: {
                 allDone()
-                ScenarioFunction.eqRobSimulatorTutorialTrriger(key: "perfect")
+                let _ = ScenarioFunction.eqRobNewSimulatorTutorialTrriger(key: "perfect")
             })
         } else {
             doctorSays(in: .MissEnemies, value: nil)
@@ -419,6 +418,7 @@ struct EqRobController {
     }
     
     private static func allDone() {
+        gameScene.eqRob.resetColorize()
         selectedEnemyIndex = 0
         attackingEnemyIndex = 0
         selectedEnemies = [Enemy]()
@@ -437,6 +437,7 @@ struct EqRobController {
         CharacterController.doctor.changeBalloonTexture(index: 0)
         CharacterController.doctor.move(from: nil, to: doctorOffPos)
         gameScene.itemType = .None
+        gameScene.setEnemyLooks(toNormal: false)
         ItemTouchController.othersTouched()
     }
     

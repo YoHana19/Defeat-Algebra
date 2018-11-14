@@ -12,24 +12,59 @@ import SpriteKit
 class EqRobJudgeController {
     
     public static var gameScene: GameScene!
-    private static var enemy1 = Enemy(ve: "")
-    private static var enemy2 = Enemy(ve: "")
+    public static var enemy1 = Enemy(ve: "")
+    public static var enemy2 = Enemy(ve: "")
     public static var isEquivalent: Bool = false
-    private static var isCorrect: Bool = false
+    public static var isCorrect: Bool = false
+    public static var isActive: Bool = false
+    
+    private static func getFirst(completion: @escaping (Bool) -> Void) {
+        let enemies = gameScene.gridNode.enemyArray
+        let rand = Int(arc4random_uniform(UInt32(enemies.count)))
+        enemy1 = enemies[rand]
+        let wrongable = VECategory.wrongableVEs(ve: enemy1.variableExpressionString)
+        if wrongable[0] != "x+1" {
+            let cands = enemies.filter({ wrongable.contains($0.variableExpressionString) })
+            if cands.count > 0 {
+                enemy2 = cands[0]
+                VECategory.getCategory(ve: enemy1.variableExpressionString) { cate1 in
+                    VECategory.getCategory(ve: enemy2.variableExpressionString) { cate2 in
+                        if cate1 == cate2 {
+                            isEquivalent = true
+                        } else {
+                            isEquivalent = false
+                        }
+                        return completion(true)
+                    }
+                }
+            } else {
+                return completion(false)
+            }
+        } else {
+            return completion(false)
+        }
+    }
     
     public static func getTwoEnemyRandomly(completion: @escaping () -> Void) {
-        let enemise = gameScene.gridNode.enemyArray
-        DAUtility.getRandomNumbers(total: enemise.count, times: 2) { nums in
-            enemy1 = enemise[nums[0]]
-            enemy2 = enemise[nums[1]]
-            VECategory.getCategory(ve: enemy1.variableExpressionString) { cate1 in
-                VECategory.getCategory(ve: enemy2.variableExpressionString) { cate2 in
-                    if cate1 == cate2 {
-                        isEquivalent = true
-                    } else {
-                        isEquivalent = false
+        isActive = true
+        getFirst() { picked in
+            if picked {
+                return completion()
+            } else {
+                let enemise = gameScene.gridNode.enemyArray
+                DAUtility.getRandomNumbers(total: enemise.count, times: 2) { nums in
+                    enemy1 = enemise[nums[0]]
+                    enemy2 = enemise[nums[1]]
+                    VECategory.getCategory(ve: enemy1.variableExpressionString) { cate1 in
+                        VECategory.getCategory(ve: enemy2.variableExpressionString) { cate2 in
+                            if cate1 == cate2 {
+                                isEquivalent = true
+                            } else {
+                                isEquivalent = false
+                            }
+                            return completion()
+                        }
                     }
-                    return completion()
                 }
             }
         }
@@ -43,9 +78,12 @@ class EqRobJudgeController {
         CharacterController.doctor.move(from: nil, to: EqRobController.doctorOnPos[0])
         
         gameScene.eqRob.go(to: enemy1) {
+            SoundController.sound(scene: gameScene, sound: .SignalGot)
             gameScene.eqRob.go(to: enemy2) {
+                SoundController.sound(scene: gameScene, sound: .SignalGot)
                 gameScene.eqRob.go(toPos: EqRobController.eqRobCenterPos) {
                     doctorSays(in: .ScanDone)
+                    SoundController.sound(scene: gameScene, sound: .ShowVe)
                     enemy1.pointing()
                     enemy2.pointing()
                     gameScene.eqRob.look(at: gameScene.madScientistNode) {
@@ -62,27 +100,45 @@ class EqRobJudgeController {
     }
     
     public static func showJudge() {
+        SoundController.playBGM(bgm: .EqJudge, isLoop: true)
+        gameScene.hero.setPhysics(isActive: false)
         CharacterController.doctor.zPosition = 55
+        let jb = JudgeBackground(gameScene: gameScene, enemy1: enemy1, enemy2: enemy2, isEquivalent: isEquivalent)
         doctorSays(in: .Choice)
-        let _ = JudgeBackground(gameScene: gameScene, enemy1: enemy1, enemy2: enemy2, isEquivalent: isEquivalent)
+        let _ = ScenarioTouchController.eqRobSimulatorTutorialTouch()
+        let wait = SKAction.wait(forDuration: 1.0)
+        gameScene.run(wait, completion: {
+            jb.isEnableTouch = true
+        })
     }
     
     public static func hideJudge(diffSelected: Bool, pos: CGPoint) {
+        if let _ = gameScene as? ScenarioScene {
+            GameStageController.soundForScenario()
+        } else {
+            GameStageController.sound()
+        }
         for child in gameScene.children {
             if let bg = child as? JudgeBackground {
                 bg.removeFromParent()
             }
         }
+        SoundController.sound(scene: gameScene, sound: .EqSelected)
         CharacterController.doctor.zPosition = 20
         doctorSays(in: .EqRobAttack)
         resetEnemy(enemy: enemy1)
         resetEnemy(enemy: enemy2)
         backEqRob(diffSelected: diffSelected, pos: pos)
+        let wait = SKAction.wait(forDuration: 1.0)
+        gameScene.run(wait, completion: {
+            gameScene.hero.setPhysics(isActive: true)
+        })
     }
     
     private static func backEqRob(diffSelected: Bool, pos: CGPoint) {
         if (diffSelected && !isEquivalent) || (!diffSelected && isEquivalent) {
             isCorrect = true
+            DataController.countForEnemyKilledByEqRobJudge(num: 2)
         } else {
             isCorrect = false
         }
@@ -92,6 +148,7 @@ class EqRobJudgeController {
         } else {
             gameScene.eqRob.eqSign.isHidden = false
         }
+        DataController.setDataForEqRobJudge(isMiss: !isCorrect)
         gameScene.eqRob.go(toPos: EqRobController.eqRobCenterPos) {
             gameScene.eqRob.look(at: gameScene.madScientistNode) {
                 let wait = SKAction.wait(forDuration: 1.0)
@@ -119,14 +176,21 @@ class EqRobJudgeController {
             enemy.defend()
         } else if enemy.stateRecord.count < 1 {
             enemy.defend()
+        } else if enemy.state == .Attack && enemy.punchInterval != 0 {
+            enemy.defend()
         }
     }
     
     public static func eqRobGoToAttak() {
         gameScene.eqRob.kill(enemy1) {
+            SoundController.sound(scene: gameScene, sound: .EqAttack)
             gameScene.eqRob.kill(enemy2) {
+                SoundController.sound(scene: gameScene, sound: .EqAttack)
                 attackDone()
-                gameScene.eqRob.go(toPos: EqRobController.eqRobOriginPos) {}
+                gameScene.eqRob.go(toPos: EqRobController.eqRobOriginPos) {
+                    gameScene.eqRob.diffSign.isHidden = true
+                    gameScene.eqRob.eqSign.isHidden = true
+                }
             }
         }
     }
@@ -136,6 +200,8 @@ class EqRobJudgeController {
             destroyEnemiesAtOnce()
             let wait = SKAction.wait(forDuration: 4.0)
             gameScene.run(wait, completion: {
+                isActive = false
+                guard ScenarioTouchController.eqRobSimulatorTutorialTouch() else { return }
                 CharacterController.retreatDoctor()
                 gameScene.itemType = .None
                 ItemTouchController.othersTouched()
@@ -156,9 +222,10 @@ class EqRobJudgeController {
     private static func destroyEnemiesAtOnce(delay: TimeInterval = 1.0) {
         let wait = SKAction.wait(forDuration: delay)
         gameScene.run(wait, completion: {
-            doctorSays(in: .Correct)
             EnemyDeadController.hitEnemy(enemy: enemy1, gameScene: gameScene, isEqRob: true) {}
             EnemyDeadController.hitEnemy(enemy: enemy2, gameScene: gameScene, isEqRob: true) {}
+            guard ScenarioTouchController.eqRobSimulatorTutorialTouch() else { return }
+            doctorSays(in: .Correct)
         })
     }
     
@@ -169,6 +236,7 @@ class EqRobJudgeController {
         doctorSays(in: .CheckDone)
         let wait = SKAction.wait(forDuration: 3.0)
         gameScene.run(wait, completion: {
+            isActive = false
             CharacterController.retreatDoctor()
             gameScene.itemType = .None
             ItemTouchController.othersTouched()
@@ -208,7 +276,7 @@ struct EqRobJudgeLines {
             if EqRobJudgeController.isEquivalent {
                 value = "同じ"
             }
-            return "さすがじゃ！やはり\(value)文字式だったようじゃな"
+            return "さすがじゃ！\(value)文字式で正解だったようじゃな"
         case .Wrong:
             var value = "違う"
             if !EqRobJudgeController.isEquivalent {
@@ -220,7 +288,7 @@ struct EqRobJudgeLines {
             if EqRobJudgeController.isEquivalent {
                 value = "同じ"
             }
-            return "シミュレータで本当に\(value)文字式か確かめてみよう"
+            return "シミュレータで本当に\(value)文字式なのか確かめてみよう"
         case .CheckDone:
             return "次は間違えずに敵を倒そう！"
         }

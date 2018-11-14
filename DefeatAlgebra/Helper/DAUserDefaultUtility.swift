@@ -23,6 +23,7 @@ class DAUserDefaultUtility {
     static var changeVeSizeExplainByEdge = false
     static var changeVeSizeExplainByNeignbor = false
     static var eqRobExplain = false
+    static var eqRobNewExplain = false
     static var cannonExplain = false
     static var invisibleSignal = false
     static var lastScenario = false
@@ -34,13 +35,12 @@ class DAUserDefaultUtility {
         
         initialScenario = ud.bool(forKey: "initialScenario")
         uncoverSignal = ud.bool(forKey: "uncoverSignal")
-        changeMoveSpan = ud.bool(forKey: "changeMoveSpan")
         timeBombExplain = ud.bool(forKey: "timeBombExplain")
-        moveExplain = ud.bool(forKey: "moveExplain")
         showUnsimplified = ud.bool(forKey: "showUnsimplified")
         changeVeSizeExplainByEdge = ud.bool(forKey: "changeVeSizeExplainByEdge")
         changeVeSizeExplainByNeignbor = ud.bool(forKey: "changeVeSizeExplainByNeignbor")
         eqRobExplain = ud.bool(forKey: "eqRobExplain")
+        eqRobNewExplain = ud.bool(forKey: "eqRobNewExplain")
         cannonExplain = ud.bool(forKey: "cannonExplain")
         invisibleSignal = ud.bool(forKey: "invisibleSignal")
         lastScenario = ud.bool(forKey: "lastScenario")
@@ -67,6 +67,7 @@ class DAUserDefaultUtility {
         changeVeSizeExplainByEdge = false
         changeVeSizeExplainByNeignbor = false
         eqRobExplain = false
+        eqRobNewExplain = false
         cannonExplain = false
         invisibleSignal = false
         lastScenario = false
@@ -83,14 +84,8 @@ class DAUserDefaultUtility {
         case "uncoverSignal":
             uncoverSignal = true
             break;
-        case "changeMoveSpan":
-            changeMoveSpan = true
-            break;
         case "timeBombExplain":
             timeBombExplain = true
-            break;
-        case "moveExplain":
-            moveExplain = true
             break;
         case "showUnsimplified":
             showUnsimplified = true
@@ -103,6 +98,9 @@ class DAUserDefaultUtility {
             break;
         case "eqRobExplain":
             eqRobExplain = true
+            break;
+        case "eqRobNewExplain":
+            eqRobNewExplain = true
             break;
         case "cannonExplain":
             cannonExplain = true

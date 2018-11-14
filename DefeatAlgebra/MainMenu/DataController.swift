@@ -9,12 +9,12 @@
 import Foundation
 
 enum Data: String {
-    case GameOverByHit, GameOverByCastle, EnemyKilledByDA, AttackedEnemyKilledByDA, UsedBomb, EnemyKilledByBomb, AttackedEnemyKilledByBomb, UsedEqRob, MissedEqRob, DestroyedEqRob, EnemyKilledByEqRob, FiredCannon, EnemyKilledByCannon, AttackedEnemyKilledByCannon, UsedTryCannon, ChangeCannonDistanceInTrying, GetHintInTryingCannon, GetAnswerInTryingCannon
+    case GameOverByHit, GameOverByCastle, EnemyKilledByDA, UsedBomb, EnemyKilledByBomb, UsedEqRobJudge, EqRobJudgeMiss, EnemyKilledByEqRobJudge, UsedEqRob, MissedEqRob, DestroyedEqRob, EnemyKilledByEqRob, FiredCannon, EnemyKilledByCannon, UsedTryCannon, ChangeCannonDistanceInTrying, GetHintInTryingCannon, GetAnswerInTryingCannon
 }
 
 class DataController {
     
-    public static let data: [Data] = [.GameOverByHit, .GameOverByCastle, .EnemyKilledByDA, .AttackedEnemyKilledByDA, .UsedBomb, .EnemyKilledByBomb, .AttackedEnemyKilledByBomb, .UsedEqRob, .MissedEqRob, .DestroyedEqRob, .EnemyKilledByEqRob, .FiredCannon, .EnemyKilledByCannon, .AttackedEnemyKilledByCannon, .UsedTryCannon, .ChangeCannonDistanceInTrying,.GetHintInTryingCannon, .GetAnswerInTryingCannon]
+    public static let data: [Data] = [.GameOverByHit, .GameOverByCastle, .EnemyKilledByDA, .UsedBomb, .EnemyKilledByBomb, .UsedEqRobJudge, .EqRobJudgeMiss, .EnemyKilledByEqRobJudge, .UsedEqRob, .MissedEqRob, .DestroyedEqRob, .EnemyKilledByEqRob, .FiredCannon, .EnemyKilledByCannon, .UsedTryCannon, .ChangeCannonDistanceInTrying,.GetHintInTryingCannon, .GetAnswerInTryingCannon]
     
     public static var isGameScene = true
     private static let ud = UserDefaults.standard
@@ -22,17 +22,17 @@ class DataController {
     private static var gameOverByHit = 0
     private static var gameOverByCastle = 0
     private static var enemyKilledByDA = 0
-    private static var attackedEnemyKilledByDA = 0
     private static var usedBomb = 0
     private static var enemyKilledByBomb = 0
-    private static var attackedEnemyKilledByBomb = 0
+    private static var usedEqRobJudge = 0
+    private static var eqRobJudgeMiss = 0
+    private static var enemyKilledByEqRobJudge = 0
     private static var usedEqRob = 0
     private static var missedEqRob = 0
     private static var destroyedEqRob = 0
     private static var enemyKilledByEqRob = 0
     private static var firedCannon = 0
     private static var enemyKilledByCannon = 0
-    private static var attackedEnemyKilledByCannon = 0
     private static var usedTryCannon = 0
     private static var changeCannonDistanceInTrying = 0
     private static var getHintInTryingCannon = 0
@@ -60,6 +60,16 @@ class DataController {
         usedBomb += 1
         setData(type: .UsedBomb)
         
+    }
+    
+    public static func setDataForEqRobJudge(isMiss: Bool) {
+        guard isGameScene else { return }
+        usedEqRobJudge += 1
+        if (isMiss) {
+            eqRobJudgeMiss += 1
+            setData(type: .EqRobJudgeMiss)
+        }
+        setData(type: .UsedEqRobJudge)
     }
     
     public static func setDataForEqRob(isPerfect: Bool, isMiss: Bool) {
@@ -110,28 +120,25 @@ class DataController {
     public static func setDataForEnemyKilled() {
         guard isGameScene else { return }
         setData(type: .EnemyKilledByDA)
-        setData(type: .AttackedEnemyKilledByDA)
         setData(type: .EnemyKilledByBomb)
-        setData(type: .AttackedEnemyKilledByBomb)
+        setData(type: .EnemyKilledByEqRobJudge)
         setData(type: .EnemyKilledByEqRob)
         setData(type: .EnemyKilledByCannon)
-        setData(type: .AttackedEnemyKilledByCannon)
     }
     
     public static func countForEnemyKilledByDA(enemy: Enemy) {
         guard isGameScene else { return }
         enemyKilledByDA += 1
-        if enemy.posRecord.last?.2 == 0 {
-            attackedEnemyKilledByDA += 1
-        }
     }
     
     public static func countForEnemyKilledByTimeBomb(enemy: Enemy) {
         guard isGameScene else { return }
         enemyKilledByBomb += 1
-        if enemy.posRecord.last?.2 == 0 {
-            attackedEnemyKilledByBomb += 1
-        }
+    }
+    
+    public static func countForEnemyKilledByEqRobJudge(num: Int) {
+        guard isGameScene else { return }
+        enemyKilledByEqRobJudge += num
     }
     
     public static func countForEnemyKilledByEqRob(num: Int) {
@@ -142,9 +149,6 @@ class DataController {
     public static func countForEnemyKilledByCannon(enemy: Enemy) {
         guard isGameScene else { return }
         enemyKilledByCannon += 1
-        if enemy.posRecord.last?.2 == 0 {
-            attackedEnemyKilledByCannon += 1
-        }
     }
     
     private static func setData(type: Data) {
@@ -162,14 +166,16 @@ class DataController {
             return gameOverByCastle
         case .EnemyKilledByDA:
             return enemyKilledByDA
-        case .AttackedEnemyKilledByDA:
-            return attackedEnemyKilledByDA
         case .UsedBomb:
             return usedBomb
         case .EnemyKilledByBomb:
             return enemyKilledByBomb
-        case .AttackedEnemyKilledByBomb:
-            return attackedEnemyKilledByBomb
+        case .UsedEqRobJudge:
+            return usedEqRobJudge
+        case .EqRobJudgeMiss:
+            return eqRobJudgeMiss
+        case .EnemyKilledByEqRobJudge:
+            return enemyKilledByEqRobJudge
         case .UsedEqRob:
             return usedEqRob
         case .MissedEqRob:
@@ -182,8 +188,6 @@ class DataController {
             return firedCannon
         case .EnemyKilledByCannon:
             return enemyKilledByCannon
-        case .AttackedEnemyKilledByCannon:
-            return attackedEnemyKilledByCannon
         case .UsedTryCannon:
             return usedTryCannon
         case .ChangeCannonDistanceInTrying:
@@ -206,17 +210,20 @@ class DataController {
         case .EnemyKilledByDA:
             enemyKilledByDA = 0
             break;
-        case .AttackedEnemyKilledByDA:
-            attackedEnemyKilledByDA = 0
-            break;
         case .UsedBomb:
             usedBomb = 0
             break;
         case .EnemyKilledByBomb:
             enemyKilledByBomb = 0
             break;
-        case .AttackedEnemyKilledByBomb:
-            attackedEnemyKilledByBomb = 0
+        case .UsedEqRobJudge:
+            usedEqRobJudge = 0
+            break;
+        case .EqRobJudgeMiss:
+            eqRobJudgeMiss = 0
+            break;
+        case .EnemyKilledByEqRobJudge:
+            enemyKilledByEqRobJudge = 0
             break;
         case .UsedEqRob:
             usedEqRob = 0
@@ -235,9 +242,6 @@ class DataController {
             break;
         case .EnemyKilledByCannon:
             enemyKilledByCannon = 0
-            break;
-        case .AttackedEnemyKilledByCannon:
-            attackedEnemyKilledByCannon = 0
             break;
         case .UsedTryCannon:
             usedTryCannon = 0

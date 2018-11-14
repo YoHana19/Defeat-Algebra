@@ -46,7 +46,7 @@ struct GameOverTurnController {
         gameScene.buttonRetryFromTop.state = .msButtonNodeStateHidden
         /* Play Sound */
         if MainMenu.soundOnFlag {
-            gameScene.gameOverSoundDone = true
+            gameScene.gameOverSoundDone = false
             if let _ = gameScene as? ScenarioScene {
                 GameStageController.soundForScenario()
             } else {
@@ -66,5 +66,13 @@ struct GameOverTurnController {
         } else {
             return 0.5
         }
+    }
+    
+    public static func calculateWaitTime(enemy: Enemy) -> TimeInterval {
+        let dif = enemy.positionY - gameScene.hero.positionY
+        let leftVal = enemy.valueOfEnemy - dif
+        let leftPunchLength = CGFloat(leftVal) * enemy.singlePunchLength
+        let totalLength = leftPunchLength + enemy.punchLength
+        return TimeInterval(totalLength * enemy.punchSpeed)
     }
 }

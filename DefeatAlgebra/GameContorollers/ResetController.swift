@@ -22,5 +22,8 @@ struct ResetController {
         CannonController.willFireCannon.removeAll()
         VEEquivalentController.numOfCheck = 0
         PlayerTurnController.done = false
+        PlayerTurnController.isNewEqRobTurn = true
+        PlayerTurnController.countTurn = 0
+        CharacterController.doctor.changeBalloonTexture(index: 0)
     }
 }

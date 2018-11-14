@@ -25,23 +25,17 @@ struct GameStageController {
         case MainMenu.uncoverSignalStartTurn: //1
             loadScenarioScene(scene: scene)
             break;
-//        case MainMenu.changeMoveSpanStartTurn: //2
-//            loadScenarioScene(scene: scene)
-//            break;
         case MainMenu.timeBombStartTurn: //4
             loadScenarioScene(scene: scene)
             break;
-//        case MainMenu.moveExplainStartTurn: //5
-//            loadScenarioScene(scene: scene)
-//            break;
         case MainMenu.showUnsimplifiedStartTurn: //6
             loadScenarioScene(scene: scene)
             break;
-        case MainMenu.eqRobNewStartTurn: //7
+        case MainMenu.eqRobStartTurn: //7
             loadScenarioScene(scene: scene)
             break;
-        case MainMenu.secondDayStartTurn: //10
-            loadGameScene(scene: scene)
+        case MainMenu.eqRobNewStartTurn: //9
+            loadScenarioScene(scene: scene)
             break;
         case MainMenu.cannonStartTurn:
             loadScenarioScene(scene: scene)
@@ -83,7 +77,6 @@ struct GameStageController {
     public static func initialize() {
         moveLevel()
         sound()
-        dodgeRatio()
         timeBomb()
         stageLabel()
         cannon()
@@ -98,25 +91,25 @@ struct GameStageController {
 //        }
     }
     
-    private static func dodgeRatio() {
-        if GameScene.stageLevel < MainMenu.timeBombStartTurn + 2 {
-            EnemyMoveController.dodgeRation = 0
-        } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
-            EnemyMoveController.dodgeRation = 70
-        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn-1 {
-            EnemyMoveController.dodgeRation = 80
-        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn-1 {
-            EnemyMoveController.dodgeRation = 100
-        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+1 {
-            EnemyMoveController.dodgeRation = 0
-        } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
-            EnemyMoveController.dodgeRation = 80
-        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
-            EnemyMoveController.dodgeRation = 70
-        } else if GameScene.stageLevel <= MainMenu.lastTurn {
-            EnemyMoveController.dodgeRation = 100
-        }
-    }
+//    private static func dodgeRatio() {
+//        if GameScene.stageLevel < MainMenu.timeBombStartTurn + 2 {
+//            EnemyMoveController.dodgeRation = 0
+//        } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
+//            EnemyMoveController.dodgeRation = 70
+//        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn-1 {
+//            EnemyMoveController.dodgeRation = 80
+//        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn-1 {
+//            EnemyMoveController.dodgeRation = 100
+//        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+1 {
+//            EnemyMoveController.dodgeRation = 0
+//        } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
+//            EnemyMoveController.dodgeRation = 80
+//        } else if GameScene.stageLevel < MainMenu.invisibleStartTurn {
+//            EnemyMoveController.dodgeRation = 70
+//        } else if GameScene.stageLevel <= MainMenu.lastTurn {
+//            EnemyMoveController.dodgeRation = 100
+//        }
+//    }
     
     private static func timeBomb() {
         if GameScene.stageLevel == MainMenu.timeBombStartTurn {
@@ -170,11 +163,11 @@ struct GameStageController {
             SoundController.playBGM(bgm: .Game1, isLoop: true)
         } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             SoundController.playBGM(bgm: .Game2, isLoop: true)
-        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn-1 {
+        } else if GameScene.stageLevel < MainMenu.eqRobNewStartTurn-1 {
             SoundController.playBGM(bgm: .Game3, isLoop: true)
-        } else if GameScene.stageLevel == MainMenu.secondDayStartTurn-1 {
+        } else if GameScene.stageLevel == MainMenu.eqRobNewStartTurn-1 {
             SoundController.playBGM(bgm: .FirstDayLast, isLoop: true)
-        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+2 {
+        } else if GameScene.stageLevel < MainMenu.eqRobNewStartTurn+2 {
             SoundController.playBGM(bgm: .Game2, isLoop: true)
         } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
             SoundController.playBGM(bgm: .Game1, isLoop: true)
@@ -192,9 +185,9 @@ struct GameStageController {
             SoundController.playBGM(bgm: .Opening2, isLoop: true)
         } else if GameScene.stageLevel < MainMenu.eqRobStartTurn {
             SoundController.playBGM(bgm: .Game2, isLoop: true)
-        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn {
+        } else if GameScene.stageLevel < MainMenu.eqRobNewStartTurn {
             SoundController.playBGM(bgm: .Opening2, isLoop: true)
-        } else if GameScene.stageLevel < MainMenu.secondDayStartTurn+2 {
+        } else if GameScene.stageLevel < MainMenu.eqRobNewStartTurn+2 {
             SoundController.playBGM(bgm: .Game2, isLoop: true)
         } else if GameScene.stageLevel < MainMenu.cannonStartTurn {
             SoundController.playBGM(bgm: .Game1, isLoop: true)
@@ -225,7 +218,9 @@ struct GameStageController {
         } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
             gameScene.totalNumOfEnemy = 3
         } else if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-            gameScene.totalNumOfEnemy = 5
+            gameScene.totalNumOfEnemy = 2
+        } else if GameScene.stageLevel == MainMenu.eqRobNewStartTurn {
+            gameScene.totalNumOfEnemy = 4
         } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
             gameScene.totalNumOfEnemy = 2
         } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
@@ -248,12 +243,12 @@ struct GameStageController {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.initialScenario
         } else if GameScene.stageLevel == MainMenu.uncoverSignalStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.uncoverSignal
-        } else if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn {
-            scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.changeMoveSpan
         } else if GameScene.stageLevel == MainMenu.timeBombStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.timeBombExplain
         } else if GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.showUnsimplified
+        } else if GameScene.stageLevel == MainMenu.eqRobNewStartTurn {
+            scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.eqRobNewExplain
         } else if GameScene.stageLevel == MainMenu.eqRobStartTurn {
             scenarioScene.skipButton.isHidden = !DAUserDefaultUtility.eqRobExplain
         } else if GameScene.stageLevel == MainMenu.cannonStartTurn {
@@ -281,6 +276,10 @@ struct GameStageController {
         if GameScene.stageLevel <= 2 {
             return 3
         } else if GameScene.stageLevel <= 4 {
+            return 2
+        } else if GameScene.stageLevel == MainMenu.eqRobStartTurn+1 {
+            return 2
+        } else if GameScene.stageLevel == MainMenu.eqRobNewStartTurn+1 {
             return 2
         } else {
             return 3

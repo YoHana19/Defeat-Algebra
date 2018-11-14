@@ -97,51 +97,51 @@ class EnemyMoveController {
 //        }
 //    }
     
-    private static func detectHeroOrBomb(enemy: Enemy, grid: Grid) -> [Direction] {
-        var leftIsSafe = true
-        var rightIsSafe = true
-        var forwardIsSafe = true
-        let enemyPosX = enemy.positionX
-        let enemyPosY = enemy.positionY
-        // hero
-        if enemyPosX-1 == gameScene.hero.positionX && enemyPosY-1 == gameScene.hero.positionY {
-            leftIsSafe = false
-            forwardIsSafe = false
-        } else if enemyPosX+1 == gameScene.hero.positionX && enemyPosY-1 == gameScene.hero.positionY {
-            rightIsSafe = false
-            forwardIsSafe = false
-        } else if enemyPosX == gameScene.hero.positionX && enemyPosY-2 == gameScene.hero.positionY {
-            forwardIsSafe = false
-        }
-        
-        if (GameScene.stageLevel >= MainMenu.timeBombStartTurn && GameScene.stageLevel <= MainMenu.timeBombStartTurn+3) || (GameScene.stageLevel >= MainMenu.secondDayStartTurn && GameScene.stageLevel <= MainMenu.secondDayStartTurn+1) {
-            // bomb
-            let bombLeft = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX-1, enemyPosY) })
-            let bombRight = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX+1, enemyPosY) })
-            let bombForward = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX, enemyPosY-1) })
-            if bombLeft.count > 0 {
-                leftIsSafe = false
-            }
-            if bombRight.count > 0 {
-                rightIsSafe = false
-            }
-            if bombForward.count > 0 {
-                forwardIsSafe = false
-            }
-        }
-        
-        var direction = [Direction]()
-        if leftIsSafe {
-            direction.append(.left)
-        }
-        if rightIsSafe {
-            direction.append(.right)
-        }
-        if forwardIsSafe {
-            direction.append(.front)
-        }
-        return direction
-    }
+//    private static func detectHeroOrBomb(enemy: Enemy, grid: Grid) -> [Direction] {
+//        var leftIsSafe = true
+//        var rightIsSafe = true
+//        var forwardIsSafe = true
+//        let enemyPosX = enemy.positionX
+//        let enemyPosY = enemy.positionY
+//        // hero
+//        if enemyPosX-1 == gameScene.hero.positionX && enemyPosY-1 == gameScene.hero.positionY {
+//            leftIsSafe = false
+//            forwardIsSafe = false
+//        } else if enemyPosX+1 == gameScene.hero.positionX && enemyPosY-1 == gameScene.hero.positionY {
+//            rightIsSafe = false
+//            forwardIsSafe = false
+//        } else if enemyPosX == gameScene.hero.positionX && enemyPosY-2 == gameScene.hero.positionY {
+//            forwardIsSafe = false
+//        }
+//
+//        if (GameScene.stageLevel >= MainMenu.timeBombStartTurn && GameScene.stageLevel <= MainMenu.timeBombStartTurn+3) || (GameScene.stageLevel >= MainMenu.secondDayStartTurn && GameScene.stageLevel <= MainMenu.secondDayStartTurn+1) {
+//            // bomb
+//            let bombLeft = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX-1, enemyPosY) })
+//            let bombRight = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX+1, enemyPosY) })
+//            let bombForward = grid.timeBombSetArray.filter({ $0.setPos == (enemyPosX, enemyPosY-1) })
+//            if bombLeft.count > 0 {
+//                leftIsSafe = false
+//            }
+//            if bombRight.count > 0 {
+//                rightIsSafe = false
+//            }
+//            if bombForward.count > 0 {
+//                forwardIsSafe = false
+//            }
+//        }
+//        
+//        var direction = [Direction]()
+//        if leftIsSafe {
+//            direction.append(.left)
+//        }
+//        if rightIsSafe {
+//            direction.append(.right)
+//        }
+//        if forwardIsSafe {
+//            direction.append(.front)
+//        }
+//        return direction
+//    }
     
     private static func getDirection(enemy: Enemy, gridNode: Grid, completion: @escaping (Direction) -> Void) {
         /* Determine direction to move */

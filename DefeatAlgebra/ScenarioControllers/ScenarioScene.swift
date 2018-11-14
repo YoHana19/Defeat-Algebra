@@ -19,6 +19,7 @@ enum TutorialState {
 class ScenarioScene: GameScene {
     
     var skipButton: MSButtonNode!
+    var tutorialVE = SKLabelNode(fontNamed: DAFont.fontName)
     
     override var playerTurnState: PlayerTurnState {
         didSet {
@@ -112,7 +113,7 @@ class ScenarioScene: GameScene {
             SoundController.stopBGM()
             
             TutorialController.state = .Pending
-            if GameScene.stageLevel == MainMenu.changeMoveSpanStartTurn || GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
+            if GameScene.stageLevel == MainMenu.timeBombStartTurn || GameScene.stageLevel == MainMenu.showUnsimplifiedStartTurn || GameScene.stageLevel == MainMenu.eqRobStartTurn || GameScene.stageLevel == MainMenu.eqRobNewStartTurn || GameScene.stageLevel == MainMenu.lastTurn {
                 ScenarioController.loadGameScene()
             } else {
                 CharacterController.retreatMainHero()
@@ -204,7 +205,7 @@ class ScenarioScene: GameScene {
         setLife(numOflife: life)
         
         GameStageController.initializeForScenario()
-        
+        setVE()
         setEqRob()
         
         self.isCharactersTurn = true
@@ -423,7 +424,7 @@ class ScenarioScene: GameScene {
             guard gameState == .PlayerTurn else { return }
             guard TutorialController.userTouch(on: nodeAtPoint.name) else { return }
             
-            if nodeAtPoint.name == "eqRob" {
+            if nodeAtPoint.name == "eqRob" || nodeAtPoint.name == "eqVELabel" {
                 AllTouchController.eqRobTouched()
                 
             } else if playerTurnState == .MoveState {
@@ -747,6 +748,40 @@ class ScenarioScene: GameScene {
         enemy.punchIntervalForCount = enemy.punchInterval
         enemy.defend()
         enemy.posRecord.removeAll()
+    }
+    
+    func setVE() {
+        tutorialVE = SKLabelNode(fontNamed: DAFont.fontName)
+        tutorialVE.text = "x+1"
+        tutorialVE.horizontalAlignmentMode = .left
+        /* Set font size */
+        tutorialVE.fontSize = 100
+        /* Set zPosition */
+        tutorialVE.zPosition = 50
+        /* Set position */
+        tutorialVE.position = CGPoint(x: 80, y: 1080)
+        tutorialVE.isHidden = true
+        /* Add to Scene */
+        self.addChild(tutorialVE)
+    }
+    
+    func showVE() {
+        tutorialVE.isHidden = false
+    }
+    
+    func changeVE(txt: String, redPos: [Int]?) {
+        tutorialVE.text = txt
+        let attrText = NSMutableAttributedString(string: tutorialVE.text!)
+        let font = UIFont(name: DAFont.fontName, size: tutorialVE.fontSize) ?? UIFont.systemFont(ofSize: tutorialVE.fontSize)
+        attrText.addAttributes([.foregroundColor: UIColor.white, .font: font], range: NSMakeRange(0, tutorialVE.text!.count))
+        if let poses = redPos {
+            for pos in poses {
+                attrText.addAttribute(.foregroundColor, value: UIColor.red, range: NSMakeRange(pos, 1))
+            }
+        }
+        if #available(iOS 11.0, *) {
+            tutorialVE.attributedText = attrText
+        }
     }
 }
 

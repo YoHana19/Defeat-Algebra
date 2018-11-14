@@ -333,4 +333,12 @@ class EqRob: SKSpriteNode {
         variableExpressionLabel.fontColor = UIColor.red
     }
     
+    func colorize() {
+        self.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 0.7, duration: 0.50))
+    }
+    
+    func resetColorize() {
+        self.run(SKAction.colorize(with: UIColor.red, colorBlendFactor: 0, duration: 0.50))
+    }
+    
 }

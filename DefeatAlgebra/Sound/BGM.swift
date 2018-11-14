@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 
 enum Bgm {
-    case Opening, Opening2, MainMenu, StageClear, Game1, Game2, Game3, SimBGM, FirstDayLast, Last
+    case Opening, Opening2, MainMenu, StageClear, EqJudge, Game1, Game2, Game3, SimBGM, FirstDayLast, Last
 }
 
 class BGM: AVAudioPlayer {
@@ -26,6 +26,8 @@ class BGM: AVAudioPlayer {
             source = ("mainMenu", "mp3")
         case .StageClear:
             source = ("stageClear", "mp3")
+        case .EqJudge:
+            source = ("eqJudge", "mp3")
         case .Game1:
             source = ("game1", "wav")
         case .Game2:

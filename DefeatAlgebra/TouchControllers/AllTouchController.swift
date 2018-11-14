@@ -17,7 +17,6 @@ struct AllTouchController {
         guard gameScene.itemType == .EqRob else { return }
         guard EqRobTouchController.state == .WillAttack else { return }
         SoundController.sound(scene: gameScene, sound: .EqSelected)
-        
         EqRobController.execute(2, enemy: nil)
     }
     

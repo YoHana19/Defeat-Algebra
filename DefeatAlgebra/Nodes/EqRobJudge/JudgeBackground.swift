@@ -11,10 +11,10 @@ import SpriteKit
 
 class JudgeBackground: SKSpriteNode {
     
-    public var isEnable = false
     var eqRobDiff = SKSpriteNode(imageNamed: "eqRob")
     var eqRobEq = SKSpriteNode(imageNamed: "eqRob")
     var isEquivalent = false
+    var isEnableTouch = false
     
     init(gameScene: GameScene, enemy1: Enemy, enemy2: Enemy, isEquivalent: Bool) {
         /* Initialize with enemy asset */
@@ -50,10 +50,15 @@ class JudgeBackground: SKSpriteNode {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
         let nodeAtPoint = atPoint(location)     // Find the node at that location
+        
+        guard ScenarioTouchController.eqRobSimulatorTutorialTouch(value: nodeAtPoint.name) else { return }
+        
+        guard isEnableTouch else { return }
         
         if nodeAtPoint.name == "different" {
             EqRobJudgeController.hideJudge(diffSelected: true, pos: CGPoint(x: 255, y: 540))
@@ -65,7 +70,9 @@ class JudgeBackground: SKSpriteNode {
     private func setEnemy(enemy: Enemy, enemyPos: CGPoint) {
         enemy.zPosition = 51
         enemy.xValueLabel.isHidden = true
-        enemy.variableExpressionLabel.color = UIColor.white
+        enemy.direction = .front
+        enemy.setMovingAnimation()
+        enemy.variableExpressionLabel.fontColor = UIColor.white
         let move = SKAction.move(to: enemyPos, duration: 1.0)
         let scale = SKAction.scale(by: 2.0, duration: 1.0)
         let group = SKAction.group([move, scale])

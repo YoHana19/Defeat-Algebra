@@ -155,7 +155,25 @@ class ScenarioFunction {
         }
     }
     
-    
+    public static func eqRobNewSimulatorTutorialTrriger(key: String = "") -> Bool {
+        guard GameScene.stageLevel == MainMenu.eqRobNewStartTurn, let _ = VEEquivalentController.gameScene as? ScenarioScene else { return true }
+        if ScenarioController.currentActionIndex == 3 {
+            ScenarioController.controllActions()
+            return false
+        } else if ScenarioController.currentActionIndex == 6 {
+            guard key == "eqRob" else { return true }
+            ScenarioController.controllActions()
+            return true
+        } else if ScenarioController.currentActionIndex == 7 {
+            guard key == "perfect" else { return false }
+            ScenarioController.currentActionIndex += 2
+            print(ScenarioController.currentActionIndex)
+            ScenarioController.controllActions()
+            return false
+        } else {
+            return true
+        }
+    }
     
     
     

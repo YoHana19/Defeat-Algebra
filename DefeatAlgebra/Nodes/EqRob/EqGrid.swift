@@ -32,7 +32,6 @@ class EqGrid: Grid {
             case .Converstaion:
                 ScenarioController.nextLine()
                 return
-                break;
             case .Action:
                 if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
                     guard ScenarioTouchController.eqRobSimulatorTutorialTouch() else { return }
@@ -92,17 +91,26 @@ class EqGrid: Grid {
         guard conclusionLabel.isHidden else { return true }
         conclusionLabel.isHidden = false
         SoundController.sound(scene: VEEquivalentController.gameScene, sound: .ButtonMove)
-        if EqRobTouchController.state == .AliveInstruction
-        {
-            conclusionLabel.text = "同じ文字式"
-        } else if EqRobTouchController.state == .DeadInstruction {
-            conclusionLabel.text = "違う文字式"
-        } else if EqRobJudgeController.isEquivalent {
-            conclusionLabel.text = "同じ文字式"
-        } else if !EqRobJudgeController.isEquivalent {
-            conclusionLabel.text = "違う文字式"
-        } else if let _ = VEEquivalentController.gameScene as? ScenarioScene {
-            conclusionLabel.text = "同じ文字式"
+        if let _ = VEEquivalentController.gameScene as? ScenarioScene {
+            if GameScene.stageLevel == MainMenu.eqRobStartTurn && ScenarioController.currentActionIndex < 14 {
+                conclusionLabel.text = "同じ文字式"
+            } else if GameScene.stageLevel == MainMenu.eqRobNewStartTurn {
+                if EqRobTouchController.state == .AliveInstruction {
+                    conclusionLabel.text = "同じ文字式"
+                } else if EqRobTouchController.state == .DeadInstruction {
+                    conclusionLabel.text = "違う文字式"
+                }
+            }
+        } else {
+            if EqRobTouchController.state == .AliveInstruction {
+                conclusionLabel.text = "同じ文字式"
+            } else if EqRobTouchController.state == .DeadInstruction {
+                conclusionLabel.text = "違う文字式"
+            } else if EqRobJudgeController.isEquivalent {
+                conclusionLabel.text = "同じ文字式"
+            } else if !EqRobJudgeController.isEquivalent {
+                conclusionLabel.text = "違う文字式"
+            }
         }
         return false
     }

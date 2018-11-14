@@ -72,12 +72,33 @@ class EnemyAddController {
         })
     }
     
-    // eqRob
-    static func addInitialEnemyAtGrid2(veCate: Int, isHard: Bool, enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
+    private static func sliceVeSource(veCate: Int, completion: @escaping ([[String]]) -> Void) {
+        let veSourceOrigin = VECategory.ves[veCate]
+        let dispatchGroup = DispatchGroup()
+        var veSourceArray = [[String]]()
+        var tempArray = [String]()
+        for ve in veSourceOrigin {
+            dispatchGroup.enter()
+            if ve == "0" {
+                veSourceArray.append(tempArray)
+                tempArray = [String]()
+            } else {
+                tempArray.append(ve)
+            }
+            dispatchGroup.leave()
+        }
+        dispatchGroup.notify(queue: .main, execute: {
+            return completion(veSourceArray)
+        })
+    }
+    
+    // fix eqRob
+    static func addInitialEnemyAtGrid2(veCate: Int, enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
         
-        getEqRobSource(isHard: isHard, veCate: veCate, numOfEnemy: enemyPosArray.count) { source in
+        sliceVeSource(veCate: veCate) { source in
+            let rand = Int(arc4random_uniform(UInt32(source.count)))
             let dispatchGroup = DispatchGroup()
-            let veSource = source.shuffled
+            let veSource = source[rand].shuffled
             for (i, posArray) in enemyPosArray.enumerated() {
                 dispatchGroup.enter()
                 /* New enemy object */
@@ -95,26 +116,44 @@ class EnemyAddController {
         }
     }
     
+    //    static func addInitialEnemyAtGrid2(veCate: Int, isHard: Bool, enemyPosArray: [[Int]], grid: Grid, completion: @escaping () -> Void) {
+//
+//        getEqRobSource(isHard: isHard, veCate: veCate, numOfEnemy: enemyPosArray.count) { source in
+//            let dispatchGroup = DispatchGroup()
+//            let veSource = source.shuffled
+//            for (i, posArray) in enemyPosArray.enumerated() {
+//                dispatchGroup.enter()
+//                /* New enemy object */
+//                let enemy = Enemy(variableExpressionSource: [veSource[i]], forEdu: false)
+//
+//                /* set adding enemy movement */
+//                setAddEnemyMovement(enemy: enemy, posX: posArray[0], posY: posArray[1], grid: grid) {
+//                    dispatchGroup.leave()
+//                }
+//
+//            }
+//            dispatchGroup.notify(queue: .main, execute: {
+//                return completion()
+//            })
+//        }
+//    }
+    
     private static func getRatio(numOfEnmey: Int) -> Int {
         let rand = Int(arc4random_uniform(100))
         if numOfEnmey == 4 {
-            if rand < 16 {
-                return 0
-            } else if rand < 37 {
+            if rand < 15 {
                 return 1
-            } else if rand < 79 {
+            } else if rand < 65 {
                 return 2
             } else {
                 return 3
             }
         } else {
-            if rand < 16 {
-                return 0
-            } else if rand < 37 {
+            if rand < 15 {
                 return 1
-            } else if rand < 58 {
+            } else if rand < 30 {
                 return 2
-            } else if rand < 79 {
+            } else if rand < 65 {
                 return 3
             } else {
                 return 4
@@ -146,6 +185,7 @@ class EnemyAddController {
             }
             
             VECategory.getUnsimplifiedSingle(source: origin) { source in
+                
                 DAUtility.getRandomNumbers(total: source.count, times: otherNum) { rands in
                     for i in rands {
                         dispatchGroup.enter()
@@ -182,6 +222,7 @@ class EnemyAddController {
                 }
             }
             VECategory.getUnsimplifiedSingle(source: origin) { source in
+                
                 DAUtility.getRandomNumbers(total: source.count, times: otherNum) { rands in
                     for i in rands {
                         dispatchGroup.enter()
@@ -230,6 +271,7 @@ class EnemyAddController {
                 }
             }
             VECategory.getUnsimplifiedSingle(source: origin) { source in
+                
                 DAUtility.getRandomNumbers(total: source.count, times: otherNum) { rands2 in
                     for r in rands2 {
                         dispatchGroup.enter()
@@ -239,6 +281,7 @@ class EnemyAddController {
                 }
             }
             VECategory.getUnsimplifiedSingle(source: origin2) { source in
+                
                 DAUtility.getRandomNumbers(total: source.count, times: otherNum2) { rands2 in
                     for r in rands2 {
                         dispatchGroup.enter()
@@ -326,11 +369,12 @@ class EnemyAddController {
     }
     
     // eqRob
-    static func addEnemyAtGrid2(addIndex: Int, grid: Grid, isHard: Bool, completion: @escaping () -> Void) {
+    static func addEnemyAtGrid2(addIndex: Int, grid: Grid, completion: @escaping () -> Void) {
         let manager = EnemyProperty.addEnemyVEManager[GameStageController.adjustGameSceneLevel()][String(addIndex)]![0]
-        getEqRobSource(isHard: isHard, veCate: manager[1], numOfEnemy: manager[0]) { source in
+        sliceVeSource(veCate: manager[1]) { source in
+            let rand = Int(arc4random_uniform(UInt32(source.count)))
             let dispatchGroup = DispatchGroup()
-            let veSource = source.shuffled
+            let veSource = source[rand].shuffled
             for ve in veSource {
                 dispatchGroup.enter()
                 let enemy = Enemy(variableExpressionSource: [ve], forEdu: false)
@@ -354,6 +398,35 @@ class EnemyAddController {
             })
         }
     }
+    
+//    static func addEnemyAtGrid2(addIndex: Int, grid: Grid, isHard: Bool, completion: @escaping () -> Void) {
+//        let manager = EnemyProperty.addEnemyVEManager[GameStageController.adjustGameSceneLevel()][String(addIndex)]![0]
+//        getEqRobSource(isHard: isHard, veCate: manager[1], numOfEnemy: manager[0]) { source in
+//            let dispatchGroup = DispatchGroup()
+//            let veSource = source.shuffled
+//            for ve in veSource {
+//                dispatchGroup.enter()
+//                let enemy = Enemy(variableExpressionSource: [ve], forEdu: false)
+//
+//                /* x position */
+//                let randX = Int(arc4random_uniform(UInt32(grid.startPosArray.count)))
+//                let startPositionX = grid.startPosArray[randX]
+//                /* Make sure not to overlap enemies */
+//                grid.startPosArray.remove(at: randX)
+//
+//                /* y position */
+//                let randY = Int(arc4random_uniform(UInt32(manager[2])))
+//
+//                /* set adding enemy movement */
+//                setAddEnemyMovement(enemy: enemy, posX: startPositionX, posY: 11-randY, grid: grid) {
+//                    dispatchGroup.leave()
+//                }
+//            }
+//            dispatchGroup.notify(queue: .main, execute: {
+//                return completion()
+//            })
+//        }
+//    }
     /* Make common stuff for adding enemy */
     private static func setAddEnemyMovement(enemy: Enemy, posX: Int, posY: Int, grid: Grid, completion: @escaping () -> Void) {
         /* Get gameScene */

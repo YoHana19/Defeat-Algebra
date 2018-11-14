@@ -76,6 +76,8 @@ struct ItemTouchController {
             if CannonTouchController.state == .Pending {
                 CannonController.back(0)
             }
+        } else if EqRobJudgeController.isActive {
+            return
         }
         
         /* Show attack and item buttons */

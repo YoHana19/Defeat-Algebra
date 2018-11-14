@@ -259,45 +259,26 @@ class EqBackground: SKSpriteNode {
         }
     }
     
-    func forInstruction() {
-        if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
-            if ScenarioController.currentActionIndex < 11 {
-                if VEEquivalentController.numOfCheck == 1 {
-                    ScenarioController.nextLineWithoutMoving()
-                }
-            }
-        }
-    }
     
-    func forInstruction2() {
-        if GameScene.stageLevel == MainMenu.eqRobStartTurn, let _ = self.parent as? ScenarioScene {
-            if ScenarioController.currentActionIndex < 11 {
-                doneButton.isHidden = true
-            }
-        }
-    }
-    
-    func setExcessArea(length: Double, posX: Int, bottom: Bool) {
+    func setExcessArea(yValue: Int, posX: Int) {
         guard let gameScene = self.parent as? GameScene else { return }
-        let square = SKShapeNode(rectOf: CGSize(width: gameScene.gridNode.cellWidth, height: length))
-        square.fillColor = UIColor.yellow
-        square.alpha = 0.4
-        square.zPosition = 100
-        square.name = "excessArea"
+        guard yValue > 11 else { return }
+        let length = Double(yValue-11) * gameScene.gridNode.cellHeight
+        let excessArea = SKShapeNode(rectOf: CGSize(width: gameScene.gridNode.cellWidth, height: length))
+        excessArea.fillColor = UIColor.red
+        excessArea.alpha = 0.4
+        excessArea.zPosition = 5
+        excessArea.name = "excessArea\(posX)"
         let xPos = gameScene.gridNode.position.x + CGFloat((Double(posX)+0.5) * gameScene.gridNode.cellWidth)
         var yPos: CGFloat = 0
-        if bottom {
-            yPos = gameScene.gridNode.position.y - CGFloat(length/2)
-        } else {
-            yPos = gameScene.gridNode.position.y + CGFloat(12 * gameScene.gridNode.cellHeight) + CGFloat(length/2)
-        }
-        square.position = CGPoint(x: xPos, y: yPos)
-        addChild(square)
+        yPos = gameScene.gridNode.position.y - CGFloat(length/2)
+        excessArea.position = CGPoint(x: xPos, y: yPos)
+        addChild(excessArea)
     }
     
-    func removeExcessArea() {
+    func removeExcessArea(posX: Int) {
         for child in self.children {
-            if child.name == "excessArea" {
+            if child.name == "excessArea\(posX)" {
                 child.removeFromParent()
             }
         }
@@ -372,22 +353,29 @@ class EqBackground: SKSpriteNode {
     func showArea(eqGrid: EqGrid, originPos: (Int, Int)) {
         resetArea(eqGrid: eqGrid)
         if VEEquivalentController.outPutXValue > 0 {
-            for i in 1...VEEquivalentController.outPutXValue {
-                GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-i)], color: "red", grid: eqGrid, zPosition: 12)
+            if VEEquivalentController.outPutXValue > 11 {
+                VEEquivalentController.showEcessArea(yValue: VEEquivalentController.outPutXValue, posX: originPos.0)
+                for i in 1...11 {
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, 11-i)], color: "red", grid: eqGrid, zPosition: 5)
+                }
+            } else {
+                for i in 1...VEEquivalentController.outPutXValue {
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-i)], color: "red", grid: eqGrid, zPosition: 5)
+                }
             }
             if VEEquivalentController.outPutNumValue > 0 {
                 for i in 1...VEEquivalentController.outPutNumValue {
-                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-VEEquivalentController.outPutXValue-i)], color: "yellow", grid: eqGrid, zPosition: 12)
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-VEEquivalentController.outPutXValue-i)], color: "yellow", grid: eqGrid, zPosition: 5)
                 }
             } else if VEEquivalentController.outPutNumValue < 0 {
                 for i in 1...abs(VEEquivalentController.outPutNumValue) {
-                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-VEEquivalentController.outPutXValue+i-1)], color: "yellow", grid: eqGrid, zPosition: 12)
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-VEEquivalentController.outPutXValue+i-1)], color: "yellow", grid: eqGrid, zPosition: 5)
                 }
             }
         } else {
             if VEEquivalentController.outPutNumValue > 0 {
                 for i in 1...VEEquivalentController.outPutNumValue {
-                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-i)], color: "yellow", grid: eqGrid, zPosition: 12)
+                    GridActiveAreaController.showActiveArea(at: [(originPos.0, originPos.1-i)], color: "yellow", grid: eqGrid, zPosition: 5)
                 }
             } else if VEEquivalentController.outPutNumValue < 0 {
 //                for i in 1...abs(VEEquivalentController.outPutNumValue) {
@@ -400,5 +388,6 @@ class EqBackground: SKSpriteNode {
     func resetArea(eqGrid: EqGrid) {
         GridActiveAreaController.resetSquareArray(at: VEEquivalentController.curActivePos.0, color: "red", grid: eqGrid)
         GridActiveAreaController.resetSquareArray(at: VEEquivalentController.curActivePos.0, color: "yellow", grid: eqGrid)
+        removeExcessArea(posX: VEEquivalentController.curActivePos.0)
     }
 }

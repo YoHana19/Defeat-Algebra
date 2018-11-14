@@ -81,11 +81,19 @@ class DummyEqRob: SKSpriteNode {
     
     func move(completion: @escaping () -> Void) {
         guard let eqGrid = self.eqGrid else { return }
+        VEEquivalentController.resetEcessArea(posX: VEEquivalentController.curActivePos.0)
         self.isHidden = false
         let move = SKAction.moveBy(x: CGFloat(Double(self.distance)*eqGrid.cellWidth), y: 0, duration: 1.0)
         self.run(move, completion: {
-            for i in 1...self.outPutXValue {
-                GridActiveAreaController.showActiveArea(at: [(self.xPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+            if self.outPutXValue > 11 {
+                VEEquivalentController.showEcessArea(yValue: self.outPutXValue, posX: self.xPos)
+                for i in 1...11 {
+                    GridActiveAreaController.showActiveArea(at: [(self.xPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
+            } else {
+                for i in 1...self.outPutXValue {
+                    GridActiveAreaController.showActiveArea(at: [(self.xPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
             }
             if self.outPutNumValue > 0 {
                 for i in 1...self.outPutNumValue {
@@ -102,11 +110,19 @@ class DummyEqRob: SKSpriteNode {
     
     func lastMove(completion: @escaping () -> Void) {
         guard let eqGrid = self.eqGrid else { return }
+        VEEquivalentController.resetEcessArea(posX: xPos)
         self.isHidden = false
         let move = SKAction.moveBy(x: CGFloat(Double(lastXPos-xPos)*eqGrid.cellWidth), y: 0, duration: 1.0)
         self.run(move, completion: {
-            for i in 1...self.outPutXValue {
-                GridActiveAreaController.showActiveArea(at: [(self.lastXPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+            if self.outPutXValue > 11 {
+                VEEquivalentController.showEcessArea(yValue: self.outPutXValue, posX: self.lastXPos)
+                for i in 1...11 {
+                    GridActiveAreaController.showActiveArea(at: [(self.lastXPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
+            } else {
+                for i in 1...self.outPutXValue {
+                    GridActiveAreaController.showActiveArea(at: [(self.lastXPos, 11-i)], color: "red", grid: eqGrid, zPosition: 12)
+                }
             }
             if self.outPutNumValue > 0 {
                 for i in 1...self.outPutNumValue {

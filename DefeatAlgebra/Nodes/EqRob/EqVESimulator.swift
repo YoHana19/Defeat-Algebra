@@ -30,7 +30,7 @@ class EqVESimulator: SKLabelNode {
             self.positioning()
         }
         self.fontName = DAFont.fontName
-        zPosition = 3
+        zPosition = 50
         setResult()
     }
     

@@ -12,15 +12,14 @@ import SpriteKit
 class MainMenu: SKScene {
     
     public static let uncoverSignalStartTurn = 1
-    public static let changeMoveSpanStartTurn = 2
     public static let timeBombStartTurn = 4
     public static let showUnsimplifiedStartTurn = 5
     public static let eqRobStartTurn = 6
-    public static let eqRobNewStartTurn = 7
-    public static let secondDayStartTurn = 8
-    public static let cannonStartTurn = 9
-    public static let invisibleStartTurn = 12
-    public static let lastTurn = 14
+    public static let eqRobNewStartTurn = 8
+    //public static let secondDayStartTurn = 9
+    public static let cannonStartTurn = 10
+    public static let invisibleStartTurn = 13
+    public static let lastTurn = 15
     
     /* UI Connections */
     var buttonNewGame: MSButtonNode!

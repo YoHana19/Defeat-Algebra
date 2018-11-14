@@ -12,6 +12,8 @@ import SpriteKit
 struct PlayerTurnController {
     public static var gameScene: GameScene!
     public static var done = false
+    public static var isNewEqRobTurn = true
+    public static var countTurn = 0
     
     public static func displayPhase() {
         if !done {
@@ -31,25 +33,54 @@ struct PlayerTurnController {
             done = true
             gameScene.playerPhaseLabel.isHidden = true
             if GameScene.stageLevel >= MainMenu.eqRobStartTurn && GameScene.stageLevel < MainMenu.eqRobNewStartTurn {
-                if gameScene.gridNode.enemyArray.count > 2 {
-                    gameScene.itemType = .None
-                    gameScene.playerTurnState = .UsingItem
-                    gameScene.gameState = .PlayerTurn
-                    EqRobJudgeController.getTwoEnemyRandomly() {
-                        EqRobJudgeController.eqRobGoToScan()
-                    }
-                }
-            } else if GameScene.stageLevel >= MainMenu.eqRobNewStartTurn && GameScene.stageLevel < MainMenu.cannonStartTurn {
-                checkMultiSameEnemy() { over3 in
-                    if over3 > 0 {
-                        gameScene.itemType = .EqRob
+                if countTurn == 0 {
+                    if gameScene.gridNode.enemyArray.count > 1 {
+                        gameScene.itemType = .None
                         gameScene.playerTurnState = .UsingItem
                         gameScene.gameState = .PlayerTurn
-                        EqRobController.scannedVECategory = over3
-                        EqRobController.execute(0, enemy: nil)
+                        EqRobJudgeController.getTwoEnemyRandomly() {
+                            EqRobJudgeController.eqRobGoToScan()
+                        }
                     } else {
                         gameScene.playerTurnState = .MoveState
                     }
+                    countTurn = 1
+                } else {
+                    gameScene.playerTurnState = .MoveState
+                    countTurn -= 1
+                }
+            } else if GameScene.stageLevel >= MainMenu.eqRobNewStartTurn && GameScene.stageLevel < MainMenu.cannonStartTurn {
+                if countTurn == 0 {
+                    if isNewEqRobTurn {
+                        checkMultiSameEnemy() { over3 in
+                            if over3 > 0 {
+                                gameScene.itemType = .EqRob
+                                gameScene.playerTurnState = .UsingItem
+                                gameScene.gameState = .PlayerTurn
+                                EqRobController.scannedVECategory = over3
+                                EqRobController.execute(0, enemy: nil)
+                            } else {
+                                gameScene.playerTurnState = .MoveState
+                            }
+                        }
+                        isNewEqRobTurn = false
+                    } else {
+                        if gameScene.gridNode.enemyArray.count > 1 {
+                            gameScene.itemType = .None
+                            gameScene.playerTurnState = .UsingItem
+                            gameScene.gameState = .PlayerTurn
+                            EqRobJudgeController.getTwoEnemyRandomly() {
+                                EqRobJudgeController.eqRobGoToScan()
+                            }
+                        } else {
+                            gameScene.playerTurnState = .MoveState
+                        }
+                        isNewEqRobTurn = true
+                    }
+                    countTurn = Int(arc4random_uniform(2))+1
+                } else {
+                    gameScene.playerTurnState = .MoveState
+                    countTurn -= 1
                 }
             } else {
                 gameScene.playerTurnState = .MoveState
