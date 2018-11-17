@@ -74,8 +74,10 @@ class CannonRecordBoard: SKSpriteNode {
     }
     
     var enemyVE = ""
+    var visualNodes = [SKSpriteNode]()
     
-    init(isLeft: Bool, enemyVe: String, cannonVe: String) {
+    
+    init(isLeft: Bool, enemyVe: String, cannonVe: String, gap: Int) {
         /* Initialize with enemy asset */
         let texture = SKTexture(imageNamed: "cannonRecordBoard")
         let bodySize = CGSize(width: 285, height: 900)
@@ -95,6 +97,8 @@ class CannonRecordBoard: SKSpriteNode {
         distanceFromTop = topMargin
         setScrollView()
         setInitial(veForEnemy: enemyVe, veForCannon: cannonVe)
+        
+        lineUpVisualNode(gap: gap)
     }
     
     /* You are required to implement this for your subclass to work */
@@ -217,11 +221,12 @@ class CannonRecordBoard: SKSpriteNode {
     public func createRecord(xValue: Int, distanse: Int, enemyValue: Int, cannonValue: Int) {
         let lineIndex = xValue - 4
         let enemyLabelPos = CGPoint(x: leftMarginEnemy, y: -(distanceFromTop+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: String(enemyValue), color: nil, pos: enemyLabelPos, name: nil, fontSize: 30, isRecord: true)
+        createLabel(text: String(enemyValue), color: nil, pos: enemyLabelPos, name: "record", fontSize: 30, isRecord: true)
         let cannonLabelPos = CGPoint(x: leftMarginCannon, y: -(distanceFromTop+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: String(cannonValue), color: nil, pos: cannonLabelPos, name: nil, fontSize: 30, isRecord: true)
+        createLabel(text: String(cannonValue), color: nil, pos: cannonLabelPos, name: "record", fontSize: 30, isRecord: true)
         let distlabelPos = CGPoint(x: leftMarginDist, y: -(distanceFromTop+lineSpace*CGFloat(lineIndex)))
-        createLabel(text: String(distanse), color: nil, pos: distlabelPos, name: nil, fontSize: nil, isDistanse: true, isRecord: true)
+        createLabel(text: String(distanse), color: nil, pos: distlabelPos, name: "record", fontSize: nil, isDistanse: true, isRecord: true)
+        showValueArea(xValue: xValue, enemyValue: enemyValue, cannonValue: cannonValue)
     }
     
     public func createCannon(ve: String) {
@@ -276,6 +281,121 @@ class CannonRecordBoard: SKSpriteNode {
             scrollView.addChild(veLabel)
             self.distanceFromTop += self.gapBtwNodeNVe + 21
             self.setXValue()
+        }
+    }
+    
+    public func changeCannonVe(newVe: String) {
+        currentVeLabel.text = newVe
+        removeArea()
+        removeRecord()
+    }
+    
+    private func setXValueForVisual() {
+        for i in 1...3 {
+            let xlabelPos = CGPoint(x: 40+CGFloat(i-1)*80, y: -300)
+            let signal = SignalValueHolder(value: i)
+            signal.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+            signal.setScale(0.55)
+            signal.zPosition = 1
+            signal.position = xlabelPos
+            scrollView.addChild(signal)
+        }
+    }
+    
+    let cellLength: CGFloat = 35
+    let gapH: CGFloat = 40
+    let marginFromLeft: CGFloat = 20
+    let marginFromTop: CGFloat = -350
+    
+    private func lineUpVisualNode(gap: Int) {
+        setXValueForVisual()
+        if gap > 0 {
+            for i in 0...5 {
+                if i % 2 == 0 {
+                    let pos = CGPoint(x: marginFromLeft+gapH*CGFloat(i), y: marginFromTop-CGFloat(gap)*cellLength)
+                    setVisualNode(imgName: "front1", pos: pos)
+                } else {
+                    let pos = CGPoint(x: marginFromLeft+gapH*CGFloat(i), y: marginFromTop)
+                    setVisualNode(imgName: "cannonFront", pos: pos)
+                }
+            }
+        } else {
+            for i in 0...5 {
+                if i % 2 == 0 {
+                    let pos = CGPoint(x: marginFromLeft+gapH*CGFloat(i), y: marginFromTop)
+                    setVisualNode(imgName: "front1", pos: pos)
+                } else {
+                    let pos = CGPoint(x: marginFromLeft+gapH*CGFloat(i), y: marginFromTop-CGFloat(-gap)*cellLength)
+                    setVisualNode(imgName: "cannonFront", pos: pos)
+                }
+            }
+        }
+    }
+    
+    private func setVisualNode(imgName: String, pos: CGPoint) {
+        let texture = SKTexture(imageNamed: imgName)
+        let bodySize = CGSize(width: cellLength, height: cellLength)
+        let node = SKSpriteNode(texture: texture, color: UIColor.clear, size: bodySize)
+        node.zPosition = 1
+        node.position = pos
+        node.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        scrollView.addChild(node)
+        visualNodes.append(node)
+    }
+    
+    private func showValueArea(xValue: Int, enemyValue: Int, cannonValue: Int) {
+        switch xValue {
+        case 1:
+            setValueArea(pos: visualNodes[0].position, value: enemyValue, color: UIColor.red)
+            setValueArea(pos: visualNodes[1].position, value: cannonValue, color: UIColor.yellow)
+            break;
+        case 2:
+            setValueArea(pos: visualNodes[2].position, value: enemyValue, color: UIColor.red)
+            setValueArea(pos: visualNodes[3].position, value: cannonValue, color: UIColor.yellow)
+            break;
+        case 3:
+            setValueArea(pos: visualNodes[4].position, value: enemyValue, color: UIColor.red)
+            setValueArea(pos: visualNodes[5].position, value: cannonValue, color: UIColor.yellow)
+            break;
+        default:
+            break;
+        }
+    }
+    
+    private func setValueArea(pos: CGPoint, value: Int, color: UIColor) {
+        let length = CGFloat(value)*cellLength
+        let area = SKShapeNode(rectOf: CGSize(width: cellLength, height: length))
+        area.fillColor = color
+        area.alpha = 0.4
+        area.zPosition = 2
+        area.name = "area"
+        area.position = CGPoint(x: pos.x, y: pos.y-(cellLength+area.frame.height)/2)
+        scrollView.addChild(area)
+        let label = SKLabelNode(fontNamed: DAFont.fontName)
+        label.text = String(value)
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode = .center
+        label.fontSize = 30
+        label.name = "record"
+        label.position = area.position
+        label.zPosition = 5
+        label.fontColor = UIColor.white
+        scrollView.addChild(label)
+    }
+    
+    private func removeArea() {
+        for child in scrollView.children {
+            if child.name == "area" {
+                child.removeFromParent()
+            }
+        }
+    }
+    
+    private func removeRecord() {
+        for child in scrollView.children {
+            if child.name == "record" {
+                child.removeFromParent()
+            }
         }
     }
 }

@@ -16,13 +16,19 @@ class CannonBackground: SKSpriteNode {
     var cannon = Cannon(type: 0)
     let changeVeButton = SKSpriteNode(imageNamed: "changeVeButton")
     let tryDoneButton = SKSpriteNode(imageNamed: "tryDoneButton")
-    var recordBoard = CannonRecordBoard(isLeft: true, enemyVe: "", cannonVe: "")
+    var recordBoard = CannonRecordBoard(isLeft: true, enemyVe: "", cannonVe: "", gap: 1)
     var isSignal1Tapped = false
     var isSignal2Tapped = false
     var isSignal3Tapped = false
     var signal1 = SignalValueHolder(value: 1)
     var signal2 = SignalValueHolder(value: 1)
     var signal3 = SignalValueHolder(value: 1)
+    var isTrying: Bool = false {
+        didSet {
+            changeVeButton.isHidden = isTrying
+            tryDoneButton.isHidden = isTrying
+        }
+    }
     
     init(gameScene: GameScene, enemy: Enemy, cannon: Cannon) {
         /* Initialize with enemy asset */
@@ -46,14 +52,19 @@ class CannonBackground: SKSpriteNode {
         
         /* Set buttons */
         setSignals()
-        
         setButton()
         
+        let gap = cannon.spotPos[1] - enemy.positionY
         if enemy.positionX > 3 {
-            setRecordBoard(isLeft: true, enemyVe: enemy.variableExpressionString, cannonVe: cannon.variableExpressionLabel.text!)
+            setRecordBoard(isLeft: true, enemyVe: enemy.variableExpressionString, cannonVe: cannon.variableExpressionLabel.text!, gap: gap)
         } else {
-            setRecordBoard(isLeft: false, enemyVe: enemy.variableExpressionString, cannonVe: cannon.variableExpressionLabel.text!)
+            setRecordBoard(isLeft: false, enemyVe: enemy.variableExpressionString, cannonVe: cannon.variableExpressionLabel.text!, gap: gap)
         }
+        
+        let wait = SKAction.wait(forDuration: 2.0)
+        self.run(wait, completion: {
+            self.doTry() {}
+        })
     }
     
     /* You are required to implement this for your subclass to work */
@@ -64,7 +75,7 @@ class CannonBackground: SKSpriteNode {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         guard let gameScene = self.parent as? GameScene else { return }
-
+        
         /* Get touch point */
         let touch = touches.first!              // Get the first touch
         let location = touch.location(in: self) // Find the location of that touch in this view
@@ -86,6 +97,43 @@ class CannonBackground: SKSpriteNode {
                 break;
             }
         }
+        
+        if nodeAtPoint.name == "changeVeButton" {
+            guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .UtilButton)
+            isSignal1Tapped = false
+            isSignal2Tapped = false
+            isSignal3Tapped = false
+            if let _ = gameScene as? ScenarioScene {
+                CannonController.showInputPanelInTrying()
+                ScenarioController.controllActions()
+            } else {
+                CannonController.showInputPanelInTrying()
+            }
+            CannonTryController.numOfChangeVE += 1
+        } else if nodeAtPoint.name == "tryDoneButton" {
+            guard isEnable else { return }
+            SoundController.sound(scene: gameScene, sound: .HeroMove)
+            if let _ = gameScene as? ScenarioScene {
+                if GameScene.stageLevel == MainMenu.invisibleStartTurn {
+                    if ScenarioController.currentActionIndex > 21 && ScenarioController.currentActionIndex < 36 {
+                        CannonTutorialController.hideEqGrid()
+                    } else {
+                        CannonTryController.hideEqGrid()
+                        TutorialController.visibleTutorialLabel(true)
+                    }
+                }
+            } else {
+                CannonTryController.hideEqGrid()
+            }
+        } else {
+            guard let gameScene = self.parent as? GameScene else { return }
+            if gameScene.inputPanelForCannon.isActive == true {
+                CannonController.hideInputPanelInTrying()
+            }
+        }
+        
+        return
         
         /* Touch button 1 */
         if nodeAtPoint.name == "signal1" || nodeAtPoint.name == "label1" {
@@ -120,40 +168,69 @@ class CannonBackground: SKSpriteNode {
             } else {
                 signalTapped(value: 3, node: node as! SKSpriteNode)
             }
-        } else if nodeAtPoint.name == "changeVeButton" {
-            guard isEnable else { return }
-            SoundController.sound(scene: gameScene, sound: .UtilButton)
-            isSignal1Tapped = false
-            isSignal2Tapped = false
-            isSignal3Tapped = false
-            if let _ = gameScene as? ScenarioScene {
-                CannonController.showInputPanelInTrying()
-                ScenarioController.controllActions()
-            } else {
-                CannonController.showInputPanelInTrying()
-            }
-            CannonTryController.numOfChangeVE += 1
-        } else if nodeAtPoint.name == "tryDoneButton" {
-            guard isEnable else { return }
-            SoundController.sound(scene: gameScene, sound: .HeroMove)
-            if let _ = gameScene as? ScenarioScene {
-                if GameScene.stageLevel == MainMenu.invisibleStartTurn {
-                    if ScenarioController.currentActionIndex > 21 && ScenarioController.currentActionIndex < 36 {
-                        CannonTutorialController.hideEqGrid()
-                    } else {
-                        CannonTryController.hideEqGrid()
-                        TutorialController.visibleTutorialLabel(true)
-                    }
+        }
+    }
+    
+    public func doTry(completion: @escaping () -> Void) {
+        isTrying = true
+        signalTapped(value: 1) {
+            self.signalTapped(value: 2) {
+                self.signalTapped(value: 3) {
+                    self.isTrying = false
+                    return completion()
                 }
-            } else {
-                CannonTryController.hideEqGrid()
-            }
-        } else {
-            guard let gameScene = self.parent as? GameScene else { return }
-            if gameScene.inputPanelForCannon.isActive == true {
-                CannonController.hideInputPanelInTrying()
             }
         }
+    }
+    
+    func signalTapped(value: Int, completion: @escaping () -> Void) {
+        guard let gameScene = self.parent as? GameScene else { return }
+        var node = SKSpriteNode()
+        if value == 1 {
+            node = signal1
+            signal1.isHidden = true
+        } else if value == 2 {
+            node = signal2
+            signal2.isHidden = true
+        } else {
+            node = signal3
+            signal3.isHidden = true
+        }
+        CharacterController.doctor.balloon.isHidden = true
+        gameScene.valueOfX.text = "x=\(value)"
+        SoundController.sound(scene: gameScene, sound: .TimeBombAA)
+        
+        let dispatchGroup = DispatchGroup()
+        dispatchGroup.enter()
+        SignalController.send(target: enemy, num: value, from: node.position, zPos: 10) {
+            dispatchGroup.leave()
+            self.enemy.calculatePunchLengthForCannon(value: value)
+        }
+        
+        dispatchGroup.enter()
+        SignalController.sendToCannon(target: cannon, num: value, from: node.position) {
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.notify(queue: .main, execute: {
+            self.enemy.punchAndMoveForCannon {
+                self.cannon.throwBombForTry(enemy: self.enemy, value: value, completion: { result in
+                    CannonController.doctorSays(in: .Trying, value: String(result))
+                    let cannonValue = self.cannon.calculateValue(value: value)
+                    let distance = (self.cannon.spotPos[1]-cannonValue) - (self.enemy.positionY-self.enemy.valueOfEnemy)
+                    self.record(value: value, distance: distance, enemyValue: self.enemy.valueOfEnemy, cannonValue: cannonValue)
+                    let wait = SKAction.wait(forDuration: 2.0)
+                    self.parent!.run(wait, completion: {
+                        if !CannonTryController.hintOn && !CannonTryController.isCorrect {
+                            let rand = arc4random_uniform(UInt32(3))
+                            CannonController.doctorSays(in: .Trying, value: String(rand+3))
+                        }
+                        CannonTryController.resetEnemy()
+                        return completion()
+                    })
+                })
+            }
+        })
     }
     
     func signalTapped(value: Int, node: SKSpriteNode) {
@@ -253,15 +330,17 @@ class CannonBackground: SKSpriteNode {
     
     func setButton() {
         changeVeButton.size = CGSize(width: 280, height: 70)
-        changeVeButton.position = CGPoint(x: 430, y: 1288)
+        changeVeButton.position = CGPoint(x: 560, y: 150)
         changeVeButton.zPosition = 5
         changeVeButton.name = "changeVeButton"
+        changeVeButton.isHidden = true
         addChild(changeVeButton)
         
         tryDoneButton.size = CGSize(width: 130, height: 70)
         tryDoneButton.position = CGPoint(x: 670, y: 1288)
         tryDoneButton.zPosition = 5
         tryDoneButton.name = "tryDoneButton"
+        tryDoneButton.isHidden = true
         addChild(tryDoneButton)
     }
     
@@ -300,8 +379,8 @@ class CannonBackground: SKSpriteNode {
         signal3.isHidden = false
     }
     
-    func setRecordBoard(isLeft: Bool, enemyVe: String, cannonVe: String) {
-        recordBoard = CannonRecordBoard(isLeft: isLeft, enemyVe: enemyVe, cannonVe: cannonVe)
+    func setRecordBoard(isLeft: Bool, enemyVe: String, cannonVe: String, gap: Int) {
+        recordBoard = CannonRecordBoard(isLeft: isLeft, enemyVe: enemyVe, cannonVe: cannonVe, gap: gap)
         addChild(recordBoard)
     }
     

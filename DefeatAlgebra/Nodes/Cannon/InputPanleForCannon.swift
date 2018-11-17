@@ -376,8 +376,9 @@ class InputPanelForCannon: SKSpriteNode {
                 CannonTryController.getBG() { bg in
                     guard let canSim = bg else { return }
                     canSim.showAllSignalButton()
-                    canSim.rePosChangeVeButton(originPos: true)
-                    canSim.recordBoard.createCannon(ve: tempVe)
+                    //canSim.recordBoard.createCannon(ve: tempVe)
+                    canSim.recordBoard.changeCannonVe(newVe: tempVe)
+                    canSim.doTry () {}
                 }
             } else {
                 CannonController.execute(1, cannon: nil)
