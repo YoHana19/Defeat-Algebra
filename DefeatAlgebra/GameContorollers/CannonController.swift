@@ -123,12 +123,11 @@ struct CannonController {
     
     private static func startSelectEnemyForTry() {
         selectedCannon.isActive = true
-        hideInputPanel()
         doctorSays(in: .WillTry, value: nil)
         let cand = gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == selectedCannon.spotPos[0] })
         if cand.count == 1 {
-            startTry(enemy: cand[0])
             CannonTouchController.state = .Trying
+            startTry(enemy: cand[0])
         } else {
             for enemy in cand {
                 enemy.pointing()
@@ -141,11 +140,11 @@ struct CannonController {
             gameScene.gridNode.isTutorial = true
             CannonTouchController.state = .Trying
         }
+        hideInputPanel()
     }
     
     public static func startTry(enemy: Enemy) {
         doctorSays(in: .Trying, value: "3")
-        hideInputPanel()
         for enemy in gameScene.gridNode.enemyArray {
             enemy.removePointing()
         }
@@ -166,28 +165,28 @@ struct CannonController {
     }
     
     public static func hint() {
-        doctorSays(in: .Trying, value: "6")
+        doctorSays(in: .Trying, value: "5")
         CannonTryController.getBG() { bg in
             guard let bg = bg else { return }
             bg.isEnable = false
             let wait = SKAction.wait(forDuration: 2.6)
             gameScene.run(wait, completion: {
                 CannonTryController.hintOn = false
-                doctorSays(in: .Trying, value: "7")
+                //sdoctorSays(in: .Trying, value: "7")
                 bg.isEnable = true
             })
         }
     }
     
     public static func correct() {
-        doctorSays(in: .Trying, value: "8")
+        doctorSays(in: .Trying, value: "6")
         CannonTryController.getBG() { bg in
             guard let bg = bg else { return }
             bg.isEnable = false
             let wait = SKAction.wait(forDuration: 2.6)
             gameScene.run(wait, completion: {
                 CannonTryController.isCorrect = false
-                doctorSays(in: .Trying, value: "9")
+                //doctorSays(in: .Trying, value: "9")
                 bg.isEnable = true
             })
         }
@@ -313,23 +312,17 @@ struct CannonLines {
         case "0":
             return "どうやら、グリッドを超えてしまったようじゃな..."
         case "1":
-            return "ジャストミートじゃ！xが他の数でも当たるか確かめるのじゃ！"
+            return "砲撃が当たったぞ！\n他の数じゃとどうじゃろう！？"
         case "2":
-            return "うーむ当たらないのう。確実に当てるにはどうすればよいじゃろうか"
+            return "砲撃した所と敵との距離は\(CannonTryController.currentDist)じゃな"
         case "3":
-            return "xに入る数を選んで、試し撃ちしてみよう！"
+            return "xがどんな数になっても、砲撃が当たるか確かめるぞ"
         case "4":
-            return "砲撃の飛距離を変えることもできるぞ"
+            return "うーむ、\(CannonTryController.currentCannonVE)では当たらないようじゃな。砲撃の飛距離を変えてみよう"
         case "5":
-            return "アルジェ砲と敵との距離に注目してみたらどうじゃろう"
+            return "砲撃と敵との距離がいつも\(CannonTryController.currentDist)で同じなのはなぜじゃろうな・・・"
         case "6":
-            return "砲撃と敵との距離が常に一緒じゃな！"
-        case "7":
-            return "なぜ一緒なのじゃろうか・・"
-        case "8":
-            return "xの数がいくつでも砲撃が必ず当たるようじゃ！"
-        case "9":
-            return "なぜその飛距離なら必ず当たるのじゃろう？"
+            return "\(CannonTryController.currentCannonVE)を飛距離とすればxがどんな数でも敵に当たるようじゃな！！"
         default:
             return ""
         }

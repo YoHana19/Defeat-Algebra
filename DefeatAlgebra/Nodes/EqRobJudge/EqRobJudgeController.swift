@@ -104,9 +104,11 @@ class EqRobJudgeController {
         gameScene.hero.setPhysics(isActive: false)
         CharacterController.doctor.zPosition = 55
         let jb = JudgeBackground(gameScene: gameScene, enemy1: enemy1, enemy2: enemy2, isEquivalent: isEquivalent)
+        enemy1.variableExpressionLabel.fontSize = enemy1.veLabelSize
+        enemy2.variableExpressionLabel.fontSize = enemy2.veLabelSize
         doctorSays(in: .Choice)
         let _ = ScenarioTouchController.eqRobSimulatorTutorialTouch()
-        let wait = SKAction.wait(forDuration: 1.0)
+        let wait = SKAction.wait(forDuration: 2.0)
         gameScene.run(wait, completion: {
             jb.isEnableTouch = true
         })

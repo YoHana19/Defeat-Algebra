@@ -95,11 +95,9 @@ class ScenarioTouchController {
     private static func scenarioSceneInvisibleStartTurn() {
         if ScenarioController.currentActionIndex == 6 || ScenarioController.currentActionIndex == 7 {
             ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex >= 12 && ScenarioController.currentActionIndex <= 14 {
-            ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 17 {
-            ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 39 {
+        } else if ScenarioController.currentActionIndex < 39 {
+            let _ = CannonTutorialController.userTouch(on: "")
+        } else if ScenarioController.currentActionIndex == 59 {
             let _ = TutorialController.userTouch(on: "")
         }
     }
@@ -173,7 +171,6 @@ class ScenarioTouchController {
         } else if ScenarioController.currentActionIndex == 6 {
             if let enemy = nodeAtPoint as? Enemy {
                 guard !enemy.isSelectedForEqRob else { return }
-                print("HOEHOGEOHEOHEO")
                 enemy.isSelectedForEqRob = true
                 EqRobTutorialController.setSelectedEnemyOnPanel(enemy: enemy)
             }
@@ -209,7 +206,7 @@ class ScenarioTouchController {
             }
         } else if ScenarioController.currentActionIndex == 6 || ScenarioController.currentActionIndex == 7 {
             ScenarioController.controllActions()
-        } else if ScenarioController.currentActionIndex == 39 {
+        } else if ScenarioController.currentActionIndex == 59 {
             let _ = TutorialController.userTouch(on: "")
         }
     }

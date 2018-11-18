@@ -196,7 +196,7 @@ struct GameStageController {
         } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
             if ScenarioController.currentActionIndex < 10 {
                 SoundController.playBGM(bgm: .FirstDayLast, isLoop: true)
-            } else if ScenarioController.currentActionIndex < 36 {
+            } else if ScenarioController.currentActionIndex < 56 {
                 SoundController.playBGM(bgm: .Opening2, isLoop: true)
             } else {
                 SoundController.playBGM(bgm: .Game1, isLoop: true)

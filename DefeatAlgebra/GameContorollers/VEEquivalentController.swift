@@ -412,7 +412,7 @@ struct VEEquivalentController {
         enemy.eqPosY = y
         enemy.zPosition = 10
         enemy.xValueLabel.text = ""
-        enemy.variableExpressionLabel.color = UIColor.white
+        enemy.variableExpressionLabel.fontColor = UIColor.white
         enemy.adjustLabelSize()
         let move = SKAction.move(to: pos, duration: 1.0)
         enemy.run(move, completion: {
@@ -523,6 +523,8 @@ struct VEEquivalentController {
             if enemy.state == .Defence {
                 enemy.defend()
             } else if enemy.stateRecord.count < 1 {
+                enemy.defend()
+            } else if enemy.state == .Attack && enemy.punchInterval != 0 {
                 enemy.defend()
             }
         }

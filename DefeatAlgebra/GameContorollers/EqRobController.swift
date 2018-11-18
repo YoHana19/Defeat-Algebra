@@ -570,7 +570,6 @@ struct EqRobLines {
         case .EqRobDestroyed:
             return "むむぅ・・・\n間違った敵を選んでしまったようじゃの"
         case .DestroyedInstruction:
-            print("curIndex: \(curIndex)")
             return value!
         case .DestroyedInstructionDone:
             return value!

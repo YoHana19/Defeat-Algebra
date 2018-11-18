@@ -23,11 +23,11 @@ struct VECategory {
     static let ve6 = ["2+x", "2x", "2x-x+2", "3-1+x", "0", "3+x", "3x", "3x-2x+3", "4-1+x", "0"]
     static let ve7 = ["1+2x", "3x", "2x+x", "4x-x", "0", "3x-1", "2x", "x+x", "3x-x", "0"]
     // level 8 9 (eqRobNew) 10
-    static let ve8 = ["2+2x", "4x", "x+2+x", "x+x+2x", "3x-x+3-1", "0", "2x+2", "4x", "2+2x+2x-2", "x+2x+x", "3x-x+2", "0"]
-    static let ve9 = ["2+3x", "5x", "2x+2+x", "2x+x+2x", "4x-x+4-2", "0", "3x+2", "5x", "2+2x+3x-2", "3x+x+x", "4x-x+2", "0"]
+    static let ve8 = ["2+2x", "4x", "x+2+x", "x+x+2x", "2x+3-1", "0", "2x+2", "4x", "2+4x-2", "x+2x+x", "3x-x+2", "0"]
+    static let ve9 = ["2+3x", "5x", "2x+2+x", "2x+x+2x", "3x+4-2", "0", "3x+2", "5x", "2+5x-2", "3x+x+x", "4x-x+2", "0"]
     // level 12 (cannon), 13, 15 (invisible), 16
-    static let ve10 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
-    static let ve11 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
+    static let ve10 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
+    static let ve11 = ["x+1", "x+3", "2+x", "2x+1", "2+2x", "2x", "3x", "2x-1", "3x-1", "3x-2"]
     
     static let ves: [[String]] = [ve0, ve1, ve2, ve3, ve4, ve5, ve6, ve7, ve8, ve9, ve10, ve11]
     static let unSFrom = [11]
@@ -42,25 +42,25 @@ struct VECategory {
             return completion(2)
         case "x+1", "1+1×x", "x×1+1", "x+2-1", "3+x-2", "2x-x+1", "1+3x-2x":
             return completion(3)
-        case "x+2", "2+x", "x×1+2", "x+4-2", "x+3-1", "2x-x+2", "3x-2x+2", "2+x×1", "4+x-2", "2x+2-x", "2+3x-2x", "2x+3-x-1", "3x-2-2x+4", "5+2x-3-x", "4-x-2+2x", "3-1+x":
+        case "x+2", "2+x", "x×1+2", "x+4-2", "x+3-1", "2x-x+2", "3x-2x+2", "2+x×1", "4+x-2", "2x+2-x", "2+3x-2x", "2x+3-x-1", "3x-2-2x+4", "5+2x-3-x", "4-x-2+2x", "3-1+x", "x-1+3":
             return completion(4)
-        case "x+3", "3+x", "3+x×1", "1×x+3", "x+4-1", "x+5-2", "2x-x+3", "3x-2x+3", "x-2+5", "2x+3-x", "3+3x-2x", "2x+4-x-1", "3x-2-2x+5", "6+2x-3-x", "5-x-2+2x", "4-1+x":
+        case "x+3", "3+x", "3+x×1", "1×x+3", "x+4-1", "x+5-2", "2x-x+3", "3x-2x+3", "x-2+5", "2x+3-x", "3+3x-2x", "2x+4-x-1", "3x-2-2x+5", "6+2x-3-x", "5-x-2+2x", "4-1+x", "4+x-1":
             return completion(5)
-        case "2x+1", "1+2x", "x×2+1", "x+1+x", "2x+3-2", "3x-x+1", "4x-2x+1", "x+x+1", "3+2x-2", "1+4x-2x", "3x+2-x-1", "4x-2-2x+3", "4+3x-3-x", "3-x-2+3x":
+        case "2x+1", "1+2x", "x×2+1", "x+1+x", "2x+3-2", "3x-x+1", "4x-2x+1", "x+x+1", "3+2x-2", "1+4x-2x", "3x+2-x-1", "4x-2-2x+3", "4+3x-3-x", "3-x-2+3x", "2x+2-1":
             return completion(6)
-        case "2x+2", "2+2x", "x+x+2", "2+2×x", "x+2+x", "x×2+2", "2x+3-1", "4+2x-2", "3x-x+2", "2+4x-2x", "3x-x+3-1":
+        case "2x+2", "2+2x", "x+x+2", "2+2×x", "x+2+x", "x×2+2", "2x+3-1", "4+2x-2", "3x-x+2", "2+4x-2x", "3x-x+3-1", "2x+3-1":
             return completion(7)
         case "2x-1", "x×2-1", "2x-2+1", "3x-x-1", "4x-2x-1", "x+x-1", "2x+1-2", "4x-1-2x", "x-1+x", "3x+1-x-2", "4x-3-2x+2", "3+3x-4-x", "2-x-3+3x":
             return completion(8)
-        case "3x-1", "x×3-1", "3x-3+2", "4x-x-1", "5x-2x-1", "x+x+x-1", "3x+2-3", "5x-1-2x", "2x-1+x", "4x+1-x-2", "5x-3-2x+2", "3+4x-4-x", "2-x-3+4x":
+        case "3x-1", "x×3-1", "3x-3+2", "4x-x-1", "5x-2x-1", "x+x+x-1", "3x+2-3", "5x-1-2x", "2x-1+x", "4x+1-x-2", "5x-3-2x+2", "3+4x-4-x", "2-x-3+4x", "2×x+x-1":
             return completion(9)
         case "3x-2", "x×3-2", "3x-3+1", "4x-x-2", "5x-2x-2", "x+x+x-2", "1+3x-3", "5x-2-2x", "2x-2+x", "4x+1-x-3", "5x-4-2x+2", "3+4x-5-x", "2-x-4+4x":
             return completion(10)
-        case "3x+2", "2+3x", "5+3x-3", "5x-2x+2", "2+4x-x", "x+2+x+x", "4x-x+2", "2x+2+x", "4x-x+4-2":
+        case "3x+2", "2+3x", "5+3x-3", "5x-2x+2", "2+4x-x", "x+2+x+x", "4x-x+2", "2x+2+x", "4x-x+4-2", "3x+4-2":
             return completion(11)
-        case "4x", "2x+2x", "3x+x", "x+x+2x", "4x-2+2", "2+2x+2x-2", "x+2x+x":
+        case "4x", "2x+2x", "3x+x", "x+x+2x", "4x-2+2", "2+2x+2x-2", "x+2x+x", "2+4x-2":
             return completion(12)
-        case "5x", "2x+3x", "4x+x", "x+x+3x", "5x-2+2", "2x+x+2x", "2+2x+3x-2", "3x+x+x":
+        case "5x", "2x+3x", "4x+x", "x+x+3x", "5x-2+2", "2x+x+2x", "2+2x+3x-2", "3x+x+x", "2+5x-2":
             return completion(13)
         default:
             return completion(1000)
@@ -114,68 +114,89 @@ struct VECategory {
         }
     }
     
-    // "x+2", "x+3", "2+x", "3+x", "2x+1", "1+2x", "2x-1", "3x-1", "3x-2"
+    // "x+1", "x+3", "2+x", "2x+1", "2+2x", "2x", "3x", "2x-1", "3x-1", "3x-2"
     public static func unSimplifiedVEs(veCate: Int) -> [String] {
         switch veCate {
         case 0: // x
             let ves = ["1×x", "x×1", "2x-x", "3x-2x"]
             return ves
-        case 1: // 2x
-            let ves = ["2×x", "x×2", "3x-x", "4x-2x", "x+x"]
-            return ves
-        case 2: // 3x
-            let ves = ["3×x", "x×3", "2x+x", "4x-x", "x+x+x", "2×x+x"]
-            return ves
-        case 3: // x+1
-            let ves = ["1+1×x", "x×1+1", "x+2-1", "3+x-2", "2x-x+1", "1+3x-2x"]
-            return ves
-        case 4: // x+2
+        case 1: // 2x using
             var ves = [String]()
-            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-                ves = ["x×1+2", "x+4-2", "x+3-1", "2x-x+2", "3x-2x+2"]
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["3x-x", "4x-2x", "x+x"]
+            } else {
+                ves = ["2×x", "x×2", "3x-x", "4x-2x", "x+x"]
+            }
+            return ves
+        case 2: // 3x using
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["2x+x", "4x-x", "x+x+x"]
+            } else {
+                ves = ["3×x", "x×3", "2x+x", "4x-x", "x+x+x", "2×x+x"]
+            }
+            return ves
+        case 3: // x+1 using
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["3+x-2", "2x-x+1", "1+3x-2x"]
+            } else {
+                ves = ["1+1×x", "x×1+1", "x+2-1", "3+x-2", "2x-x+1", "1+3x-2x"]
+            }
+            return ves
+        case 4: // x+2 using
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["4+x-2", "2x-x+2", "2+3x-2x"]
             } else {
                 ves = ["2+x×1", "4+x-2", "2x+2-x", "2x-x+2", "2+3x-2x"]
             }
             return ves
-        case 5: // x+3
+        case 5: // x+3 using
             var ves = [String]()
-            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-                ves = ["1×x+3", "x+4-1", "x+5-2", "2x-x+3", "3x-2x+3"]
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["x-2+5", "2x-x+3", "3+3x-2x"]
             } else {
                 ves = ["1×x+3", "x-2+5", "2x+3-x", "2x-x+3", "3+3x-2x"]
             }
+
             return ves
-        case 6: // 2x+1
+        case 6: // 2x+1 using
             var ves = [String]()
-            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-                ves = ["x×2+1", "2x+3-2", "3x-x+1", "4x-2x+1", "x+x+1"]
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["3+2x-2", "3x-x+1", "1+4x-2x", "x+1+x"]
             } else {
                 ves = ["x×2+1", "3+2x-2", "3x-x+1", "1+4x-2x", "x+1+x"]
             }
             return ves
-        case 7: // 2x+2
-            let ves = ["2+2×x", "x×2+2", "2x+3-1", "4+2x-2", "3x-x+2", "2+4x-2x", "x+x+2"]
-            return ves
-        case 8: // 2x-1
+        case 7: // 2x+2 using
             var ves = [String]()
-            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-                ves = ["x×2-1", "2x-2+1", "3x-x-1", "4x-2x-1", "x+x-1"]
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["4+2x-2", "3x-x+2", "2+4x-2x", "x+x+2"]
+            } else {
+                ves = ["2+2×x", "x×2+2", "2x+3-1", "4+2x-2", "3x-x+2", "2+4x-2x", "x+x+2"]
+            }
+            return ves
+        case 8: // 2x-1 using
+            var ves = [String]()
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["2x+1-2", "3x-x-1", "4x-1-2x", "x-1+x"]
             } else {
                 ves = ["x×2-1", "2x+1-2", "3x-x-1", "4x-1-2x", "x-1+x"]
             }
             return ves
-        case 9: // 3x-1
+        case 9: // 3x-1 using
             var ves = [String]()
-            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-                ves = ["x×3-1", "3x-3+2", "4x-x-1", "5x-2x-1", "x+x+x-1"]
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["3x+2-3", "4x-x-1", "x+x+x-1", "2x-1+x"]
             } else {
                 ves = ["x×3-1", "3x+2-3", "4x-x-1", "5x-1-2x", "x+x+x-1", "2x-1+x"]
             }
             return ves
-        case 10: // 3x-2
+        case 10: // 3x-2 using
             var ves = [String]()
-            if GameScene.stageLevel == MainMenu.eqRobStartTurn {
-                ves = ["x×3-2", "3x-3+1", "4x-x-2", "5x-2x-2", "x+x+x-2"]
+            if GameScene.stageLevel == MainMenu.lastTurn {
+                ves = ["1+3x-3", "5x-2-2x", "x+x+x-2", "2x-2+x"]
             } else {
                 ves = ["x×3-2", "1+3x-3", "4x-x-2", "5x-2-2x", "x+x+x-2", "2x-2+x"]
             }
@@ -364,7 +385,7 @@ struct VECategory {
     }
     static func getUnsimplified(source: [String], completion: @escaping ([String]) -> Void) {
         let dispatchGroup = DispatchGroup()
-        var ves = source
+        var ves = [String]()
         for ve in source {
             dispatchGroup.enter()
             getCategory(ve: ve) { cate in

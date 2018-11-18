@@ -1152,6 +1152,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 }
                 if enemy.state == .Defence {
                     enemy.defend()
+                } else if enemy.stateRecord.count < 1 {
+                    enemy.defend()
+                } else if enemy.state == .Attack && enemy.punchInterval != 0 {
+                    enemy.defend()
                 }
             }
         }

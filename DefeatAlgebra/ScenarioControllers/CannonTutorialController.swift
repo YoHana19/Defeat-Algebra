@@ -63,108 +63,108 @@ struct CannonTutorialController {
                     } else {
                         return false
                     }
-                case 10:
-                    if name == "buttonTry" {
-                        ScenarioController.controllActions()
-                        return true
-                    } else {
-                        return false
-                    }
-                case 11:
-                    if name == "signal1" || name == "label1" {
-                        return true
-                    } else {
-                        return false
-                    }
-                case 12:
-                    ScenarioController.controllActions()
-                    return false
-                case 13:
-                    ScenarioController.controllActions()
-                    return false
-                case 14:
-                    ScenarioController.controllActions()
-                    return false
-                case 16:
-                    if name == "signal2" || name == "label2" {
-                        return true
-                    } else {
-                        return false
-                    }
-                case 17:
-                    ScenarioController.controllActions()
-                    return false
-                case 19:
-                    if name == "signal3" || name == "label3" {
-                        return true
-                    } else {
-                        return false
-                    }
-                case 23:
-                    if name == "changeVeButton" {
-                        return true
-                    } else {
-                        return false
-                    }
-                case 24:
-                    if name == "buttonX" {
-                        ScenarioController.controllActions()
-                        return true
-                    } else {
-                        return false
-                    }
-                case 25:
+                case 9:
                     if name == "button+" {
                         ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 26:
+                case 10:
+                    if name == "button4" {
+                        ScenarioController.controllActions()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 11:
+                    return false
+                case 12:
+                    if name == "buttonTry" {
+                        return true
+                    } else {
+                        return false
+                    }
+                case 13, 14, 17, 18, 19, 20, 21, 22, 23, 24, 27, 30, 31:
+                    ScenarioController.controllActions()
+                    return false
+                case 32:
+                    if name == "changeVeButton" {
+                        return true
+                    } else {
+                        return false
+                    }
+                case 33:
                     if name == "button2" {
                         ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 27:
-                    if name == "buttonOK" {
+                case 34:
+                    if name == "buttonX" {
                         ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 28:
-                    if name == "signal1" || name == "label1" || name == "signal2" || name == "label2" || name == "signal3" || name == "label3" {
-                        guard isTouchEnable else { return false }
-                        CannonTryController.resetEnemy()
+                case 35:
+                    if name == "buttonOK" {
                         return true
                     } else {
                         return false
                     }
-                case 29:
-                    if name == "signal1" || name == "label1" || name == "signal2" || name == "label2" || name == "signal3" || name == "label3" {
-                        guard isTouchEnable else { return false }
-                        CannonTryController.resetEnemy()
+                case 36, 38, 39, 40, 41, 42, 43:
+                    ScenarioController.controllActions()
+                    return false
+                case 44:
+                    if name == "changeVeButton" {
                         return true
                     } else {
                         return false
                     }
-                case 30:
-                    if name == "signal1" || name == "label1" || name == "signal2" || name == "label2" || name == "signal3" || name == "label3" {
-                        guard isTouchEnable else { return false }
-                        CannonTryController.resetEnemy()
+                case 45:
+                    if name == "button2" {
+                        ScenarioController.controllActions()
                         return true
                     } else {
                         return false
                     }
-                case 32:
+                case 46:
+                    if name == "buttonX" {
+                        ScenarioController.controllActions()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 47:
+                    if name == "button+" {
+                        ScenarioController.controllActions()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 48:
+                    if name == "button2" {
+                        ScenarioController.controllActions()
+                        return true
+                    } else {
+                        return false
+                    }
+                case 49:
+                    if name == "buttonOK" {
+                        return true
+                    } else {
+                        return false
+                    }
+                case 51, 52:
+                    ScenarioController.controllActions()
+                    return false
+                case 53:
                     if name == "tryDoneButton" {
                         ScenarioController.controllActions()
-                        return true
-                    } else {
-                        return false
                     }
+                    return false
                 default:
                     return true
                 }
@@ -188,7 +188,6 @@ struct CannonTutorialController {
         CannonController.selectedCannon.zPosition = 6
         CannonController.gameScene.eqGrid.isHidden = true
         CannonController.gameScene.eqGrid.zPosition = -1
-        CannonController.gameScene.eqRob.zPosition = 11
         CannonController.gameScene.inputPanelForCannon.zPosition = 10
         SignalController.speed = 0.006
         CharacterController.doctor.changeBalloonTexture(index: 0)
@@ -208,7 +207,18 @@ struct CannonTutorialController {
         let cands = CannonController.gameScene.gridNode.enemyArray.filter({ $0.state == .Attack && $0.positionX == CannonController.selectedCannon.spotPos[0] })
         for enemy in cands {
             SignalController.sendToCannon(target: CannonController.selectedCannon, num: CannonController.gameScene.xValue, from: enemy.absolutePos()) {
+                charaSpeakInTrying()
             }
+        }
+    }
+    
+    public static func charaSpeakInTrying() {
+        switch ScenarioController.currentActionIndex {
+        case 15, 16, 25, 26, 28, 29, 54:
+            ScenarioController.controllActions()
+            break;
+        default:
+            break;
         }
     }
 }

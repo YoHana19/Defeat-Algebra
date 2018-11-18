@@ -52,15 +52,16 @@ struct PlayerTurnController {
             } else if GameScene.stageLevel >= MainMenu.eqRobNewStartTurn && GameScene.stageLevel < MainMenu.cannonStartTurn {
                 if countTurn == 0 {
                     if isNewEqRobTurn {
-                        checkMultiSameEnemy() { over3 in
-                            if over3 > 0 {
+                        checkMultiSameEnemy() { over2 in
+                            if over2 > 0 {
                                 gameScene.itemType = .EqRob
                                 gameScene.playerTurnState = .UsingItem
                                 gameScene.gameState = .PlayerTurn
-                                EqRobController.scannedVECategory = over3
+                                EqRobController.scannedVECategory = over2
                                 EqRobController.execute(0, enemy: nil)
                             } else {
                                 gameScene.playerTurnState = .MoveState
+                                countTurn = 0
                             }
                         }
                         isNewEqRobTurn = false
@@ -77,7 +78,7 @@ struct PlayerTurnController {
                         }
                         isNewEqRobTurn = true
                     }
-                    countTurn = Int(arc4random_uniform(2))+1
+                    countTurn = 1
                 } else {
                     gameScene.playerTurnState = .MoveState
                     countTurn -= 1
@@ -104,19 +105,22 @@ struct PlayerTurnController {
             }
         }
         dispatchGroup.notify(queue: .main, execute: {
-            var over3 = -1
+            var over2 = -1
+            var num = 1
             let dispatchGroup2 = DispatchGroup()
             for cate in uniCates {
                 dispatchGroup2.enter()
-                if cates.filter({ $0 == cate}).count > 2 {
-                    over3 = cate
+                let dupli = cates.filter({ $0 == cate}).count
+                if dupli > num {
+                    num = dupli
+                    over2 = cate
                     dispatchGroup2.leave()
                 } else {
                     dispatchGroup2.leave()
                 }
             }
             dispatchGroup2.notify(queue: .main, execute: {
-                return completion(over3)
+                return completion(over2)
             })
         })
     }

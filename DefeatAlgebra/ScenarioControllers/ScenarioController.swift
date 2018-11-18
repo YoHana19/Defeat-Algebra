@@ -129,7 +129,7 @@ struct ScenarioController {
     
     static func controllActions() {
 //        print(scenarioScene.tutorialState)
-        print("currentActionIndex: \(currentActionIndex)")
+//        print("currentActionIndex: \(currentActionIndex)")
 //        print("currentLineIndex: \(currentLineIndex)")
         switch GameScene.stageLevel {
         case 0:
@@ -1165,7 +1165,7 @@ struct ScenarioController {
         case 0:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.setHero()
-            scenarioScene.enemyEnter([(6,10,"x", 0)]) {
+            scenarioScene.enemyEnter([(6,11,"2x", 0)]) {
                 currentActionIndex += 1
                 controllActions()
             }
@@ -1183,7 +1183,7 @@ struct ScenarioController {
         case 2:
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.retreatMadDoctor()
-            SignalSendingTurnController.sendSignal(in: 3) {
+            SignalSendingTurnController.sendSignal(in: 2) {
                 scenarioScene.gridNode.enemyArray[0].myTurnFlag = true
                 scenarioScene.gameState = .EnemyTurn
                 scenarioScene.isCharactersTurn = false
@@ -1234,31 +1234,28 @@ struct ScenarioController {
             break;
         case 8:
             guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingInputButtonForCannon(name: "+")
+            currentActionIndex += 1
+            break;
+        case 9:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingInputButtonForCannon(name: "4")
+            currentActionIndex += 1
+            break;
+        case 10:
+            guard scenarioScene.isCharactersTurn else { return }
             guard scenarioScene.tutorialState == .Action else { return }
             scenarioScene.tutorialState = .None
+            currentActionIndex += 1
             scenarioScene.removePointing()
             nextLineWithoutMoving()
             scenarioScene.pointingInputButtonForCannon(name: "Try")
             wait(length: 1.5) {
                 CannonTouchController.state = .Trying
-                currentActionIndex += 1
                 scenarioScene.tutorialState = .Action
                 controllActions()
-            }
-            break;
-        case 9:
-            guard scenarioScene.isCharactersTurn else { return }
-            nextLineWithoutMoving()
-            currentActionIndex += 1
-            break;
-        case 10:
-            guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.removePointing()
-            CharacterController.retreatMadDoctor()
-            scenarioScene.pointingEqSignal1()
-            currentActionIndex += 1
-            wait(length: 1.0) {
-                nextLineWithoutMoving()
             }
             break;
         case 11:
@@ -1268,134 +1265,291 @@ struct ScenarioController {
             break;
         case 12:
             guard scenarioScene.isCharactersTurn else { return }
+            CannonController.hideInputPanel()
+            CannonController.selectedCannon.isActive = true
+            scenarioScene.gridNode.isTutorial = true
+            CannonTryController.showEqGrid(enemy: scenarioScene.gridNode.enemyArray[0], cannon: CannonController.selectedCannon)
             nextLineWithoutMoving()
-            currentActionIndex += 1
+            scenarioScene.removePointing()
+            CharacterController.retreatMadDoctor()
+            wait(length: 2.0) {
+                currentActionIndex += 1
+            }
             break;
         case 13:
             guard scenarioScene.isCharactersTurn else { return }
-            CharacterController.mainHero.move(from: nil, to: CGPoint(x:600,y:CharacterController.mainHero.position.y), duration: 0.5)
             nextLineWithoutMoving()
             currentActionIndex += 1
             break;
         case 14:
             guard scenarioScene.isCharactersTurn else { return }
-            nextLineWithoutMoving()
+            currentActionIndex += 1
+            CannonTryController.getBG() { b in
+                guard let bg = b else { return }
+                bg.signalTappedForScenario(value: 1) {}
+            }
             break;
         case 15:
             guard scenarioScene.isCharactersTurn else { return }
-            CharacterController.retreatMainHero()
-            CannonTryController.resetEnemy()
-            nextLineWithoutMoving()
-            scenarioScene.pointingEqSignal2()
-            currentActionIndex += 1
-            break;
-        case 16:
-            guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.removePointing()
+            CharacterController.mainHero.move(from: nil, to: CGPoint(x:600,y:CharacterController.mainHero.position.y), duration: 0.5)
             nextLineWithoutMoving()
             currentActionIndex += 1
             break;
-        case 17:
+        case 16, 17:
             guard scenarioScene.isCharactersTurn else { return }
             nextLineWithoutMoving()
+            currentActionIndex += 1
             break;
         case 18:
-            CannonTryController.resetEnemy()
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.pointing(pos: CGPoint(x: 150, y: 900))
+            scenarioScene.pointing(pos: CGPoint(x: 320, y: 1200))
             nextLineWithoutMoving()
-            scenarioScene.pointingEqSignal3()
             currentActionIndex += 1
             break;
         case 19:
             guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.removePointing()
-            CannonTryController.resetEnemy()
             nextLineWithoutMoving()
-            scenarioScene.tutorialState = .Converstaion
-            CharacterController.doctor.setScale(1.0)
-            CharacterController.mainHero.setScale(1.0)
+            currentActionIndex += 1
             break;
         case 20:
             guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.pointing(pos: CGPoint(x: 120, y: 750))
+            scenarioScene.pointing(pos: CGPoint(x: 170, y: 1150))
             nextLineWithoutMoving()
-            scenarioScene.pointingLog()
-            scenarioScene.tutorialState = .Converstaion
+            currentActionIndex += 1
             break;
         case 21:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             scenarioScene.removePointing()
+            scenarioScene.pointing(pos: CGPoint(x: 150, y: 820))
+            scenarioScene.pointing(pos: CGPoint(x: 250, y: 1150))
             nextLineWithoutMoving()
-            scenarioScene.tutorialState = .Converstaion
-            scenarioScene.pointingDist()
+            currentActionIndex += 1
             break;
-        case 22:
+        case 22, 23:
             guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.removePointing()
-            scenarioScene.pointingChangeVeButton()
-            charaSpeak(at: currentLineIndex)
-            CharacterController.retreatMainHero()
-            break;
-        case 23:
-            guard scenarioScene.isCharactersTurn else { return }
-            scenarioScene.removePointing()
-            CharacterController.doctor.move(from: nil, to: CannonController.doctorOnPos[0])
             nextLineWithoutMoving()
-            scenarioScene.pointingInputButtonForCannon(name: "x")
             currentActionIndex += 1
             break;
         case 24:
             guard scenarioScene.isCharactersTurn else { return }
+            currentActionIndex += 1
             scenarioScene.removePointing()
-            scenarioScene.pointingInputButtonForCannon(name: "+")
+            scenarioScene.removePointing()
+            CannonTryController.getBG() { b in
+                guard let bg = b else { return }
+                bg.signalTappedForScenario(value: 2) {}
+            }
+            break;
+        case 25, 26:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLineWithoutMoving()
             currentActionIndex += 1
             break;
-        case 25:
+        case 27:
+            guard scenarioScene.isCharactersTurn else { return }
+            currentActionIndex += 1
+            CannonTryController.getBG() { b in
+                guard let bg = b else { return }
+                bg.signalTappedForScenario(value: 3) {
+                    bg.isTrying = false
+                }
+            }
+            break;
+        case 28:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 29:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.tutorialState = .None
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            wait(length: 1.0) {
+                scenarioScene.tutorialState = .Action
+            }
+            break;
+        case 30:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 31:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.retreatMainHero()
+            scenarioScene.pointingChangeVeButton()
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 32:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
+            CharacterController.doctor.move(from: nil, to: CannonController.doctorOnPos[0])
+            nextLineWithoutMoving()
             scenarioScene.pointingInputButtonForCannon(name: "2")
             currentActionIndex += 1
             break;
-        case 26:
+        case 33:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingInputButtonForCannon(name: "x")
+            currentActionIndex += 1
+            break;
+        case 34:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             scenarioScene.pointingInputButtonForCannon(name: "OK")
             currentActionIndex += 1
             break;
-        case 27:
+        case 35:
             guard scenarioScene.isCharactersTurn else { return }
-            nextLine()
-            scenarioScene.tutorialState = .Action
+            scenarioScene.removePointing()
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 36:
+            guard scenarioScene.isCharactersTurn else { return }
+            currentActionIndex += 1
+            CannonTryController.getBG() { b in
+                guard let bg = b else { return }
+                bg.doTryForScenario {
+                    controllActions()
+                }
+            }
+            break;
+        case 37:
+            guard scenarioScene.isCharactersTurn else { return }
+            CharacterController.mainHero.move(from: nil, to: CGPoint(x:600,y:CharacterController.mainHero.position.y), duration: 0.5)
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 38:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 39:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.pointing(pos: CGPoint(x: 170, y: 1150))
+            scenarioScene.pointing(pos: CGPoint(x: 250, y: 1150))
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 40:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.pointing(pos: CGPoint(x: 160, y: 1100))
+            scenarioScene.pointing(pos: CGPoint(x: 160, y: 1050))
+            scenarioScene.pointing(pos: CGPoint(x: 160, y: 1000))
+            scenarioScene.pointing(pos: CGPoint(x: 230, y: 1100))
+            scenarioScene.pointing(pos: CGPoint(x: 230, y: 1050))
+            scenarioScene.pointing(pos: CGPoint(x: 230, y: 1000))
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 41:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.pointing(pos: CGPoint(x: 300, y: 1100))
+            scenarioScene.pointing(pos: CGPoint(x: 300, y: 1050))
+            scenarioScene.pointing(pos: CGPoint(x: 300, y: 1000))
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 42:
+            guard scenarioScene.isCharactersTurn else { return }
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 43:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            scenarioScene.removePointing()
+            CharacterController.retreatMainHero()
+            scenarioScene.pointingChangeVeButton()
+            nextLineWithoutMoving()
+            currentActionIndex += 1
+            break;
+        case 44:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            CharacterController.doctor.move(from: nil, to: CannonController.doctorOnPos[0])
+            nextLineWithoutMoving()
+            scenarioScene.pointingInputButtonForCannon(name: "2")
+            currentActionIndex += 1
+            break;
+        case 45:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingInputButtonForCannon(name: "x")
+            currentActionIndex += 1
+            break;
+        case 46:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingInputButtonForCannon(name: "+")
+            currentActionIndex += 1
+            break;
+        case 47:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingInputButtonForCannon(name: "2")
+            currentActionIndex += 1
+            break;
+        case 48:
+            guard scenarioScene.isCharactersTurn else { return }
+            scenarioScene.removePointing()
+            scenarioScene.pointingInputButtonForCannon(name: "OK")
+            currentActionIndex += 1
+            break;
+        case 49:
+            guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
             currentActionIndex += 1
+            CannonTryController.getBG() { b in
+                guard let bg = b else { return }
+                bg.doTryForScenario {
+                    controllActions()
+                }
+            }
             break;
-        case 28:
+        case 50:
             guard scenarioScene.isCharactersTurn else { return }
-            nextLine()
+            CharacterController.mainHero.move(from: nil, to: CGPoint(x:600,y:CharacterController.mainHero.position.y), duration: 0.5)
+            nextLineWithoutMoving()
             currentActionIndex += 1
             break;
-        case 29:
+        case 51:
             guard scenarioScene.isCharactersTurn else { return }
-            nextLine()
+            nextLineWithoutMoving()
             currentActionIndex += 1
             break;
-        case 30:
+        case 52:
             guard scenarioScene.isCharactersTurn else { return }
-            nextLine()
-            scenarioScene.tutorialState = .Converstaion
-            break;
-        case 31:
-            guard scenarioScene.isCharactersTurn else { return }
-            CannonTryController.resetEnemy()
             scenarioScene.pointingTryDoneButton()
-            charaSpeak(at: currentLineIndex)
+            nextLineWithoutMoving()
+            currentActionIndex += 1
             break;
-        case 32:
+        case 53:
             guard scenarioScene.isCharactersTurn else { return }
             scenarioScene.removePointing()
-            nextLine()
-            scenarioScene.tutorialState = .Converstaion
+            nextLineWithoutMoving()
+            CannonTutorialController.hideEqGrid()
+            currentActionIndex += 1
             break;
-        case 33:
+        case 54:
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.doctor.balloon.isHidden = true
             scenarioScene.enemyTurnDoneFlag = false
@@ -1405,23 +1559,24 @@ struct ScenarioController {
             scenarioScene.isCharactersTurn = false
             currentActionIndex += 1
             break;
-        case 34:
+        case 55:
             guard !scenarioScene.isCharactersTurn && scenarioScene.gameState == .AddEnemy && scenarioScene.countTurn == 0 else { return }
             nextLine()
+            CharacterController.mainHero.setScale(1.0)
             scenarioScene.tutorialState = .Converstaion
             scenarioScene.isCharactersTurn = true
             scenarioScene.gridNode.isTutorial = true
             break;
-        case 35:
+        case 56:
             guard scenarioScene.isCharactersTurn else { return }
             CharacterController.retreatDoctor()
             CharacterController.retreatMainHero()
-            scenarioScene.enemyEnter([(6,9,"x+3", 0),(1,9,"2x+1", 0)]) {
+            scenarioScene.enemyEnter([(6,8,"x+3", 0),(1,9,"2x-1", 0)]) {
                 currentActionIndex += 1
                 controllActions()
             }
             break;
-        case 36:
+        case 57:
             guard scenarioScene.isCharactersTurn else { return }
             SoundController.playBGM(bgm: .Game1, isLoop: true)
             TutorialController.enable()
@@ -1431,9 +1586,8 @@ struct ScenarioController {
             scenarioScene.gameState = .SignalSending
             scenarioScene.isCharactersTurn = false
             scenarioScene.gridNode.isTutorial = false
-            currentActionIndex += 1
             break;
-        case 38: // fail
+        case 58: // fail
             guard scenarioScene.totalNumOfEnemy > 0 else { return }
             guard !scenarioScene.isCharactersTurn && scenarioScene.gameState == .AddEnemy && scenarioScene.countTurn == 1 else { return }
             scenarioScene.isCharactersTurn = true
@@ -1443,7 +1597,7 @@ struct ScenarioController {
             TutorialController.execute()
             currentActionIndex += 1
             break;
-        case 39:
+        case 59:
             guard scenarioScene.isCharactersTurn else { return }
             currentActionIndex += 1
             let dispatchGroup = DispatchGroup()
@@ -1458,7 +1612,7 @@ struct ScenarioController {
                 scenarioScene.enemyTurnDoneFlag = false
                 scenarioScene.gridNode.numOfTurnEndEnemy = 0
                 scenarioScene.gridNode.enemyArray[0].myTurnFlag = true
-                currentActionIndex = 36
+                currentActionIndex = 57
                 controllActions()
             })
             break;

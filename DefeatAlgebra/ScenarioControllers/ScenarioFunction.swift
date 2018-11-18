@@ -167,7 +167,6 @@ class ScenarioFunction {
         } else if ScenarioController.currentActionIndex == 7 {
             guard key == "perfect" else { return false }
             ScenarioController.currentActionIndex += 2
-            print(ScenarioController.currentActionIndex)
             ScenarioController.controllActions()
             return false
         } else {

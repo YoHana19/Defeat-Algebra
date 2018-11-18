@@ -57,14 +57,14 @@ class CannonRecordBoard: SKSpriteNode {
                         for label in distLabel {
                             label.fontColor = UIColor.blue
                         }
-                        currentVeLabel.fontColor = UIColor.blue
+                        //currentVeLabel.fontColor = UIColor.blue
                         CannonTryController.isCorrect = true
                         DataController.setDataForGetAnswer()
                     } else {
                         for label in distLabel {
                             label.fontColor = UIColor.red
                         }
-                        currentVeLabel.fontColor = UIColor.red
+                        //currentVeLabel.fontColor = UIColor.red
                         CannonTryController.hintOn = true
                         DataController.setDataForGetHint()
                     }
@@ -286,8 +286,10 @@ class CannonRecordBoard: SKSpriteNode {
     
     public func changeCannonVe(newVe: String) {
         currentVeLabel.text = newVe
+        currentVeLabel.fontColor = UIColor.white
         removeArea()
         removeRecord()
+        distLabel.removeAll()
     }
     
     private func setXValueForVisual() {
@@ -369,7 +371,11 @@ class CannonRecordBoard: SKSpriteNode {
         area.alpha = 0.4
         area.zPosition = 2
         area.name = "area"
-        area.position = CGPoint(x: pos.x, y: pos.y-(cellLength+area.frame.height)/2)
+        var aresPos = CGPoint(x: pos.x, y: pos.y-(cellLength+area.frame.height)/2)
+        if value < 0 {
+            aresPos = CGPoint(x: pos.x, y: pos.y+(cellLength+area.frame.height)/2)
+        }
+        area.position = aresPos
         scrollView.addChild(area)
         let label = SKLabelNode(fontNamed: DAFont.fontName)
         label.text = String(value)

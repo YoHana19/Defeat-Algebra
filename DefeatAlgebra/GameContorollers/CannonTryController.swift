@@ -14,11 +14,13 @@ struct CannonTryController {
     private static var checkingEnemy = Enemy(variableExpressionSource: ["x"], forEdu: false)
     public static var numOfCheck = 0
     public static var numOfChangeVE = 0
+    public static var currentDist = 0
+    public static var currentCannonVE = ""
     public static var hintOn: Bool = false {
         didSet {
             if !oldValue && hintOn {
                 if let _ = gameScene as? ScenarioScene {
-                    if GameScene.stageLevel == 7 && ScenarioController.currentActionIndex > 17 {
+                    if ScenarioController.currentActionIndex > 56 {
                         CannonController.execute(5, cannon: nil)
                     } else {
                         hintOn = false
@@ -34,8 +36,10 @@ struct CannonTryController {
         didSet {
             if !oldValue && isCorrect {
                 if let _ = gameScene as? ScenarioScene {
-                    if GameScene.stageLevel == 7 && ScenarioController.currentActionIndex > 17 {
+                    if ScenarioController.currentActionIndex > 56 {
                         CannonController.execute(6, cannon: nil)
+                    } else {
+                        isCorrect = false
                     }
                 } else {
                     CannonController.execute(6, cannon: nil)
@@ -58,6 +62,7 @@ struct CannonTryController {
         gameScene.signalHolder.zPosition = 9
         gameScene.valueOfX.zPosition = 10
         gameScene.valueOfX.text = ""
+        CannonTryController.currentCannonVE = cannon.variableExpression
     }
     
     private static func lineup(cannon: Cannon, enemy: Enemy) {

@@ -25,5 +25,9 @@ struct ResetController {
         PlayerTurnController.isNewEqRobTurn = true
         PlayerTurnController.countTurn = 0
         CharacterController.doctor.changeBalloonTexture(index: 0)
+        CharacterController.doctor.balloon.isHidden = true
+        CharacterController.mainHero.balloon.isHidden = true
+        CharacterController.doctor.setScale(1.0)
+        CharacterController.mainHero.setScale(1.0)
     }
 }

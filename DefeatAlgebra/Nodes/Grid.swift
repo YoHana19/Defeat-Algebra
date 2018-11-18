@@ -285,15 +285,28 @@ class Grid: SKSpriteNode {
                         let touch = touches.first!
                         let location = touch.location(in: self)
                         let nodeAtPoint = atPoint(location)
-                        guard let enemy = nodeAtPoint as? Enemy else { return }
-                        if gameScene.eqGrid.isHidden {
-                            if enemy.positionX == CannonController.selectedCannon.spotPos[0] {
-                                if enemy.state == .Attack {
-                                    CannonTouchController.onEvent(cannon: nil, enemy: enemy)
+                        if nodeAtPoint.name == "enemy" || nodeAtPoint.name == "shield" {
+                            if let enemy = nodeAtPoint as? Enemy {
+                                if gameScene.eqGrid.isHidden {
+                                    if enemy.positionX == CannonController.selectedCannon.spotPos[0] {
+                                        if enemy.state == .Attack {
+                                            CannonTouchController.onEvent(cannon: nil, enemy: enemy)
+                                        }
+                                    }
+                                } else {
+                                    AllTouchController.enemyTouched(enemy: enemy)
+                                }
+                            } else if let enemy = nodeAtPoint.parent as? Enemy {
+                                if gameScene.eqGrid.isHidden {
+                                    if enemy.positionX == CannonController.selectedCannon.spotPos[0] {
+                                        if enemy.state == .Attack {
+                                            CannonTouchController.onEvent(cannon: nil, enemy: enemy)
+                                        }
+                                    }
+                                } else {
+                                    AllTouchController.enemyTouched(enemy: enemy)
                                 }
                             }
-                        } else {
-                            AllTouchController.enemyTouched(enemy: enemy)
                         }
                     }
                     break;

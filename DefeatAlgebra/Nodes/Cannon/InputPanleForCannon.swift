@@ -56,7 +56,7 @@ class InputPanelForCannon: SKSpriteNode {
                 }
             }
             if GameScene.stageLevel == MainMenu.invisibleStartTurn {
-                if ScenarioController.currentActionIndex > 35 {
+                if ScenarioController.currentActionIndex > 56 {
                     if (CannonTouchController.state == .Trying) {
                         TutorialController.visibleTutorialLabel(false)
                     } else {
@@ -358,12 +358,14 @@ class InputPanelForCannon: SKSpriteNode {
                 } else if GameScene.stageLevel == MainMenu.invisibleStartTurn {
                     if ScenarioController.currentActionIndex < 17 {
                         return
-                    } else if ScenarioController.currentActionIndex < 30 {
+                    } else if ScenarioController.currentActionIndex < 53 {
+                        CannonTryController.currentCannonVE = tempVe
                         CannonTryController.getBG() { bg in
                             guard let canSim = bg else { return }
                             canSim.showAllSignalButton()
-                            canSim.rePosChangeVeButton(originPos: true)
-                            canSim.recordBoard.createCannon(ve: tempVe)
+                            canSim.isTrying = true
+                            canSim.recordBoard.changeCannonVe(newVe: tempVe)
+                            ScenarioController.controllActions()
                         }
                         return
                     }
@@ -373,10 +375,10 @@ class InputPanelForCannon: SKSpriteNode {
             if CannonTouchController.state == .Trying {
                 DataController.setDataForChangeCannonDistanceInTrying()
                 CannonController.execute(3, cannon: nil)
+                CannonTryController.currentCannonVE = tempVe
                 CannonTryController.getBG() { bg in
                     guard let canSim = bg else { return }
                     canSim.showAllSignalButton()
-                    //canSim.recordBoard.createCannon(ve: tempVe)
                     canSim.recordBoard.changeCannonVe(newVe: tempVe)
                     canSim.doTry () {}
                 }
@@ -412,13 +414,15 @@ class InputPanelForCannon: SKSpriteNode {
             DataController.setDataForUsedTryCannon()
             
             self.isHidden = true
-            CannonController.execute(2, cannon: nil)
             
             if let _ = self.parent as? ScenarioScene, GameScene.stageLevel == MainMenu.invisibleStartTurn {
-                if ScenarioController.currentActionIndex > 35 {
-                    TutorialController.visibleTutorialLabel(false)
+                if ScenarioController.currentActionIndex == 12 {
+                    ScenarioController.controllActions()
+                    return
                 }
             }
+            
+            CannonController.execute(2, cannon: nil)
         }
         
     }
